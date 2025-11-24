@@ -1,0 +1,26 @@
+import { c as create_ssr_component, e as escape, d as each, b as add_attribute } from "../../../../chunks/ssr.js";
+import "devalue";
+const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let site;
+  let roomsByBuilding;
+  let buildingNames;
+  let { data } = $$props;
+  let editingRoomId = null;
+  let editingRoom = { name: "", building: "", floor: "" };
+  if ($$props.data === void 0 && $$bindings.data && data !== void 0)
+    $$bindings.data(data);
+  site = data.site;
+  roomsByBuilding = data.roomsByBuilding || {};
+  buildingNames = Object.keys(roomsByBuilding).sort();
+  return `<div class="max-w-7xl mx-auto px-4 py-10"> <div class="mb-6" data-svelte-h="svelte-14m0uw6"><a href="/sites" class="text-spore-cream/60 hover:text-spore-cream text-sm font-medium">← Back to Sites</a></div>  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-10"><div><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight">${escape(site.name)}</h1> <p class="text-spore-cream/60 mt-2 text-sm font-medium">${escape(site.rooms?.length || 0)} room${escape(site.rooms?.length !== 1 ? "s" : "")}</p></div> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide">${escape("+ ADD ROOM")}</button></div>  ${``}  ${buildingNames.length > 0 ? `<div class="space-y-8">${each(buildingNames, (building) => {
+    return `<div class="bg-spore-white rounded-xl overflow-hidden"> <div class="bg-spore-dark px-6 py-4"><h2 class="text-lg font-bold text-spore-cream">${escape(building === "Unassigned" ? "Unassigned Rooms" : `Building ${building}`)}</h2> <p class="text-spore-cream/60 text-sm">${escape(roomsByBuilding[building].length)} room${escape(roomsByBuilding[building].length !== 1 ? "s" : "")} </p></div>  <div class="p-6"><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">${each(roomsByBuilding[building], (room) => {
+      return `${editingRoomId === room.id ? ` <div class="bg-spore-cream/20 rounded-lg p-4 border-2 border-spore-orange"><form method="POST" action="?/updateRoom"><input type="hidden" name="roomId"${add_attribute("value", room.id, 0)}> <div class="space-y-3"><input type="text" name="name" placeholder="Room name" class="w-full px-3 py-2 rounded border border-spore-cream bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange" required${add_attribute("value", editingRoom.name, 0)}> <div class="grid grid-cols-2 gap-2"><input type="text" name="building" placeholder="Building" class="px-3 py-2 rounded border border-spore-cream bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"${add_attribute("value", editingRoom.building, 0)}> <input type="number" name="floor" placeholder="Floor" class="px-3 py-2 rounded border border-spore-cream bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"${add_attribute("value", editingRoom.floor, 0)}></div> <div class="flex gap-2"><button type="submit" ${!editingRoom.name.trim() ? "disabled" : ""} class="flex-1 bg-spore-forest text-white px-3 py-2 rounded font-bold text-xs hover:bg-spore-forest/90 disabled:opacity-50 transition-colors">${escape("SAVE")}</button> <button type="button" class="px-3 py-2 rounded font-bold text-xs text-spore-steel hover:bg-spore-cream transition-colors" data-svelte-h="svelte-je9169">CANCEL
+													</button></div> </div></form> </div>` : ` <div class="bg-spore-cream/20 rounded-lg p-4 border border-spore-cream/50 group hover:border-spore-orange/50 transition-colors"><div class="flex justify-between items-start"><div><h3 class="font-bold text-spore-dark">Room ${escape(room.name)}</h3> <p class="text-sm text-spore-steel mt-1">${room.floor ? `Floor ${escape(room.floor)}` : ``} ${room._count?.assets ? `<span class="ml-2">• ${escape(room._count.assets)} asset${escape(room._count.assets !== 1 ? "s" : "")}</span>` : ``} </p></div> <div class="flex gap-2"><button class="text-spore-steel/40 hover:text-spore-orange transition-colors opacity-0 group-hover:opacity-100" data-svelte-h="svelte-hw6ud4">✏️</button> <form method="POST" action="?/deleteRoom"><input type="hidden" name="roomId"${add_attribute("value", room.id, 0)}> <button type="submit" class="text-spore-steel/40 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" data-svelte-h="svelte-1wwci4s">✕
+													</button></form> </div></div> <div class="mt-4 pt-3 border-t border-spore-cream/50"><a href="${"/assets?room=" + escape(room.id, true)}" class="text-xs font-semibold text-spore-orange hover:text-spore-orange/80">View Assets →
+											</a></div> </div>`}`;
+    })} </div></div> </div>`;
+  })}</div>` : `<div class="text-center py-16 bg-spore-white rounded-xl"><div class="text-5xl mb-4" data-svelte-h="svelte-1vg2ihf">🚪</div> <h3 class="text-xl font-bold text-spore-dark mb-2" data-svelte-h="svelte-1vqwohh">No rooms yet</h3> <p class="text-spore-steel mb-6" data-svelte-h="svelte-1qkbz3q">Add rooms to this site to start tracking assets</p> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold" data-svelte-h="svelte-1aornih">+ ADD ROOM</button></div>`}</div>`;
+});
+export {
+  Page as default
+};

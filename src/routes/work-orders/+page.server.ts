@@ -1,0 +1,226 @@
+import type { Actions, PageServerLoad } from './$types';
+import { createRequestPrisma } from '$lib/server/prisma';
+import { broadcastToOrg } from '$lib/server/websocket-handler';
+import { WorkOrderStatus } from '@prisma/client';
+import { requireAuth, isManagerOrAbove } from '$lib/server/guards';
+import { fail } from '@sveltejs/kit';
+import { logAudit } from '$lib/server/audit';
+
+export const load: PageServerLoad = async (event) => {
+	requireAuth(event);
+	
+	const prisma = createRequestPrisma(event);
+	const myOnly = event.url.searchParams.get('my') === 'true';
+	const userId = event.locals.user!.id;
+	
+	const workOrders = await prisma.workOrder.findMany({
+		where: myOnly ? { assignedToId: userId } : undefined,
+		include: {
+			asset: {
+				select: {
+					id: true,
+					name: true
+				}
+			},
+			assignedTo: {
+				select: {
+					id: true,
+					firstName: true,
+					lastName: true
+				}
+			}
+		},
+		orderBy: {
+			createdAt: 'desc'
+		}
+	});
+
+	// Get assets for the create form
+	const assets = await prisma.asset.findMany({
+		include: {
+			room: {
+				include: {
+					site: { select: { name: true } }
+				}
+			}
+		},
+		orderBy: { name: 'asc' }
+	});
+
+	// Get users for assignment dropdown
+	const users = await prisma.user.findMany({
+		where: { orgId: event.locals.user!.orgId },
+		select: {
+			id: true,
+			firstName: true,
+			lastName: true,
+			email: true
+		},
+		orderBy: { firstName: 'asc' }
+	});
+
+	return { workOrders, assets, users, myOnly };
+};
+
+export const actions: Actions = {
+	/**
+	 * Create a new Work Order
+	 */
+	create: async (event) => {
+		const prisma = createRequestPrisma(event);
+		const data = await event.request.formData();
+		
+		const title = data.get('title') as string;
+		const description = data.get('description') as string;
+		const assetId = data.get('assetId') as string;
+		const failureMode = data.get('failureMode') as string || 'General';
+
+		if (!title || !assetId) {
+			return { success: false, error: 'Title and asset are required.' };
+		}
+
+		const orgId = event.locals.user!.orgId;
+
+		try {
+			const newWo = await prisma.workOrder.create({
+				data: {
+					title: title.trim(),
+					description: description?.trim() || '',
+					assetId,
+					failureMode,
+					orgId,
+					status: 'PENDING'
+				},
+				select: {
+					id: true,
+					title: true,
+					status: true,
+					assetId: true,
+					orgId: true,
+					createdAt: true
+				}
+			});
+
+			// Broadcast to all connected clients
+			broadcastToOrg(orgId, {
+				type: 'WO_NEW',
+				payload: newWo
+			});
+
+			// Audit log
+			await logAudit(event.locals.user!.id, 'WORK_ORDER_CREATED', {
+				workOrderId: newWo.id,
+				title: newWo.title,
+				assetId: newWo.assetId
+			});
+
+			return { success: true, workOrder: newWo };
+		} catch (e) {
+			console.error('Error creating work order:', e);
+			return { success: false, error: 'Failed to create work order.' };
+		}
+	},
+
+	/** * Handles updating the status of a Work Order.
+	 * This is the core workflow trigger for the real-time system.
+	 */
+	updateStatus: async (event) => {
+		const { request } = event;
+		const prisma = createRequestPrisma(event);
+		const data = await request.formData();
+		const woId = data.get('workOrderId') as string;
+		const newStatus = data.get('status') as WorkOrderStatus;
+
+		if (!woId || !newStatus) {
+			return { success: false, error: 'Missing ID or status.' };
+		}
+
+		try {
+			// 1. DATABASE UPDATE: Uses the secure Prisma client.
+			//    Middleware automatically filters by the user's orgId.
+			const updatedWo = await prisma.workOrder.update({
+				where: { id: woId },
+				data: { status: newStatus },
+				// Select specific fields for the broadcast payload
+				select: {
+					id: true,
+					title: true,
+					status: true,
+					assetId: true,
+					orgId: true
+				}
+			});
+
+			if (!updatedWo) {
+				return { success: false, error: 'Work order not found.' };
+			}
+
+			// 2. REAL-TIME BROADCAST: Push the change instantly to all connected clients in the same organization.
+			broadcastToOrg(updatedWo.orgId, {
+				type: 'WO_UPDATE',
+				payload: updatedWo
+			});
+
+			// Audit log
+			await logAudit(event.locals.user!.id, 'WORK_ORDER_STATUS_CHANGED', {
+				workOrderId: updatedWo.id,
+				title: updatedWo.title,
+				newStatus
+			});
+
+			return { success: true, updatedWo };
+		} catch (e) {
+			console.error('Error updating WO status:', e);
+			return { success: false, error: 'Database transaction failed.' };
+		}
+	},
+
+	assign: async (event) => {
+		const prisma = createRequestPrisma(event);
+		const data = await event.request.formData();
+		
+		const woId = data.get('workOrderId') as string;
+		const assignedToId = data.get('assignedToId') as string;
+
+		if (!woId) {
+			return fail(400, { error: 'Work order ID required' });
+		}
+
+		try {
+			const updatedWo = await prisma.workOrder.update({
+				where: { id: woId },
+				data: { assignedToId: assignedToId || null },
+				select: {
+					id: true,
+					title: true,
+					status: true,
+					assignedToId: true,
+					orgId: true,
+					assignedTo: {
+						select: { firstName: true, lastName: true }
+					}
+				}
+			});
+
+			broadcastToOrg(updatedWo.orgId, {
+				type: 'WO_UPDATE',
+				payload: updatedWo
+			});
+
+			// Audit log
+			await logAudit(event.locals.user!.id, 'WORK_ORDER_ASSIGNED', {
+				workOrderId: updatedWo.id,
+				title: updatedWo.title,
+				assignedToId: assignedToId || null,
+				assignedToName: updatedWo.assignedTo 
+					? `${updatedWo.assignedTo.firstName || ''} ${updatedWo.assignedTo.lastName || ''}`.trim()
+					: null
+			});
+
+			return { success: true };
+		} catch (e) {
+			console.error('Error assigning WO:', e);
+			return fail(500, { error: 'Failed to assign work order' });
+		}
+	}
+};
