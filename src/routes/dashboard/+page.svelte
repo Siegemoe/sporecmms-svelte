@@ -6,18 +6,20 @@
 	export let data: PageData;
 
 	let wsConnected = false;
+	let wsPolling = false;
 	let liveFeed: Array<{ type: string; message: string; time: Date; id: number }> = [];
 	let lastSeenTimestamp = 0;
 
 	const unsubscribe = wsStore.subscribe((state) => {
 		wsConnected = state.isConnected;
-		
+		wsPolling = state.isPolling;
+
 		if (state.messages.length > 0) {
 			const latest = state.messages[0];
-			
+
 			if (latest.timestamp && latest.timestamp > lastSeenTimestamp) {
 				lastSeenTimestamp = latest.timestamp;
-				
+
 				if (latest.type === 'WO_UPDATE') {
 					const wo = latest.payload as { title: string; status: string };
 					liveFeed = [
@@ -25,7 +27,7 @@
 						...liveFeed
 					].slice(0, 10);
 				}
-				
+
 				if (latest.type === 'WO_NEW') {
 					const wo = latest.payload as { title: string };
 					liveFeed = [
@@ -52,13 +54,19 @@
 	<div class="mb-10">
 		<h1 class="text-4xl font-extrabold text-spore-cream tracking-tight">Dashboard</h1>
 		<div class="flex items-center gap-3 mt-2">
-			<span 
-				class="flex items-center gap-2 text-sm font-medium {wsConnected ? 'text-spore-orange' : 'text-spore-cream/50'}"
+			<span
+				class="flex items-center gap-2 text-sm font-medium {wsConnected ? 'text-spore-orange' : wsPolling ? 'text-spore-forest' : 'text-spore-cream/50'}"
 				role="status"
 				aria-live="polite"
 			>
-				<span class="w-2 h-2 rounded-full {wsConnected ? 'bg-spore-orange animate-pulse' : 'bg-spore-cream/30'}" aria-hidden="true"></span>
-				{wsConnected ? 'Live updates enabled' : 'Connecting...'}
+				<span class="w-2 h-2 rounded-full {wsConnected ? 'bg-spore-orange animate-pulse' : wsPolling ? 'bg-spore-forest animate-pulse' : 'bg-spore-cream/30'}" aria-hidden="true"></span>
+				{#if wsConnected}
+					Live updates enabled
+				{:else if wsPolling}
+					Polling updates
+				{:else}
+					Connecting...
+				{/if}
 			</span>
 		</div>
 	</div>
@@ -68,41 +76,41 @@
 		<div class="lg:col-span-2 space-y-8">
 			<!-- Stats Cards -->
 			<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-				<div class="bg-spore-white rounded-xl p-5">
+				<div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50">
 					<p class="text-xs font-semibold text-spore-steel uppercase tracking-wide">Total WOs</p>
 					<p class="text-3xl font-extrabold text-spore-dark mt-1">{stats?.total || 0}</p>
 				</div>
-				<div class="bg-spore-white rounded-xl p-5">
+				<div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50">
 					<p class="text-xs font-semibold text-spore-steel uppercase tracking-wide">Pending</p>
 					<p class="text-3xl font-extrabold text-spore-orange mt-1">{stats?.pending || 0}</p>
 				</div>
-				<div class="bg-spore-white rounded-xl p-5">
+				<div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50">
 					<p class="text-xs font-semibold text-spore-steel uppercase tracking-wide">In Progress</p>
 					<p class="text-3xl font-extrabold text-spore-steel mt-1">{stats?.inProgress || 0}</p>
 				</div>
-				<div class="bg-spore-white rounded-xl p-5">
+				<div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50">
 					<p class="text-xs font-semibold text-spore-steel uppercase tracking-wide">Completed</p>
 					<p class="text-3xl font-extrabold text-spore-forest mt-1">{stats?.completed || 0}</p>
 				</div>
 			</div>
 
 			<!-- Quick Actions -->
-			<div class="bg-spore-white rounded-xl p-6">
+			<div class="bg-spore-white rounded-xl p-6 shadow-sm border border-spore-cream/50">
 				<h2 class="text-lg font-bold text-spore-dark mb-5">Quick Actions</h2>
 				<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-					<a href="/work-orders" class="flex flex-col items-center p-5 bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors">
+					<a href="/work-orders" class="flex flex-col items-center p-5 bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors border border-spore-cream/30">
 						<span class="text-2xl mb-2">📋</span>
 						<span class="text-sm font-semibold text-spore-steel">All Work Orders</span>
 					</a>
-					<a href="/sites" class="flex flex-col items-center p-5 bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors">
+					<a href="/sites" class="flex flex-col items-center p-5 bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors border border-spore-cream/30">
 						<span class="text-2xl mb-2">🏢</span>
 						<span class="text-sm font-semibold text-spore-steel">Sites</span>
 					</a>
-					<a href="/assets" class="flex flex-col items-center p-5 bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors">
+					<a href="/assets" class="flex flex-col items-center p-5 bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors border border-spore-cream/30">
 						<span class="text-2xl mb-2">⚙️</span>
 						<span class="text-sm font-semibold text-spore-steel">Assets</span>
 					</a>
-					<a href="/work-orders?create=true" class="flex flex-col items-center p-5 bg-spore-orange rounded-xl hover:bg-spore-orange/90 transition-colors">
+					<a href="/work-orders?create=true" class="flex flex-col items-center p-5 bg-spore-orange rounded-xl hover:bg-spore-orange/90 transition-colors shadow-sm hover:shadow-md">
 						<span class="text-2xl mb-2">➕</span>
 						<span class="text-sm font-bold text-white">New WO</span>
 					</a>
@@ -110,12 +118,12 @@
 			</div>
 
 			<!-- Recent Work Orders -->
-			<div class="bg-spore-white rounded-xl p-6">
+			<div class="bg-spore-white rounded-xl p-6 shadow-sm border border-spore-cream/50">
 				<div class="flex justify-between items-center mb-5">
 					<h2 class="text-lg font-bold text-spore-dark">Recent Work Orders</h2>
 					<a href="/work-orders" class="text-sm font-semibold text-spore-orange hover:text-spore-orange/80">View all →</a>
 				</div>
-				
+
 				{#if recentWorkOrders.length > 0}
 					<div class="space-y-3">
 						{#each recentWorkOrders as wo}
@@ -128,7 +136,7 @@
 										{wo.asset?.room?.floor ? ` • Floor ${wo.asset.room.floor}` : ''}
 									</p>
 								</div>
-								<span class="ml-3 px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-full
+								<span class="ml-3 px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-full
 									{wo.status === 'COMPLETED' ? 'bg-spore-forest text-white' : ''}
 									{wo.status === 'IN_PROGRESS' ? 'bg-spore-orange text-white' : ''}
 									{wo.status === 'PENDING' ? 'bg-spore-steel text-white' : ''}
@@ -150,9 +158,15 @@
 			<div class="bg-spore-dark rounded-xl p-6 border border-spore-steel/30">
 				<div class="flex items-center justify-between mb-5">
 					<h2 class="text-lg font-bold text-spore-cream">Live Feed</h2>
-					<span class="flex items-center gap-2 text-xs font-semibold {wsConnected ? 'text-spore-orange' : 'text-spore-cream/50'}">
-						<span class="w-2 h-2 rounded-full {wsConnected ? 'bg-spore-orange animate-pulse' : 'bg-spore-cream/30'}"></span>
-						{wsConnected ? 'Connected' : 'Offline'}
+					<span class="flex items-center gap-2 text-xs font-semibold {wsConnected ? 'text-spore-orange' : wsPolling ? 'text-spore-forest' : 'text-spore-cream/50'}">
+						<span class="w-2 h-2 rounded-full {wsConnected ? 'bg-spore-orange animate-pulse' : wsPolling ? 'bg-spore-forest animate-pulse' : 'bg-spore-cream/30'}"></span>
+						{#if wsConnected}
+							Live
+						{:else if wsPolling}
+							Polling
+						{:else}
+							Offline
+						{/if}
 					</span>
 				</div>
 				

@@ -3,7 +3,8 @@ const initialState = {
   isConnected: false,
   messages: [],
   error: null,
-  orgId: null
+  orgId: null,
+  isPolling: false
 };
 const wsStore = writable(initialState);
 export {

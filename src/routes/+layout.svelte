@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
+	import QuickFAB from '$lib/components/QuickFAB.svelte';
 	import type { LayoutData } from './$types';
 
 	export let data: LayoutData;
@@ -17,9 +18,13 @@
 	$: currentPath = $page.url.pathname;
 	$: user = data.user;
 	$: isAuthPage = currentPath.startsWith('/auth');
+	$: isLandingPage = currentPath === '/';
+
+	// Show FAB on all authenticated pages except work orders create page and auth pages
+	$: showFAB = user && !isAuthPage && !isLandingPage && !currentPath.startsWith('/work-orders/new');
 </script>
 
-{#if !isAuthPage && user}
+{#if !isAuthPage && !isLandingPage && user}
 <!-- Navigation - Dark with orange accent -->
 <nav class="bg-spore-dark border-b border-spore-steel/30">
 	<div class="max-w-7xl mx-auto px-4">
@@ -115,21 +120,44 @@
 </nav>
 
 <!-- Mobile nav -->
-<nav class="md:hidden bg-spore-dark border-b border-spore-steel/30 px-4 py-2">
-	<div class="flex justify-around">
-		<a href="/dashboard" class="text-lg {currentPath === '/dashboard' ? 'text-spore-orange' : 'text-spore-cream/70'}">📊</a>
-		<a href="/work-orders" class="text-lg {currentPath.startsWith('/work-orders') ? 'text-spore-orange' : 'text-spore-cream/70'}">📋</a>
-		<a href="/sites" class="text-lg {currentPath.startsWith('/sites') ? 'text-spore-orange' : 'text-spore-cream/70'}">🏢</a>
-		<a href="/assets" class="text-lg {currentPath.startsWith('/assets') ? 'text-spore-orange' : 'text-spore-cream/70'}">⚙️</a>
+<nav class="md:hidden bg-spore-dark border-b border-spore-steel/30 px-4 py-3 shadow-lg">
+	<div class="flex justify-around items-center">
+		<a href="/dashboard" class="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors {currentPath === '/dashboard' ? 'text-spore-orange bg-spore-cream/10' : 'text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5'}">
+			<span class="text-xl leading-none">📊</span>
+			<span class="text-xs font-medium">Dashboard</span>
+		</a>
+		<a href="/work-orders" class="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors {currentPath.startsWith('/work-orders') ? 'text-spore-orange bg-spore-cream/10' : 'text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5'}">
+			<span class="text-xl leading-none">📋</span>
+			<span class="text-xs font-medium">Work Orders</span>
+		</a>
+		<a href="/sites" class="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors {currentPath.startsWith('/sites') ? 'text-spore-orange bg-spore-cream/10' : 'text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5'}">
+			<span class="text-xl leading-none">🏢</span>
+			<span class="text-xs font-medium">Sites</span>
+		</a>
+		<a href="/assets" class="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors {currentPath.startsWith('/assets') ? 'text-spore-orange bg-spore-cream/10' : 'text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5'}">
+			<span class="text-xl leading-none">⚙️</span>
+			<span class="text-xs font-medium">Assets</span>
+		</a>
 		{#if user.role === 'ADMIN'}
-			<a href="/users" class="text-lg {currentPath.startsWith('/users') ? 'text-spore-orange' : 'text-spore-cream/70'}">👥</a>
-			<a href="/audit-log" class="text-lg {currentPath.startsWith('/audit-log') ? 'text-spore-orange' : 'text-spore-cream/70'}">📜</a>
+			<div class="flex gap-2">
+				<a href="/users" class="flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-colors {currentPath.startsWith('/users') ? 'text-spore-orange bg-spore-cream/10' : 'text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5'}">
+					<span class="text-lg leading-none">👥</span>
+				</a>
+				<a href="/audit-log" class="flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-colors {currentPath.startsWith('/audit-log') ? 'text-spore-orange bg-spore-cream/10' : 'text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5'}">
+					<span class="text-lg leading-none">📜</span>
+				</a>
+			</div>
 		{/if}
 	</div>
 </nav>
 {/if}
 
 <!-- Page Content -->
-<main class="{isAuthPage ? '' : 'bg-spore-steel min-h-screen'}">
+<main class="{isAuthPage || isLandingPage ? '' : 'bg-spore-steel min-h-screen'}">
 	<slot />
 </main>
+
+<!-- Quick FAB -->
+{#if showFAB}
+	<QuickFAB assets={data.assets || []} />
+{/if}

@@ -6,7 +6,10 @@
       "Bash(npm run build:*)",
       "Bash(npx prisma db push:*)",
       "WebSearch",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(npx wrangler deploy:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

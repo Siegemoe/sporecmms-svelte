@@ -4,7 +4,7 @@ import { validateSession } from '$lib/server/auth';
 import { building } from '$app/environment';
 
 // Routes that don't require authentication
-const publicRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password'];
+const publicRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password', '/'];
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// Skip auth checks during build/prerender (for Cloudflare fallback generation)

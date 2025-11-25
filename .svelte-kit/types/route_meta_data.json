@@ -4,6 +4,9 @@
 		"src/routes/+layout.server.ts",
 		"src/routes/+layout.server.ts"
 	],
+	"/api/activity": [
+		"src/routes/api/activity/+server.ts"
+	],
 	"/assets": [
 		"src/routes/assets/+page.server.ts",
 		"src/routes/+layout.server.ts"

@@ -216,8 +216,9 @@
 
 	<!-- Work Orders Table -->
 	{#if workOrders && workOrders.length > 0}
-		<div class="bg-spore-white rounded-xl overflow-hidden">
-			<div class="overflow-x-auto">
+		<div class="bg-spore-white rounded-xl shadow-sm border border-spore-cream/50 overflow-hidden">
+			<!-- Desktop Table -->
+			<div class="hidden md:block overflow-x-auto">
 				<table class="min-w-full" role="table" aria-label="Work orders list">
 					<thead class="bg-spore-dark">
 						<tr>
@@ -232,15 +233,15 @@
 						{#each workOrders as workOrder (workOrder.id)}
 							<tr class="hover:bg-spore-cream/20 transition-colors">
 								<td class="px-6 py-4 whitespace-nowrap">
-									<a 
-										href="/work-orders/{workOrder.id}" 
+									<a
+										href="/work-orders/{workOrder.id}"
 										class="text-sm font-bold text-spore-dark hover:text-spore-orange transition-colors focus:outline-none focus:underline"
 									>
 										{workOrder.title}
 									</a>
 								</td>
 								<td class="px-6 py-4 whitespace-nowrap">
-									<span class="px-3 py-1 inline-flex text-xs font-bold uppercase tracking-wide rounded-full
+									<span class="px-3 py-1.5 inline-flex text-xs font-bold uppercase tracking-wide rounded-full
 										{workOrder.status === 'COMPLETED' ? 'bg-spore-forest text-white' : ''}
 										{workOrder.status === 'IN_PROGRESS' ? 'bg-spore-orange text-white' : ''}
 										{workOrder.status === 'PENDING' ? 'bg-spore-steel text-white' : ''}
@@ -273,7 +274,7 @@
 									<form method="POST" action="?/updateStatus" class="inline" use:enhance>
 										<input type="hidden" name="workOrderId" value={workOrder.id} />
 										<input type="hidden" name="status" value="IN_PROGRESS" />
-										<button 
+										<button
 											type="submit"
 											class="text-spore-orange hover:text-spore-orange/70 focus:outline-none focus:underline disabled:opacity-30 disabled:cursor-not-allowed"
 											disabled={workOrder.status === 'IN_PROGRESS'}
@@ -286,7 +287,7 @@
 									<form method="POST" action="?/updateStatus" class="inline" use:enhance>
 										<input type="hidden" name="workOrderId" value={workOrder.id} />
 										<input type="hidden" name="status" value="COMPLETED" />
-										<button 
+										<button
 											type="submit"
 											class="text-spore-forest hover:text-spore-forest/70 focus:outline-none focus:underline disabled:opacity-30 disabled:cursor-not-allowed"
 											disabled={workOrder.status === 'COMPLETED'}
@@ -296,7 +297,7 @@
 											Complete
 										</button>
 									</form>
-									<a 
+									<a
 										href="/work-orders/{workOrder.id}"
 										class="text-spore-steel hover:text-spore-dark focus:outline-none focus:underline"
 										title="View details for {workOrder.title}"
@@ -308,6 +309,88 @@
 						{/each}
 					</tbody>
 				</table>
+			</div>
+
+			<!-- Mobile Cards -->
+			<div class="md:hidden divide-y divide-spore-cream/50">
+				{#each workOrders as workOrder (workOrder.id)}
+					<div class="p-4 hover:bg-spore-cream/10 transition-colors">
+						<div class="flex items-start justify-between mb-3">
+							<h3 class="text-base font-bold text-spore-dark flex-1 mr-3">
+								<a
+									href="/work-orders/{workOrder.id}"
+									class="hover:text-spore-orange transition-colors focus:outline-none focus:underline"
+								>
+									{workOrder.title}
+								</a>
+							</h3>
+							<span class="px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-full
+								{workOrder.status === 'COMPLETED' ? 'bg-spore-forest text-white' : ''}
+								{workOrder.status === 'IN_PROGRESS' ? 'bg-spore-orange text-white' : ''}
+								{workOrder.status === 'PENDING' ? 'bg-spore-steel text-white' : ''}
+								{workOrder.status === 'ON_HOLD' ? 'bg-spore-cream text-spore-steel' : ''}
+								{workOrder.status === 'CANCELLED' ? 'bg-red-600 text-white' : ''}
+							">
+								{workOrder.status.replace('_', ' ')}
+							</span>
+						</div>
+						<div class="space-y-2 mb-4">
+							<div class="flex items-center justify-between">
+								<span class="text-sm font-medium text-spore-steel">Asset:</span>
+								<span class="text-sm text-spore-dark">{workOrder.asset?.name || 'N/A'}</span>
+							</div>
+							<div class="flex items-center justify-between">
+								<span class="text-sm font-medium text-spore-steel">Assigned:</span>
+								<form method="POST" action="?/assign" use:enhance class="flex-1 max-w-[150px]">
+									<input type="hidden" name="workOrderId" value={workOrder.id} />
+									<select
+										name="assignedToId"
+										value={workOrder.assignedToId || ''}
+										on:change={(e) => e.currentTarget.form?.requestSubmit()}
+										class="w-full text-sm bg-spore-cream/30 border border-spore-cream/50 rounded-lg px-2 py-1 text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange"
+									>
+										<option value="">Unassigned</option>
+										{#each users as user}
+											<option value={user.id}>{getUserName(user)}</option>
+										{/each}
+									</select>
+								</form>
+							</div>
+						</div>
+						<div class="flex gap-2 text-sm font-bold">
+							<form method="POST" action="?/updateStatus" class="flex-1" use:enhance>
+								<input type="hidden" name="workOrderId" value={workOrder.id} />
+								<input type="hidden" name="status" value="IN_PROGRESS" />
+								<button
+									type="submit"
+									class="w-full bg-spore-orange text-white py-2 px-3 rounded-lg font-medium hover:bg-spore-orange/90 focus:outline-none focus:ring-1 focus:ring-spore-orange disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+									disabled={workOrder.status === 'IN_PROGRESS'}
+									aria-label="Start work order: {workOrder.title}"
+								>
+									Start
+								</button>
+							</form>
+							<form method="POST" action="?/updateStatus" class="flex-1" use:enhance>
+								<input type="hidden" name="workOrderId" value={workOrder.id} />
+								<input type="hidden" name="status" value="COMPLETED" />
+								<button
+									type="submit"
+									class="w-full bg-spore-forest text-white py-2 px-3 rounded-lg font-medium hover:bg-spore-forest/90 focus:outline-none focus:ring-1 focus:ring-spore-forest disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+									disabled={workOrder.status === 'COMPLETED'}
+									aria-label="Complete work order: {workOrder.title}"
+								>
+									Complete
+								</button>
+							</form>
+							<a
+								href="/work-orders/{workOrder.id}"
+								class="flex-1 bg-spore-cream text-spore-dark py-2 px-3 rounded-lg font-medium text-center hover:bg-spore-cream/70 focus:outline-none focus:ring-1 focus:ring-spore-cream transition-colors"
+							>
+								View
+							</a>
+						</div>
+					</div>
+				{/each}
 			</div>
 		</div>
 	{:else}

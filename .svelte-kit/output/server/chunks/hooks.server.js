@@ -1,7 +1,7 @@
 import { r as redirect } from "./index.js";
 import { b as validateSession } from "./auth.js";
 import { b as building } from "./environment.js";
-const publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password"];
+const publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password", "/"];
 const handle = async ({ event, resolve }) => {
   if (building) {
     return resolve(event);

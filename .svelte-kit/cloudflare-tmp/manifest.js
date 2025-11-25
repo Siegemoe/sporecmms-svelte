@@ -10,7 +10,7 @@ return {
 	assets: new Set([]),
 	mimeTypes: {},
 	_: {
-		client: {"start":"_app/immutable/entry/start.0b517267.js","app":"_app/immutable/entry/app.32a7f6fd.js","imports":["_app/immutable/entry/start.0b517267.js","_app/immutable/chunks/scheduler.1dbefa40.js","_app/immutable/chunks/singletons.31dab2c1.js","_app/immutable/chunks/index.0cd93556.js","_app/immutable/chunks/parse.bee59afc.js","_app/immutable/entry/app.32a7f6fd.js","_app/immutable/chunks/scheduler.1dbefa40.js","_app/immutable/chunks/index.316c407f.js"],"stylesheets":[],"fonts":[]},
+		client: {"start":"_app/immutable/entry/start.5d1a9eda.js","app":"_app/immutable/entry/app.3338d7a2.js","imports":["_app/immutable/entry/start.5d1a9eda.js","_app/immutable/chunks/scheduler.150511e5.js","_app/immutable/chunks/singletons.710e10d0.js","_app/immutable/chunks/index.40078100.js","_app/immutable/chunks/parse.bee59afc.js","_app/immutable/entry/app.3338d7a2.js","_app/immutable/chunks/scheduler.150511e5.js","_app/immutable/chunks/index.7311d585.js"],"stylesheets":[],"fonts":[]},
 		nodes: [
 			__memo(() => import('../output/server/nodes/0.js')),
 			__memo(() => import('../output/server/nodes/1.js')),
@@ -36,6 +36,13 @@ return {
 				params: [],
 				page: { layouts: [0,], errors: [1,], leaf: 2 },
 				endpoint: null
+			},
+			{
+				id: "/api/activity",
+				pattern: /^\/api\/activity\/?$/,
+				params: [],
+				page: null,
+				endpoint: __memo(() => import('../output/server/entries/endpoints/api/activity/_server.ts.js'))
 			},
 			{
 				id: "/assets",
