@@ -1,4 +1,4 @@
-name = "spore-cmms"
+name = "sporecmms-svelte"
 compatibility_date = "2025-11-25"
 compatibility_flags = ["nodejs_compat"]
 
