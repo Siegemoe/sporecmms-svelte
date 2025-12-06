@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { initializeWebSocket } from '$lib/stores/websocket';
+	// import { initializeWebSocket } from '$lib/stores/websocket';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
@@ -9,10 +9,11 @@
 
 	export let data: LayoutData;
 
+	// Temporarily disable WebSocket to debug login issue
 	onMount(() => {
-		if (data.user) {
-			initializeWebSocket();
-		}
+		// if (data.user) {
+		// 	initializeWebSocket();
+		// }
 	});
 
 	$: currentPath = $page.url.pathname;

@@ -3,10 +3,14 @@ import type { RequestEvent } from '@sveltejs/kit';
 
 // Singleton instance
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
-const prismaSingleton = globalForPrisma.prisma ?? new PrismaClient();
+const prismaSingleton = globalForPrisma.prisma ?? new PrismaClient({
+  log: ['query', 'info', 'warn', 'error'],
+});
 
 if (process.env.NODE_ENV !== 'production') {
 	globalForPrisma.prisma = prismaSingleton;
+} else {
+  globalForPrisma.prisma = prismaSingleton;
 }
 
 // Models that have direct orgId field and need tenant filtering
