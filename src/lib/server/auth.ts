@@ -17,11 +17,9 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 // Session management
 export async function createSession(userId: string): Promise<string> {
 	try {
-		console.log('[AUTH] Creating session for user:', userId);
 		const expiresAt = new Date();
 		expiresAt.setDate(expiresAt.getDate() + SESSION_EXPIRY_DAYS);
 
-		console.log('[AUTH] Session expires at:', expiresAt);
 		const session = await prisma.session.create({
 			data: {
 				userId,
@@ -29,14 +27,9 @@ export async function createSession(userId: string): Promise<string> {
 			}
 		});
 
-		console.log('[AUTH] Session created successfully:', session.id);
 		return session.id;
 	} catch (error) {
-		console.error('[AUTH] Failed to create session:', error);
-		console.error('[AUTH] Error details:', error instanceof Error ? error.message : 'Unknown error');
-		if (error instanceof Error && error.stack) {
-			console.error('[AUTH] Stack trace:', error.stack);
-		}
+		console.error('Failed to create session:', error);
 		throw new Error('Failed to create session');
 	}
 }

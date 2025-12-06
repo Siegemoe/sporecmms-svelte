@@ -5,6 +5,7 @@ import { createServer } from 'http';
 import { handler } from './build/handler.js';
 import { WebSocketServer } from 'ws';
 import { parse } from 'cookie';
+import { PrismaClient } from '@prisma/client';
 
 // --- WebSocket Setup ---
 const wss = new WebSocketServer({ noServer: true });
@@ -35,19 +36,42 @@ export function broadcastToOrg(orgId, message) {
 // Make broadcast available globally for imports
 globalThis.__wsBroadcast = broadcastToOrg;
 
-// --- Session Validation (simplified for now) ---
-// TODO: Replace with real session validation (Lucia, Clerk, etc.)
-function validateSessionFromCookies(cookieHeader) {
+// --- Session Validation ---
+const prisma = new PrismaClient();
+
+async function validateSessionFromCookies(cookieHeader) {
 	if (!cookieHeader) return null;
-	
+
 	const cookies = parse(cookieHeader);
 	const sessionId = cookies['spore_session'];
-	
+
 	if (!sessionId) return null;
-	
-	// For now, return a mock org. Replace this with real lookup.
-	// In production: query your session store/database
-	return { orgId: 'org-123', userId: 'user-1' };
+
+	try {
+		const session = await prisma.session.findUnique({
+			where: { id: sessionId },
+			include: {
+				user: {
+					select: {
+						id: true,
+						orgId: true
+					}
+				}
+			}
+		});
+
+		if (!session || session.expiresAt < new Date()) {
+			return null;
+		}
+
+		return {
+			orgId: session.user.orgId,
+			userId: session.user.id
+		};
+	} catch (e) {
+		console.error('Session validation error:', e);
+		return null;
+	}
 }
 
 // --- WebSocket Connection Handler ---
@@ -98,18 +122,21 @@ server.on('upgrade', (req, socket, head) => {
 	}
 
 	// Validate session from cookies
-	const session = validateSessionFromCookies(req.headers.cookie);
-	
-	if (!session) {
-		console.log('[WS] Unauthorized upgrade attempt');
+	validateSessionFromCookies(req.headers.cookie).then(session => {
+		if (!session) {
+			console.log('[WS] Unauthorized upgrade attempt');
+			socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+			socket.destroy();
+			return;
+		}
+
+		wss.handleUpgrade(req, socket, head, (ws) => {
+			wss.emit('connection', ws, req, session);
+		});
+	}).catch(err => {
+		console.error('[WS] Session validation failed:', err);
 		socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
 		socket.destroy();
-		return;
-	}
-
-	// Complete the WebSocket handshake
-	wss.handleUpgrade(req, socket, head, (ws) => {
-		wss.emit('connection', ws, req, session);
 	});
 });
 
