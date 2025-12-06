@@ -9,15 +9,20 @@ async function verifyPassword(password, hash) {
   return bcrypt.compare(password, hash);
 }
 async function createSession(userId) {
-  const expiresAt = /* @__PURE__ */ new Date();
-  expiresAt.setDate(expiresAt.getDate() + SESSION_EXPIRY_DAYS);
-  const session = await prisma.session.create({
-    data: {
-      userId,
-      expiresAt
-    }
-  });
-  return session.id;
+  try {
+    const expiresAt = /* @__PURE__ */ new Date();
+    expiresAt.setDate(expiresAt.getDate() + SESSION_EXPIRY_DAYS);
+    const session = await prisma.session.create({
+      data: {
+        userId,
+        expiresAt
+      }
+    });
+    return session.id;
+  } catch (error) {
+    console.error("Failed to create session:", error);
+    throw new Error("Failed to create session");
+  }
 }
 async function validateSession(cookies) {
   const sessionId = cookies.get(SESSION_COOKIE);

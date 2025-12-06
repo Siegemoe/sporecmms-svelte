@@ -27,7 +27,8 @@
       "Bash(curl:*)",
       "Bash(pkill:*)",
       "Bash(tasklist:*)",
-      "Bash(npx prisma migrate:*)"
+      "Bash(npx prisma migrate:*)",
+      "Bash(npm run check:*)"
     ],
     "deny": [],
     "ask": []

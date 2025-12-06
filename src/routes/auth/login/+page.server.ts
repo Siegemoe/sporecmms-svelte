@@ -52,9 +52,10 @@ export const actions: Actions = {
 			console.error('Login error:', error);
 
 			// Handle other errors
+			const emailValue = formData?.get('email') as string;
 			return fail(500, {
 				error: 'An unexpected error occurred. Please try again.',
-				email: formData?.get('email') as string
+				email: emailValue
 			});
 		}
 	}

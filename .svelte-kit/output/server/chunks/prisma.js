@@ -1,7 +1,12 @@
 import { PrismaClient } from "@prisma/client";
+import { withAccelerate } from "@prisma/extension-accelerate";
 const globalForPrisma = globalThis;
-const prismaSingleton = globalForPrisma.prisma ?? new PrismaClient();
+const prismaSingleton = globalForPrisma.prisma ?? new PrismaClient({
+  log: process.env.NODE_ENV === "development" ? ["query", "info", "warn", "error"] : ["warn", "error"]
+}).$extends(withAccelerate());
 if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prismaSingleton;
+} else {
   globalForPrisma.prisma = prismaSingleton;
 }
 const orgModels = ["WorkOrder", "User", "Site"];

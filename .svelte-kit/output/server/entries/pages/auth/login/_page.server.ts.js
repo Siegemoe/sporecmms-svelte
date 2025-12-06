@@ -9,25 +9,37 @@ const load = async ({ locals }) => {
 };
 const actions = {
   default: async ({ request, cookies }) => {
-    const formData = await request.formData();
-    const email = formData.get("email");
-    const password = formData.get("password");
-    if (!email || !password) {
-      return fail(400, { error: "Email and password are required", email });
+    try {
+      const formData2 = await request.formData();
+      const email = formData2.get("email");
+      const password = formData2.get("password");
+      if (!email || !password) {
+        return fail(400, { error: "Email and password are required", email });
+      }
+      const user = await prisma.user.findUnique({
+        where: { email: email.toLowerCase().trim() }
+      });
+      if (!user) {
+        return fail(400, { error: "Invalid email or password", email });
+      }
+      const valid = await verifyPassword(password, user.password);
+      if (!valid) {
+        return fail(400, { error: "Invalid email or password", email });
+      }
+      const sessionId = await createSession(user.id);
+      setSessionCookie(cookies, sessionId);
+      throw redirect(303, "/dashboard");
+    } catch (error) {
+      if (error && typeof error === "object" && "location" in error) {
+        throw error;
+      }
+      console.error("Login error:", error);
+      const emailValue = formData?.get("email");
+      return fail(500, {
+        error: "An unexpected error occurred. Please try again.",
+        email: emailValue
+      });
     }
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() }
-    });
-    if (!user) {
-      return fail(400, { error: "Invalid email or password", email });
-    }
-    const valid = await verifyPassword(password, user.password);
-    if (!valid) {
-      return fail(400, { error: "Invalid email or password", email });
-    }
-    const sessionId = await createSession(user.id);
-    setSessionCookie(cookies, sessionId);
-    throw redirect(303, "/dashboard");
   }
 };
 export {

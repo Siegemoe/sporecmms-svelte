@@ -43,8 +43,8 @@ function blank_object() {
 function run_all(fns) {
   fns.forEach(run);
 }
-function safe_not_equal(a, b) {
-  return a != a ? b == b : a !== b || a && typeof a === "object" || typeof a === "function";
+function safe_not_equal(a, b2) {
+  return a != a ? b2 == b2 : a !== b2 || a && typeof a === "object" || typeof a === "function";
 }
 function subscribe(store, ...callbacks) {
   if (store == null) {
@@ -508,7 +508,7 @@ function utf8Length(string) {
 function utf8Array(string) {
   var offset = 0, c1, c2;
   var buffer = new Array(utf8Length(string));
-  for (var i = 0, k = string.length; i < k; ++i) {
+  for (var i = 0, k2 = string.length; i < k2; ++i) {
     c1 = string.charCodeAt(i);
     if (c1 < 128) {
       buffer[offset++] = c1;
@@ -530,19 +530,19 @@ function utf8Array(string) {
   }
   return buffer;
 }
-function base64_encode(b, len) {
+function base64_encode(b2, len) {
   var off = 0, rs = [], c1, c2;
-  if (len <= 0 || len > b.length)
+  if (len <= 0 || len > b2.length)
     throw Error("Illegal len: " + len);
   while (off < len) {
-    c1 = b[off++] & 255;
+    c1 = b2[off++] & 255;
     rs.push(BASE64_CODE[c1 >> 2 & 63]);
     c1 = (c1 & 3) << 4;
     if (off >= len) {
       rs.push(BASE64_CODE[c1 & 63]);
       break;
     }
-    c2 = b[off++] & 255;
+    c2 = b2[off++] & 255;
     c1 |= c2 >> 4 & 15;
     rs.push(BASE64_CODE[c1 & 63]);
     c1 = (c2 & 15) << 2;
@@ -550,7 +550,7 @@ function base64_encode(b, len) {
       rs.push(BASE64_CODE[c1 & 63]);
       break;
     }
-    c2 = b[off++] & 255;
+    c2 = b2[off++] & 255;
     c1 |= c2 >> 6 & 3;
     rs.push(BASE64_CODE[c1 & 63]);
     rs.push(BASE64_CODE[c2 & 63]);
@@ -594,91 +594,91 @@ function base64_decode(s3, len) {
     res.push(rs[off].charCodeAt(0));
   return res;
 }
-function _encipher(lr, off, P, S) {
-  var n2, l = lr[off], r3 = lr[off + 1];
-  l ^= P[0];
-  n2 = S[l >>> 24];
-  n2 += S[256 | l >> 16 & 255];
-  n2 ^= S[512 | l >> 8 & 255];
-  n2 += S[768 | l & 255];
-  r3 ^= n2 ^ P[1];
-  n2 = S[r3 >>> 24];
-  n2 += S[256 | r3 >> 16 & 255];
-  n2 ^= S[512 | r3 >> 8 & 255];
-  n2 += S[768 | r3 & 255];
-  l ^= n2 ^ P[2];
-  n2 = S[l >>> 24];
-  n2 += S[256 | l >> 16 & 255];
-  n2 ^= S[512 | l >> 8 & 255];
-  n2 += S[768 | l & 255];
-  r3 ^= n2 ^ P[3];
-  n2 = S[r3 >>> 24];
-  n2 += S[256 | r3 >> 16 & 255];
-  n2 ^= S[512 | r3 >> 8 & 255];
-  n2 += S[768 | r3 & 255];
-  l ^= n2 ^ P[4];
-  n2 = S[l >>> 24];
-  n2 += S[256 | l >> 16 & 255];
-  n2 ^= S[512 | l >> 8 & 255];
-  n2 += S[768 | l & 255];
-  r3 ^= n2 ^ P[5];
-  n2 = S[r3 >>> 24];
-  n2 += S[256 | r3 >> 16 & 255];
-  n2 ^= S[512 | r3 >> 8 & 255];
-  n2 += S[768 | r3 & 255];
-  l ^= n2 ^ P[6];
-  n2 = S[l >>> 24];
-  n2 += S[256 | l >> 16 & 255];
-  n2 ^= S[512 | l >> 8 & 255];
-  n2 += S[768 | l & 255];
-  r3 ^= n2 ^ P[7];
-  n2 = S[r3 >>> 24];
-  n2 += S[256 | r3 >> 16 & 255];
-  n2 ^= S[512 | r3 >> 8 & 255];
-  n2 += S[768 | r3 & 255];
-  l ^= n2 ^ P[8];
-  n2 = S[l >>> 24];
-  n2 += S[256 | l >> 16 & 255];
-  n2 ^= S[512 | l >> 8 & 255];
-  n2 += S[768 | l & 255];
-  r3 ^= n2 ^ P[9];
-  n2 = S[r3 >>> 24];
-  n2 += S[256 | r3 >> 16 & 255];
-  n2 ^= S[512 | r3 >> 8 & 255];
-  n2 += S[768 | r3 & 255];
-  l ^= n2 ^ P[10];
-  n2 = S[l >>> 24];
-  n2 += S[256 | l >> 16 & 255];
-  n2 ^= S[512 | l >> 8 & 255];
-  n2 += S[768 | l & 255];
-  r3 ^= n2 ^ P[11];
-  n2 = S[r3 >>> 24];
-  n2 += S[256 | r3 >> 16 & 255];
-  n2 ^= S[512 | r3 >> 8 & 255];
-  n2 += S[768 | r3 & 255];
-  l ^= n2 ^ P[12];
-  n2 = S[l >>> 24];
-  n2 += S[256 | l >> 16 & 255];
-  n2 ^= S[512 | l >> 8 & 255];
-  n2 += S[768 | l & 255];
-  r3 ^= n2 ^ P[13];
-  n2 = S[r3 >>> 24];
-  n2 += S[256 | r3 >> 16 & 255];
-  n2 ^= S[512 | r3 >> 8 & 255];
-  n2 += S[768 | r3 & 255];
-  l ^= n2 ^ P[14];
-  n2 = S[l >>> 24];
-  n2 += S[256 | l >> 16 & 255];
-  n2 ^= S[512 | l >> 8 & 255];
-  n2 += S[768 | l & 255];
-  r3 ^= n2 ^ P[15];
-  n2 = S[r3 >>> 24];
-  n2 += S[256 | r3 >> 16 & 255];
-  n2 ^= S[512 | r3 >> 8 & 255];
-  n2 += S[768 | r3 & 255];
-  l ^= n2 ^ P[16];
-  lr[off] = r3 ^ P[BLOWFISH_NUM_ROUNDS + 1];
-  lr[off + 1] = l;
+function _encipher(lr, off, P2, S2) {
+  var n2, l2 = lr[off], r3 = lr[off + 1];
+  l2 ^= P2[0];
+  n2 = S2[l2 >>> 24];
+  n2 += S2[256 | l2 >> 16 & 255];
+  n2 ^= S2[512 | l2 >> 8 & 255];
+  n2 += S2[768 | l2 & 255];
+  r3 ^= n2 ^ P2[1];
+  n2 = S2[r3 >>> 24];
+  n2 += S2[256 | r3 >> 16 & 255];
+  n2 ^= S2[512 | r3 >> 8 & 255];
+  n2 += S2[768 | r3 & 255];
+  l2 ^= n2 ^ P2[2];
+  n2 = S2[l2 >>> 24];
+  n2 += S2[256 | l2 >> 16 & 255];
+  n2 ^= S2[512 | l2 >> 8 & 255];
+  n2 += S2[768 | l2 & 255];
+  r3 ^= n2 ^ P2[3];
+  n2 = S2[r3 >>> 24];
+  n2 += S2[256 | r3 >> 16 & 255];
+  n2 ^= S2[512 | r3 >> 8 & 255];
+  n2 += S2[768 | r3 & 255];
+  l2 ^= n2 ^ P2[4];
+  n2 = S2[l2 >>> 24];
+  n2 += S2[256 | l2 >> 16 & 255];
+  n2 ^= S2[512 | l2 >> 8 & 255];
+  n2 += S2[768 | l2 & 255];
+  r3 ^= n2 ^ P2[5];
+  n2 = S2[r3 >>> 24];
+  n2 += S2[256 | r3 >> 16 & 255];
+  n2 ^= S2[512 | r3 >> 8 & 255];
+  n2 += S2[768 | r3 & 255];
+  l2 ^= n2 ^ P2[6];
+  n2 = S2[l2 >>> 24];
+  n2 += S2[256 | l2 >> 16 & 255];
+  n2 ^= S2[512 | l2 >> 8 & 255];
+  n2 += S2[768 | l2 & 255];
+  r3 ^= n2 ^ P2[7];
+  n2 = S2[r3 >>> 24];
+  n2 += S2[256 | r3 >> 16 & 255];
+  n2 ^= S2[512 | r3 >> 8 & 255];
+  n2 += S2[768 | r3 & 255];
+  l2 ^= n2 ^ P2[8];
+  n2 = S2[l2 >>> 24];
+  n2 += S2[256 | l2 >> 16 & 255];
+  n2 ^= S2[512 | l2 >> 8 & 255];
+  n2 += S2[768 | l2 & 255];
+  r3 ^= n2 ^ P2[9];
+  n2 = S2[r3 >>> 24];
+  n2 += S2[256 | r3 >> 16 & 255];
+  n2 ^= S2[512 | r3 >> 8 & 255];
+  n2 += S2[768 | r3 & 255];
+  l2 ^= n2 ^ P2[10];
+  n2 = S2[l2 >>> 24];
+  n2 += S2[256 | l2 >> 16 & 255];
+  n2 ^= S2[512 | l2 >> 8 & 255];
+  n2 += S2[768 | l2 & 255];
+  r3 ^= n2 ^ P2[11];
+  n2 = S2[r3 >>> 24];
+  n2 += S2[256 | r3 >> 16 & 255];
+  n2 ^= S2[512 | r3 >> 8 & 255];
+  n2 += S2[768 | r3 & 255];
+  l2 ^= n2 ^ P2[12];
+  n2 = S2[l2 >>> 24];
+  n2 += S2[256 | l2 >> 16 & 255];
+  n2 ^= S2[512 | l2 >> 8 & 255];
+  n2 += S2[768 | l2 & 255];
+  r3 ^= n2 ^ P2[13];
+  n2 = S2[r3 >>> 24];
+  n2 += S2[256 | r3 >> 16 & 255];
+  n2 ^= S2[512 | r3 >> 8 & 255];
+  n2 += S2[768 | r3 & 255];
+  l2 ^= n2 ^ P2[14];
+  n2 = S2[l2 >>> 24];
+  n2 += S2[256 | l2 >> 16 & 255];
+  n2 ^= S2[512 | l2 >> 8 & 255];
+  n2 += S2[768 | l2 & 255];
+  r3 ^= n2 ^ P2[15];
+  n2 = S2[r3 >>> 24];
+  n2 += S2[256 | r3 >> 16 & 255];
+  n2 ^= S2[512 | r3 >> 8 & 255];
+  n2 += S2[768 | r3 & 255];
+  l2 ^= n2 ^ P2[16];
+  lr[off] = r3 ^ P2[BLOWFISH_NUM_ROUNDS + 1];
+  lr[off + 1] = l2;
   return lr;
 }
 function _streamtoword(data, offp) {
@@ -686,26 +686,26 @@ function _streamtoword(data, offp) {
     word = word << 8 | data[offp] & 255, offp = (offp + 1) % data.length;
   return { key: word, offp };
 }
-function _key(key2, P, S) {
-  var offset = 0, lr = [0, 0], plen = P.length, slen = S.length, sw;
+function _key(key2, P2, S2) {
+  var offset = 0, lr = [0, 0], plen = P2.length, slen = S2.length, sw;
   for (var i = 0; i < plen; i++)
-    sw = _streamtoword(key2, offset), offset = sw.offp, P[i] = P[i] ^ sw.key;
+    sw = _streamtoword(key2, offset), offset = sw.offp, P2[i] = P2[i] ^ sw.key;
   for (i = 0; i < plen; i += 2)
-    lr = _encipher(lr, 0, P, S), P[i] = lr[0], P[i + 1] = lr[1];
+    lr = _encipher(lr, 0, P2, S2), P2[i] = lr[0], P2[i + 1] = lr[1];
   for (i = 0; i < slen; i += 2)
-    lr = _encipher(lr, 0, P, S), S[i] = lr[0], S[i + 1] = lr[1];
+    lr = _encipher(lr, 0, P2, S2), S2[i] = lr[0], S2[i + 1] = lr[1];
 }
-function _ekskey(data, key2, P, S) {
-  var offp = 0, lr = [0, 0], plen = P.length, slen = S.length, sw;
+function _ekskey(data, key2, P2, S2) {
+  var offp = 0, lr = [0, 0], plen = P2.length, slen = S2.length, sw;
   for (var i = 0; i < plen; i++)
-    sw = _streamtoword(key2, offp), offp = sw.offp, P[i] = P[i] ^ sw.key;
+    sw = _streamtoword(key2, offp), offp = sw.offp, P2[i] = P2[i] ^ sw.key;
   offp = 0;
   for (i = 0; i < plen; i += 2)
-    sw = _streamtoword(data, offp), offp = sw.offp, lr[0] ^= sw.key, sw = _streamtoword(data, offp), offp = sw.offp, lr[1] ^= sw.key, lr = _encipher(lr, 0, P, S), P[i] = lr[0], P[i + 1] = lr[1];
+    sw = _streamtoword(data, offp), offp = sw.offp, lr[0] ^= sw.key, sw = _streamtoword(data, offp), offp = sw.offp, lr[1] ^= sw.key, lr = _encipher(lr, 0, P2, S2), P2[i] = lr[0], P2[i + 1] = lr[1];
   for (i = 0; i < slen; i += 2)
-    sw = _streamtoword(data, offp), offp = sw.offp, lr[0] ^= sw.key, sw = _streamtoword(data, offp), offp = sw.offp, lr[1] ^= sw.key, lr = _encipher(lr, 0, P, S), S[i] = lr[0], S[i + 1] = lr[1];
+    sw = _streamtoword(data, offp), offp = sw.offp, lr[0] ^= sw.key, sw = _streamtoword(data, offp), offp = sw.offp, lr[1] ^= sw.key, lr = _encipher(lr, 0, P2, S2), S2[i] = lr[0], S2[i + 1] = lr[1];
 }
-function _crypt(b, salt, rounds, callback, progressCallback) {
+function _crypt(b2, salt, rounds, callback, progressCallback) {
   var cdata = C_ORIG.slice(), clen = cdata.length, err;
   if (rounds < 4 || rounds > 31) {
     err = Error("Illegal number of rounds (4-31): " + rounds);
@@ -726,15 +726,15 @@ function _crypt(b, salt, rounds, callback, progressCallback) {
       throw err;
   }
   rounds = 1 << rounds >>> 0;
-  var P, S, i = 0, j;
+  var P2, S2, i = 0, j;
   if (typeof Int32Array === "function") {
-    P = new Int32Array(P_ORIG);
-    S = new Int32Array(S_ORIG);
+    P2 = new Int32Array(P_ORIG);
+    S2 = new Int32Array(S_ORIG);
   } else {
-    P = P_ORIG.slice();
-    S = S_ORIG.slice();
+    P2 = P_ORIG.slice();
+    S2 = S_ORIG.slice();
   }
-  _ekskey(salt, b, P, S);
+  _ekskey(salt, b2, P2, S2);
   function next() {
     if (progressCallback)
       progressCallback(i / rounds);
@@ -742,15 +742,15 @@ function _crypt(b, salt, rounds, callback, progressCallback) {
       var start = Date.now();
       for (; i < rounds; ) {
         i = i + 1;
-        _key(b, P, S);
-        _key(salt, P, S);
+        _key(b2, P2, S2);
+        _key(salt, P2, S2);
         if (Date.now() - start > MAX_EXECUTION_TIME)
           break;
       }
     } else {
       for (i = 0; i < 64; i++)
         for (j = 0; j < clen >> 1; j++)
-          _encipher(cdata, j << 1, P, S);
+          _encipher(cdata, j << 1, P2, S2);
       var ret = [];
       for (i = 0; i < clen; i++)
         ret.push((cdata[i] >> 24 & 255) >>> 0), ret.push((cdata[i] >> 16 & 255) >>> 0), ret.push((cdata[i] >> 8 & 255) >>> 0), ret.push((cdata[i] & 255) >>> 0);
@@ -2151,13 +2151,13 @@ var require_index_browser = __commonJS({
     var Ne = { precision: 20, rounding: 4, modulo: 1, toExpNeg: -7, toExpPos: 21, minE: -H, maxE: H, crypto: false };
     var Te;
     var Z;
-    var w = true;
+    var w2 = true;
     var oe = "[DecimalError] ";
     var V = oe + "Invalid argument: ";
     var Le = oe + "Precision limit exceeded";
     var De = oe + "crypto unavailable";
     var Fe = "[object Decimal]";
-    var b = Math.floor;
+    var b2 = Math.floor;
     var C = Math.pow;
     var ye = /^0b([01]+(\.[01]*)?|\.[01]+)(p[+-]?\d+)?$/i;
     var en = /^0x([0-9a-f]+(\.[0-9a-f]*)?|\.[0-9a-f]+)(p[+-]?\d+)?$/i;
@@ -2171,10 +2171,10 @@ var require_index_browser = __commonJS({
     var h = { toStringTag: Fe };
     h.absoluteValue = h.abs = function() {
       var e3 = new this.constructor(this);
-      return e3.s < 0 && (e3.s = 1), p(e3);
+      return e3.s < 0 && (e3.s = 1), p2(e3);
     };
     h.ceil = function() {
-      return p(new this.constructor(this), this.e + 1, 2);
+      return p2(new this.constructor(this), this.e + 1, 2);
     };
     h.clampedTo = h.clamp = function(e3, n2) {
       var i, t2 = this, r3 = t2.constructor;
@@ -2185,46 +2185,46 @@ var require_index_browser = __commonJS({
       return i = t2.cmp(e3), i < 0 ? e3 : t2.cmp(n2) > 0 ? n2 : new r3(t2);
     };
     h.comparedTo = h.cmp = function(e3) {
-      var n2, i, t2, r3, s3 = this, o2 = s3.d, u = (e3 = new s3.constructor(e3)).d, l = s3.s, f = e3.s;
+      var n2, i, t2, r3, s3 = this, o2 = s3.d, u = (e3 = new s3.constructor(e3)).d, l2 = s3.s, f2 = e3.s;
       if (!o2 || !u)
-        return !l || !f ? NaN : l !== f ? l : o2 === u ? 0 : !o2 ^ l < 0 ? 1 : -1;
+        return !l2 || !f2 ? NaN : l2 !== f2 ? l2 : o2 === u ? 0 : !o2 ^ l2 < 0 ? 1 : -1;
       if (!o2[0] || !u[0])
-        return o2[0] ? l : u[0] ? -f : 0;
-      if (l !== f)
-        return l;
+        return o2[0] ? l2 : u[0] ? -f2 : 0;
+      if (l2 !== f2)
+        return l2;
       if (s3.e !== e3.e)
-        return s3.e > e3.e ^ l < 0 ? 1 : -1;
+        return s3.e > e3.e ^ l2 < 0 ? 1 : -1;
       for (t2 = o2.length, r3 = u.length, n2 = 0, i = t2 < r3 ? t2 : r3; n2 < i; ++n2)
         if (o2[n2] !== u[n2])
-          return o2[n2] > u[n2] ^ l < 0 ? 1 : -1;
-      return t2 === r3 ? 0 : t2 > r3 ^ l < 0 ? 1 : -1;
+          return o2[n2] > u[n2] ^ l2 < 0 ? 1 : -1;
+      return t2 === r3 ? 0 : t2 > r3 ^ l2 < 0 ? 1 : -1;
     };
     h.cosine = h.cos = function() {
       var e3, n2, i = this, t2 = i.constructor;
-      return i.d ? i.d[0] ? (e3 = t2.precision, n2 = t2.rounding, t2.precision = e3 + Math.max(i.e, i.sd()) + m, t2.rounding = 1, i = sn(t2, $e(t2, i)), t2.precision = e3, t2.rounding = n2, p(Z == 2 || Z == 3 ? i.neg() : i, e3, n2, true)) : new t2(1) : new t2(NaN);
+      return i.d ? i.d[0] ? (e3 = t2.precision, n2 = t2.rounding, t2.precision = e3 + Math.max(i.e, i.sd()) + m, t2.rounding = 1, i = sn(t2, $e(t2, i)), t2.precision = e3, t2.rounding = n2, p2(Z == 2 || Z == 3 ? i.neg() : i, e3, n2, true)) : new t2(1) : new t2(NaN);
     };
     h.cubeRoot = h.cbrt = function() {
-      var e3, n2, i, t2, r3, s3, o2, u, l, f, c2 = this, a = c2.constructor;
+      var e3, n2, i, t2, r3, s3, o2, u, l2, f2, c2 = this, a = c2.constructor;
       if (!c2.isFinite() || c2.isZero())
         return new a(c2);
-      for (w = false, s3 = c2.s * C(c2.s * c2, 1 / 3), !s3 || Math.abs(s3) == 1 / 0 ? (i = O(c2.d), e3 = c2.e, (s3 = (e3 - i.length + 1) % 3) && (i += s3 == 1 || s3 == -2 ? "0" : "00"), s3 = C(i, 1 / 3), e3 = b((e3 + 1) / 3) - (e3 % 3 == (e3 < 0 ? -1 : 2)), s3 == 1 / 0 ? i = "5e" + e3 : (i = s3.toExponential(), i = i.slice(0, i.indexOf("e") + 1) + e3), t2 = new a(i), t2.s = c2.s) : t2 = new a(s3.toString()), o2 = (e3 = a.precision) + 3; ; )
-        if (u = t2, l = u.times(u).times(u), f = l.plus(c2), t2 = S(f.plus(c2).times(u), f.plus(l), o2 + 2, 1), O(u.d).slice(0, o2) === (i = O(t2.d)).slice(0, o2))
+      for (w2 = false, s3 = c2.s * C(c2.s * c2, 1 / 3), !s3 || Math.abs(s3) == 1 / 0 ? (i = O(c2.d), e3 = c2.e, (s3 = (e3 - i.length + 1) % 3) && (i += s3 == 1 || s3 == -2 ? "0" : "00"), s3 = C(i, 1 / 3), e3 = b2((e3 + 1) / 3) - (e3 % 3 == (e3 < 0 ? -1 : 2)), s3 == 1 / 0 ? i = "5e" + e3 : (i = s3.toExponential(), i = i.slice(0, i.indexOf("e") + 1) + e3), t2 = new a(i), t2.s = c2.s) : t2 = new a(s3.toString()), o2 = (e3 = a.precision) + 3; ; )
+        if (u = t2, l2 = u.times(u).times(u), f2 = l2.plus(c2), t2 = S2(f2.plus(c2).times(u), f2.plus(l2), o2 + 2, 1), O(u.d).slice(0, o2) === (i = O(t2.d)).slice(0, o2))
           if (i = i.slice(o2 - 3, o2 + 1), i == "9999" || !r3 && i == "4999") {
-            if (!r3 && (p(u, e3 + 1, 0), u.times(u).times(u).eq(c2))) {
+            if (!r3 && (p2(u, e3 + 1, 0), u.times(u).times(u).eq(c2))) {
               t2 = u;
               break;
             }
             o2 += 4, r3 = 1;
           } else {
-            (!+i || !+i.slice(1) && i.charAt(0) == "5") && (p(t2, e3 + 1, 1), n2 = !t2.times(t2).times(t2).eq(c2));
+            (!+i || !+i.slice(1) && i.charAt(0) == "5") && (p2(t2, e3 + 1, 1), n2 = !t2.times(t2).times(t2).eq(c2));
             break;
           }
-      return w = true, p(t2, e3, a.rounding, n2);
+      return w2 = true, p2(t2, e3, a.rounding, n2);
     };
     h.decimalPlaces = h.dp = function() {
       var e3, n2 = this.d, i = NaN;
       if (n2) {
-        if (e3 = n2.length - 1, i = (e3 - b(this.e / m)) * m, e3 = n2[e3], e3)
+        if (e3 = n2.length - 1, i = (e3 - b2(this.e / m)) * m, e3 = n2[e3], e3)
           for (; e3 % 10 == 0; e3 /= 10)
             i--;
         i < 0 && (i = 0);
@@ -2232,17 +2232,17 @@ var require_index_browser = __commonJS({
       return i;
     };
     h.dividedBy = h.div = function(e3) {
-      return S(this, new this.constructor(e3));
+      return S2(this, new this.constructor(e3));
     };
     h.dividedToIntegerBy = h.divToInt = function(e3) {
       var n2 = this, i = n2.constructor;
-      return p(S(n2, new i(e3), 0, 1, 1), i.precision, i.rounding);
+      return p2(S2(n2, new i(e3), 0, 1, 1), i.precision, i.rounding);
     };
     h.equals = h.eq = function(e3) {
       return this.cmp(e3) === 0;
     };
     h.floor = function() {
-      return p(new this.constructor(this), this.e + 1, 3);
+      return p2(new this.constructor(this), this.e + 1, 3);
     };
     h.greaterThan = h.gt = function(e3) {
       return this.cmp(e3) > 0;
@@ -2258,9 +2258,9 @@ var require_index_browser = __commonJS({
       if (s3.isZero())
         return u;
       i = o2.precision, t2 = o2.rounding, o2.precision = i + Math.max(s3.e, s3.sd()) + 4, o2.rounding = 1, r3 = s3.d.length, r3 < 32 ? (e3 = Math.ceil(r3 / 3), n2 = (1 / fe(4, e3)).toString()) : (e3 = 16, n2 = "2.3283064365386962890625e-10"), s3 = j(o2, 1, s3.times(n2), new o2(1), true);
-      for (var l, f = e3, c2 = new o2(8); f--; )
-        l = s3.times(s3), s3 = u.minus(l.times(c2.minus(l.times(c2))));
-      return p(s3, o2.precision = i, o2.rounding = t2, true);
+      for (var l2, f2 = e3, c2 = new o2(8); f2--; )
+        l2 = s3.times(s3), s3 = u.minus(l2.times(c2.minus(l2.times(c2))));
+      return p2(s3, o2.precision = i, o2.rounding = t2, true);
     };
     h.hyperbolicSine = h.sinh = function() {
       var e3, n2, i, t2, r3 = this, s3 = r3.constructor;
@@ -2270,14 +2270,14 @@ var require_index_browser = __commonJS({
         r3 = j(s3, 2, r3, r3, true);
       else {
         e3 = 1.4 * Math.sqrt(t2), e3 = e3 > 16 ? 16 : e3 | 0, r3 = r3.times(1 / fe(5, e3)), r3 = j(s3, 2, r3, r3, true);
-        for (var o2, u = new s3(5), l = new s3(16), f = new s3(20); e3--; )
-          o2 = r3.times(r3), r3 = r3.times(u.plus(o2.times(l.times(o2).plus(f))));
+        for (var o2, u = new s3(5), l2 = new s3(16), f2 = new s3(20); e3--; )
+          o2 = r3.times(r3), r3 = r3.times(u.plus(o2.times(l2.times(o2).plus(f2))));
       }
-      return s3.precision = n2, s3.rounding = i, p(r3, n2, i, true);
+      return s3.precision = n2, s3.rounding = i, p2(r3, n2, i, true);
     };
     h.hyperbolicTangent = h.tanh = function() {
       var e3, n2, i = this, t2 = i.constructor;
-      return i.isFinite() ? i.isZero() ? new t2(i) : (e3 = t2.precision, n2 = t2.rounding, t2.precision = e3 + 7, t2.rounding = 1, S(i.sinh(), i.cosh(), t2.precision = e3, t2.rounding = n2)) : new t2(i.s);
+      return i.isFinite() ? i.isZero() ? new t2(i) : (e3 = t2.precision, n2 = t2.rounding, t2.precision = e3 + 7, t2.rounding = 1, S2(i.sinh(), i.cosh(), t2.precision = e3, t2.rounding = n2)) : new t2(i.s);
     };
     h.inverseCosine = h.acos = function() {
       var e3, n2 = this, i = n2.constructor, t2 = n2.abs().cmp(1), r3 = i.precision, s3 = i.rounding;
@@ -2285,46 +2285,46 @@ var require_index_browser = __commonJS({
     };
     h.inverseHyperbolicCosine = h.acosh = function() {
       var e3, n2, i = this, t2 = i.constructor;
-      return i.lte(1) ? new t2(i.eq(1) ? 0 : NaN) : i.isFinite() ? (e3 = t2.precision, n2 = t2.rounding, t2.precision = e3 + Math.max(Math.abs(i.e), i.sd()) + 4, t2.rounding = 1, w = false, i = i.times(i).minus(1).sqrt().plus(i), w = true, t2.precision = e3, t2.rounding = n2, i.ln()) : new t2(i);
+      return i.lte(1) ? new t2(i.eq(1) ? 0 : NaN) : i.isFinite() ? (e3 = t2.precision, n2 = t2.rounding, t2.precision = e3 + Math.max(Math.abs(i.e), i.sd()) + 4, t2.rounding = 1, w2 = false, i = i.times(i).minus(1).sqrt().plus(i), w2 = true, t2.precision = e3, t2.rounding = n2, i.ln()) : new t2(i);
     };
     h.inverseHyperbolicSine = h.asinh = function() {
       var e3, n2, i = this, t2 = i.constructor;
-      return !i.isFinite() || i.isZero() ? new t2(i) : (e3 = t2.precision, n2 = t2.rounding, t2.precision = e3 + 2 * Math.max(Math.abs(i.e), i.sd()) + 6, t2.rounding = 1, w = false, i = i.times(i).plus(1).sqrt().plus(i), w = true, t2.precision = e3, t2.rounding = n2, i.ln());
+      return !i.isFinite() || i.isZero() ? new t2(i) : (e3 = t2.precision, n2 = t2.rounding, t2.precision = e3 + 2 * Math.max(Math.abs(i.e), i.sd()) + 6, t2.rounding = 1, w2 = false, i = i.times(i).plus(1).sqrt().plus(i), w2 = true, t2.precision = e3, t2.rounding = n2, i.ln());
     };
     h.inverseHyperbolicTangent = h.atanh = function() {
       var e3, n2, i, t2, r3 = this, s3 = r3.constructor;
-      return r3.isFinite() ? r3.e >= 0 ? new s3(r3.abs().eq(1) ? r3.s / 0 : r3.isZero() ? r3 : NaN) : (e3 = s3.precision, n2 = s3.rounding, t2 = r3.sd(), Math.max(t2, e3) < 2 * -r3.e - 1 ? p(new s3(r3), e3, n2, true) : (s3.precision = i = t2 - r3.e, r3 = S(r3.plus(1), new s3(1).minus(r3), i + e3, 1), s3.precision = e3 + 4, s3.rounding = 1, r3 = r3.ln(), s3.precision = e3, s3.rounding = n2, r3.times(0.5))) : new s3(NaN);
+      return r3.isFinite() ? r3.e >= 0 ? new s3(r3.abs().eq(1) ? r3.s / 0 : r3.isZero() ? r3 : NaN) : (e3 = s3.precision, n2 = s3.rounding, t2 = r3.sd(), Math.max(t2, e3) < 2 * -r3.e - 1 ? p2(new s3(r3), e3, n2, true) : (s3.precision = i = t2 - r3.e, r3 = S2(r3.plus(1), new s3(1).minus(r3), i + e3, 1), s3.precision = e3 + 4, s3.rounding = 1, r3 = r3.ln(), s3.precision = e3, s3.rounding = n2, r3.times(0.5))) : new s3(NaN);
     };
     h.inverseSine = h.asin = function() {
       var e3, n2, i, t2, r3 = this, s3 = r3.constructor;
       return r3.isZero() ? new s3(r3) : (n2 = r3.abs().cmp(1), i = s3.precision, t2 = s3.rounding, n2 !== -1 ? n2 === 0 ? (e3 = L(s3, i + 4, t2).times(0.5), e3.s = r3.s, e3) : new s3(NaN) : (s3.precision = i + 6, s3.rounding = 1, r3 = r3.div(new s3(1).minus(r3.times(r3)).sqrt().plus(1)).atan(), s3.precision = i, s3.rounding = t2, r3.times(2)));
     };
     h.inverseTangent = h.atan = function() {
-      var e3, n2, i, t2, r3, s3, o2, u, l, f = this, c2 = f.constructor, a = c2.precision, d = c2.rounding;
-      if (f.isFinite()) {
-        if (f.isZero())
-          return new c2(f);
-        if (f.abs().eq(1) && a + 4 <= ve)
-          return o2 = L(c2, a + 4, d).times(0.25), o2.s = f.s, o2;
+      var e3, n2, i, t2, r3, s3, o2, u, l2, f2 = this, c2 = f2.constructor, a = c2.precision, d = c2.rounding;
+      if (f2.isFinite()) {
+        if (f2.isZero())
+          return new c2(f2);
+        if (f2.abs().eq(1) && a + 4 <= ve)
+          return o2 = L(c2, a + 4, d).times(0.25), o2.s = f2.s, o2;
       } else {
-        if (!f.s)
+        if (!f2.s)
           return new c2(NaN);
         if (a + 4 <= ve)
-          return o2 = L(c2, a + 4, d).times(0.5), o2.s = f.s, o2;
+          return o2 = L(c2, a + 4, d).times(0.5), o2.s = f2.s, o2;
       }
       for (c2.precision = u = a + 10, c2.rounding = 1, i = Math.min(28, u / m + 2 | 0), e3 = i; e3; --e3)
-        f = f.div(f.times(f).plus(1).sqrt().plus(1));
-      for (w = false, n2 = Math.ceil(u / m), t2 = 1, l = f.times(f), o2 = new c2(f), r3 = f; e3 !== -1; )
-        if (r3 = r3.times(l), s3 = o2.minus(r3.div(t2 += 2)), r3 = r3.times(l), o2 = s3.plus(r3.div(t2 += 2)), o2.d[n2] !== void 0)
+        f2 = f2.div(f2.times(f2).plus(1).sqrt().plus(1));
+      for (w2 = false, n2 = Math.ceil(u / m), t2 = 1, l2 = f2.times(f2), o2 = new c2(f2), r3 = f2; e3 !== -1; )
+        if (r3 = r3.times(l2), s3 = o2.minus(r3.div(t2 += 2)), r3 = r3.times(l2), o2 = s3.plus(r3.div(t2 += 2)), o2.d[n2] !== void 0)
           for (e3 = n2; o2.d[e3] === s3.d[e3] && e3--; )
             ;
-      return i && (o2 = o2.times(2 << i - 1)), w = true, p(o2, c2.precision = a, c2.rounding = d, true);
+      return i && (o2 = o2.times(2 << i - 1)), w2 = true, p2(o2, c2.precision = a, c2.rounding = d, true);
     };
     h.isFinite = function() {
       return !!this.d;
     };
     h.isInteger = h.isInt = function() {
-      return !!this.d && b(this.e / m) > this.d.length - 2;
+      return !!this.d && b2(this.e / m) > this.d.length - 2;
     };
     h.isNaN = function() {
       return !this.s;
@@ -2345,7 +2345,7 @@ var require_index_browser = __commonJS({
       return this.cmp(e3) < 1;
     };
     h.logarithm = h.log = function(e3) {
-      var n2, i, t2, r3, s3, o2, u, l, f = this, c2 = f.constructor, a = c2.precision, d = c2.rounding, g = 5;
+      var n2, i, t2, r3, s3, o2, u, l2, f2 = this, c2 = f2.constructor, a = c2.precision, d = c2.rounding, g = 5;
       if (e3 == null)
         e3 = new c2(10), n2 = true;
       else {
@@ -2353,8 +2353,8 @@ var require_index_browser = __commonJS({
           return new c2(NaN);
         n2 = e3.eq(10);
       }
-      if (i = f.d, f.s < 0 || !i || !i[0] || f.eq(1))
-        return new c2(i && !i[0] ? -1 / 0 : f.s != 1 ? NaN : i ? 0 : 1 / 0);
+      if (i = f2.d, f2.s < 0 || !i || !i[0] || f2.eq(1))
+        return new c2(i && !i[0] ? -1 / 0 : f2.s != 1 ? NaN : i ? 0 : 1 / 0);
       if (n2)
         if (i.length > 1)
           s3 = true;
@@ -2363,61 +2363,61 @@ var require_index_browser = __commonJS({
             r3 /= 10;
           s3 = r3 !== 1;
         }
-      if (w = false, u = a + g, o2 = B(f, u), t2 = n2 ? se(c2, u + 10) : B(e3, u), l = S(o2, t2, u, 1), x(l.d, r3 = a, d))
+      if (w2 = false, u = a + g, o2 = B(f2, u), t2 = n2 ? se(c2, u + 10) : B(e3, u), l2 = S2(o2, t2, u, 1), x2(l2.d, r3 = a, d))
         do
-          if (u += 10, o2 = B(f, u), t2 = n2 ? se(c2, u + 10) : B(e3, u), l = S(o2, t2, u, 1), !s3) {
-            +O(l.d).slice(r3 + 1, r3 + 15) + 1 == 1e14 && (l = p(l, a + 1, 0));
+          if (u += 10, o2 = B(f2, u), t2 = n2 ? se(c2, u + 10) : B(e3, u), l2 = S2(o2, t2, u, 1), !s3) {
+            +O(l2.d).slice(r3 + 1, r3 + 15) + 1 == 1e14 && (l2 = p2(l2, a + 1, 0));
             break;
           }
-        while (x(l.d, r3 += 10, d));
-      return w = true, p(l, a, d);
+        while (x2(l2.d, r3 += 10, d));
+      return w2 = true, p2(l2, a, d);
     };
     h.minus = h.sub = function(e3) {
-      var n2, i, t2, r3, s3, o2, u, l, f, c2, a, d, g = this, v = g.constructor;
+      var n2, i, t2, r3, s3, o2, u, l2, f2, c2, a, d, g = this, v = g.constructor;
       if (e3 = new v(e3), !g.d || !e3.d)
         return !g.s || !e3.s ? e3 = new v(NaN) : g.d ? e3.s = -e3.s : e3 = new v(e3.d || g.s !== e3.s ? g : NaN), e3;
       if (g.s != e3.s)
         return e3.s = -e3.s, g.plus(e3);
-      if (f = g.d, d = e3.d, u = v.precision, l = v.rounding, !f[0] || !d[0]) {
+      if (f2 = g.d, d = e3.d, u = v.precision, l2 = v.rounding, !f2[0] || !d[0]) {
         if (d[0])
           e3.s = -e3.s;
-        else if (f[0])
+        else if (f2[0])
           e3 = new v(g);
         else
-          return new v(l === 3 ? -0 : 0);
-        return w ? p(e3, u, l) : e3;
+          return new v(l2 === 3 ? -0 : 0);
+        return w2 ? p2(e3, u, l2) : e3;
       }
-      if (i = b(e3.e / m), c2 = b(g.e / m), f = f.slice(), s3 = c2 - i, s3) {
-        for (a = s3 < 0, a ? (n2 = f, s3 = -s3, o2 = d.length) : (n2 = d, i = c2, o2 = f.length), t2 = Math.max(Math.ceil(u / m), o2) + 2, s3 > t2 && (s3 = t2, n2.length = 1), n2.reverse(), t2 = s3; t2--; )
+      if (i = b2(e3.e / m), c2 = b2(g.e / m), f2 = f2.slice(), s3 = c2 - i, s3) {
+        for (a = s3 < 0, a ? (n2 = f2, s3 = -s3, o2 = d.length) : (n2 = d, i = c2, o2 = f2.length), t2 = Math.max(Math.ceil(u / m), o2) + 2, s3 > t2 && (s3 = t2, n2.length = 1), n2.reverse(), t2 = s3; t2--; )
           n2.push(0);
         n2.reverse();
       } else {
-        for (t2 = f.length, o2 = d.length, a = t2 < o2, a && (o2 = t2), t2 = 0; t2 < o2; t2++)
-          if (f[t2] != d[t2]) {
-            a = f[t2] < d[t2];
+        for (t2 = f2.length, o2 = d.length, a = t2 < o2, a && (o2 = t2), t2 = 0; t2 < o2; t2++)
+          if (f2[t2] != d[t2]) {
+            a = f2[t2] < d[t2];
             break;
           }
         s3 = 0;
       }
-      for (a && (n2 = f, f = d, d = n2, e3.s = -e3.s), o2 = f.length, t2 = d.length - o2; t2 > 0; --t2)
-        f[o2++] = 0;
+      for (a && (n2 = f2, f2 = d, d = n2, e3.s = -e3.s), o2 = f2.length, t2 = d.length - o2; t2 > 0; --t2)
+        f2[o2++] = 0;
       for (t2 = d.length; t2 > s3; ) {
-        if (f[--t2] < d[t2]) {
-          for (r3 = t2; r3 && f[--r3] === 0; )
-            f[r3] = D - 1;
-          --f[r3], f[t2] += D;
+        if (f2[--t2] < d[t2]) {
+          for (r3 = t2; r3 && f2[--r3] === 0; )
+            f2[r3] = D - 1;
+          --f2[r3], f2[t2] += D;
         }
-        f[t2] -= d[t2];
+        f2[t2] -= d[t2];
       }
-      for (; f[--o2] === 0; )
-        f.pop();
-      for (; f[0] === 0; f.shift())
+      for (; f2[--o2] === 0; )
+        f2.pop();
+      for (; f2[0] === 0; f2.shift())
         --i;
-      return f[0] ? (e3.d = f, e3.e = ue(f, i), w ? p(e3, u, l) : e3) : new v(l === 3 ? -0 : 0);
+      return f2[0] ? (e3.d = f2, e3.e = ue(f2, i), w2 ? p2(e3, u, l2) : e3) : new v(l2 === 3 ? -0 : 0);
     };
     h.modulo = h.mod = function(e3) {
       var n2, i = this, t2 = i.constructor;
-      return e3 = new t2(e3), !i.d || !e3.s || e3.d && !e3.d[0] ? new t2(NaN) : !e3.d || i.d && !i.d[0] ? p(new t2(i), t2.precision, t2.rounding) : (w = false, t2.modulo == 9 ? (n2 = S(i, e3.abs(), 0, 3, 1), n2.s *= e3.s) : n2 = S(i, e3, 0, t2.modulo, 1), n2 = n2.times(e3), w = true, i.minus(n2));
+      return e3 = new t2(e3), !i.d || !e3.s || e3.d && !e3.d[0] ? new t2(NaN) : !e3.d || i.d && !i.d[0] ? p2(new t2(i), t2.precision, t2.rounding) : (w2 = false, t2.modulo == 9 ? (n2 = S2(i, e3.abs(), 0, 3, 1), n2.s *= e3.s) : n2 = S2(i, e3, 0, t2.modulo, 1), n2 = n2.times(e3), w2 = true, i.minus(n2));
     };
     h.naturalExponential = h.exp = function() {
       return Ee(this);
@@ -2427,26 +2427,26 @@ var require_index_browser = __commonJS({
     };
     h.negated = h.neg = function() {
       var e3 = new this.constructor(this);
-      return e3.s = -e3.s, p(e3);
+      return e3.s = -e3.s, p2(e3);
     };
     h.plus = h.add = function(e3) {
-      var n2, i, t2, r3, s3, o2, u, l, f, c2, a = this, d = a.constructor;
+      var n2, i, t2, r3, s3, o2, u, l2, f2, c2, a = this, d = a.constructor;
       if (e3 = new d(e3), !a.d || !e3.d)
         return !a.s || !e3.s ? e3 = new d(NaN) : a.d || (e3 = new d(e3.d || a.s === e3.s ? a : NaN)), e3;
       if (a.s != e3.s)
         return e3.s = -e3.s, a.minus(e3);
-      if (f = a.d, c2 = e3.d, u = d.precision, l = d.rounding, !f[0] || !c2[0])
-        return c2[0] || (e3 = new d(a)), w ? p(e3, u, l) : e3;
-      if (s3 = b(a.e / m), t2 = b(e3.e / m), f = f.slice(), r3 = s3 - t2, r3) {
-        for (r3 < 0 ? (i = f, r3 = -r3, o2 = c2.length) : (i = c2, t2 = s3, o2 = f.length), s3 = Math.ceil(u / m), o2 = s3 > o2 ? s3 + 1 : o2 + 1, r3 > o2 && (r3 = o2, i.length = 1), i.reverse(); r3--; )
+      if (f2 = a.d, c2 = e3.d, u = d.precision, l2 = d.rounding, !f2[0] || !c2[0])
+        return c2[0] || (e3 = new d(a)), w2 ? p2(e3, u, l2) : e3;
+      if (s3 = b2(a.e / m), t2 = b2(e3.e / m), f2 = f2.slice(), r3 = s3 - t2, r3) {
+        for (r3 < 0 ? (i = f2, r3 = -r3, o2 = c2.length) : (i = c2, t2 = s3, o2 = f2.length), s3 = Math.ceil(u / m), o2 = s3 > o2 ? s3 + 1 : o2 + 1, r3 > o2 && (r3 = o2, i.length = 1), i.reverse(); r3--; )
           i.push(0);
         i.reverse();
       }
-      for (o2 = f.length, r3 = c2.length, o2 - r3 < 0 && (r3 = o2, i = c2, c2 = f, f = i), n2 = 0; r3; )
-        n2 = (f[--r3] = f[r3] + c2[r3] + n2) / D | 0, f[r3] %= D;
-      for (n2 && (f.unshift(n2), ++t2), o2 = f.length; f[--o2] == 0; )
-        f.pop();
-      return e3.d = f, e3.e = ue(f, t2), w ? p(e3, u, l) : e3;
+      for (o2 = f2.length, r3 = c2.length, o2 - r3 < 0 && (r3 = o2, i = c2, c2 = f2, f2 = i), n2 = 0; r3; )
+        n2 = (f2[--r3] = f2[r3] + c2[r3] + n2) / D | 0, f2[r3] %= D;
+      for (n2 && (f2.unshift(n2), ++t2), o2 = f2.length; f2[--o2] == 0; )
+        f2.pop();
+      return e3.d = f2, e3.e = ue(f2, t2), w2 ? p2(e3, u, l2) : e3;
     };
     h.precision = h.sd = function(e3) {
       var n2, i = this;
@@ -2456,78 +2456,78 @@ var require_index_browser = __commonJS({
     };
     h.round = function() {
       var e3 = this, n2 = e3.constructor;
-      return p(new n2(e3), e3.e + 1, n2.rounding);
+      return p2(new n2(e3), e3.e + 1, n2.rounding);
     };
     h.sine = h.sin = function() {
       var e3, n2, i = this, t2 = i.constructor;
-      return i.isFinite() ? i.isZero() ? new t2(i) : (e3 = t2.precision, n2 = t2.rounding, t2.precision = e3 + Math.max(i.e, i.sd()) + m, t2.rounding = 1, i = un(t2, $e(t2, i)), t2.precision = e3, t2.rounding = n2, p(Z > 2 ? i.neg() : i, e3, n2, true)) : new t2(NaN);
+      return i.isFinite() ? i.isZero() ? new t2(i) : (e3 = t2.precision, n2 = t2.rounding, t2.precision = e3 + Math.max(i.e, i.sd()) + m, t2.rounding = 1, i = un(t2, $e(t2, i)), t2.precision = e3, t2.rounding = n2, p2(Z > 2 ? i.neg() : i, e3, n2, true)) : new t2(NaN);
     };
     h.squareRoot = h.sqrt = function() {
-      var e3, n2, i, t2, r3, s3, o2 = this, u = o2.d, l = o2.e, f = o2.s, c2 = o2.constructor;
-      if (f !== 1 || !u || !u[0])
-        return new c2(!f || f < 0 && (!u || u[0]) ? NaN : u ? o2 : 1 / 0);
-      for (w = false, f = Math.sqrt(+o2), f == 0 || f == 1 / 0 ? (n2 = O(u), (n2.length + l) % 2 == 0 && (n2 += "0"), f = Math.sqrt(n2), l = b((l + 1) / 2) - (l < 0 || l % 2), f == 1 / 0 ? n2 = "5e" + l : (n2 = f.toExponential(), n2 = n2.slice(0, n2.indexOf("e") + 1) + l), t2 = new c2(n2)) : t2 = new c2(f.toString()), i = (l = c2.precision) + 3; ; )
-        if (s3 = t2, t2 = s3.plus(S(o2, s3, i + 2, 1)).times(0.5), O(s3.d).slice(0, i) === (n2 = O(t2.d)).slice(0, i))
+      var e3, n2, i, t2, r3, s3, o2 = this, u = o2.d, l2 = o2.e, f2 = o2.s, c2 = o2.constructor;
+      if (f2 !== 1 || !u || !u[0])
+        return new c2(!f2 || f2 < 0 && (!u || u[0]) ? NaN : u ? o2 : 1 / 0);
+      for (w2 = false, f2 = Math.sqrt(+o2), f2 == 0 || f2 == 1 / 0 ? (n2 = O(u), (n2.length + l2) % 2 == 0 && (n2 += "0"), f2 = Math.sqrt(n2), l2 = b2((l2 + 1) / 2) - (l2 < 0 || l2 % 2), f2 == 1 / 0 ? n2 = "5e" + l2 : (n2 = f2.toExponential(), n2 = n2.slice(0, n2.indexOf("e") + 1) + l2), t2 = new c2(n2)) : t2 = new c2(f2.toString()), i = (l2 = c2.precision) + 3; ; )
+        if (s3 = t2, t2 = s3.plus(S2(o2, s3, i + 2, 1)).times(0.5), O(s3.d).slice(0, i) === (n2 = O(t2.d)).slice(0, i))
           if (n2 = n2.slice(i - 3, i + 1), n2 == "9999" || !r3 && n2 == "4999") {
-            if (!r3 && (p(s3, l + 1, 0), s3.times(s3).eq(o2))) {
+            if (!r3 && (p2(s3, l2 + 1, 0), s3.times(s3).eq(o2))) {
               t2 = s3;
               break;
             }
             i += 4, r3 = 1;
           } else {
-            (!+n2 || !+n2.slice(1) && n2.charAt(0) == "5") && (p(t2, l + 1, 1), e3 = !t2.times(t2).eq(o2));
+            (!+n2 || !+n2.slice(1) && n2.charAt(0) == "5") && (p2(t2, l2 + 1, 1), e3 = !t2.times(t2).eq(o2));
             break;
           }
-      return w = true, p(t2, l, c2.rounding, e3);
+      return w2 = true, p2(t2, l2, c2.rounding, e3);
     };
     h.tangent = h.tan = function() {
       var e3, n2, i = this, t2 = i.constructor;
-      return i.isFinite() ? i.isZero() ? new t2(i) : (e3 = t2.precision, n2 = t2.rounding, t2.precision = e3 + 10, t2.rounding = 1, i = i.sin(), i.s = 1, i = S(i, new t2(1).minus(i.times(i)).sqrt(), e3 + 10, 0), t2.precision = e3, t2.rounding = n2, p(Z == 2 || Z == 4 ? i.neg() : i, e3, n2, true)) : new t2(NaN);
+      return i.isFinite() ? i.isZero() ? new t2(i) : (e3 = t2.precision, n2 = t2.rounding, t2.precision = e3 + 10, t2.rounding = 1, i = i.sin(), i.s = 1, i = S2(i, new t2(1).minus(i.times(i)).sqrt(), e3 + 10, 0), t2.precision = e3, t2.rounding = n2, p2(Z == 2 || Z == 4 ? i.neg() : i, e3, n2, true)) : new t2(NaN);
     };
     h.times = h.mul = function(e3) {
-      var n2, i, t2, r3, s3, o2, u, l, f, c2 = this, a = c2.constructor, d = c2.d, g = (e3 = new a(e3)).d;
+      var n2, i, t2, r3, s3, o2, u, l2, f2, c2 = this, a = c2.constructor, d = c2.d, g = (e3 = new a(e3)).d;
       if (e3.s *= c2.s, !d || !d[0] || !g || !g[0])
         return new a(!e3.s || d && !d[0] && !g || g && !g[0] && !d ? NaN : !d || !g ? e3.s / 0 : e3.s * 0);
-      for (i = b(c2.e / m) + b(e3.e / m), l = d.length, f = g.length, l < f && (s3 = d, d = g, g = s3, o2 = l, l = f, f = o2), s3 = [], o2 = l + f, t2 = o2; t2--; )
+      for (i = b2(c2.e / m) + b2(e3.e / m), l2 = d.length, f2 = g.length, l2 < f2 && (s3 = d, d = g, g = s3, o2 = l2, l2 = f2, f2 = o2), s3 = [], o2 = l2 + f2, t2 = o2; t2--; )
         s3.push(0);
-      for (t2 = f; --t2 >= 0; ) {
-        for (n2 = 0, r3 = l + t2; r3 > t2; )
+      for (t2 = f2; --t2 >= 0; ) {
+        for (n2 = 0, r3 = l2 + t2; r3 > t2; )
           u = s3[r3] + g[t2] * d[r3 - t2 - 1] + n2, s3[r3--] = u % D | 0, n2 = u / D | 0;
         s3[r3] = (s3[r3] + n2) % D | 0;
       }
       for (; !s3[--o2]; )
         s3.pop();
-      return n2 ? ++i : s3.shift(), e3.d = s3, e3.e = ue(s3, i), w ? p(e3, a.precision, a.rounding) : e3;
+      return n2 ? ++i : s3.shift(), e3.d = s3, e3.e = ue(s3, i), w2 ? p2(e3, a.precision, a.rounding) : e3;
     };
     h.toBinary = function(e3, n2) {
       return ke(this, 2, e3, n2);
     };
     h.toDecimalPlaces = h.toDP = function(e3, n2) {
       var i = this, t2 = i.constructor;
-      return i = new t2(i), e3 === void 0 ? i : (_(e3, 0, $), n2 === void 0 ? n2 = t2.rounding : _(n2, 0, 8), p(i, e3 + i.e + 1, n2));
+      return i = new t2(i), e3 === void 0 ? i : (_(e3, 0, $), n2 === void 0 ? n2 = t2.rounding : _(n2, 0, 8), p2(i, e3 + i.e + 1, n2));
     };
     h.toExponential = function(e3, n2) {
       var i, t2 = this, r3 = t2.constructor;
-      return e3 === void 0 ? i = F(t2, true) : (_(e3, 0, $), n2 === void 0 ? n2 = r3.rounding : _(n2, 0, 8), t2 = p(new r3(t2), e3 + 1, n2), i = F(t2, true, e3 + 1)), t2.isNeg() && !t2.isZero() ? "-" + i : i;
+      return e3 === void 0 ? i = F2(t2, true) : (_(e3, 0, $), n2 === void 0 ? n2 = r3.rounding : _(n2, 0, 8), t2 = p2(new r3(t2), e3 + 1, n2), i = F2(t2, true, e3 + 1)), t2.isNeg() && !t2.isZero() ? "-" + i : i;
     };
     h.toFixed = function(e3, n2) {
       var i, t2, r3 = this, s3 = r3.constructor;
-      return e3 === void 0 ? i = F(r3) : (_(e3, 0, $), n2 === void 0 ? n2 = s3.rounding : _(n2, 0, 8), t2 = p(new s3(r3), e3 + r3.e + 1, n2), i = F(t2, false, e3 + t2.e + 1)), r3.isNeg() && !r3.isZero() ? "-" + i : i;
+      return e3 === void 0 ? i = F2(r3) : (_(e3, 0, $), n2 === void 0 ? n2 = s3.rounding : _(n2, 0, 8), t2 = p2(new s3(r3), e3 + r3.e + 1, n2), i = F2(t2, false, e3 + t2.e + 1)), r3.isNeg() && !r3.isZero() ? "-" + i : i;
     };
     h.toFraction = function(e3) {
-      var n2, i, t2, r3, s3, o2, u, l, f, c2, a, d, g = this, v = g.d, N = g.constructor;
+      var n2, i, t2, r3, s3, o2, u, l2, f2, c2, a, d, g = this, v = g.d, N = g.constructor;
       if (!v)
         return new N(g);
-      if (f = i = new N(1), t2 = l = new N(0), n2 = new N(t2), s3 = n2.e = Ze(v) - g.e - 1, o2 = s3 % m, n2.d[0] = C(10, o2 < 0 ? m + o2 : o2), e3 == null)
-        e3 = s3 > 0 ? n2 : f;
+      if (f2 = i = new N(1), t2 = l2 = new N(0), n2 = new N(t2), s3 = n2.e = Ze(v) - g.e - 1, o2 = s3 % m, n2.d[0] = C(10, o2 < 0 ? m + o2 : o2), e3 == null)
+        e3 = s3 > 0 ? n2 : f2;
       else {
-        if (u = new N(e3), !u.isInt() || u.lt(f))
+        if (u = new N(e3), !u.isInt() || u.lt(f2))
           throw Error(V + u);
-        e3 = u.gt(n2) ? s3 > 0 ? n2 : f : u;
+        e3 = u.gt(n2) ? s3 > 0 ? n2 : f2 : u;
       }
-      for (w = false, u = new N(O(v)), c2 = N.precision, N.precision = s3 = v.length * m * 2; a = S(u, n2, 0, 1, 1), r3 = i.plus(a.times(t2)), r3.cmp(e3) != 1; )
-        i = t2, t2 = r3, r3 = f, f = l.plus(a.times(r3)), l = r3, r3 = n2, n2 = u.minus(a.times(r3)), u = r3;
-      return r3 = S(e3.minus(i), t2, 0, 1, 1), l = l.plus(r3.times(f)), i = i.plus(r3.times(t2)), l.s = f.s = g.s, d = S(f, t2, s3, 1).minus(g).abs().cmp(S(l, i, s3, 1).minus(g).abs()) < 1 ? [f, t2] : [l, i], N.precision = c2, w = true, d;
+      for (w2 = false, u = new N(O(v)), c2 = N.precision, N.precision = s3 = v.length * m * 2; a = S2(u, n2, 0, 1, 1), r3 = i.plus(a.times(t2)), r3.cmp(e3) != 1; )
+        i = t2, t2 = r3, r3 = f2, f2 = l2.plus(a.times(r3)), l2 = r3, r3 = n2, n2 = u.minus(a.times(r3)), u = r3;
+      return r3 = S2(e3.minus(i), t2, 0, 1, 1), l2 = l2.plus(r3.times(f2)), i = i.plus(r3.times(t2)), l2.s = f2.s = g.s, d = S2(f2, t2, s3, 1).minus(g).abs().cmp(S2(l2, i, s3, 1).minus(g).abs()) < 1 ? [f2, t2] : [l2, i], N.precision = c2, w2 = true, d;
     };
     h.toHexadecimal = h.toHex = function(e3, n2) {
       return ke(this, 16, e3, n2);
@@ -2544,7 +2544,7 @@ var require_index_browser = __commonJS({
         if (!e3.d)
           return e3.s && (e3.s = i.s), e3;
       }
-      return e3.d[0] ? (w = false, i = S(i, e3, 0, n2, 1).times(e3), w = true, p(i)) : (e3.s = i.s, i = e3), i;
+      return e3.d[0] ? (w2 = false, i = S2(i, e3, 0, n2, 1).times(e3), w2 = true, p2(i)) : (e3.s = i.s, i = e3), i;
     };
     h.toNumber = function() {
       return +this;
@@ -2553,40 +2553,40 @@ var require_index_browser = __commonJS({
       return ke(this, 8, e3, n2);
     };
     h.toPower = h.pow = function(e3) {
-      var n2, i, t2, r3, s3, o2, u = this, l = u.constructor, f = +(e3 = new l(e3));
+      var n2, i, t2, r3, s3, o2, u = this, l2 = u.constructor, f2 = +(e3 = new l2(e3));
       if (!u.d || !e3.d || !u.d[0] || !e3.d[0])
-        return new l(C(+u, f));
-      if (u = new l(u), u.eq(1))
+        return new l2(C(+u, f2));
+      if (u = new l2(u), u.eq(1))
         return u;
-      if (t2 = l.precision, s3 = l.rounding, e3.eq(1))
-        return p(u, t2, s3);
-      if (n2 = b(e3.e / m), n2 >= e3.d.length - 1 && (i = f < 0 ? -f : f) <= tn)
-        return r3 = Ue(l, u, i, t2), e3.s < 0 ? new l(1).div(r3) : p(r3, t2, s3);
+      if (t2 = l2.precision, s3 = l2.rounding, e3.eq(1))
+        return p2(u, t2, s3);
+      if (n2 = b2(e3.e / m), n2 >= e3.d.length - 1 && (i = f2 < 0 ? -f2 : f2) <= tn)
+        return r3 = Ue(l2, u, i, t2), e3.s < 0 ? new l2(1).div(r3) : p2(r3, t2, s3);
       if (o2 = u.s, o2 < 0) {
         if (n2 < e3.d.length - 1)
-          return new l(NaN);
+          return new l2(NaN);
         if (e3.d[n2] & 1 || (o2 = 1), u.e == 0 && u.d[0] == 1 && u.d.length == 1)
           return u.s = o2, u;
       }
-      return i = C(+u, f), n2 = i == 0 || !isFinite(i) ? b(f * (Math.log("0." + O(u.d)) / Math.LN10 + u.e + 1)) : new l(i + "").e, n2 > l.maxE + 1 || n2 < l.minE - 1 ? new l(n2 > 0 ? o2 / 0 : 0) : (w = false, l.rounding = u.s = 1, i = Math.min(12, (n2 + "").length), r3 = Ee(e3.times(B(u, t2 + i)), t2), r3.d && (r3 = p(r3, t2 + 5, 1), x(r3.d, t2, s3) && (n2 = t2 + 10, r3 = p(Ee(e3.times(B(u, n2 + i)), n2), n2 + 5, 1), +O(r3.d).slice(t2 + 1, t2 + 15) + 1 == 1e14 && (r3 = p(r3, t2 + 1, 0)))), r3.s = o2, w = true, l.rounding = s3, p(r3, t2, s3));
+      return i = C(+u, f2), n2 = i == 0 || !isFinite(i) ? b2(f2 * (Math.log("0." + O(u.d)) / Math.LN10 + u.e + 1)) : new l2(i + "").e, n2 > l2.maxE + 1 || n2 < l2.minE - 1 ? new l2(n2 > 0 ? o2 / 0 : 0) : (w2 = false, l2.rounding = u.s = 1, i = Math.min(12, (n2 + "").length), r3 = Ee(e3.times(B(u, t2 + i)), t2), r3.d && (r3 = p2(r3, t2 + 5, 1), x2(r3.d, t2, s3) && (n2 = t2 + 10, r3 = p2(Ee(e3.times(B(u, n2 + i)), n2), n2 + 5, 1), +O(r3.d).slice(t2 + 1, t2 + 15) + 1 == 1e14 && (r3 = p2(r3, t2 + 1, 0)))), r3.s = o2, w2 = true, l2.rounding = s3, p2(r3, t2, s3));
     };
     h.toPrecision = function(e3, n2) {
       var i, t2 = this, r3 = t2.constructor;
-      return e3 === void 0 ? i = F(t2, t2.e <= r3.toExpNeg || t2.e >= r3.toExpPos) : (_(e3, 1, $), n2 === void 0 ? n2 = r3.rounding : _(n2, 0, 8), t2 = p(new r3(t2), e3, n2), i = F(t2, e3 <= t2.e || t2.e <= r3.toExpNeg, e3)), t2.isNeg() && !t2.isZero() ? "-" + i : i;
+      return e3 === void 0 ? i = F2(t2, t2.e <= r3.toExpNeg || t2.e >= r3.toExpPos) : (_(e3, 1, $), n2 === void 0 ? n2 = r3.rounding : _(n2, 0, 8), t2 = p2(new r3(t2), e3, n2), i = F2(t2, e3 <= t2.e || t2.e <= r3.toExpNeg, e3)), t2.isNeg() && !t2.isZero() ? "-" + i : i;
     };
     h.toSignificantDigits = h.toSD = function(e3, n2) {
       var i = this, t2 = i.constructor;
-      return e3 === void 0 ? (e3 = t2.precision, n2 = t2.rounding) : (_(e3, 1, $), n2 === void 0 ? n2 = t2.rounding : _(n2, 0, 8)), p(new t2(i), e3, n2);
+      return e3 === void 0 ? (e3 = t2.precision, n2 = t2.rounding) : (_(e3, 1, $), n2 === void 0 ? n2 = t2.rounding : _(n2, 0, 8)), p2(new t2(i), e3, n2);
     };
     h.toString = function() {
-      var e3 = this, n2 = e3.constructor, i = F(e3, e3.e <= n2.toExpNeg || e3.e >= n2.toExpPos);
+      var e3 = this, n2 = e3.constructor, i = F2(e3, e3.e <= n2.toExpNeg || e3.e >= n2.toExpPos);
       return e3.isNeg() && !e3.isZero() ? "-" + i : i;
     };
     h.truncated = h.trunc = function() {
-      return p(new this.constructor(this), this.e + 1, 1);
+      return p2(new this.constructor(this), this.e + 1, 1);
     };
     h.valueOf = h.toJSON = function() {
-      var e3 = this, n2 = e3.constructor, i = F(e3, e3.e <= n2.toExpNeg || e3.e >= n2.toExpPos);
+      var e3 = this, n2 = e3.constructor, i = F2(e3, e3.e <= n2.toExpNeg || e3.e >= n2.toExpPos);
       return e3.isNeg() ? "-" + i : i;
     };
     function O(e3) {
@@ -2605,7 +2605,7 @@ var require_index_browser = __commonJS({
       if (e3 !== ~~e3 || e3 < n2 || e3 > i)
         throw Error(V + e3);
     }
-    function x(e3, n2, i, t2) {
+    function x2(e3, n2, i, t2) {
       var r3, s3, o2, u;
       for (s3 = e3[0]; s3 >= 10; s3 /= 10)
         --n2;
@@ -2631,24 +2631,24 @@ var require_index_browser = __commonJS({
       }
       return e3.precision -= i, n2;
     }
-    var S = function() {
+    var S2 = function() {
       function e3(t2, r3, s3) {
-        var o2, u = 0, l = t2.length;
-        for (t2 = t2.slice(); l--; )
-          o2 = t2[l] * r3 + u, t2[l] = o2 % s3 | 0, u = o2 / s3 | 0;
+        var o2, u = 0, l2 = t2.length;
+        for (t2 = t2.slice(); l2--; )
+          o2 = t2[l2] * r3 + u, t2[l2] = o2 % s3 | 0, u = o2 / s3 | 0;
         return u && t2.unshift(u), t2;
       }
       function n2(t2, r3, s3, o2) {
-        var u, l;
+        var u, l2;
         if (s3 != o2)
-          l = s3 > o2 ? 1 : -1;
+          l2 = s3 > o2 ? 1 : -1;
         else
-          for (u = l = 0; u < s3; u++)
+          for (u = l2 = 0; u < s3; u++)
             if (t2[u] != r3[u]) {
-              l = t2[u] > r3[u] ? 1 : -1;
+              l2 = t2[u] > r3[u] ? 1 : -1;
               break;
             }
-        return l;
+        return l2;
       }
       function i(t2, r3, s3, o2) {
         for (var u = 0; s3--; )
@@ -2656,25 +2656,25 @@ var require_index_browser = __commonJS({
         for (; !t2[0] && t2.length > 1; )
           t2.shift();
       }
-      return function(t2, r3, s3, o2, u, l) {
-        var f, c2, a, d, g, v, N, A, M, q, E, P, Y, I, le, z, W, ce, T, y, ee = t2.constructor, ae = t2.s == r3.s ? 1 : -1, R = t2.d, k = r3.d;
-        if (!R || !R[0] || !k || !k[0])
-          return new ee(!t2.s || !r3.s || (R ? k && R[0] == k[0] : !k) ? NaN : R && R[0] == 0 || !k ? ae * 0 : ae / 0);
-        for (l ? (g = 1, c2 = t2.e - r3.e) : (l = D, g = m, c2 = b(t2.e / g) - b(r3.e / g)), T = k.length, W = R.length, M = new ee(ae), q = M.d = [], a = 0; k[a] == (R[a] || 0); a++)
+      return function(t2, r3, s3, o2, u, l2) {
+        var f2, c2, a, d, g, v, N, A, M, q, E, P2, Y, I, le, z, W, ce, T2, y, ee = t2.constructor, ae = t2.s == r3.s ? 1 : -1, R = t2.d, k2 = r3.d;
+        if (!R || !R[0] || !k2 || !k2[0])
+          return new ee(!t2.s || !r3.s || (R ? k2 && R[0] == k2[0] : !k2) ? NaN : R && R[0] == 0 || !k2 ? ae * 0 : ae / 0);
+        for (l2 ? (g = 1, c2 = t2.e - r3.e) : (l2 = D, g = m, c2 = b2(t2.e / g) - b2(r3.e / g)), T2 = k2.length, W = R.length, M = new ee(ae), q = M.d = [], a = 0; k2[a] == (R[a] || 0); a++)
           ;
-        if (k[a] > (R[a] || 0) && c2--, s3 == null ? (I = s3 = ee.precision, o2 = ee.rounding) : u ? I = s3 + (t2.e - r3.e) + 1 : I = s3, I < 0)
+        if (k2[a] > (R[a] || 0) && c2--, s3 == null ? (I = s3 = ee.precision, o2 = ee.rounding) : u ? I = s3 + (t2.e - r3.e) + 1 : I = s3, I < 0)
           q.push(1), v = true;
         else {
-          if (I = I / g + 2 | 0, a = 0, T == 1) {
-            for (d = 0, k = k[0], I++; (a < W || d) && I--; a++)
-              le = d * l + (R[a] || 0), q[a] = le / k | 0, d = le % k | 0;
+          if (I = I / g + 2 | 0, a = 0, T2 == 1) {
+            for (d = 0, k2 = k2[0], I++; (a < W || d) && I--; a++)
+              le = d * l2 + (R[a] || 0), q[a] = le / k2 | 0, d = le % k2 | 0;
             v = d || a < W;
           } else {
-            for (d = l / (k[0] + 1) | 0, d > 1 && (k = e3(k, d, l), R = e3(R, d, l), T = k.length, W = R.length), z = T, E = R.slice(0, T), P = E.length; P < T; )
-              E[P++] = 0;
-            y = k.slice(), y.unshift(0), ce = k[0], k[1] >= l / 2 && ++ce;
+            for (d = l2 / (k2[0] + 1) | 0, d > 1 && (k2 = e3(k2, d, l2), R = e3(R, d, l2), T2 = k2.length, W = R.length), z = T2, E = R.slice(0, T2), P2 = E.length; P2 < T2; )
+              E[P2++] = 0;
+            y = k2.slice(), y.unshift(0), ce = k2[0], k2[1] >= l2 / 2 && ++ce;
             do
-              d = 0, f = n2(k, E, T, P), f < 0 ? (Y = E[0], T != P && (Y = Y * l + (E[1] || 0)), d = Y / ce | 0, d > 1 ? (d >= l && (d = l - 1), N = e3(k, d, l), A = N.length, P = E.length, f = n2(N, E, A, P), f == 1 && (d--, i(N, T < A ? y : k, A, l))) : (d == 0 && (f = d = 1), N = k.slice()), A = N.length, A < P && N.unshift(0), i(E, N, P, l), f == -1 && (P = E.length, f = n2(k, E, T, P), f < 1 && (d++, i(E, T < P ? y : k, P, l))), P = E.length) : f === 0 && (d++, E = [0]), q[a++] = d, f && E[0] ? E[P++] = R[z] || 0 : (E = [R[z]], P = 1);
+              d = 0, f2 = n2(k2, E, T2, P2), f2 < 0 ? (Y = E[0], T2 != P2 && (Y = Y * l2 + (E[1] || 0)), d = Y / ce | 0, d > 1 ? (d >= l2 && (d = l2 - 1), N = e3(k2, d, l2), A = N.length, P2 = E.length, f2 = n2(N, E, A, P2), f2 == 1 && (d--, i(N, T2 < A ? y : k2, A, l2))) : (d == 0 && (f2 = d = 1), N = k2.slice()), A = N.length, A < P2 && N.unshift(0), i(E, N, P2, l2), f2 == -1 && (P2 = E.length, f2 = n2(k2, E, T2, P2), f2 < 1 && (d++, i(E, T2 < P2 ? y : k2, P2, l2))), P2 = E.length) : f2 === 0 && (d++, E = [0]), q[a++] = d, f2 && E[0] ? E[P2++] = R[z] || 0 : (E = [R[z]], P2 = 1);
             while ((z++ < W || E[0] !== void 0) && I--);
             v = E[0] !== void 0;
           }
@@ -2685,13 +2685,13 @@ var require_index_browser = __commonJS({
         else {
           for (a = 1, d = q[0]; d >= 10; d /= 10)
             a++;
-          M.e = a + c2 * g - 1, p(M, u ? s3 + M.e + 1 : s3, o2, v);
+          M.e = a + c2 * g - 1, p2(M, u ? s3 + M.e + 1 : s3, o2, v);
         }
         return M;
       };
     }();
-    function p(e3, n2, i, t2) {
-      var r3, s3, o2, u, l, f, c2, a, d, g = e3.constructor;
+    function p2(e3, n2, i, t2) {
+      var r3, s3, o2, u, l2, f2, c2, a, d, g = e3.constructor;
       e:
         if (n2 != null) {
           if (a = e3.d, !a)
@@ -2699,22 +2699,22 @@ var require_index_browser = __commonJS({
           for (r3 = 1, u = a[0]; u >= 10; u /= 10)
             r3++;
           if (s3 = n2 - r3, s3 < 0)
-            s3 += m, o2 = n2, c2 = a[d = 0], l = c2 / C(10, r3 - o2 - 1) % 10 | 0;
+            s3 += m, o2 = n2, c2 = a[d = 0], l2 = c2 / C(10, r3 - o2 - 1) % 10 | 0;
           else if (d = Math.ceil((s3 + 1) / m), u = a.length, d >= u)
             if (t2) {
               for (; u++ <= d; )
                 a.push(0);
-              c2 = l = 0, r3 = 1, s3 %= m, o2 = s3 - m + 1;
+              c2 = l2 = 0, r3 = 1, s3 %= m, o2 = s3 - m + 1;
             } else
               break e;
           else {
             for (c2 = u = a[d], r3 = 1; u >= 10; u /= 10)
               r3++;
-            s3 %= m, o2 = s3 - m + r3, l = o2 < 0 ? 0 : c2 / C(10, r3 - o2 - 1) % 10 | 0;
+            s3 %= m, o2 = s3 - m + r3, l2 = o2 < 0 ? 0 : c2 / C(10, r3 - o2 - 1) % 10 | 0;
           }
-          if (t2 = t2 || n2 < 0 || a[d + 1] !== void 0 || (o2 < 0 ? c2 : c2 % C(10, r3 - o2 - 1)), f = i < 4 ? (l || t2) && (i == 0 || i == (e3.s < 0 ? 3 : 2)) : l > 5 || l == 5 && (i == 4 || t2 || i == 6 && (s3 > 0 ? o2 > 0 ? c2 / C(10, r3 - o2) : 0 : a[d - 1]) % 10 & 1 || i == (e3.s < 0 ? 8 : 7)), n2 < 1 || !a[0])
-            return a.length = 0, f ? (n2 -= e3.e + 1, a[0] = C(10, (m - n2 % m) % m), e3.e = -n2 || 0) : a[0] = e3.e = 0, e3;
-          if (s3 == 0 ? (a.length = d, u = 1, d--) : (a.length = d + 1, u = C(10, m - s3), a[d] = o2 > 0 ? (c2 / C(10, r3 - o2) % C(10, o2) | 0) * u : 0), f)
+          if (t2 = t2 || n2 < 0 || a[d + 1] !== void 0 || (o2 < 0 ? c2 : c2 % C(10, r3 - o2 - 1)), f2 = i < 4 ? (l2 || t2) && (i == 0 || i == (e3.s < 0 ? 3 : 2)) : l2 > 5 || l2 == 5 && (i == 4 || t2 || i == 6 && (s3 > 0 ? o2 > 0 ? c2 / C(10, r3 - o2) : 0 : a[d - 1]) % 10 & 1 || i == (e3.s < 0 ? 8 : 7)), n2 < 1 || !a[0])
+            return a.length = 0, f2 ? (n2 -= e3.e + 1, a[0] = C(10, (m - n2 % m) % m), e3.e = -n2 || 0) : a[0] = e3.e = 0, e3;
+          if (s3 == 0 ? (a.length = d, u = 1, d--) : (a.length = d + 1, u = C(10, m - s3), a[d] = o2 > 0 ? (c2 / C(10, r3 - o2) % C(10, o2) | 0) * u : 0), f2)
             for (; ; )
               if (d == 0) {
                 for (s3 = 1, o2 = a[0]; o2 >= 10; o2 /= 10)
@@ -2731,9 +2731,9 @@ var require_index_browser = __commonJS({
           for (s3 = a.length; a[--s3] === 0; )
             a.pop();
         }
-      return w && (e3.e > g.maxE ? (e3.d = null, e3.e = NaN) : e3.e < g.minE && (e3.e = 0, e3.d = [0])), e3;
+      return w2 && (e3.e > g.maxE ? (e3.d = null, e3.e = NaN) : e3.e < g.minE && (e3.e = 0, e3.d = [0])), e3;
     }
-    function F(e3, n2, i) {
+    function F2(e3, n2, i) {
       if (!e3.isFinite())
         return Ve(e3);
       var t2, r3 = e3.e, s3 = O(e3.d), o2 = s3.length;
@@ -2747,13 +2747,13 @@ var require_index_browser = __commonJS({
     }
     function se(e3, n2, i) {
       if (n2 > rn)
-        throw w = true, i && (e3.precision = i), Error(Le);
-      return p(new e3(te), n2, 1, true);
+        throw w2 = true, i && (e3.precision = i), Error(Le);
+      return p2(new e3(te), n2, 1, true);
     }
     function L(e3, n2, i) {
       if (n2 > ve)
         throw Error(Le);
-      return p(new e3(re), n2, i, true);
+      return p2(new e3(re), n2, i, true);
     }
     function Ze(e3) {
       var n2 = e3.length - 1, i = n2 * m + 1;
@@ -2772,14 +2772,14 @@ var require_index_browser = __commonJS({
     }
     function Ue(e3, n2, i, t2) {
       var r3, s3 = new e3(1), o2 = Math.ceil(t2 / m + 4);
-      for (w = false; ; ) {
-        if (i % 2 && (s3 = s3.times(n2), _e(s3.d, o2) && (r3 = true)), i = b(i / 2), i === 0) {
+      for (w2 = false; ; ) {
+        if (i % 2 && (s3 = s3.times(n2), _e(s3.d, o2) && (r3 = true)), i = b2(i / 2), i === 0) {
           i = s3.d.length - 1, r3 && s3.d[i] === 0 && ++s3.d[i];
           break;
         }
         n2 = n2.times(n2), _e(n2.d, o2);
       }
-      return w = true, s3;
+      return w2 = true, s3;
     }
     function Ae(e3) {
       return e3.d[e3.d.length - 1] & 1;
@@ -2795,20 +2795,20 @@ var require_index_browser = __commonJS({
       return r3;
     }
     function Ee(e3, n2) {
-      var i, t2, r3, s3, o2, u, l, f = 0, c2 = 0, a = 0, d = e3.constructor, g = d.rounding, v = d.precision;
+      var i, t2, r3, s3, o2, u, l2, f2 = 0, c2 = 0, a = 0, d = e3.constructor, g = d.rounding, v = d.precision;
       if (!e3.d || !e3.d[0] || e3.e > 17)
         return new d(e3.d ? e3.d[0] ? e3.s < 0 ? 0 : 1 / 0 : 1 : e3.s ? e3.s < 0 ? 0 : e3 : NaN);
-      for (n2 == null ? (w = false, l = v) : l = n2, u = new d(0.03125); e3.e > -2; )
+      for (n2 == null ? (w2 = false, l2 = v) : l2 = n2, u = new d(0.03125); e3.e > -2; )
         e3 = e3.times(u), a += 5;
-      for (t2 = Math.log(C(2, a)) / Math.LN10 * 2 + 5 | 0, l += t2, i = s3 = o2 = new d(1), d.precision = l; ; ) {
-        if (s3 = p(s3.times(e3), l, 1), i = i.times(++c2), u = o2.plus(S(s3, i, l, 1)), O(u.d).slice(0, l) === O(o2.d).slice(0, l)) {
+      for (t2 = Math.log(C(2, a)) / Math.LN10 * 2 + 5 | 0, l2 += t2, i = s3 = o2 = new d(1), d.precision = l2; ; ) {
+        if (s3 = p2(s3.times(e3), l2, 1), i = i.times(++c2), u = o2.plus(S2(s3, i, l2, 1)), O(u.d).slice(0, l2) === O(o2.d).slice(0, l2)) {
           for (r3 = a; r3--; )
-            o2 = p(o2.times(o2), l, 1);
+            o2 = p2(o2.times(o2), l2, 1);
           if (n2 == null)
-            if (f < 3 && x(o2.d, l - t2, g, f))
-              d.precision = l += 10, i = s3 = u = new d(1), c2 = 0, f++;
+            if (f2 < 3 && x2(o2.d, l2 - t2, g, f2))
+              d.precision = l2 += 10, i = s3 = u = new d(1), c2 = 0, f2++;
             else
-              return p(o2, d.precision = v, g, w = true);
+              return p2(o2, d.precision = v, g, w2 = true);
           else
             return d.precision = v, o2;
         }
@@ -2816,25 +2816,25 @@ var require_index_browser = __commonJS({
       }
     }
     function B(e3, n2) {
-      var i, t2, r3, s3, o2, u, l, f, c2, a, d, g = 1, v = 10, N = e3, A = N.d, M = N.constructor, q = M.rounding, E = M.precision;
+      var i, t2, r3, s3, o2, u, l2, f2, c2, a, d, g = 1, v = 10, N = e3, A = N.d, M = N.constructor, q = M.rounding, E = M.precision;
       if (N.s < 0 || !A || !A[0] || !N.e && A[0] == 1 && A.length == 1)
         return new M(A && !A[0] ? -1 / 0 : N.s != 1 ? NaN : A ? 0 : N);
-      if (n2 == null ? (w = false, c2 = E) : c2 = n2, M.precision = c2 += v, i = O(A), t2 = i.charAt(0), Math.abs(s3 = N.e) < 15e14) {
+      if (n2 == null ? (w2 = false, c2 = E) : c2 = n2, M.precision = c2 += v, i = O(A), t2 = i.charAt(0), Math.abs(s3 = N.e) < 15e14) {
         for (; t2 < 7 && t2 != 1 || t2 == 1 && i.charAt(1) > 3; )
           N = N.times(e3), i = O(N.d), t2 = i.charAt(0), g++;
         s3 = N.e, t2 > 1 ? (N = new M("0." + i), s3++) : N = new M(t2 + "." + i.slice(1));
       } else
-        return f = se(M, c2 + 2, E).times(s3 + ""), N = B(new M(t2 + "." + i.slice(1)), c2 - v).plus(f), M.precision = E, n2 == null ? p(N, E, q, w = true) : N;
-      for (a = N, l = o2 = N = S(N.minus(1), N.plus(1), c2, 1), d = p(N.times(N), c2, 1), r3 = 3; ; ) {
-        if (o2 = p(o2.times(d), c2, 1), f = l.plus(S(o2, new M(r3), c2, 1)), O(f.d).slice(0, c2) === O(l.d).slice(0, c2))
-          if (l = l.times(2), s3 !== 0 && (l = l.plus(se(M, c2 + 2, E).times(s3 + ""))), l = S(l, new M(g), c2, 1), n2 == null)
-            if (x(l.d, c2 - v, q, u))
-              M.precision = c2 += v, f = o2 = N = S(a.minus(1), a.plus(1), c2, 1), d = p(N.times(N), c2, 1), r3 = u = 1;
+        return f2 = se(M, c2 + 2, E).times(s3 + ""), N = B(new M(t2 + "." + i.slice(1)), c2 - v).plus(f2), M.precision = E, n2 == null ? p2(N, E, q, w2 = true) : N;
+      for (a = N, l2 = o2 = N = S2(N.minus(1), N.plus(1), c2, 1), d = p2(N.times(N), c2, 1), r3 = 3; ; ) {
+        if (o2 = p2(o2.times(d), c2, 1), f2 = l2.plus(S2(o2, new M(r3), c2, 1)), O(f2.d).slice(0, c2) === O(l2.d).slice(0, c2))
+          if (l2 = l2.times(2), s3 !== 0 && (l2 = l2.plus(se(M, c2 + 2, E).times(s3 + ""))), l2 = S2(l2, new M(g), c2, 1), n2 == null)
+            if (x2(l2.d, c2 - v, q, u))
+              M.precision = c2 += v, f2 = o2 = N = S2(a.minus(1), a.plus(1), c2, 1), d = p2(N.times(N), c2, 1), r3 = u = 1;
             else
-              return p(l, M.precision = E, q, w = true);
+              return p2(l2, M.precision = E, q, w2 = true);
           else
-            return M.precision = E, l;
-        l = f, r3 += 2;
+            return M.precision = E, l2;
+        l2 = f2, r3 += 2;
       }
     }
     function Ve(e3) {
@@ -2855,13 +2855,13 @@ var require_index_browser = __commonJS({
           t2 -= r3;
         for (; t2--; )
           n2 += "0";
-        e3.d.push(+n2), w && (e3.e > e3.constructor.maxE ? (e3.d = null, e3.e = NaN) : e3.e < e3.constructor.minE && (e3.e = 0, e3.d = [0]));
+        e3.d.push(+n2), w2 && (e3.e > e3.constructor.maxE ? (e3.d = null, e3.e = NaN) : e3.e < e3.constructor.minE && (e3.e = 0, e3.d = [0]));
       } else
         e3.e = 0, e3.d = [0];
       return e3;
     }
     function on(e3, n2) {
-      var i, t2, r3, s3, o2, u, l, f, c2;
+      var i, t2, r3, s3, o2, u, l2, f2, c2;
       if (n2.indexOf("_") > -1) {
         if (n2 = n2.replace(/(\d)_(?=\d)/g, "$1"), Ie.test(n2))
           return Se(e3, n2);
@@ -2875,9 +2875,9 @@ var require_index_browser = __commonJS({
         i = 8;
       else
         throw Error(V + n2);
-      for (s3 = n2.search(/p/i), s3 > 0 ? (l = +n2.slice(s3 + 1), n2 = n2.substring(2, s3)) : n2 = n2.slice(2), s3 = n2.indexOf("."), o2 = s3 >= 0, t2 = e3.constructor, o2 && (n2 = n2.replace(".", ""), u = n2.length, s3 = u - s3, r3 = Ue(t2, new t2(i), s3, s3 * 2)), f = ie(n2, i, D), c2 = f.length - 1, s3 = c2; f[s3] === 0; --s3)
-        f.pop();
-      return s3 < 0 ? new t2(e3.s * 0) : (e3.e = ue(f, c2), e3.d = f, w = false, o2 && (e3 = S(e3, r3, u * 4)), l && (e3 = e3.times(Math.abs(l) < 54 ? C(2, l) : Q.pow(2, l))), w = true, e3);
+      for (s3 = n2.search(/p/i), s3 > 0 ? (l2 = +n2.slice(s3 + 1), n2 = n2.substring(2, s3)) : n2 = n2.slice(2), s3 = n2.indexOf("."), o2 = s3 >= 0, t2 = e3.constructor, o2 && (n2 = n2.replace(".", ""), u = n2.length, s3 = u - s3, r3 = Ue(t2, new t2(i), s3, s3 * 2)), f2 = ie(n2, i, D), c2 = f2.length - 1, s3 = c2; f2[s3] === 0; --s3)
+        f2.pop();
+      return s3 < 0 ? new t2(e3.s * 0) : (e3.e = ue(f2, c2), e3.d = f2, w2 = false, o2 && (e3 = S2(e3, r3, u * 4)), l2 && (e3 = e3.times(Math.abs(l2) < 54 ? C(2, l2) : Q.pow(2, l2))), w2 = true, e3);
     }
     function un(e3, n2) {
       var i, t2 = n2.d.length;
@@ -2889,17 +2889,17 @@ var require_index_browser = __commonJS({
       return n2;
     }
     function j(e3, n2, i, t2, r3) {
-      var s3, o2, u, l, f = 1, c2 = e3.precision, a = Math.ceil(c2 / m);
-      for (w = false, l = i.times(i), u = new e3(t2); ; ) {
-        if (o2 = S(u.times(l), new e3(n2++ * n2++), c2, 1), u = r3 ? t2.plus(o2) : t2.minus(o2), t2 = S(o2.times(l), new e3(n2++ * n2++), c2, 1), o2 = u.plus(t2), o2.d[a] !== void 0) {
+      var s3, o2, u, l2, f2 = 1, c2 = e3.precision, a = Math.ceil(c2 / m);
+      for (w2 = false, l2 = i.times(i), u = new e3(t2); ; ) {
+        if (o2 = S2(u.times(l2), new e3(n2++ * n2++), c2, 1), u = r3 ? t2.plus(o2) : t2.minus(o2), t2 = S2(o2.times(l2), new e3(n2++ * n2++), c2, 1), o2 = u.plus(t2), o2.d[a] !== void 0) {
           for (s3 = a; o2.d[s3] === u.d[s3] && s3--; )
             ;
           if (s3 == -1)
             break;
         }
-        s3 = u, u = t2, t2 = o2, o2 = s3, f++;
+        s3 = u, u = t2, t2 = o2, o2 = s3, f2++;
       }
-      return w = true, o2.d.length = a + 1, o2;
+      return w2 = true, o2.d.length = a + 1, o2;
     }
     function fe(e3, n2) {
       for (var i = e3; --n2; )
@@ -2920,30 +2920,30 @@ var require_index_browser = __commonJS({
       return n2.minus(r3).abs();
     }
     function ke(e3, n2, i, t2) {
-      var r3, s3, o2, u, l, f, c2, a, d, g = e3.constructor, v = i !== void 0;
+      var r3, s3, o2, u, l2, f2, c2, a, d, g = e3.constructor, v = i !== void 0;
       if (v ? (_(i, 1, $), t2 === void 0 ? t2 = g.rounding : _(t2, 0, 8)) : (i = g.precision, t2 = g.rounding), !e3.isFinite())
         c2 = Ve(e3);
       else {
-        for (c2 = F(e3), o2 = c2.indexOf("."), v ? (r3 = 2, n2 == 16 ? i = i * 4 - 3 : n2 == 8 && (i = i * 3 - 2)) : r3 = n2, o2 >= 0 && (c2 = c2.replace(".", ""), d = new g(1), d.e = c2.length - o2, d.d = ie(F(d), 10, r3), d.e = d.d.length), a = ie(c2, 10, r3), s3 = l = a.length; a[--l] == 0; )
+        for (c2 = F2(e3), o2 = c2.indexOf("."), v ? (r3 = 2, n2 == 16 ? i = i * 4 - 3 : n2 == 8 && (i = i * 3 - 2)) : r3 = n2, o2 >= 0 && (c2 = c2.replace(".", ""), d = new g(1), d.e = c2.length - o2, d.d = ie(F2(d), 10, r3), d.e = d.d.length), a = ie(c2, 10, r3), s3 = l2 = a.length; a[--l2] == 0; )
           a.pop();
         if (!a[0])
           c2 = v ? "0p+0" : "0";
         else {
-          if (o2 < 0 ? s3-- : (e3 = new g(e3), e3.d = a, e3.e = s3, e3 = S(e3, d, i, t2, 0, r3), a = e3.d, s3 = e3.e, f = Te), o2 = a[i], u = r3 / 2, f = f || a[i + 1] !== void 0, f = t2 < 4 ? (o2 !== void 0 || f) && (t2 === 0 || t2 === (e3.s < 0 ? 3 : 2)) : o2 > u || o2 === u && (t2 === 4 || f || t2 === 6 && a[i - 1] & 1 || t2 === (e3.s < 0 ? 8 : 7)), a.length = i, f)
+          if (o2 < 0 ? s3-- : (e3 = new g(e3), e3.d = a, e3.e = s3, e3 = S2(e3, d, i, t2, 0, r3), a = e3.d, s3 = e3.e, f2 = Te), o2 = a[i], u = r3 / 2, f2 = f2 || a[i + 1] !== void 0, f2 = t2 < 4 ? (o2 !== void 0 || f2) && (t2 === 0 || t2 === (e3.s < 0 ? 3 : 2)) : o2 > u || o2 === u && (t2 === 4 || f2 || t2 === 6 && a[i - 1] & 1 || t2 === (e3.s < 0 ? 8 : 7)), a.length = i, f2)
             for (; ++a[--i] > r3 - 1; )
               a[i] = 0, i || (++s3, a.unshift(1));
-          for (l = a.length; !a[l - 1]; --l)
+          for (l2 = a.length; !a[l2 - 1]; --l2)
             ;
-          for (o2 = 0, c2 = ""; o2 < l; o2++)
+          for (o2 = 0, c2 = ""; o2 < l2; o2++)
             c2 += we.charAt(a[o2]);
           if (v) {
-            if (l > 1)
+            if (l2 > 1)
               if (n2 == 16 || n2 == 8) {
-                for (o2 = n2 == 16 ? 4 : 3, --l; l % o2; l++)
+                for (o2 = n2 == 16 ? 4 : 3, --l2; l2 % o2; l2++)
                   c2 += "0";
-                for (a = ie(c2, r3, n2), l = a.length; !a[l - 1]; --l)
+                for (a = ie(c2, r3, n2), l2 = a.length; !a[l2 - 1]; --l2)
                   ;
-                for (o2 = 1, c2 = "1."; o2 < l; o2++)
+                for (o2 = 1, c2 = "1."; o2 < l2; o2++)
                   c2 += we.charAt(a[o2]);
               } else
                 c2 = c2.charAt(0) + "." + c2.slice(1);
@@ -2952,11 +2952,11 @@ var require_index_browser = __commonJS({
             for (; ++s3; )
               c2 = "0" + c2;
             c2 = "0." + c2;
-          } else if (++s3 > l)
-            for (s3 -= l; s3--; )
+          } else if (++s3 > l2)
+            for (s3 -= l2; s3--; )
               c2 += "0";
           else
-            s3 < l && (c2 = c2.slice(0, s3) + "." + c2.slice(s3));
+            s3 < l2 && (c2 = c2.slice(0, s3) + "." + c2.slice(s3));
         }
         c2 = (n2 == 16 ? "0x" : n2 == 2 ? "0b" : n2 == 8 ? "0o" : "") + c2;
       }
@@ -2993,13 +2993,13 @@ var require_index_browser = __commonJS({
     function mn(e3, n2) {
       e3 = new this(e3), n2 = new this(n2);
       var i, t2 = this.precision, r3 = this.rounding, s3 = t2 + 4;
-      return !e3.s || !n2.s ? i = new this(NaN) : !e3.d && !n2.d ? (i = L(this, s3, 1).times(n2.s > 0 ? 0.25 : 0.75), i.s = e3.s) : !n2.d || e3.isZero() ? (i = n2.s < 0 ? L(this, t2, r3) : new this(0), i.s = e3.s) : !e3.d || n2.isZero() ? (i = L(this, s3, 1).times(0.5), i.s = e3.s) : n2.s < 0 ? (this.precision = s3, this.rounding = 1, i = this.atan(S(e3, n2, s3, 1)), n2 = L(this, s3, 1), this.precision = t2, this.rounding = r3, i = e3.s < 0 ? i.minus(n2) : i.plus(n2)) : i = this.atan(S(e3, n2, s3, 1)), i;
+      return !e3.s || !n2.s ? i = new this(NaN) : !e3.d && !n2.d ? (i = L(this, s3, 1).times(n2.s > 0 ? 0.25 : 0.75), i.s = e3.s) : !n2.d || e3.isZero() ? (i = n2.s < 0 ? L(this, t2, r3) : new this(0), i.s = e3.s) : !e3.d || n2.isZero() ? (i = L(this, s3, 1).times(0.5), i.s = e3.s) : n2.s < 0 ? (this.precision = s3, this.rounding = 1, i = this.atan(S2(e3, n2, s3, 1)), n2 = L(this, s3, 1), this.precision = t2, this.rounding = r3, i = e3.s < 0 ? i.minus(n2) : i.plus(n2)) : i = this.atan(S2(e3, n2, s3, 1)), i;
     }
     function wn(e3) {
       return new this(e3).cbrt();
     }
     function Nn(e3) {
-      return p(e3 = new this(e3), e3.e + 1, 2);
+      return p2(e3 = new this(e3), e3.e + 1, 2);
     }
     function vn(e3, n2, i) {
       return new this(e3).clamp(n2, i);
@@ -3010,7 +3010,7 @@ var require_index_browser = __commonJS({
       var n2, i, t2, r3 = e3.defaults === true, s3 = ["precision", 1, $, "rounding", 0, 8, "toExpNeg", -H, 0, "toExpPos", 0, H, "maxE", 0, H, "minE", -H, 0, "modulo", 0, 9];
       for (n2 = 0; n2 < s3.length; n2 += 3)
         if (i = s3[n2], r3 && (this[i] = Ne[i]), (t2 = e3[i]) !== void 0)
-          if (b(t2) === t2 && t2 >= s3[n2 + 1] && t2 <= s3[n2 + 2])
+          if (b2(t2) === t2 && t2 >= s3[n2 + 1] && t2 <= s3[n2 + 2])
             this[i] = t2;
           else
             throw Error(V + i + ": " + t2);
@@ -3036,31 +3036,31 @@ var require_index_browser = __commonJS({
     function He(e3) {
       var n2, i, t2;
       function r3(s3) {
-        var o2, u, l, f = this;
-        if (!(f instanceof r3))
+        var o2, u, l2, f2 = this;
+        if (!(f2 instanceof r3))
           return new r3(s3);
-        if (f.constructor = r3, qe(s3)) {
-          f.s = s3.s, w ? !s3.d || s3.e > r3.maxE ? (f.e = NaN, f.d = null) : s3.e < r3.minE ? (f.e = 0, f.d = [0]) : (f.e = s3.e, f.d = s3.d.slice()) : (f.e = s3.e, f.d = s3.d ? s3.d.slice() : s3.d);
+        if (f2.constructor = r3, qe(s3)) {
+          f2.s = s3.s, w2 ? !s3.d || s3.e > r3.maxE ? (f2.e = NaN, f2.d = null) : s3.e < r3.minE ? (f2.e = 0, f2.d = [0]) : (f2.e = s3.e, f2.d = s3.d.slice()) : (f2.e = s3.e, f2.d = s3.d ? s3.d.slice() : s3.d);
           return;
         }
-        if (l = typeof s3, l === "number") {
+        if (l2 = typeof s3, l2 === "number") {
           if (s3 === 0) {
-            f.s = 1 / s3 < 0 ? -1 : 1, f.e = 0, f.d = [0];
+            f2.s = 1 / s3 < 0 ? -1 : 1, f2.e = 0, f2.d = [0];
             return;
           }
-          if (s3 < 0 ? (s3 = -s3, f.s = -1) : f.s = 1, s3 === ~~s3 && s3 < 1e7) {
+          if (s3 < 0 ? (s3 = -s3, f2.s = -1) : f2.s = 1, s3 === ~~s3 && s3 < 1e7) {
             for (o2 = 0, u = s3; u >= 10; u /= 10)
               o2++;
-            w ? o2 > r3.maxE ? (f.e = NaN, f.d = null) : o2 < r3.minE ? (f.e = 0, f.d = [0]) : (f.e = o2, f.d = [s3]) : (f.e = o2, f.d = [s3]);
+            w2 ? o2 > r3.maxE ? (f2.e = NaN, f2.d = null) : o2 < r3.minE ? (f2.e = 0, f2.d = [0]) : (f2.e = o2, f2.d = [s3]) : (f2.e = o2, f2.d = [s3]);
             return;
           } else if (s3 * 0 !== 0) {
-            s3 || (f.s = NaN), f.e = NaN, f.d = null;
+            s3 || (f2.s = NaN), f2.e = NaN, f2.d = null;
             return;
           }
-          return Se(f, s3.toString());
-        } else if (l !== "string")
+          return Se(f2, s3.toString());
+        } else if (l2 !== "string")
           throw Error(V + s3);
-        return (u = s3.charCodeAt(0)) === 45 ? (s3 = s3.slice(1), f.s = -1) : (u === 43 && (s3 = s3.slice(1)), f.s = 1), Ie.test(s3) ? Se(f, s3) : on(f, s3);
+        return (u = s3.charCodeAt(0)) === 45 ? (s3 = s3.slice(1), f2.s = -1) : (u === 43 && (s3 = s3.slice(1)), f2.s = 1), Ie.test(s3) ? Se(f2, s3) : on(f2, s3);
       }
       if (r3.prototype = h, r3.ROUND_UP = 0, r3.ROUND_DOWN = 1, r3.ROUND_CEIL = 2, r3.ROUND_FLOOR = 3, r3.ROUND_HALF_UP = 4, r3.ROUND_HALF_DOWN = 5, r3.ROUND_HALF_EVEN = 6, r3.ROUND_HALF_CEIL = 7, r3.ROUND_HALF_FLOOR = 8, r3.EUCLID = 9, r3.config = r3.set = En, r3.clone = He, r3.isDecimal = qe, r3.abs = fn, r3.acos = ln, r3.acosh = cn, r3.add = an, r3.asin = dn, r3.asinh = hn, r3.atan = pn, r3.atanh = gn, r3.atan2 = mn, r3.cbrt = wn, r3.ceil = Nn, r3.clamp = vn, r3.cos = Sn, r3.cosh = kn, r3.div = Mn, r3.exp = Cn, r3.floor = On, r3.hypot = Pn, r3.ln = Rn, r3.log = bn, r3.log10 = _n, r3.log2 = An, r3.max = qn, r3.min = Tn, r3.mod = Ln, r3.mul = Dn, r3.pow = Fn, r3.random = In, r3.round = Zn, r3.sign = Un, r3.sin = Bn, r3.sinh = Vn, r3.sqrt = $n, r3.sub = Hn, r3.sum = jn, r3.tan = Wn, r3.tanh = Gn, r3.trunc = Jn, e3 === void 0 && (e3 = {}), e3 && e3.defaults !== true)
         for (t2 = ["precision", "rounding", "toExpNeg", "toExpPos", "maxE", "minE", "modulo", "crypto"], n2 = 0; n2 < t2.length; )
@@ -3074,19 +3074,19 @@ var require_index_browser = __commonJS({
       return new this(e3).exp();
     }
     function On(e3) {
-      return p(e3 = new this(e3), e3.e + 1, 3);
+      return p2(e3 = new this(e3), e3.e + 1, 3);
     }
     function Pn() {
       var e3, n2, i = new this(0);
-      for (w = false, e3 = 0; e3 < arguments.length; )
+      for (w2 = false, e3 = 0; e3 < arguments.length; )
         if (n2 = new this(arguments[e3++]), n2.d)
           i.d && (i = i.plus(n2.times(n2)));
         else {
           if (n2.s)
-            return w = true, new this(1 / 0);
+            return w2 = true, new this(1 / 0);
           i = n2;
         }
-      return w = true, i.sqrt();
+      return w2 = true, i.sqrt();
     }
     function qe(e3) {
       return e3 instanceof Q || e3 && e3.toStringTag === Fe || false;
@@ -3147,7 +3147,7 @@ var require_index_browser = __commonJS({
       return o2.e = i, o2.d = u, o2;
     }
     function Zn(e3) {
-      return p(e3 = new this(e3), e3.e + 1, this.rounding);
+      return p2(e3 = new this(e3), e3.e + 1, this.rounding);
     }
     function Un(e3) {
       return e3 = new this(e3), e3.d ? e3.d[0] ? e3.s : 0 * e3.s : e3.s || NaN;
@@ -3166,9 +3166,9 @@ var require_index_browser = __commonJS({
     }
     function jn() {
       var e3 = 0, n2 = arguments, i = new this(n2[e3]);
-      for (w = false; i.s && ++e3 < n2.length; )
+      for (w2 = false; i.s && ++e3 < n2.length; )
         i = i.plus(n2[e3]);
-      return w = true, p(i, this.precision, this.rounding);
+      return w2 = true, p2(i, this.precision, this.rounding);
     }
     function Wn(e3) {
       return new this(e3).tan();
@@ -3177,7 +3177,7 @@ var require_index_browser = __commonJS({
       return new this(e3).tanh();
     }
     function Jn(e3) {
-      return p(e3 = new this(e3), e3.e + 1, 1);
+      return p2(e3 = new this(e3), e3.e + 1, 1);
     }
     h[Symbol.for("nodejs.util.inspect.custom")] = h.toString;
     h[Symbol.toStringTag] = "Decimal";
@@ -3459,6 +3459,180 @@ var require_default2 = __commonJS({
   }
 });
 
+// node_modules/@prisma/client/scripts/default-index.js
+var require_default_index = __commonJS({
+  "node_modules/@prisma/client/scripts/default-index.js"(exports, module) {
+    "use strict";
+    var __defProp2 = Object.defineProperty;
+    var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
+    var __getOwnPropNames2 = Object.getOwnPropertyNames;
+    var __hasOwnProp2 = Object.prototype.hasOwnProperty;
+    var __export2 = (target, all) => {
+      for (var name in all)
+        __defProp2(target, name, { get: all[name], enumerable: true });
+    };
+    var __copyProps2 = (to, from, except, desc) => {
+      if (from && typeof from === "object" || typeof from === "function") {
+        for (let key2 of __getOwnPropNames2(from))
+          if (!__hasOwnProp2.call(to, key2) && key2 !== except)
+            __defProp2(to, key2, { get: () => from[key2], enumerable: !(desc = __getOwnPropDesc2(from, key2)) || desc.enumerable });
+      }
+      return to;
+    };
+    var __toCommonJS = (mod) => __copyProps2(__defProp2({}, "__esModule", { value: true }), mod);
+    var default_index_exports = {};
+    __export2(default_index_exports, {
+      Prisma: () => Prisma,
+      PrismaClient: () => PrismaClient2,
+      default: () => default_index_default
+    });
+    module.exports = __toCommonJS(default_index_exports);
+    var prisma2 = {
+      enginesVersion: "605197351a3c8bdd595af2d2a9bc3025bca48ea2"
+    };
+    var version = "5.22.0";
+    var clientVersion = version;
+    var PrismaClient2 = class {
+      constructor() {
+        throw new Error('@prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.');
+      }
+    };
+    function defineExtension(ext) {
+      if (typeof ext === "function") {
+        return ext;
+      }
+      return (client) => client.$extends(ext);
+    }
+    function getExtensionContext(that) {
+      return that;
+    }
+    var Prisma = {
+      defineExtension,
+      getExtensionContext,
+      prismaVersion: { client: clientVersion, engine: prisma2.enginesVersion }
+    };
+    var default_index_default = { Prisma };
+  }
+});
+
+// node_modules/@prisma/extension-accelerate/dist/index.js
+function f(a, n2) {
+  let [c2 = 0, u = 0, m = 0] = a.split(".").map(Number), [o2 = 0, h = 0, i = 0] = n2.split(".").map(Number), r3 = o2 - c2, e3 = h - u, t2 = i - m;
+  return r3 || e3 || t2;
+}
+function p() {
+  let a = import_default_index2.default.Prisma.prismaVersion;
+  return [F(), `PrismaEngine/${a.engine}`, `PrismaClient/${a.client}`].join(" ");
+}
+function F() {
+  return typeof navigator < "u" ? navigator.userAgent : typeof process < "u" && typeof process.versions < "u" ? `Node/${process.versions.node} (${process.platform}; ${process.arch})` : "EdgeRuntime" in globalThis ? "Vercel-Edge-Runtime" : "UnknownRuntime";
+}
+function S(a) {
+  let n2 = p(), c2;
+  return async (u) => {
+    let { args: m } = u, { cacheStrategy: o2, __accelerateInfo: h = false, ...i } = m, r3 = null, { __internalParams: e3, query: t2 } = u;
+    return e3.customDataProxyFetch = () => async (s3, d) => {
+      let A = new Array();
+      typeof o2?.ttl == "number" && A.push(`max-age=${o2.ttl}`), typeof o2?.swr == "number" && A.push(`stale-while-revalidate=${o2.swr}`);
+      let y = o2?.tags?.join(",") ?? "";
+      d.headers = { ...d.headers, "cache-control": A.length > 0 ? A.join(",") : "no-cache", "user-agent": n2, ...y.length > 0 ? { "accelerate-cache-tags": y } : {} }, c2 && (d.headers["accelerate-query-engine-jwt"] = c2);
+      try {
+        let g = await a(s3, d);
+        return r3 = { cacheStatus: g.headers.get("accelerate-cache-status"), lastModified: new Date(g.headers.get("last-modified") ?? ""), region: g.headers.get("cf-ray")?.split("-")[1] ?? "unspecified", requestId: g.headers.get("cf-ray") ?? "unspecified", signature: g.headers.get("accelerate-signature") ?? "unspecified" }, c2 = g.headers.get("accelerate-query-engine-jwt") ?? void 0, g;
+      } catch {
+        throw new Error(x);
+      }
+    }, h ? { data: await t2(i, e3), info: r3 } : t2(i, e3);
+  };
+}
+function T(a) {
+  let n2 = f("5.1.0", import_default_index.default.Prisma.prismaVersion.client) >= 0;
+  return import_default_index.default.Prisma.defineExtension((c2) => {
+    let { apiKeyPromise: u, baseURL: m } = b(c2), o2 = S(a);
+    async function h(r3) {
+      let e3 = await u;
+      if (!e3)
+        return { requestId: "unspecified" };
+      let t2;
+      try {
+        t2 = await a(new URL("/invalidate", m).href, { method: "POST", headers: { authorization: `Bearer ${e3}`, "content-type": "application/json" }, body: JSON.stringify(r3) });
+      } catch {
+        throw new Error(x);
+      }
+      if (!t2?.ok) {
+        let s3 = await t2.text();
+        throw new Error(`Failed to invalidate Accelerate cache. Response was ${t2.status} ${t2.statusText}. ${s3}`);
+      }
+      return t2.body?.cancel(), { requestId: t2.headers.get("cf-ray") ?? "unspecified" };
+    }
+    let i = c2.$extends({ name: P, query: { $allModels: { $allOperations: o2 } } });
+    return i.$extends({ name: P, client: { $accelerate: { invalidate: (r3) => h(r3), invalidateAll: () => h({ tags: "all" }) } }, model: { $allModels: { aggregate(r3) {
+      let e3 = import_default_index.default.Prisma.getExtensionContext(this), t2 = n2 ? e3.$parent[e3.$name] : i[e3.name], s3 = t2.aggregate(r3);
+      return Object.assign(s3, { withAccelerateInfo() {
+        return t2.aggregate({ ...r3, __accelerateInfo: true });
+      } });
+    }, count(r3) {
+      let e3 = import_default_index.default.Prisma.getExtensionContext(this), t2 = n2 ? e3.$parent[e3.$name] : i[e3.name], s3 = t2.count(r3);
+      return Object.assign(s3, { withAccelerateInfo() {
+        return t2.count({ ...r3, __accelerateInfo: true });
+      } });
+    }, findFirst(r3) {
+      let e3 = import_default_index.default.Prisma.getExtensionContext(this), t2 = n2 ? e3.$parent[e3.$name] : i[e3.name], s3 = t2.findFirst(r3);
+      return Object.assign(s3, { withAccelerateInfo() {
+        return t2.findFirst({ ...r3, __accelerateInfo: true });
+      } });
+    }, findFirstOrThrow(r3) {
+      let e3 = import_default_index.default.Prisma.getExtensionContext(this), t2 = n2 ? e3.$parent[e3.$name] : i[e3.name], s3 = t2.findFirstOrThrow(r3);
+      return Object.assign(s3, { withAccelerateInfo() {
+        return t2.findFirstOrThrow({ ...r3, __accelerateInfo: true });
+      } });
+    }, findMany(r3) {
+      let e3 = import_default_index.default.Prisma.getExtensionContext(this), t2 = n2 ? e3.$parent[e3.$name] : i[e3.name], s3 = t2.findMany(r3);
+      return Object.assign(s3, { withAccelerateInfo() {
+        return t2.findMany({ ...r3, __accelerateInfo: true });
+      } });
+    }, findUnique(r3) {
+      let e3 = import_default_index.default.Prisma.getExtensionContext(this), t2 = n2 ? e3.$parent[e3.$name] : i[e3.name], s3 = t2.findUnique(r3);
+      return Object.assign(s3, { withAccelerateInfo() {
+        return t2.findUnique({ ...r3, __accelerateInfo: true });
+      } });
+    }, findUniqueOrThrow(r3) {
+      let e3 = import_default_index.default.Prisma.getExtensionContext(this), t2 = n2 ? e3.$parent[e3.$name] : i[e3.name], s3 = t2.findUniqueOrThrow(r3);
+      return Object.assign(s3, { withAccelerateInfo() {
+        return t2.findUniqueOrThrow({ ...r3, __accelerateInfo: true });
+      } });
+    }, groupBy(r3) {
+      let e3 = import_default_index.default.Prisma.getExtensionContext(this), t2 = n2 ? e3.$parent[e3.$name] : i[e3.name], s3 = t2.groupBy(r3);
+      return Object.assign(s3, { withAccelerateInfo() {
+        return t2.groupBy({ ...r3, __accelerateInfo: true });
+      } });
+    } } } });
+  });
+}
+function b(a) {
+  let n2 = Reflect.get(a, "_accelerateEngineConfig");
+  try {
+    let { host: c2, hostname: u, protocol: m, searchParams: o2 } = new URL(n2?.accelerateUtils?.resolveDatasourceUrl?.(n2));
+    if (m === "prisma+postgres:" && (u === "localhost" || u === "127.0.0.1"))
+      return { apiKeyPromise: Promise.resolve(o2.get("api_key")), baseURL: new URL(`http://${c2}`) };
+  } catch {
+  }
+  return { apiKeyPromise: a._engine.start().then(() => a._engine.apiKey?.() ?? null), baseURL: new URL("https://accelerate.prisma-data.net") };
+}
+function k(a) {
+  let n2 = a?.fetch ?? fetch;
+  return T(n2);
+}
+var import_default_index, import_default_index2, P, x;
+var init_dist = __esm({
+  "node_modules/@prisma/extension-accelerate/dist/index.js"() {
+    import_default_index = __toESM(require_default_index(), 1);
+    import_default_index2 = __toESM(require_default_index(), 1);
+    P = "@prisma/extension-accelerate";
+    x = "Unable to connect to the Accelerate API. This may be due to a network or DNS issue. Please check your connection and the Accelerate connection string. For details, visit https://www.prisma.io/docs/accelerate/troubleshoot.";
+  }
+});
+
 // .svelte-kit/output/server/chunks/prisma.js
 function createPrismaClient(orgId) {
   if (!orgId) {
@@ -3516,9 +3690,14 @@ var import_client, globalForPrisma, prismaSingleton, orgModels, prisma;
 var init_prisma = __esm({
   ".svelte-kit/output/server/chunks/prisma.js"() {
     import_client = __toESM(require_default2(), 1);
+    init_dist();
     globalForPrisma = globalThis;
-    prismaSingleton = globalForPrisma.prisma ?? new import_client.PrismaClient();
+    prismaSingleton = globalForPrisma.prisma ?? new import_client.PrismaClient({
+      log: true ? ["query", "info", "warn", "error"] : ["warn", "error"]
+    }).$extends(k());
     if (true) {
+      globalForPrisma.prisma = prismaSingleton;
+    } else {
       globalForPrisma.prisma = prismaSingleton;
     }
     orgModels = ["WorkOrder", "User", "Site"];
@@ -3534,15 +3713,20 @@ async function verifyPassword(password, hash3) {
   return bcryptjs_default.compare(password, hash3);
 }
 async function createSession(userId) {
-  const expiresAt = /* @__PURE__ */ new Date();
-  expiresAt.setDate(expiresAt.getDate() + SESSION_EXPIRY_DAYS);
-  const session = await prisma.session.create({
-    data: {
-      userId,
-      expiresAt
-    }
-  });
-  return session.id;
+  try {
+    const expiresAt = /* @__PURE__ */ new Date();
+    expiresAt.setDate(expiresAt.getDate() + SESSION_EXPIRY_DAYS);
+    const session = await prisma.session.create({
+      data: {
+        userId,
+        expiresAt
+      }
+    });
+    return session.id;
+  } catch (error2) {
+    console.error("Failed to create session:", error2);
+    throw new Error("Failed to create session");
+  }
 }
 async function validateSession(cookies) {
   const sessionId = cookies.get(SESSION_COOKIE);
@@ -3788,7 +3972,7 @@ function uneval(value, replacer) {
   }
   walk(value);
   const names = /* @__PURE__ */ new Map();
-  Array.from(counts).filter((entry) => entry[1] > 1).sort((a, b) => b[1] - a[1]).forEach((entry, i) => {
+  Array.from(counts).filter((entry) => entry[1] > 1).sort((a, b2) => b2[1] - a[1]).forEach((entry, i) => {
     names.set(entry[0], get_name(i));
   });
   function stringify2(thing) {
@@ -3878,7 +4062,7 @@ function uneval(value, replacer) {
         case "Map":
           values.push(`new Map`);
           statements.push(
-            `${name}.${Array.from(thing).map(([k, v]) => `set(${stringify2(k)}, ${stringify2(v)})`).join(".")}`
+            `${name}.${Array.from(thing).map(([k2, v]) => `set(${stringify2(k2)}, ${stringify2(v)})`).join(".")}`
           );
           break;
         default:
@@ -3973,7 +4157,7 @@ function stringify(value, reducers) {
     custom.push({ key: key2, fn: reducers[key2] });
   }
   const keys = [];
-  let p = 0;
+  let p2 = 0;
   function flatten(thing) {
     if (typeof thing === "function") {
       throw new DevalueError(`Cannot stringify a function`, keys);
@@ -3990,7 +4174,7 @@ function stringify(value, reducers) {
       return NEGATIVE_INFINITY;
     if (thing === 0 && 1 / thing < 0)
       return NEGATIVE_ZERO;
-    const index18 = p++;
+    const index18 = p2++;
     indexes.set(thing, index18);
     for (const { key: key2, fn } of custom) {
       const value2 = fn(thing);
@@ -4701,7 +4885,7 @@ var init__ = __esm({
     index = 0;
     component = async () => component_cache ??= (await Promise.resolve().then(() => (init_layout_svelte(), layout_svelte_exports))).default;
     server_id = "src/routes/+layout.server.ts";
-    imports = ["_app/immutable/nodes/0.d6773105.js", "_app/immutable/chunks/_layout.2017d786.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/websocket.9dc1f895.js", "_app/immutable/chunks/index.40078100.js", "_app/immutable/chunks/stores.8c799d02.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/forms.b92a16ff.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/each.12b2b3cf.js"];
+    imports = ["_app/immutable/chunks/0.05414af0.js", "_app/immutable/chunks/_layout.03a00b80.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/stores.2956f071.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/index.40078100.js", "_app/immutable/chunks/forms.c4a6f134.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/each.12b2b3cf.js"];
     stylesheets = ["_app/immutable/assets/_layout.bcb74662.css"];
     fonts = [];
   }
@@ -4740,7 +4924,7 @@ var init__2 = __esm({
   ".svelte-kit/output/server/nodes/1.js"() {
     index2 = 1;
     component2 = async () => component_cache2 ??= (await Promise.resolve().then(() => (init_error_svelte(), error_svelte_exports))).default;
-    imports2 = ["_app/immutable/nodes/1.dc98e6c7.js", "_app/immutable/chunks/error.8bd22d19.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/stores.8c799d02.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/index.40078100.js"];
+    imports2 = ["_app/immutable/chunks/1.07229c09.js", "_app/immutable/chunks/error.75a5ba9e.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/stores.2956f071.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/index.40078100.js"];
     stylesheets2 = [];
     fonts2 = [];
   }
@@ -4896,9 +5080,9 @@ var init_page_server_ts2 = __esm({
     actions = {
       create: async (event) => {
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
-        const name = formData.get("name");
-        const roomId = formData.get("roomId");
+        const formData2 = await event.request.formData();
+        const name = formData2.get("name");
+        const roomId = formData2.get("roomId");
         if (!name || name.trim() === "") {
           return fail(400, { error: "Asset name is required" });
         }
@@ -4923,8 +5107,8 @@ var init_page_server_ts2 = __esm({
           return fail(403, { error: "Permission denied. Only managers can delete assets." });
         }
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
-        const assetId = formData.get("assetId");
+        const formData2 = await event.request.formData();
+        const assetId = formData2.get("assetId");
         if (!assetId) {
           return fail(400, { error: "Asset ID is required" });
         }
@@ -4943,10 +5127,10 @@ var init_page_server_ts2 = __esm({
       },
       update: async (event) => {
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
-        const assetId = formData.get("assetId");
-        const name = formData.get("name");
-        const roomId = formData.get("roomId");
+        const formData2 = await event.request.formData();
+        const assetId = formData2.get("assetId");
+        const name = formData2.get("name");
+        const roomId = formData2.get("roomId");
         if (!assetId) {
           return fail(400, { error: "Asset ID is required" });
         }
@@ -5019,7 +5203,7 @@ var init__4 = __esm({
     index4 = 3;
     component4 = async () => component_cache4 ??= (await Promise.resolve().then(() => (init_page_svelte2(), page_svelte_exports2))).default;
     server_id3 = "src/routes/assets/+page.server.ts";
-    imports4 = ["_app/immutable/chunks/3.d9f2a97a.js", "_app/immutable/chunks/_page.b2ac7d04.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.b92a16ff.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/index.40078100.js"];
+    imports4 = ["_app/immutable/nodes/3.c8891b4b.js", "_app/immutable/chunks/_page.24714e0d.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.c4a6f134.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/index.40078100.js"];
     stylesheets4 = [];
     fonts4 = [];
   }
@@ -5094,10 +5278,10 @@ var init_page_server_ts3 = __esm({
     actions2 = {
       update: async (event) => {
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
+        const formData2 = await event.request.formData();
         const { id } = event.params;
-        const name = formData.get("name");
-        const roomId = formData.get("roomId");
+        const name = formData2.get("name");
+        const roomId = formData2.get("roomId");
         if (!name || name.trim() === "") {
           return fail(400, { error: "Asset name is required" });
         }
@@ -5188,7 +5372,7 @@ var init__5 = __esm({
     index5 = 4;
     component5 = async () => component_cache5 ??= (await Promise.resolve().then(() => (init_page_svelte3(), page_svelte_exports3))).default;
     server_id4 = "src/routes/assets/[id]/+page.server.ts";
-    imports5 = ["_app/immutable/nodes/4.f9f11874.js", "_app/immutable/chunks/_page.44ff7878.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.b92a16ff.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/index.40078100.js"];
+    imports5 = ["_app/immutable/nodes/4.f85a4408.js", "_app/immutable/chunks/_page.6d1027bf.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.c4a6f134.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/index.40078100.js"];
     stylesheets5 = [];
     fonts5 = [];
   }
@@ -5273,7 +5457,7 @@ function formatDetails(details) {
   if (!details)
     return "";
   if (typeof details === "object") {
-    return Object.entries(details).filter(([_, v]) => v != null).map(([k, v]) => `${k}: ${v}`).join(", ");
+    return Object.entries(details).filter(([_, v]) => v != null).map(([k2, v]) => `${k2}: ${v}`).join(", ");
   }
   return String(details);
 }
@@ -5342,25 +5526,37 @@ var init_page_server_ts5 = __esm({
     };
     actions3 = {
       default: async ({ request, cookies }) => {
-        const formData = await request.formData();
-        const email = formData.get("email");
-        const password = formData.get("password");
-        if (!email || !password) {
-          return fail(400, { error: "Email and password are required", email });
+        try {
+          const formData2 = await request.formData();
+          const email = formData2.get("email");
+          const password = formData2.get("password");
+          if (!email || !password) {
+            return fail(400, { error: "Email and password are required", email });
+          }
+          const user = await prisma.user.findUnique({
+            where: { email: email.toLowerCase().trim() }
+          });
+          if (!user) {
+            return fail(400, { error: "Invalid email or password", email });
+          }
+          const valid = await verifyPassword(password, user.password);
+          if (!valid) {
+            return fail(400, { error: "Invalid email or password", email });
+          }
+          const sessionId = await createSession(user.id);
+          setSessionCookie(cookies, sessionId);
+          throw redirect(303, "/dashboard");
+        } catch (error2) {
+          if (error2 && typeof error2 === "object" && "location" in error2) {
+            throw error2;
+          }
+          console.error("Login error:", error2);
+          const emailValue = formData?.get("email");
+          return fail(500, {
+            error: "An unexpected error occurred. Please try again.",
+            email: emailValue
+          });
         }
-        const user = await prisma.user.findUnique({
-          where: { email: email.toLowerCase().trim() }
-        });
-        if (!user) {
-          return fail(400, { error: "Invalid email or password", email });
-        }
-        const valid = await verifyPassword(password, user.password);
-        if (!valid) {
-          return fail(400, { error: "Invalid email or password", email });
-        }
-        const sessionId = await createSession(user.id);
-        setSessionCookie(cookies, sessionId);
-        throw redirect(303, "/dashboard");
       }
     };
   }
@@ -5404,7 +5600,7 @@ var init__7 = __esm({
     index7 = 6;
     component7 = async () => component_cache7 ??= (await Promise.resolve().then(() => (init_page_svelte5(), page_svelte_exports5))).default;
     server_id6 = "src/routes/auth/login/+page.server.ts";
-    imports7 = ["_app/immutable/chunks/6.61e7d0d9.js", "_app/immutable/chunks/_page.b4a2f7f5.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.b92a16ff.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/index.40078100.js"];
+    imports7 = ["_app/immutable/nodes/6.a694c3e8.js", "_app/immutable/chunks/_page.1ba0c55d.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.c4a6f134.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/index.40078100.js"];
     stylesheets7 = [];
     fonts7 = [];
   }
@@ -5471,13 +5667,13 @@ var init_page_server_ts7 = __esm({
     };
     actions5 = {
       default: async ({ request, cookies }) => {
-        const formData = await request.formData();
-        const orgName = formData.get("orgName");
-        const firstName = formData.get("firstName");
-        const lastName = formData.get("lastName");
-        const email = formData.get("email");
-        const password = formData.get("password");
-        const confirmPassword = formData.get("confirmPassword");
+        const formData2 = await request.formData();
+        const orgName = formData2.get("orgName");
+        const firstName = formData2.get("firstName");
+        const lastName = formData2.get("lastName");
+        const email = formData2.get("email");
+        const password = formData2.get("password");
+        const confirmPassword = formData2.get("confirmPassword");
         if (!orgName?.trim()) {
           return fail(400, { error: "Organization name is required", orgName, firstName, lastName, email });
         }
@@ -5562,7 +5758,7 @@ var init__9 = __esm({
     index9 = 8;
     component8 = async () => component_cache8 ??= (await Promise.resolve().then(() => (init_page_svelte6(), page_svelte_exports6))).default;
     server_id8 = "src/routes/auth/register/+page.server.ts";
-    imports9 = ["_app/immutable/chunks/8.b3aff02f.js", "_app/immutable/chunks/_page.70354de9.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.b92a16ff.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/index.40078100.js"];
+    imports9 = ["_app/immutable/chunks/8.f44aa075.js", "_app/immutable/chunks/_page.df02af6a.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.c4a6f134.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/index.40078100.js"];
     stylesheets9 = [];
     fonts9 = [];
   }
@@ -5752,7 +5948,7 @@ var init__10 = __esm({
     index10 = 9;
     component9 = async () => component_cache9 ??= (await Promise.resolve().then(() => (init_page_svelte7(), page_svelte_exports7))).default;
     server_id9 = "src/routes/dashboard/+page.server.ts";
-    imports10 = ["_app/immutable/nodes/9.c87e5b46.js", "_app/immutable/chunks/_page.30107082.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/websocket.9dc1f895.js", "_app/immutable/chunks/index.40078100.js"];
+    imports10 = ["_app/immutable/nodes/9.a410e085.js", "_app/immutable/chunks/_page.341c96d0.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/websocket.7498009b.js", "_app/immutable/chunks/index.40078100.js"];
     stylesheets10 = [];
     fonts10 = [];
   }
@@ -5794,10 +5990,10 @@ var init_page_server_ts9 = __esm({
         requireAuth(event);
         const prisma2 = createRequestPrisma(event);
         const userId = event.locals.user.id;
-        const formData = await event.request.formData();
-        const firstName = formData.get("firstName");
-        const lastName = formData.get("lastName");
-        const phoneNumber = formData.get("phoneNumber");
+        const formData2 = await event.request.formData();
+        const firstName = formData2.get("firstName");
+        const lastName = formData2.get("lastName");
+        const phoneNumber = formData2.get("phoneNumber");
         await prisma2.user.update({
           where: { id: userId },
           data: {
@@ -5812,10 +6008,10 @@ var init_page_server_ts9 = __esm({
         requireAuth(event);
         const prisma2 = createRequestPrisma(event);
         const userId = event.locals.user.id;
-        const formData = await event.request.formData();
-        const currentPassword = formData.get("currentPassword");
-        const newPassword = formData.get("newPassword");
-        const confirmPassword = formData.get("confirmPassword");
+        const formData2 = await event.request.formData();
+        const currentPassword = formData2.get("currentPassword");
+        const newPassword = formData2.get("newPassword");
+        const confirmPassword = formData2.get("confirmPassword");
         if (!currentPassword || !newPassword || !confirmPassword) {
           return fail(400, { passwordError: "All password fields are required" });
         }
@@ -5893,7 +6089,7 @@ var init__11 = __esm({
     index11 = 10;
     component10 = async () => component_cache10 ??= (await Promise.resolve().then(() => (init_page_svelte8(), page_svelte_exports8))).default;
     server_id10 = "src/routes/profile/+page.server.ts";
-    imports11 = ["_app/immutable/chunks/10.9ff8ceb6.js", "_app/immutable/chunks/_page.4061a8a2.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.b92a16ff.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/index.40078100.js"];
+    imports11 = ["_app/immutable/chunks/10.fe8d2825.js", "_app/immutable/chunks/_page.fbbe98cb.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.c4a6f134.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/index.40078100.js"];
     stylesheets11 = [];
     fonts11 = [];
   }
@@ -5928,8 +6124,8 @@ var init_page_server_ts10 = __esm({
     actions7 = {
       create: async (event) => {
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
-        const name = formData.get("name");
+        const formData2 = await event.request.formData();
+        const name = formData2.get("name");
         if (!name || name.trim() === "") {
           return fail(400, { error: "Site name is required" });
         }
@@ -5950,8 +6146,8 @@ var init_page_server_ts10 = __esm({
           return fail(403, { error: "Permission denied. Only managers can delete sites." });
         }
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
-        const siteId = formData.get("siteId");
+        const formData2 = await event.request.formData();
+        const siteId = formData2.get("siteId");
         if (!siteId) {
           return fail(400, { error: "Site ID is required" });
         }
@@ -5970,9 +6166,9 @@ var init_page_server_ts10 = __esm({
       },
       update: async (event) => {
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
-        const siteId = formData.get("siteId");
-        const name = formData.get("name");
+        const formData2 = await event.request.formData();
+        const siteId = formData2.get("siteId");
+        const name = formData2.get("name");
         if (!siteId) {
           return fail(400, { error: "Site ID is required" });
         }
@@ -6033,7 +6229,7 @@ var init__12 = __esm({
     index12 = 11;
     component11 = async () => component_cache11 ??= (await Promise.resolve().then(() => (init_page_svelte9(), page_svelte_exports9))).default;
     server_id11 = "src/routes/sites/+page.server.ts";
-    imports12 = ["_app/immutable/chunks/11.d95b9400.js", "_app/immutable/chunks/_page.86f53509.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.b92a16ff.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/index.40078100.js"];
+    imports12 = ["_app/immutable/chunks/11.01797213.js", "_app/immutable/chunks/_page.3fd617a7.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.c4a6f134.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/index.40078100.js"];
     stylesheets12 = [];
     fonts12 = [];
   }
@@ -6088,11 +6284,11 @@ var init_page_server_ts11 = __esm({
     actions8 = {
       createRoom: async (event) => {
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
+        const formData2 = await event.request.formData();
         const { id: siteId } = event.params;
-        const name = formData.get("name");
-        const building2 = formData.get("building");
-        const floor = formData.get("floor");
+        const name = formData2.get("name");
+        const building2 = formData2.get("building");
+        const floor = formData2.get("floor");
         if (!name || name.trim() === "") {
           return fail(400, { error: "Room name is required" });
         }
@@ -6108,9 +6304,9 @@ var init_page_server_ts11 = __esm({
       },
       updateSite: async (event) => {
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
+        const formData2 = await event.request.formData();
         const { id } = event.params;
-        const name = formData.get("name");
+        const name = formData2.get("name");
         if (!name || name.trim() === "") {
           return fail(400, { error: "Site name is required" });
         }
@@ -6122,8 +6318,8 @@ var init_page_server_ts11 = __esm({
       },
       deleteRoom: async (event) => {
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
-        const roomId = formData.get("roomId");
+        const formData2 = await event.request.formData();
+        const roomId = formData2.get("roomId");
         if (!roomId) {
           return fail(400, { error: "Room ID is required" });
         }
@@ -6134,11 +6330,11 @@ var init_page_server_ts11 = __esm({
       },
       updateRoom: async (event) => {
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
-        const roomId = formData.get("roomId");
-        const name = formData.get("name");
-        const building2 = formData.get("building");
-        const floor = formData.get("floor");
+        const formData2 = await event.request.formData();
+        const roomId = formData2.get("roomId");
+        const name = formData2.get("name");
+        const building2 = formData2.get("building");
+        const floor = formData2.get("floor");
         if (!roomId) {
           return fail(400, { error: "Room ID is required" });
         }
@@ -6211,7 +6407,7 @@ var init__13 = __esm({
     index13 = 12;
     component12 = async () => component_cache12 ??= (await Promise.resolve().then(() => (init_page_svelte10(), page_svelte_exports10))).default;
     server_id12 = "src/routes/sites/[id]/+page.server.ts";
-    imports13 = ["_app/immutable/chunks/12.b94fc86a.js", "_app/immutable/chunks/_page.a500e685.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.b92a16ff.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/index.40078100.js"];
+    imports13 = ["_app/immutable/chunks/12.8a9a46ae.js", "_app/immutable/chunks/_page.c407500e.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.c4a6f134.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/index.40078100.js"];
     stylesheets13 = [];
     fonts13 = [];
   }
@@ -6257,12 +6453,12 @@ var init_page_server_ts12 = __esm({
           return fail(403, { error: "Access denied" });
         }
         const prisma2 = createRequestPrisma(event);
-        const formData = await request.formData();
-        const email = formData.get("email");
-        const firstName = formData.get("firstName");
-        const lastName = formData.get("lastName");
-        const role = formData.get("role");
-        const password = formData.get("password");
+        const formData2 = await request.formData();
+        const email = formData2.get("email");
+        const firstName = formData2.get("firstName");
+        const lastName = formData2.get("lastName");
+        const role = formData2.get("role");
+        const password = formData2.get("password");
         if (!email?.trim()) {
           return fail(400, { error: "Email is required" });
         }
@@ -6302,9 +6498,9 @@ var init_page_server_ts12 = __esm({
           return fail(403, { error: "Access denied" });
         }
         const prisma2 = createRequestPrisma(event);
-        const formData = await request.formData();
-        const userId = formData.get("userId");
-        const role = formData.get("role");
+        const formData2 = await request.formData();
+        const userId = formData2.get("userId");
+        const role = formData2.get("role");
         if (!userId)
           return fail(400, { error: "User ID required" });
         if (!["ADMIN", "MANAGER", "TECHNICIAN"].includes(role)) {
@@ -6335,8 +6531,8 @@ var init_page_server_ts12 = __esm({
           return fail(403, { error: "Access denied" });
         }
         const prisma2 = createRequestPrisma(event);
-        const formData = await request.formData();
-        const userId = formData.get("userId");
+        const formData2 = await request.formData();
+        const userId = formData2.get("userId");
         if (!userId)
           return fail(400, { error: "User ID required" });
         if (userId === locals.user.id) {
@@ -6410,7 +6606,7 @@ var init__14 = __esm({
     index14 = 13;
     component13 = async () => component_cache13 ??= (await Promise.resolve().then(() => (init_page_svelte11(), page_svelte_exports11))).default;
     server_id13 = "src/routes/users/+page.server.ts";
-    imports14 = ["_app/immutable/chunks/13.1c42d9c0.js", "_app/immutable/chunks/_page.55d70550.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.b92a16ff.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/index.40078100.js"];
+    imports14 = ["_app/immutable/chunks/13.5703ae2e.js", "_app/immutable/chunks/_page.e6690281.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.c4a6f134.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/index.40078100.js"];
     stylesheets14 = [];
     fonts14 = [];
   }
@@ -6785,7 +6981,7 @@ var init__15 = __esm({
     index15 = 14;
     component14 = async () => component_cache14 ??= (await Promise.resolve().then(() => (init_page_svelte12(), page_svelte_exports12))).default;
     server_id14 = "src/routes/work-orders/+page.server.ts";
-    imports15 = ["_app/immutable/chunks/14.6054b7f5.js", "_app/immutable/chunks/_page.014ca7a9.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/websocket.9dc1f895.js", "_app/immutable/chunks/index.40078100.js", "_app/immutable/chunks/forms.b92a16ff.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/stores.8c799d02.js"];
+    imports15 = ["_app/immutable/chunks/14.e7ef136b.js", "_app/immutable/chunks/_page.96539268.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/websocket.7498009b.js", "_app/immutable/chunks/index.40078100.js", "_app/immutable/chunks/forms.c4a6f134.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/stores.2956f071.js"];
     stylesheets15 = [];
     fonts15 = [];
   }
@@ -6841,9 +7037,9 @@ var init_page_server_ts14 = __esm({
     actions11 = {
       updateStatus: async (event) => {
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
+        const formData2 = await event.request.formData();
         const { id } = event.params;
-        const newStatus = formData.get("status");
+        const newStatus = formData2.get("status");
         if (!newStatus) {
           return fail(400, { error: "Status is required" });
         }
@@ -6866,12 +7062,12 @@ var init_page_server_ts14 = __esm({
       },
       update: async (event) => {
         const prisma2 = createRequestPrisma(event);
-        const formData = await event.request.formData();
+        const formData2 = await event.request.formData();
         const { id } = event.params;
-        const title = formData.get("title");
-        const description = formData.get("description");
-        const assetId = formData.get("assetId");
-        const failureMode = formData.get("failureMode");
+        const title = formData2.get("title");
+        const description = formData2.get("description");
+        const assetId = formData2.get("assetId");
+        const failureMode = formData2.get("failureMode");
         if (!title || title.trim() === "") {
           return fail(400, { error: "Title is required" });
         }
@@ -6971,7 +7167,7 @@ var init__16 = __esm({
     index16 = 15;
     component15 = async () => component_cache15 ??= (await Promise.resolve().then(() => (init_page_svelte13(), page_svelte_exports13))).default;
     server_id15 = "src/routes/work-orders/[id]/+page.server.ts";
-    imports16 = ["_app/immutable/nodes/15.4cda50f6.js", "_app/immutable/chunks/_page.4b4ee9e9.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.b92a16ff.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/index.40078100.js"];
+    imports16 = ["_app/immutable/chunks/15.8c3d6188.js", "_app/immutable/chunks/_page.86b1c81a.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/each.12b2b3cf.js", "_app/immutable/chunks/index.7311d585.js", "_app/immutable/chunks/forms.c4a6f134.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/index.40078100.js"];
     stylesheets16 = [];
     fonts16 = [];
   }
@@ -7230,7 +7426,7 @@ var options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1dedr4j"
+  version_hash: "1sp7ob6"
 };
 function get_hooks() {
   return Promise.resolve().then(() => (init_hooks_server(), hooks_server_exports));
@@ -7255,17 +7451,17 @@ function negotiate(accept, types) {
       parts.push({ type, subtype, q: +q, i });
     }
   });
-  parts.sort((a, b) => {
-    if (a.q !== b.q) {
-      return b.q - a.q;
+  parts.sort((a, b2) => {
+    if (a.q !== b2.q) {
+      return b2.q - a.q;
     }
-    if (a.subtype === "*" !== (b.subtype === "*")) {
+    if (a.subtype === "*" !== (b2.subtype === "*")) {
       return a.subtype === "*" ? 1 : -1;
     }
-    if (a.type === "*" !== (b.type === "*")) {
+    if (a.type === "*" !== (b2.type === "*")) {
       return a.type === "*" ? 1 : -1;
     }
-    return a.i - b.i;
+    return a.i - b2.i;
   });
   let accepted;
   let min_priority = Infinity;
@@ -8142,10 +8338,10 @@ function sha256(data) {
   const out = init.slice(0);
   const array2 = encode(data);
   for (let i = 0; i < array2.length; i += 16) {
-    const w = array2.subarray(i, i + 16);
+    const w2 = array2.subarray(i, i + 16);
     let tmp;
     let a;
-    let b;
+    let b2;
     let out0 = out[0];
     let out1 = out[1];
     let out2 = out[2];
@@ -8156,11 +8352,11 @@ function sha256(data) {
     let out7 = out[7];
     for (let i2 = 0; i2 < 64; i2++) {
       if (i2 < 16) {
-        tmp = w[i2];
+        tmp = w2[i2];
       } else {
-        a = w[i2 + 1 & 15];
-        b = w[i2 + 14 & 15];
-        tmp = w[i2 & 15] = (a >>> 7 ^ a >>> 18 ^ a >>> 3 ^ a << 25 ^ a << 14) + (b >>> 17 ^ b >>> 19 ^ b >>> 10 ^ b << 15 ^ b << 13) + w[i2 & 15] + w[i2 + 9 & 15] | 0;
+        a = w2[i2 + 1 & 15];
+        b2 = w2[i2 + 14 & 15];
+        tmp = w2[i2 & 15] = (a >>> 7 ^ a >>> 18 ^ a >>> 3 ^ a << 25 ^ a << 14) + (b2 >>> 17 ^ b2 >>> 19 ^ b2 >>> 10 ^ b2 << 15 ^ b2 << 13) + w2[i2 & 15] + w2[i2 + 9 & 15] | 0;
       }
       tmp = tmp + out7 + (out4 >>> 6 ^ out4 >>> 11 ^ out4 >>> 25 ^ out4 << 26 ^ out4 << 21 ^ out4 << 7) + (out6 ^ out4 & (out5 ^ out6)) + key[i2];
       out7 = out6;
@@ -8188,8 +8384,8 @@ function sha256(data) {
 var init = new Uint32Array(8);
 var key = new Uint32Array(64);
 function precompute() {
-  function frac(x) {
-    return (x - Math.floor(x)) * 4294967296;
+  function frac(x2) {
+    return (x2 - Math.floor(x2)) * 4294967296;
   }
   let prime = 2;
   for (let i = 0; i < 64; prime++) {
@@ -8212,12 +8408,12 @@ function precompute() {
 function reverse_endianness(bytes) {
   for (let i = 0; i < bytes.length; i += 4) {
     const a = bytes[i + 0];
-    const b = bytes[i + 1];
+    const b2 = bytes[i + 1];
     const c2 = bytes[i + 2];
     const d = bytes[i + 3];
     bytes[i + 0] = d;
     bytes[i + 1] = c2;
-    bytes[i + 2] = b;
+    bytes[i + 2] = b2;
     bytes[i + 3] = a;
   }
 }
@@ -8236,21 +8432,21 @@ function encode(str) {
 }
 var chars2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split("");
 function base64(bytes) {
-  const l = bytes.length;
+  const l2 = bytes.length;
   let result = "";
   let i;
-  for (i = 2; i < l; i += 3) {
+  for (i = 2; i < l2; i += 3) {
     result += chars2[bytes[i - 2] >> 2];
     result += chars2[(bytes[i - 2] & 3) << 4 | bytes[i - 1] >> 4];
     result += chars2[(bytes[i - 1] & 15) << 2 | bytes[i] >> 6];
     result += chars2[bytes[i] & 63];
   }
-  if (i === l + 1) {
+  if (i === l2 + 1) {
     result += chars2[bytes[i - 2] >> 2];
     result += chars2[(bytes[i - 2] & 3) << 4];
     result += "==";
   }
-  if (i === l) {
+  if (i === l2) {
     result += chars2[bytes[i - 2] >> 2];
     result += chars2[(bytes[i - 2] & 3) << 4 | bytes[i - 1] >> 4];
     result += chars2[(bytes[i - 1] & 15) << 2];
@@ -8436,8 +8632,8 @@ var Csp = class {
 function defer() {
   let fulfil;
   let reject;
-  const promise = new Promise((f, r3) => {
-    fulfil = f;
+  const promise = new Promise((f2, r3) => {
+    fulfil = f2;
     reject = r3;
   });
   return { promise, fulfil, reject };
@@ -8556,7 +8752,7 @@ async function render_response({
       for (const url of node.fonts)
         fonts17.add(url);
       if (node.inline_styles) {
-        Object.entries(await node.inline_styles()).forEach(([k, v]) => inline_styles.set(k, v));
+        Object.entries(await node.inline_styles()).forEach(([k2, v]) => inline_styles.set(k2, v));
       }
     }
   } else {
@@ -8615,7 +8811,7 @@ async function render_response({
   const { data, chunks } = get_data(
     event,
     options2,
-    branch.map((b) => b.server_data),
+    branch.map((b2) => b2.server_data),
     global
   );
   if (page_config.ssr && page_config.csr) {
@@ -9014,7 +9210,7 @@ async function render_data(event, route, options2, manifest2, state, invalidated
     let length = promises.length;
     const nodes = await Promise.all(
       promises.map(
-        (p, i) => p.catch(async (error2) => {
+        (p2, i) => p2.catch(async (error2) => {
           if (error2 instanceof Redirect) {
             throw error2;
           }
@@ -9281,11 +9477,11 @@ async function render_page(event, page2, options2, manifest2, state, resolve_opt
         }
       });
     });
-    for (const p of server_promises)
-      p.catch(() => {
+    for (const p2 of server_promises)
+      p2.catch(() => {
       });
-    for (const p of load_promises)
-      p.catch(() => {
+    for (const p2 of load_promises)
+      p2.catch(() => {
       });
     for (let i = 0; i < nodes.length; i += 1) {
       const node = nodes[i];
@@ -10059,14 +10255,14 @@ async function respond(request, options2, manifest2, state) {
 function filter_private_env(env, { public_prefix, private_prefix }) {
   return Object.fromEntries(
     Object.entries(env).filter(
-      ([k]) => k.startsWith(private_prefix) && (public_prefix === "" || !k.startsWith(public_prefix))
+      ([k2]) => k2.startsWith(private_prefix) && (public_prefix === "" || !k2.startsWith(public_prefix))
     )
   );
 }
 function filter_public_env(env, { public_prefix, private_prefix }) {
   return Object.fromEntries(
     Object.entries(env).filter(
-      ([k]) => k.startsWith(public_prefix) && (private_prefix === "" || !k.startsWith(private_prefix))
+      ([k2]) => k2.startsWith(public_prefix) && (private_prefix === "" || !k2.startsWith(private_prefix))
     )
   );
 }
@@ -10140,10 +10336,10 @@ var manifest = (() => {
   return {
     appDir: "_app",
     appPath: "_app",
-    assets: /* @__PURE__ */ new Set([]),
-    mimeTypes: {},
+    assets: /* @__PURE__ */ new Set(["favicon.png", "favicon.svg"]),
+    mimeTypes: { ".png": "image/png", ".svg": "image/svg+xml" },
     _: {
-      client: { "start": "_app/immutable/entry/start.f44309c8.js", "app": "_app/immutable/entry/app.e743e499.js", "imports": ["_app/immutable/entry/start.f44309c8.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/singletons.620b706d.js", "_app/immutable/chunks/index.40078100.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.e743e499.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/index.7311d585.js"], "stylesheets": [], "fonts": [] },
+      client: { "start": "_app/immutable/entry/start.59b4b4cb.js", "app": "_app/immutable/entry/app.bb4f50a4.js", "imports": ["_app/immutable/entry/start.59b4b4cb.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/singletons.dec2cbf6.js", "_app/immutable/chunks/index.40078100.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.bb4f50a4.js", "_app/immutable/chunks/scheduler.150511e5.js", "_app/immutable/chunks/index.7311d585.js"], "stylesheets": [], "fonts": [] },
       nodes: [
         __memo(() => Promise.resolve().then(() => (init__(), __exports))),
         __memo(() => Promise.resolve().then(() => (init__2(), __exports2))),
