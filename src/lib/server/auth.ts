@@ -16,17 +16,22 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 
 // Session management
 export async function createSession(userId: string): Promise<string> {
-	const expiresAt = new Date();
-	expiresAt.setDate(expiresAt.getDate() + SESSION_EXPIRY_DAYS);
+	try {
+		const expiresAt = new Date();
+		expiresAt.setDate(expiresAt.getDate() + SESSION_EXPIRY_DAYS);
 
-	const session = await prisma.session.create({
-		data: {
-			userId,
-			expiresAt
-		}
-	});
+		const session = await prisma.session.create({
+			data: {
+				userId,
+				expiresAt
+			}
+		});
 
-	return session.id;
+		return session.id;
+	} catch (error) {
+		console.error('Failed to create session:', error);
+		throw new Error('Failed to create session');
+	}
 }
 
 export async function validateSession(cookies: Cookies) {

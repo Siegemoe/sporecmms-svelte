@@ -27,6 +27,7 @@
  */
 declare module '$env/static/private' {
 	export const DATABASE_URL: string;
+	export const DIRECT_URL: string;
 	export const SESSION_SECRET: string;
 	export const DATABASE_POOL_SIZE: string;
 	export const ACLOCAL_PATH: string;
@@ -48,8 +49,14 @@ declare module '$env/static/private' {
 	export const DISPLAY: string;
 	export const DriverData: string;
 	export const EDITOR: string;
-	export const EFC_7964_1592913036: string;
+	export const EFC_6064_1262719628: string;
+	export const EFC_6064_1592913036: string;
+	export const EFC_6064_2283032206: string;
+	export const EFC_6064_2775293581: string;
+	export const EFC_6064_3789132940: string;
 	export const EXEPATH: string;
+	export const FPS_BROWSER_APP_PROFILE_STRING: string;
+	export const FPS_BROWSER_USER_PROFILE_STRING: string;
 	export const GIT_EDITOR: string;
 	export const HOME: string;
 	export const HOMEDRIVE: string;
@@ -72,7 +79,6 @@ declare module '$env/static/private' {
 	export const NoDefaultCurrentDirectoryInExePath: string;
 	export const NODE_ENV: string;
 	export const NODE_EXE: string;
-	export const NPM_CLI_JS: string;
 	export const npm_command: string;
 	export const npm_config_cache: string;
 	export const npm_config_globalconfig: string;
@@ -93,7 +99,8 @@ declare module '$env/static/private' {
 	export const npm_package_name: string;
 	export const npm_package_version: string;
 	export const NPM_PREFIX_JS: string;
-	export const NPM_PREFIX_NPM_CLI_JS: string;
+	export const NPM_PREFIX_NPX_CLI_JS: string;
+	export const NPX_CLI_JS: string;
 	export const NUMBER_OF_PROCESSORS: string;
 	export const OneDrive: string;
 	export const ORIGINAL_PATH: string;
@@ -164,6 +171,7 @@ declare module '$env/static/public' {
 declare module '$env/dynamic/private' {
 	export const env: {
 		DATABASE_URL: string;
+		DIRECT_URL: string;
 		SESSION_SECRET: string;
 		DATABASE_POOL_SIZE: string;
 		ACLOCAL_PATH: string;
@@ -185,8 +193,14 @@ declare module '$env/dynamic/private' {
 		DISPLAY: string;
 		DriverData: string;
 		EDITOR: string;
-		EFC_7964_1592913036: string;
+		EFC_6064_1262719628: string;
+		EFC_6064_1592913036: string;
+		EFC_6064_2283032206: string;
+		EFC_6064_2775293581: string;
+		EFC_6064_3789132940: string;
 		EXEPATH: string;
+		FPS_BROWSER_APP_PROFILE_STRING: string;
+		FPS_BROWSER_USER_PROFILE_STRING: string;
 		GIT_EDITOR: string;
 		HOME: string;
 		HOMEDRIVE: string;
@@ -209,7 +223,6 @@ declare module '$env/dynamic/private' {
 		NoDefaultCurrentDirectoryInExePath: string;
 		NODE_ENV: string;
 		NODE_EXE: string;
-		NPM_CLI_JS: string;
 		npm_command: string;
 		npm_config_cache: string;
 		npm_config_globalconfig: string;
@@ -230,7 +243,8 @@ declare module '$env/dynamic/private' {
 		npm_package_name: string;
 		npm_package_version: string;
 		NPM_PREFIX_JS: string;
-		NPM_PREFIX_NPM_CLI_JS: string;
+		NPM_PREFIX_NPX_CLI_JS: string;
+		NPX_CLI_JS: string;
 		NUMBER_OF_PROCESSORS: string;
 		OneDrive: string;
 		ORIGINAL_PATH: string;
