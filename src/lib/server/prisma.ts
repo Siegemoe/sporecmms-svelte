@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client';
+import { withAccelerate } from '@prisma/extension-accelerate';
 import type { RequestEvent } from '@sveltejs/kit';
 
 // Singleton instance
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 const prismaSingleton = globalForPrisma.prisma ?? new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'],
-});
+  log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['warn', 'error'],
+}).$extends(withAccelerate());
 
 if (process.env.NODE_ENV !== 'production') {
 	globalForPrisma.prisma = prismaSingleton;

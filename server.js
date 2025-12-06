@@ -6,6 +6,7 @@ import { handler } from './build/handler.js';
 import { WebSocketServer } from 'ws';
 import { parse } from 'cookie';
 import { PrismaClient } from '@prisma/client';
+import { withAccelerate } from '@prisma/extension-accelerate';
 
 // --- WebSocket Setup ---
 const wss = new WebSocketServer({ noServer: true });
@@ -37,7 +38,7 @@ export function broadcastToOrg(orgId, message) {
 globalThis.__wsBroadcast = broadcastToOrg;
 
 // --- Session Validation ---
-const prisma = new PrismaClient();
+const prisma = new PrismaClient().$extends(withAccelerate());
 
 async function validateSessionFromCookies(cookieHeader) {
 	if (!cookieHeader) return null;
