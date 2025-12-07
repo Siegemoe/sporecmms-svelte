@@ -5,10 +5,13 @@ compatibility_flags = ["nodejs_compat"]
 # Main entry point for the Cloudflare Worker
 main = ".svelte-kit/cloudflare/_worker.js"
 
-# Environment variables
-# Add your environment variables here
+# Environment variables for Prisma
+# You must set these when deploying:
+# wrangler secret put DATABASE_URL
+# wrangler secret put DIRECT_URL
 
 # DATABASE_URL = ""
+# DIRECT_URL = ""
 # JWT_SECRET = ""
 
 # KV, D1, R2 bindings can be added here as needed

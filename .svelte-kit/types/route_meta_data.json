@@ -7,6 +7,9 @@
 	"/api/activity": [
 		"src/routes/api/activity/+server.ts"
 	],
+	"/api/debug/env": [
+		"src/routes/api/debug/env/+server.ts"
+	],
 	"/assets": [
 		"src/routes/assets/+page.server.ts",
 		"src/routes/+layout.server.ts"
