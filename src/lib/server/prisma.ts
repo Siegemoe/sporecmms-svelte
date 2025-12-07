@@ -149,55 +149,6 @@ export function createRequestPrisma(event: RequestEvent) {
 	return createPrismaClient(orgId);
 }
 
-function createPrismaClient(orgId?: string) {
-	if (!orgId) {
-		return prismaSingleton;
-	}
-
-	return prismaSingleton.$extends({
-		query: {
-			$allModels: {
-				async findMany({ model, args, query }) {
-					if (orgModels.includes(model)) {
-						args.where = { ...args.where, orgId };
-					}
-					return query(args);
-				},
-				async findFirst({ model, args, query }) {
-					if (orgModels.includes(model)) {
-						args.where = { ...args.where, orgId };
-					}
-					return query(args);
-				},
-				async findUnique({ model, args, query }) {
-					const result = await query(args);
-					if (result && orgModels.includes(model) && (result as any).orgId !== orgId) {
-						return null;
-					}
-					return result;
-				},
-				async update({ model, args, query }) {
-					if (orgModels.includes(model)) {
-						args.where = { ...args.where, orgId } as any;
-					}
-					return query(args);
-				},
-				async delete({ model, args, query }) {
-					if (orgModels.includes(model)) {
-						args.where = { ...args.where, orgId } as any;
-					}
-					return query(args);
-				},
-				async create({ model, args, query }) {
-					if (orgModels.includes(model)) {
-						args.data = { ...args.data, orgId };
-					}
-					return query(args);
-				}
-			}
-		}
-	});
-}
 
 // Default prisma instance for system operations
 export const prisma = prismaSingleton;

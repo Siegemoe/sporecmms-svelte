@@ -148,6 +148,11 @@
     "isEntry": true,
     "src": "src/routes/api/activity/+server.ts"
   },
+  "src/routes/api/debug/env/+server.ts": {
+    "file": "entries/endpoints/api/debug/env/_server.ts.js",
+    "isEntry": true,
+    "src": "src/routes/api/debug/env/+server.ts"
+  },
   "src/routes/assets/+page.server.ts": {
     "file": "entries/pages/assets/_page.server.ts.js",
     "imports": [

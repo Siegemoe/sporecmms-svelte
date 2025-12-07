@@ -2,8 +2,11 @@ name = "spore-cmms"
 compatibility_date = "2025-11-25"
 compatibility_flags = ["nodejs_compat"]
 
-# Main entry point for the Cloudflare Worker
-main = ".svelte-kit/cloudflare/_worker.js"
+# For Cloudflare Pages, use pages_build_output_dir
+pages_build_output_dir = ".svelte-kit/cloudflare"
+
+# For Cloudflare Workers functions (if needed)
+# main = ".svelte-kit/cloudflare/_worker.js"
 
 # Environment variables for Prisma
 # You must set these when deploying:
@@ -13,13 +16,3 @@ main = ".svelte-kit/cloudflare/_worker.js"
 # DATABASE_URL = ""
 # DIRECT_URL = ""
 # JWT_SECRET = ""
-
-# KV, D1, R2 bindings can be added here as needed
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "your-kv-namespace-id"
-
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "spore-cmms-db"
-# database_id = "your-database-id"

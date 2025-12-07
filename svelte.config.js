@@ -13,9 +13,9 @@ const config = {
 			},
 			platformProxy: {
 				configPath: 'wrangler.toml',
-				persist: true
-			},
-			fallback: 'plaintext'
+				persist: true,
+				environment: undefined // Use default for Cloudflare Pages
+			}
 		})
 	}
 };
