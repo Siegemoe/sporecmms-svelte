@@ -16,7 +16,8 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	const skip = (page - 1) * limit;
 
 	// Get audit logs for users in this org
-	const auditLogs = await prisma.auditLog.findMany({
+	const client = await prisma;
+	const auditLogs = await client.auditLog.findMany({
 		where: {
 			user: { orgId }
 		},
@@ -34,7 +35,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		}
 	});
 
-	const totalCount = await prisma.auditLog.count({
+	const totalCount = await client.auditLog.count({
 		where: {
 			user: { orgId }
 		}

@@ -20,9 +20,7 @@ type AuditAction =
 	| 'USER_ROLE_CHANGED'
 	| 'USER_DELETED';
 
-interface AuditDetails {
-	[key: string]: unknown;
-}
+interface AuditDetails extends Record<string, unknown> {}
 
 export async function logAudit(
 	userId: string,
@@ -30,11 +28,12 @@ export async function logAudit(
 	details?: AuditDetails
 ): Promise<void> {
 	try {
-		await prisma.auditLog.create({
+		const client = await prisma;
+		await client.auditLog.create({
 			data: {
 				userId,
 				action,
-				details: details || null
+				details: details as any
 			}
 		});
 	} catch (e) {

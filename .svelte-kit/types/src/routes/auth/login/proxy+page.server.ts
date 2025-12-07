@@ -14,8 +14,9 @@ export const load = async ({ locals }: Parameters<PageServerLoad>[0]) => {
 
 export const actions = {
 	default: async ({ request, cookies }: import('./$types').RequestEvent) => {
+		let formData: FormData | undefined;
 		try {
-			const formData = await request.formData();
+			formData = await request.formData();
 			const email = formData.get('email') as string;
 			const password = formData.get('password') as string;
 
@@ -24,7 +25,8 @@ export const actions = {
 			}
 
 			// Find user
-			const user = await prisma.user.findUnique({
+			const client = await prisma;
+			const user = await client.user.findUnique({
 				where: { email: email.toLowerCase().trim() }
 			});
 

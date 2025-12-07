@@ -10,7 +10,7 @@ import { logAudit } from '$lib/server/audit';
 export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	requireAuth(event);
 	
-	const prisma = createRequestPrisma(event);
+	const prisma = await createRequestPrisma(event);
 	const { id } = event.params;
 
 	const workOrder = await prisma.workOrder.findUnique({
@@ -49,7 +49,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 
 export const actions = {
 	updateStatus: async (event: import('./$types').RequestEvent) => {
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id } = event.params;
 		
@@ -80,7 +80,7 @@ export const actions = {
 	},
 
 	update: async (event: import('./$types').RequestEvent) => {
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id } = event.params;
 		
@@ -116,7 +116,7 @@ export const actions = {
 			return fail(403, { error: 'Permission denied. Only managers can delete work orders.' });
 		}
 		
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const { id } = event.params;
 
 		// Get WO details before deletion for audit

@@ -13,7 +13,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		throw error(403, 'Access denied. Admin privileges required.');
 	}
 
-	const prisma = createRequestPrisma(event);
+	const prisma = await createRequestPrisma(event);
 
 	const users = await prisma.user.findMany({
 		where: { orgId: locals.user.orgId },
@@ -39,7 +39,7 @@ export const actions = {
 			return fail(403, { error: 'Access denied' });
 		}
 
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await request.formData();
 		
 		const email = formData.get('email') as string;
@@ -95,7 +95,7 @@ export const actions = {
 			return fail(403, { error: 'Access denied' });
 		}
 
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await request.formData();
 		
 		const userId = formData.get('userId') as string;
@@ -139,7 +139,7 @@ export const actions = {
 			return fail(403, { error: 'Access denied' });
 		}
 
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await request.formData();
 		const userId = formData.get('userId') as string;
 

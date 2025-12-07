@@ -7,7 +7,7 @@ import { fail } from '@sveltejs/kit';
 export const load: PageServerLoad = async (event) => {
 	requireAuth(event);
 	
-	const prisma = createRequestPrisma(event);
+	const prisma = await createRequestPrisma(event);
 	const userId = event.locals.user!.id;
 
 	const user = await prisma.user.findUnique({
@@ -30,7 +30,7 @@ export const actions: Actions = {
 	updateProfile: async (event) => {
 		requireAuth(event);
 		
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const userId = event.locals.user!.id;
 		const formData = await event.request.formData();
 		
@@ -53,7 +53,7 @@ export const actions: Actions = {
 	changePassword: async (event) => {
 		requireAuth(event);
 		
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const userId = event.locals.user!.id;
 		const formData = await event.request.formData();
 		

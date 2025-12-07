@@ -38,7 +38,10 @@ export function broadcastToOrg(orgId, message) {
 globalThis.__wsBroadcast = broadcastToOrg;
 
 // --- Session Validation ---
-const prisma = new PrismaClient().$extends(withAccelerate());
+const prismaPromise = (async () => {
+  const { createNodePrismaClient } = await import('./src/lib/server/prisma.js');
+  return createNodePrismaClient();
+})();
 
 async function validateSessionFromCookies(cookieHeader) {
 	if (!cookieHeader) return null;
@@ -49,6 +52,7 @@ async function validateSessionFromCookies(cookieHeader) {
 	if (!sessionId) return null;
 
 	try {
+		const prisma = await prismaPromise;
 		const session = await prisma.session.findUnique({
 			where: { id: sessionId },
 			include: {

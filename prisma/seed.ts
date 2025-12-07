@@ -1,13 +1,13 @@
-import { PrismaClient } from '@prisma/client';
-import { withAccelerate } from '@prisma/extension-accelerate';
+import { createNodePrismaClient } from '../src/lib/server/prisma.js';
 import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient().$extends(withAccelerate());
+const prismaPromise = createNodePrismaClient();
 
 async function main() {
   console.log('🌱 Starting database seeding...');
 
   // Create a default organization
+  const prisma = await prismaPromise;
   let org = await prisma.org.findFirst({
     where: { name: 'Spore CMMS Demo' },
   });
@@ -98,10 +98,13 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
+  .catch(async (e) => {
     console.error('❌ Error seeding database:', e);
+    const prisma = await prismaPromise;
+    await prisma.$disconnect();
     process.exit(1);
   })
   .finally(async () => {
+    const prisma = await prismaPromise;
     await prisma.$disconnect();
   });

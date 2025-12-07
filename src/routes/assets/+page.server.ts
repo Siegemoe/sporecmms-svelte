@@ -7,7 +7,7 @@ import { logAudit } from '$lib/server/audit';
 export const load: PageServerLoad = async (event) => {
 	requireAuth(event);
 	
-	const prisma = createRequestPrisma(event);
+	const prisma = await createRequestPrisma(event);
 	const roomFilter = event.url.searchParams.get('room');
 
 	const assets = await prisma.asset.findMany({
@@ -46,7 +46,7 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions: Actions = {
 	create: async (event) => {
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		
 		const name = formData.get('name') as string;
@@ -82,7 +82,7 @@ export const actions: Actions = {
 			return fail(403, { error: 'Permission denied. Only managers can delete assets.' });
 		}
 		
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		
 		const assetId = formData.get('assetId') as string;
@@ -110,7 +110,7 @@ export const actions: Actions = {
 	},
 
 	update: async (event) => {
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		
 		const assetId = formData.get('assetId') as string;

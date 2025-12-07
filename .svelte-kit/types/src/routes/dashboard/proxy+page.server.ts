@@ -9,7 +9,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 
 		console.log('[DASHBOARD] Loading dashboard for user:', event.locals.user?.id);
 
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 
 		// Get work order stats
 		const [total, pending, inProgress, completed] = await Promise.all([

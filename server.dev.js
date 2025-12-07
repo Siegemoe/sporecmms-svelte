@@ -5,9 +5,10 @@ import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { parse } from 'cookie';
 import { spawn } from 'child_process';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+const prismaPromise = (async () => {
+  const { createNodePrismaClient } = await import('./src/lib/server/prisma.js');
+  return createNodePrismaClient();
+})();
 
 // --- WebSocket Setup ---
 const wss = new WebSocketServer({ noServer: true });
@@ -45,6 +46,7 @@ async function validateSessionFromCookies(cookieHeader) {
 	if (!sessionId) return null;
 	
 	try {
+		const prisma = await prismaPromise;
 		const session = await prisma.session.findUnique({
 			where: { id: sessionId },
 			include: {

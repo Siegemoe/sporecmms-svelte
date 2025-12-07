@@ -7,7 +7,7 @@ import { requireAuth, isManagerOrAbove } from '$lib/server/guards';
 export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	requireAuth(event);
 	
-	const prisma = createRequestPrisma(event);
+	const prisma = await createRequestPrisma(event);
 	const { id } = event.params;
 
 	const site = await prisma.site.findUnique({
@@ -47,7 +47,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 
 export const actions = {
 	createRoom: async (event: import('./$types').RequestEvent) => {
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id: siteId } = event.params;
 		
@@ -72,7 +72,7 @@ export const actions = {
 	},
 
 	updateSite: async (event: import('./$types').RequestEvent) => {
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id } = event.params;
 		
@@ -91,7 +91,7 @@ export const actions = {
 	},
 
 	deleteRoom: async (event: import('./$types').RequestEvent) => {
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		
 		const roomId = formData.get('roomId') as string;
@@ -108,7 +108,7 @@ export const actions = {
 	},
 
 	updateRoom: async (event: import('./$types').RequestEvent) => {
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		
 		const roomId = formData.get('roomId') as string;

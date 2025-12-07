@@ -25,7 +25,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 			});
 		}
 
-		const prisma = createRequestPrisma({ locals } as any);
+		const prisma = await createRequestPrisma({ locals } as any);
 
 		// Get recent activity from work orders
 		const recentWorkOrders = await prisma.workOrder.findMany({

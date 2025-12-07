@@ -9,7 +9,7 @@ import { logAudit } from '$lib/server/audit';
 export const load: PageServerLoad = async (event) => {
 	requireAuth(event);
 	
-	const prisma = createRequestPrisma(event);
+	const prisma = await createRequestPrisma(event);
 	const myOnly = event.url.searchParams.get('my') === 'true';
 	const userId = event.locals.user!.id;
 	
@@ -67,7 +67,7 @@ export const actions: Actions = {
 	 * Create a new Work Order
 	 */
 	create: async (event) => {
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const data = await event.request.formData();
 		
 		const title = data.get('title') as string;
@@ -126,7 +126,7 @@ export const actions: Actions = {
 	 */
 	updateStatus: async (event) => {
 		const { request } = event;
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const data = await request.formData();
 		const woId = data.get('workOrderId') as string;
 		const newStatus = data.get('status') as WorkOrderStatus;
@@ -176,7 +176,7 @@ export const actions: Actions = {
 	},
 
 	assign: async (event) => {
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const data = await event.request.formData();
 		
 		const woId = data.get('workOrderId') as string;

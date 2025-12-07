@@ -6,7 +6,7 @@ import { requireAuth, isManagerOrAbove } from '$lib/server/guards';
 export const load: PageServerLoad = async (event) => {
 	requireAuth(event);
 	
-	const prisma = createRequestPrisma(event);
+	const prisma = await createRequestPrisma(event);
 	const { id } = event.params;
 
 	const asset = await prisma.asset.findUnique({
@@ -68,7 +68,7 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions: Actions = {
 	update: async (event) => {
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id } = event.params;
 		
@@ -100,7 +100,7 @@ export const actions: Actions = {
 			return fail(403, { error: 'Permission denied. Only managers can delete assets.' });
 		}
 		
-		const prisma = createRequestPrisma(event);
+		const prisma = await createRequestPrisma(event);
 		const { id } = event.params;
 
 		await prisma.asset.delete({

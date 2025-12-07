@@ -1,12 +1,14 @@
 // Seed script - run with: node prisma/seed.js
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+const prismaPromise = (async () => {
+  const { createNodePrismaClient } = await import('../src/lib/server/prisma.js');
+  return createNodePrismaClient();
+})();
 
 async function main() {
 	console.log('🌱 Seeding database...');
 
 	// Create or find the test org
+	const prisma = await prismaPromise;
 	const org = await prisma.org.upsert({
 		where: { id: 'org-123' },
 		update: {},
@@ -104,5 +106,6 @@ main()
 		process.exit(1);
 	})
 	.finally(async () => {
+		const prisma = await prismaPromise;
 		await prisma.$disconnect();
 	});

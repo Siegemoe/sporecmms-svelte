@@ -39,7 +39,8 @@ export const actions = {
 		}
 
 		// Check if email already exists
-		const existingUser = await prisma.user.findUnique({
+		const client = await prisma;
+		const existingUser = await client.user.findUnique({
 			where: { email: email.toLowerCase().trim() }
 		});
 		if (existingUser) {
@@ -49,7 +50,7 @@ export const actions = {
 		// Create org and admin user in a transaction
 		const hashedPassword = await hashPassword(password);
 
-		const { user } = await prisma.$transaction(async (tx) => {
+		const { user } = await client.$transaction(async (tx) => {
 			const org = await tx.org.create({
 				data: { name: orgName.trim() }
 			});

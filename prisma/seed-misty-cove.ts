@@ -1,9 +1,11 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+const clientPromise = (async () => {
+  const { createNodePrismaClient } = await import('../src/lib/server/prisma.js');
+  return createNodePrismaClient();
+})();
 
 async function main() {
 	// Get your org (the one you registered with)
+	const prisma = await clientPromise;
 	const user = await prisma.user.findFirst({
 		where: { email: { contains: '' } }, // Gets first user
 		select: { orgId: true, email: true }
@@ -48,5 +50,6 @@ main()
 		process.exit(1);
 	})
 	.finally(async () => {
+		const prisma = await clientPromise;
 		await prisma.$disconnect();
 	});

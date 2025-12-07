@@ -6,7 +6,7 @@ export const load = async ({ locals }: Parameters<LayoutServerLoad>[0]) => {
 	// Get assets for Quick FAB if user is authenticated
 	let assets = [];
 	if (locals.user) {
-		const prisma = createRequestPrisma({ locals } as any);
+		const prisma = await createRequestPrisma({ locals } as any);
 		assets = await prisma.asset.findMany({
 			include: {
 				room: {
