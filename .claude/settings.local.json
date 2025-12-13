@@ -29,7 +29,9 @@
       "Bash(tasklist:*)",
       "Bash(npx prisma migrate:*)",
       "Bash(npm run check:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(git checkout:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "ask": []
