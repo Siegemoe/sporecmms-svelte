@@ -1,6 +1,6 @@
 // @ts-nocheck
 import type { PageServerLoad } from './$types';
-import { prisma } from '$lib/server/prisma';
+import { getPrisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
 import { isAdmin } from '$lib/server/guards';
 
@@ -16,7 +16,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	const skip = (page - 1) * limit;
 
 	// Get audit logs for users in this org
-	const client = await prisma;
+	const client = await getPrisma();
 	const auditLogs = await client.auditLog.findMany({
 		where: {
 			user: { orgId }

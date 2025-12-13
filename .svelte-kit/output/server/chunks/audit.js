@@ -1,7 +1,7 @@
-import { p as prisma } from "./prisma.js";
+import { g as getPrisma } from "./prisma.js";
 async function logAudit(userId, action, details) {
   try {
-    const client = await prisma;
+    const client = await getPrisma();
     await client.auditLog.create({
       data: {
         userId,

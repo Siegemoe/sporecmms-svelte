@@ -1,7 +1,9 @@
 import type { PageServerLoad, Actions } from './$types';
-import { fail, redirect } from '@sveltejs/kit';
+import { fail, redirect, error } from '@sveltejs/kit';
 import { verifyPassword, createSession, setSessionCookie } from '$lib/server/auth';
 import { getPrisma } from '$lib/server/prisma';
+import { validateInput, loginSchema } from '$lib/validation';
+import { checkRateLimit, RATE_LIMITS } from '$lib/server/rateLimit';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	// Already logged in
@@ -12,31 +14,48 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request, cookies, getClientAddress }) => {
 		let formData: FormData | undefined;
 		try {
-			formData = await request.formData();
-			const email = formData.get('email') as string;
-			const password = formData.get('password') as string;
+			// Rate limiting based on IP
+			const ip = getClientAddress() || 'unknown';
+			const rateLimitResult = checkRateLimit(
+				`login:${ip}`,
+				RATE_LIMITS.AUTH.limit,
+				RATE_LIMITS.AUTH.windowMs
+			);
 
-			if (!email || !password) {
-				return fail(400, { error: 'Email and password are required', email });
+			if (!rateLimitResult.success) {
+				throw error(429, 'Too many login attempts. Please try again later.');
+			}
+
+			formData = await request.formData();
+
+			// Validate input
+			const validation = validateInput(loginSchema, {
+				email: formData.get('email'),
+				password: formData.get('password')
+			});
+
+			if (!validation.success) {
+				const firstError = Object.values(validation.errors)[0];
+				return fail(400, { error: firstError, email: formData.get('email') });
 			}
 
 			// Find user
 			const client = await getPrisma();
 			const user = await client.user.findUnique({
-				where: { email: email.toLowerCase().trim() }
+				where: { email: validation.data.email }
 			});
 
 			if (!user) {
-				return fail(400, { error: 'Invalid email or password', email });
+				return fail(400, { error: 'Invalid email or password', email: formData.get('email') });
 			}
 
 			// Verify password
-			const valid = await verifyPassword(password, user.password);
+			const valid = await verifyPassword(validation.data.password, user.password);
 			if (!valid) {
-				return fail(400, { error: 'Invalid email or password', email });
+				return fail(400, { error: 'Invalid email or password', email: formData.get('email') });
 			}
 
 			// Create session

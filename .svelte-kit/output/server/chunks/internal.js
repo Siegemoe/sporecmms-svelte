@@ -11,6 +11,7 @@ function set_assets(path) {
   assets = initial.assets = path;
 }
 let public_env = {};
+let fix_stack_trace = (error) => error?.stack;
 function set_private_env(environment) {
 }
 function set_public_env(environment) {
@@ -105,7 +106,17 @@ const options = {
   root: Root,
   service_worker: false,
   templates: {
-    app: ({ head, body, assets: assets2, nonce, env }) => '<!DOCTYPE html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="' + assets2 + '/favicon.png" />\n		<meta name="viewport" content="width=device-width" />\n		' + head + '\n	</head>\n	<body data-sveltekit-preload-data="hover">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>",
+    app: ({ head, body, assets: assets2, nonce, env }) => '<!DOCTYPE html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="' + assets2 + `/favicon.png" />
+		<meta name="viewport" content="width=device-width" />
+		<meta http-equiv="Content-Security-Policy"
+			content="default-src 'self';
+						script-src 'self' 'unsafe-inline';
+						style-src 'self' 'unsafe-inline';
+						img-src 'self' data: blob:;
+						font-src 'self';
+						connect-src 'self' https://api.prisma-data.net;
+						frame-ancestors 'none';">
+		` + head + '\n	</head>\n	<body data-sveltekit-preload-data="hover">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>",
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -177,7 +188,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "3lmcok"
+  version_hash: "illx1x"
 };
 function get_hooks() {
   return import("./hooks.server.js");
@@ -187,6 +198,7 @@ export {
   base as b,
   set_public_env as c,
   set_assets as d,
+  fix_stack_trace as f,
   get_hooks as g,
   options as o,
   public_env as p,

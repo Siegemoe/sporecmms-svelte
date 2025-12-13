@@ -1,4 +1,4 @@
-import { c as create_ssr_component, a as createEventDispatcher, b as subscribe, e as escape, d as add_attribute, v as validate_component } from "../../chunks/ssr.js";
+import { c as create_ssr_component, a as createEventDispatcher, b as validate_store, d as subscribe, e as escape, f as add_attribute, v as validate_component } from "../../chunks/ssr.js";
 import { p as page } from "../../chunks/stores.js";
 import "devalue";
 const app = "";
@@ -7,7 +7,7 @@ const QuickFAB = create_ssr_component(($$result, $$props, $$bindings, slots) => 
   createEventDispatcher();
   if ($$props.assets === void 0 && $$bindings.assets && assets !== void 0)
     $$bindings.assets(assets);
-  return ` ${`<button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 lg:hidden" title="Create Work Order" aria-label="Create Work Order" data-svelte-h="svelte-2vdg7u"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>  <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 hidden lg:flex" title="Create Work Order" aria-label="Create Work Order" data-svelte-h="svelte-3pnp2f"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>`}  ${``}`;
+  return ` ${`<button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 lg:hidden" title="Create Work Order" aria-label="Create Work Order"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>  <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 hidden lg:flex" title="Create Work Order" aria-label="Create Work Order"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>`}  ${``}`;
 });
 const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let currentPath;
@@ -16,6 +16,7 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let isLandingPage;
   let showFAB;
   let $page, $$unsubscribe_page;
+  validate_store(page, "page");
   $$unsubscribe_page = subscribe(page, (value) => $page = value);
   let { data } = $$props;
   if ($$props.data === void 0 && $$bindings.data && data !== void 0)
@@ -26,7 +27,7 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   isLandingPage = currentPath === "/";
   showFAB = user && !isAuthPage && !isLandingPage && !currentPath.startsWith("/work-orders/new");
   $$unsubscribe_page();
-  return `${!isAuthPage && !isLandingPage && user ? ` <nav class="bg-spore-dark border-b border-spore-steel/30"><div class="max-w-7xl mx-auto px-4"><div class="flex justify-between h-16"><div class="flex items-center gap-10"> <a href="/dashboard" class="flex items-center gap-2" data-svelte-h="svelte-sc039f"><span class="text-2xl font-extrabold text-spore-cream tracking-tight">SPORE</span> <span class="text-xs font-medium text-spore-steel uppercase tracking-widest">CMMS</span></a>  <div class="hidden md:flex items-center gap-1"><a href="/dashboard" class="${"px-4 py-2 text-sm font-semibold tracking-wide transition-colors " + escape(
+  return `${!isAuthPage && !isLandingPage && user ? ` <nav class="bg-spore-dark border-b border-spore-steel/30"><div class="max-w-7xl mx-auto px-4"><div class="flex justify-between h-16"><div class="flex items-center gap-10"> <a href="/dashboard" class="flex items-center gap-2"><span class="text-2xl font-extrabold text-spore-cream tracking-tight" data-svelte-h="svelte-p6fqmb">SPORE</span> <span class="text-xs font-medium text-spore-steel uppercase tracking-widest" data-svelte-h="svelte-1fermaa">CMMS</span></a>  <div class="hidden md:flex items-center gap-1"><a href="/dashboard" class="${"px-4 py-2 text-sm font-semibold tracking-wide transition-colors " + escape(
     currentPath === "/dashboard" ? "text-spore-orange" : "text-spore-cream/70 hover:text-spore-cream",
     true
   )}">Dashboard</a> <a href="/work-orders" class="${"px-4 py-2 text-sm font-semibold tracking-wide transition-colors " + escape(
@@ -44,7 +45,7 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   )}">Users</a> <a href="/audit-log" class="${"px-4 py-2 text-sm font-semibold tracking-wide transition-colors " + escape(
     currentPath.startsWith("/audit-log") ? "text-spore-orange" : "text-spore-cream/70 hover:text-spore-cream",
     true
-  )}">Audit Log</a>` : ``}</div></div>  <div class="flex items-center gap-4"><a href="/profile" class="hidden sm:block text-right hover:opacity-80 transition-opacity"><p class="text-sm font-semibold text-spore-cream">${escape(user.firstName || user.email.split("@")[0])}</p> <p class="text-xs text-spore-steel capitalize">${escape(user.role.toLowerCase())}</p></a> <form method="POST" action="/auth/logout" data-svelte-h="svelte-4tekxq"><button type="submit" class="text-sm font-semibold text-spore-cream/50 hover:text-spore-cream transition-colors" title="Sign out of your account">Logout</button></form></div></div></div></nav>  <nav class="md:hidden bg-spore-dark border-b border-spore-steel/30 px-4 py-3 shadow-lg"><div class="flex justify-around items-center"><a href="/dashboard" class="${"flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors " + escape(
+  )}">Audit Log</a>` : ``}</div></div>  <div class="flex items-center gap-4"><a href="/profile" class="hidden sm:block text-right hover:opacity-80 transition-opacity"><p class="text-sm font-semibold text-spore-cream">${escape(user.firstName || user.email.split("@")[0])}</p> <p class="text-xs text-spore-steel capitalize">${escape(user.role.toLowerCase())}</p></a> <form method="POST" action="/auth/logout"><button type="submit" class="text-sm font-semibold text-spore-cream/50 hover:text-spore-cream transition-colors" title="Sign out of your account" data-svelte-h="svelte-t0glq2">Logout</button></form></div></div></div></nav>  <nav class="md:hidden bg-spore-dark border-b border-spore-steel/30 px-4 py-3 shadow-lg"><div class="flex justify-around items-center"><a href="/dashboard" class="${"flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors " + escape(
     currentPath === "/dashboard" ? "text-spore-orange bg-spore-cream/10" : "text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5",
     true
   )}"><span class="text-xl leading-none" data-svelte-h="svelte-n8oaaj">📊</span> <span class="text-xs font-medium" data-svelte-h="svelte-q6iwf9">Dashboard</span></a> <a href="/work-orders" class="${"flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors " + escape(

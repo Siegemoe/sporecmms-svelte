@@ -1,4 +1,4 @@
-import { p as prisma } from "../../../chunks/prisma.js";
+import { g as getPrisma } from "../../../chunks/prisma.js";
 import { e as error } from "../../../chunks/index.js";
 import { a as isAdmin } from "../../../chunks/guards.js";
 const load = async (event) => {
@@ -9,7 +9,7 @@ const load = async (event) => {
   const page = parseInt(event.url.searchParams.get("page") || "1");
   const limit = 50;
   const skip = (page - 1) * limit;
-  const client = await prisma;
+  const client = await getPrisma();
   const auditLogs = await client.auditLog.findMany({
     where: {
       user: { orgId }

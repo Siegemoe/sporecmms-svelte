@@ -51,6 +51,9 @@
   "_prisma.js": {
     "file": "chunks/prisma.js"
   },
+  "_rateLimit.js": {
+    "file": "chunks/rateLimit.js"
+  },
   "_ssr.js": {
     "file": "chunks/ssr.js"
   },
@@ -99,7 +102,7 @@
     "src": "src/hooks.server.ts"
   },
   "src/routes/+layout.css": {
-    "file": "_app/immutable/assets/_layout.98621fde.css",
+    "file": "_app/immutable/assets/_layout.fadb47e1.css",
     "src": "src/routes/+layout.css"
   },
   "src/routes/+layout.server.ts": {
@@ -112,7 +115,7 @@
   },
   "src/routes/+layout.svelte": {
     "css": [
-      "_app/immutable/assets/_layout.98621fde.css"
+      "_app/immutable/assets/_layout.fadb47e1.css"
     ],
     "file": "entries/pages/_layout.svelte.js",
     "imports": [
@@ -147,11 +150,6 @@
     ],
     "isEntry": true,
     "src": "src/routes/api/activity/+server.ts"
-  },
-  "src/routes/api/debug/env/+server.ts": {
-    "file": "entries/endpoints/api/debug/env/_server.ts.js",
-    "isEntry": true,
-    "src": "src/routes/api/debug/env/+server.ts"
   },
   "src/routes/assets/+page.server.ts": {
     "file": "entries/pages/assets/_page.server.ts.js",
@@ -213,7 +211,8 @@
     "imports": [
       "_index.js",
       "_auth.js",
-      "_prisma.js"
+      "_prisma.js",
+      "_rateLimit.js"
     ],
     "isEntry": true,
     "src": "src/routes/auth/login/+page.server.ts"
@@ -240,7 +239,8 @@
     "imports": [
       "_index.js",
       "_auth.js",
-      "_prisma.js"
+      "_prisma.js",
+      "_rateLimit.js"
     ],
     "isEntry": true,
     "src": "src/routes/auth/register/+page.server.ts"

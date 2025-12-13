@@ -1,8 +1,10 @@
 import * as server from '../entries/pages/audit-log/_page.server.ts.js';
 
 export const index = 5;
+let component_cache;
+export const component = async () => component_cache ??= (await import('../entries/pages/audit-log/_page.svelte.js')).default;
 export { server };
 export const server_id = "src/routes/audit-log/+page.server.ts";
-export const imports = [];
+export const imports = ["_app/immutable/nodes/5.341bd501.js","_app/immutable/chunks/_page.c93a40eb.js","_app/immutable/chunks/scheduler.82236372.js","_app/immutable/chunks/globals.7f7f1b26.js","_app/immutable/chunks/index.a73b1e10.js"];
 export const stylesheets = [];
 export const fonts = [];

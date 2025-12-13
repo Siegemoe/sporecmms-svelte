@@ -1,4 +1,3 @@
-import { PrismaPg } from "@prisma/adapter-pg";
 function isCloudflareWorker() {
   const g = globalThis;
   return !g.process?.versions?.node && typeof g.fetch === "function" && !g.Buffer;
@@ -19,28 +18,35 @@ async function createBasePrismaClient() {
   const directUrl = getEnvVar("DIRECT_URL");
   const effectiveUrl = accelerateUrl || databaseUrl || directUrl;
   if (!effectiveUrl) {
+    if (typeof globalThis !== "undefined" && globalThis.__SVELTEKIT__) {
+      const { PrismaClient } = await import("@prisma/client");
+      return new PrismaClient({
+        datasources: {
+          db: {
+            url: "postgresql://localhost:5432/dummy"
+          }
+        }
+      });
+    }
     throw new Error("DATABASE_URL, ACCELERATE_URL, or DIRECT_URL environment variable is required");
   }
   const nodeEnv = getEnvVar("NODE_ENV") || "development";
   const logLevel = nodeEnv === "development" ? ["query", "info", "warn", "error"] : ["warn", "error"];
+  const { withAccelerate } = await import("@prisma/extension-accelerate");
   if (isCloudflareWorker()) {
     const { PrismaClient: EdgePrismaClient } = await import("@prisma/client/edge");
-    const adapter = new PrismaPg({
-      url: effectiveUrl
-    });
-    return new EdgePrismaClient({
-      adapter,
+    const client = new EdgePrismaClient({
+      accelerateUrl: effectiveUrl,
       log: logLevel
     });
+    return client.$extends(withAccelerate());
   } else {
     const { PrismaClient: NodePrismaClient } = await import("@prisma/client");
-    const adapter = new PrismaPg({
-      url: effectiveUrl
-    });
-    return new NodePrismaClient({
-      adapter,
+    const client = new NodePrismaClient({
+      accelerateUrl: effectiveUrl,
       log: logLevel
     });
+    return client.$extends(withAccelerate());
   }
 }
 const globalForPrisma = globalThis;
@@ -114,8 +120,10 @@ async function createRequestPrisma(event) {
   }
   return createPrismaClient(orgId);
 }
-const prisma = getPrismaSingleton();
+async function getPrisma() {
+  return getPrismaSingleton();
+}
 export {
   createRequestPrisma as c,
-  prisma as p
+  getPrisma as g
 };

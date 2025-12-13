@@ -1,5 +1,5 @@
-import type { Handle } from '@sveltejs/kit';
-import { redirect } from '@sveltejs/kit';
+import type { Handle, handleError } from '@sveltejs/kit';
+import { redirect, error } from '@sveltejs/kit';
 import { validateSession } from '$lib/server/auth';
 import { building } from '$app/environment';
 
@@ -29,5 +29,39 @@ export const handle: Handle = async ({ event, resolve }) => {
 		throw redirect(303, '/dashboard');
 	}
 
-	return resolve(event);
+	const response = await resolve(event);
+
+	// Add security headers in production
+	if (event.platform?.env?.NODE_ENV === 'production' || event.url.hostname.includes('pages.dev')) {
+		// Prevent clickjacking
+		response.headers.set('X-Frame-Options', 'DENY');
+		// Prevent MIME type sniffing
+		response.headers.set('X-Content-Type-Options', 'nosniff');
+		// Control referrer information
+		response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+		// Disable browser features if not needed
+		response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+		// HSTS (only add if you have a valid SSL certificate)
+		response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+	}
+
+	return response;
+};
+
+// Sanitize error responses in production
+export const handleError: handleError = async ({ error, event }) => {
+	const isProduction = event.platform?.env?.NODE_ENV === 'production' || event.url.hostname.includes('pages.dev');
+
+	if (isProduction) {
+		// Don't expose detailed errors in production
+		const statusCode = error instanceof Error && 'status' in error ? (error as any).status : 500;
+
+		return error(statusCode, {
+			message: statusCode === 500 ? 'Something went wrong' : error.message,
+			code: 'INTERNAL_ERROR'
+		});
+	}
+
+	// In development, let SvelteKit handle errors normally
+	return error;
 };

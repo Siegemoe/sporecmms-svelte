@@ -10,7 +10,7 @@ return {
 	assets: new Set(["favicon.png","favicon.svg"]),
 	mimeTypes: {".png":"image/png",".svg":"image/svg+xml"},
 	_: {
-		client: null,
+		client: {"start":"_app/immutable/entry/start.1a7544d3.js","app":"_app/immutable/entry/app.3e661aca.js","imports":["_app/immutable/entry/start.1a7544d3.js","_app/immutable/chunks/scheduler.82236372.js","_app/immutable/chunks/singletons.94292769.js","_app/immutable/chunks/index.8162ef61.js","_app/immutable/chunks/parse.bee59afc.js","_app/immutable/entry/app.3e661aca.js","_app/immutable/chunks/scheduler.82236372.js","_app/immutable/chunks/index.a73b1e10.js"],"stylesheets":[],"fonts":[]},
 		nodes: [
 			__memo(() => import('./nodes/0.js')),
 			__memo(() => import('./nodes/1.js')),
@@ -43,13 +43,6 @@ return {
 				params: [],
 				page: null,
 				endpoint: __memo(() => import('./entries/endpoints/api/activity/_server.ts.js'))
-			},
-			{
-				id: "/api/debug/env",
-				pattern: /^\/api\/debug\/env\/?$/,
-				params: [],
-				page: null,
-				endpoint: __memo(() => import('./entries/endpoints/api/debug/env/_server.ts.js'))
 			},
 			{
 				id: "/assets",

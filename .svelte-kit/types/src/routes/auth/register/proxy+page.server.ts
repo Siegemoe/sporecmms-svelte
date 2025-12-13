@@ -1,8 +1,10 @@
 // @ts-nocheck
 import type { PageServerLoad, Actions } from './$types';
-import { fail, redirect } from '@sveltejs/kit';
+import { fail, redirect, error } from '@sveltejs/kit';
 import { hashPassword, createSession, setSessionCookie } from '$lib/server/auth';
-import { prisma } from '$lib/server/prisma';
+import { getPrisma } from '$lib/server/prisma';
+import { validateInput, registerSchema } from '$lib/validation';
+import { checkRateLimit, RATE_LIMITS } from '$lib/server/rateLimit';
 
 export const load = async ({ locals }: Parameters<PageServerLoad>[0]) => {
 	if (locals.user) {
@@ -12,55 +14,85 @@ export const load = async ({ locals }: Parameters<PageServerLoad>[0]) => {
 };
 
 export const actions = {
-	default: async ({ request, cookies }: import('./$types').RequestEvent) => {
-		const formData = await request.formData();
-		const orgName = formData.get('orgName') as string;
-		const firstName = formData.get('firstName') as string;
-		const lastName = formData.get('lastName') as string;
-		const email = formData.get('email') as string;
-		const password = formData.get('password') as string;
-		const confirmPassword = formData.get('confirmPassword') as string;
+	default: async ({ request, cookies, getClientAddress }: import('./$types').RequestEvent) => {
+		try {
+			// Rate limiting based on IP
+			const ip = getClientAddress() || 'unknown';
+			const rateLimitResult = checkRateLimit(
+				`register:${ip}`,
+				RATE_LIMITS.AUTH.limit,
+				RATE_LIMITS.AUTH.windowMs
+			);
 
-		// Validation
-		if (!orgName?.trim()) {
-			return fail(400, { error: 'Organization name is required', orgName, firstName, lastName, email });
-		}
-		if (!firstName?.trim()) {
-			return fail(400, { error: 'First name is required', orgName, firstName, lastName, email });
-		}
-		if (!email?.trim()) {
-			return fail(400, { error: 'Email is required', orgName, firstName, lastName, email });
-		}
-		if (!password || password.length < 8) {
-			return fail(400, { error: 'Password must be at least 8 characters', orgName, firstName, lastName, email });
-		}
-		if (password !== confirmPassword) {
-			return fail(400, { error: 'Passwords do not match', orgName, firstName, lastName, email });
-		}
+			if (!rateLimitResult.success) {
+				throw error(429, 'Too many registration attempts. Please try again later.');
+			}
+
+			const formData = await request.formData();
+			const confirmPassword = formData.get('confirmPassword') as string;
+
+			// Extract and validate input
+			const validation = validateInput(registerSchema, {
+				orgName: formData.get('orgName'),
+				firstName: formData.get('firstName'),
+				lastName: formData.get('lastName'),
+				email: formData.get('email'),
+				password: formData.get('password')
+			});
+
+			if (!validation.success) {
+				// Return first error message with form data
+				const firstError = Object.values(validation.errors)[0];
+				return fail(400, {
+					error: firstError,
+					orgName: formData.get('orgName'),
+					firstName: formData.get('firstName'),
+					lastName: formData.get('lastName'),
+					email: formData.get('email')
+				});
+			}
+
+			// Password confirmation check
+			if (validation.data.password !== confirmPassword) {
+				return fail(400, {
+					error: 'Passwords do not match',
+					orgName: formData.get('orgName'),
+					firstName: formData.get('firstName'),
+					lastName: formData.get('lastName'),
+					email: formData.get('email')
+				});
+			}
 
 		// Check if email already exists
-		const client = await prisma;
+		const client = await getPrisma();
 		const existingUser = await client.user.findUnique({
-			where: { email: email.toLowerCase().trim() }
+			where: { email: validation.data.email }
 		});
+
 		if (existingUser) {
-			return fail(400, { error: 'An account with this email already exists', orgName, firstName, lastName, email });
+			return fail(400, {
+				error: 'An account with this email already exists',
+				orgName: formData.get('orgName'),
+				firstName: formData.get('firstName'),
+				lastName: formData.get('lastName'),
+				email: formData.get('email')
+			});
 		}
 
 		// Create org and admin user in a transaction
-		const hashedPassword = await hashPassword(password);
+		const hashedPassword = await hashPassword(validation.data.password);
 
 		const { user } = await client.$transaction(async (tx) => {
 			const org = await tx.org.create({
-				data: { name: orgName.trim() }
+				data: { name: validation.data.orgName }
 			});
 
 			const user = await tx.user.create({
 				data: {
-					email: email.toLowerCase().trim(),
+					email: validation.data.email,
 					password: hashedPassword,
-					firstName: firstName.trim(),
-					lastName: lastName?.trim() || null,
+					firstName: validation.data.firstName,
+					lastName: validation.data.lastName,
 					role: 'ADMIN',
 					orgId: org.id
 				}
@@ -74,6 +106,14 @@ export const actions = {
 		setSessionCookie(cookies, sessionId);
 
 		throw redirect(303, '/dashboard');
+		} catch (error) {
+			console.error('[REGISTER] Error:', error);
+			console.error('[REGISTER] Stack:', error.stack);
+			return fail(500, {
+				error: 'Internal server error during registration. Please try again.',
+				details: error.message
+			});
+		}
 	}
 };
 ;null as any as Actions;

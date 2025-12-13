@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { p as prisma } from "./prisma.js";
+import { g as getPrisma } from "./prisma.js";
 const SESSION_COOKIE = "spore_session";
 const SESSION_EXPIRY_DAYS = 30;
 async function hashPassword(password) {
@@ -12,7 +12,7 @@ async function createSession(userId) {
   try {
     const expiresAt = /* @__PURE__ */ new Date();
     expiresAt.setDate(expiresAt.getDate() + SESSION_EXPIRY_DAYS);
-    const client = await prisma;
+    const client = await getPrisma();
     const session = await client.session.create({
       data: {
         userId,
@@ -30,7 +30,7 @@ async function validateSession(cookies) {
   if (!sessionId) {
     return null;
   }
-  const client = await prisma;
+  const client = await getPrisma();
   const session = await client.session.findUnique({
     where: { id: sessionId },
     include: {
@@ -58,7 +58,7 @@ async function validateSession(cookies) {
 async function destroySession(cookies) {
   const sessionId = cookies.get(SESSION_COOKIE);
   if (sessionId) {
-    const client = await prisma;
+    const client = await getPrisma();
     await client.session.delete({ where: { id: sessionId } }).catch(() => {
     });
     cookies.delete(SESSION_COOKIE, { path: "/" });
@@ -68,8 +68,10 @@ function setSessionCookie(cookies, sessionId) {
   cookies.set(SESSION_COOKIE, sessionId, {
     path: "/",
     httpOnly: true,
-    sameSite: "lax",
-    secure: globalThis.process?.env?.NODE_ENV === "production",
+    sameSite: "strict",
+    // Upgrade from 'lax' for better security
+    secure: true,
+    // Always secure in production (Cloudflare Pages enforces HTTPS)
     maxAge: 60 * 60 * 24 * SESSION_EXPIRY_DAYS
   });
 }
