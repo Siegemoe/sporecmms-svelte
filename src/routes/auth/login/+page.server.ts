@@ -1,7 +1,7 @@
 import type { PageServerLoad, Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { verifyPassword, createSession, setSessionCookie } from '$lib/server/auth';
-import { prisma } from '$lib/server/prisma';
+import { getPrisma } from '$lib/server/prisma';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	// Already logged in
@@ -24,7 +24,7 @@ export const actions: Actions = {
 			}
 
 			// Find user
-			const client = await prisma;
+			const client = await getPrisma();
 			const user = await client.user.findUnique({
 				where: { email: email.toLowerCase().trim() }
 			});

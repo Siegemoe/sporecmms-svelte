@@ -1,6 +1,6 @@
 import type { Cookies } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
-import { prisma } from './prisma';
+import { getPrisma } from './prisma';
 
 const SESSION_COOKIE = 'spore_session';
 const SESSION_EXPIRY_DAYS = 30;
@@ -20,7 +20,7 @@ export async function createSession(userId: string): Promise<string> {
 		const expiresAt = new Date();
 		expiresAt.setDate(expiresAt.getDate() + SESSION_EXPIRY_DAYS);
 
-		const client = await prisma;
+		const client = await getPrisma();
 		const session = await client.session.create({
 			data: {
 				userId,
@@ -41,7 +41,7 @@ export async function validateSession(cookies: Cookies) {
 		return null;
 	}
 
-	const client = await prisma;
+	const client = await getPrisma();
 	const session = await client.session.findUnique({
 		where: { id: sessionId },
 		include: {
@@ -74,7 +74,7 @@ export async function validateSession(cookies: Cookies) {
 export async function destroySession(cookies: Cookies): Promise<void> {
 	const sessionId = cookies.get(SESSION_COOKIE);
 	if (sessionId) {
-		const client = await prisma;
+		const client = await getPrisma();
 		await client.session.delete({ where: { id: sessionId } }).catch(() => {});
 		cookies.delete(SESSION_COOKIE, { path: '/' });
 	}

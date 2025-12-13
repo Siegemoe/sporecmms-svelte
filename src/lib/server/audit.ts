@@ -1,4 +1,4 @@
-import { prisma } from './prisma';
+import { getPrisma } from './prisma';
 
 type AuditAction = 
 	| 'WORK_ORDER_CREATED'
@@ -28,7 +28,7 @@ export async function logAudit(
 	details?: AuditDetails
 ): Promise<void> {
 	try {
-		const client = await prisma;
+		const client = await getPrisma();
 		await client.auditLog.create({
 			data: {
 				userId,

@@ -39,6 +39,19 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
   const effectiveUrl = accelerateUrl || databaseUrl || directUrl;
 
   if (!effectiveUrl) {
+    // During build, check if we're in a build environment
+    // In build/SSR generation, we might not have access to environment variables
+    if (typeof globalThis !== 'undefined' && (globalThis as any).__SVELTEKIT__) {
+      // Build environment - return a minimal client for type checking
+      const { PrismaClient } = await import('@prisma/client');
+      return new PrismaClient({
+        datasources: {
+          db: {
+            url: "postgresql://localhost:5432/dummy"
+          }
+        }
+      }) as any;
+    }
     throw new Error('DATABASE_URL, ACCELERATE_URL, or DIRECT_URL environment variable is required');
   }
 
@@ -46,10 +59,12 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
   const nodeEnv = getEnvVar('NODE_ENV') || 'development';
   const logLevel = ['query', 'info', 'warn', 'error']; // Enable all logs temporarily
 
+  // Import the Accelerate extension
+  const { withAccelerate } = await import('@prisma/extension-accelerate');
+
   if (isCloudflareWorker()) {
-    // Cloudflare Worker environment - use edge client with Accelerate extension
+    // Cloudflare Worker environment - use edge client with Accelerate
     const { PrismaClient: EdgePrismaClient } = await import('@prisma/client/edge');
-    const { withAccelerate } = await import('@prisma/extension-accelerate');
 
     const client = new EdgePrismaClient({
       accelerateUrl: effectiveUrl,
@@ -58,12 +73,11 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
 
     return client.$extends(withAccelerate()) as PrismaClient;
   } else {
-    // Node.js environment - use standard client
+    // Node.js environment - use standard client with Accelerate
     const { PrismaClient: NodePrismaClient } = await import('@prisma/client');
-    const { withAccelerate } = await import('@prisma/extension-accelerate');
 
     const client = new NodePrismaClient({
-      datasourceUrl: effectiveUrl,
+      accelerateUrl: effectiveUrl,
       log: logLevel as any,
     });
 
@@ -187,8 +201,11 @@ export async function createRequestPrisma(event: RequestEvent): Promise<PrismaCl
 /**
  * Default prisma instance for system operations (non-tenant-specific)
  * This is used for operations like auth, session management, etc.
+ * Changed to function export to avoid module-level evaluation during build
  */
-export const prisma: Promise<PrismaClient> = getPrismaSingleton();
+export async function getPrisma(): Promise<PrismaClient> {
+  return getPrismaSingleton();
+}
 
 /**
  * Helper function to get a Prisma client for Node.js scripts
@@ -197,6 +214,7 @@ export const prisma: Promise<PrismaClient> = getPrismaSingleton();
 export async function createNodePrismaClient(): Promise<PrismaClient> {
   // Force Node.js client for scripts
   const { PrismaClient: NodePrismaClient } = await import('@prisma/client');
+  const { withAccelerate } = await import('@prisma/extension-accelerate');
 
   const databaseUrl = getEnvVar('DATABASE_URL') || getEnvVar('DIRECT_URL');
   const nodeEnv = getEnvVar('NODE_ENV') || 'development';
@@ -206,14 +224,12 @@ export async function createNodePrismaClient(): Promise<PrismaClient> {
     throw new Error('DATABASE_URL or DIRECT_URL environment variable is required for Node.js client');
   }
 
-  const adapter = new PrismaPg({
-    url: databaseUrl
+  const client = new NodePrismaClient({
+    accelerateUrl: databaseUrl,
+    log: logLevel as any,
   });
 
-  return new NodePrismaClient({
-    adapter,
-    log: logLevel as any,
-  }) as PrismaClient;
+  return client.$extends(withAccelerate()) as PrismaClient;
 }
 
 /**

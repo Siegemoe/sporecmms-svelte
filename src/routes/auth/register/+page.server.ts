@@ -1,7 +1,7 @@
 import type { PageServerLoad, Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { hashPassword, createSession, setSessionCookie } from '$lib/server/auth';
-import { prisma } from '$lib/server/prisma';
+import { getPrisma } from '$lib/server/prisma';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals.user) {
@@ -41,7 +41,7 @@ export const actions: Actions = {
 
 		// Check if email already exists
 		console.log('[REGISTER] Getting Prisma client');
-		const client = await prisma;
+		const client = await getPrisma();
 		console.log('[REGISTER] Prisma client obtained, checking for existing user');
 		const existingUser = await client.user.findUnique({
 			where: { email: email.toLowerCase().trim() }
