@@ -52,7 +52,7 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
     const { withAccelerate } = await import('@prisma/extension-accelerate');
 
     const client = new EdgePrismaClient({
-      datasourceUrl: effectiveUrl,
+      accelerateUrl: effectiveUrl,
       log: logLevel as any,
     });
 
