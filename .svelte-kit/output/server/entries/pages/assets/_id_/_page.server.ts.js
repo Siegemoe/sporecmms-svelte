@@ -3,7 +3,7 @@ import { e as error, f as fail, r as redirect } from "../../../../chunks/index.j
 import { r as requireAuth, i as isManagerOrAbove } from "../../../../chunks/guards.js";
 const load = async (event) => {
   requireAuth(event);
-  const prisma = createRequestPrisma(event);
+  const prisma = await createRequestPrisma(event);
   const { id } = event.params;
   const asset = await prisma.asset.findUnique({
     where: { id },
@@ -57,7 +57,7 @@ const load = async (event) => {
 };
 const actions = {
   update: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const { id } = event.params;
     const name = formData.get("name");
@@ -81,7 +81,7 @@ const actions = {
     if (!isManagerOrAbove(event)) {
       return fail(403, { error: "Permission denied. Only managers can delete assets." });
     }
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const { id } = event.params;
     await prisma.asset.delete({
       where: { id }

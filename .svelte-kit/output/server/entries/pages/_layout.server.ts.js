@@ -2,7 +2,7 @@ import { c as createRequestPrisma } from "../../chunks/prisma.js";
 const load = async ({ locals }) => {
   let assets = [];
   if (locals.user) {
-    const prisma = createRequestPrisma({ locals });
+    const prisma = await createRequestPrisma({ locals });
     assets = await prisma.asset.findMany({
       include: {
         room: {

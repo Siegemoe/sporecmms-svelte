@@ -5,7 +5,7 @@ import { f as fail } from "../../../chunks/index.js";
 import { l as logAudit } from "../../../chunks/audit.js";
 const load = async (event) => {
   requireAuth(event);
-  const prisma = createRequestPrisma(event);
+  const prisma = await createRequestPrisma(event);
   const myOnly = event.url.searchParams.get("my") === "true";
   const userId = event.locals.user.id;
   const workOrders = await prisma.workOrder.findMany({
@@ -56,7 +56,7 @@ const actions = {
    * Create a new Work Order
    */
   create: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const data = await event.request.formData();
     const title = data.get("title");
     const description = data.get("description");
@@ -105,7 +105,7 @@ const actions = {
    */
   updateStatus: async (event) => {
     const { request } = event;
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const data = await request.formData();
     const woId = data.get("workOrderId");
     const newStatus = data.get("status");
@@ -144,7 +144,7 @@ const actions = {
     }
   },
   assign: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const data = await event.request.formData();
     const woId = data.get("workOrderId");
     const assignedToId = data.get("assignedToId");

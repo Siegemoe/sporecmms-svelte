@@ -4,7 +4,7 @@ import { r as requireAuth } from "../../../chunks/guards.js";
 import { f as fail } from "../../../chunks/index.js";
 const load = async (event) => {
   requireAuth(event);
-  const prisma = createRequestPrisma(event);
+  const prisma = await createRequestPrisma(event);
   const userId = event.locals.user.id;
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -23,7 +23,7 @@ const load = async (event) => {
 const actions = {
   updateProfile: async (event) => {
     requireAuth(event);
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const userId = event.locals.user.id;
     const formData = await event.request.formData();
     const firstName = formData.get("firstName");
@@ -41,7 +41,7 @@ const actions = {
   },
   changePassword: async (event) => {
     requireAuth(event);
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const userId = event.locals.user.id;
     const formData = await event.request.formData();
     const currentPassword = formData.get("currentPassword");

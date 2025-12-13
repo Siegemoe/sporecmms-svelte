@@ -7,7 +7,7 @@ const load = async (event) => {
   if (!locals.user || !canManageUsers(locals.user.role)) {
     throw error(403, "Access denied. Admin privileges required.");
   }
-  const prisma = createRequestPrisma(event);
+  const prisma = await createRequestPrisma(event);
   const users = await prisma.user.findMany({
     where: { orgId: locals.user.orgId },
     orderBy: { createdAt: "desc" },
@@ -28,7 +28,7 @@ const actions = {
     if (!locals.user || !canManageUsers(locals.user.role)) {
       return fail(403, { error: "Access denied" });
     }
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await request.formData();
     const email = formData.get("email");
     const firstName = formData.get("firstName");
@@ -73,7 +73,7 @@ const actions = {
     if (!locals.user || !canManageUsers(locals.user.role)) {
       return fail(403, { error: "Access denied" });
     }
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await request.formData();
     const userId = formData.get("userId");
     const role = formData.get("role");
@@ -106,7 +106,7 @@ const actions = {
     if (!locals.user || !canManageUsers(locals.user.role)) {
       return fail(403, { error: "Access denied" });
     }
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await request.formData();
     const userId = formData.get("userId");
     if (!userId)

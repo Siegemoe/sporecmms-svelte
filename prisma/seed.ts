@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { createNodePrismaClient } from '../src/lib/server/prisma.js';
 import bcrypt from 'bcryptjs';
 

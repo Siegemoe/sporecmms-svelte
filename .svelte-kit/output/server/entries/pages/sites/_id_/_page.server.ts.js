@@ -3,7 +3,7 @@ import { e as error, f as fail } from "../../../../chunks/index.js";
 import { r as requireAuth } from "../../../../chunks/guards.js";
 const load = async (event) => {
   requireAuth(event);
-  const prisma = createRequestPrisma(event);
+  const prisma = await createRequestPrisma(event);
   const { id } = event.params;
   const site = await prisma.site.findUnique({
     where: { id },
@@ -37,7 +37,7 @@ const load = async (event) => {
 };
 const actions = {
   createRoom: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const { id: siteId } = event.params;
     const name = formData.get("name");
@@ -57,7 +57,7 @@ const actions = {
     return { success: true, room };
   },
   updateSite: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const { id } = event.params;
     const name = formData.get("name");
@@ -71,7 +71,7 @@ const actions = {
     return { success: true, site };
   },
   deleteRoom: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const roomId = formData.get("roomId");
     if (!roomId) {
@@ -83,7 +83,7 @@ const actions = {
     return { success: true };
   },
   updateRoom: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const roomId = formData.get("roomId");
     const name = formData.get("name");

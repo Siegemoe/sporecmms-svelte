@@ -1,18 +1,69 @@
-import { PrismaClient } from "@prisma/client";
-import { withAccelerate } from "@prisma/extension-accelerate";
+import { PrismaPg } from "@prisma/adapter-pg";
+function isCloudflareWorker() {
+  const g = globalThis;
+  return !g.process?.versions?.node && typeof g.fetch === "function" && !g.Buffer;
+}
+function getEnvVar(key) {
+  const g = globalThis;
+  if (g[key]) {
+    return g[key];
+  }
+  if (g.platform?.env?.[key]) {
+    return g.platform.env[key];
+  }
+  return g.process?.env?.[key];
+}
+async function createBasePrismaClient() {
+  const databaseUrl = getEnvVar("DATABASE_URL");
+  const accelerateUrl = getEnvVar("ACCELERATE_URL");
+  const directUrl = getEnvVar("DIRECT_URL");
+  const effectiveUrl = accelerateUrl || databaseUrl || directUrl;
+  if (!effectiveUrl) {
+    throw new Error("DATABASE_URL, ACCELERATE_URL, or DIRECT_URL environment variable is required");
+  }
+  const nodeEnv = getEnvVar("NODE_ENV") || "development";
+  const logLevel = nodeEnv === "development" ? ["query", "info", "warn", "error"] : ["warn", "error"];
+  if (isCloudflareWorker()) {
+    const { PrismaClient: EdgePrismaClient } = await import("@prisma/client/edge");
+    const adapter = new PrismaPg({
+      url: effectiveUrl
+    });
+    return new EdgePrismaClient({
+      adapter,
+      log: logLevel
+    });
+  } else {
+    const { PrismaClient: NodePrismaClient } = await import("@prisma/client");
+    const adapter = new PrismaPg({
+      url: effectiveUrl
+    });
+    return new NodePrismaClient({
+      adapter,
+      log: logLevel
+    });
+  }
+}
 const globalForPrisma = globalThis;
-const prismaSingleton = globalForPrisma.prisma ?? new PrismaClient({
-  log: process.env.NODE_ENV === "development" ? ["query", "info", "warn", "error"] : ["warn", "error"]
-}).$extends(withAccelerate());
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prismaSingleton;
+async function getPrismaSingleton() {
+  if (globalForPrisma.prisma) {
+    return globalForPrisma.prisma;
+  }
+  if (!globalForPrisma.prismaPromise) {
+    globalForPrisma.prismaPromise = createBasePrismaClient();
+  }
+  const client = await globalForPrisma.prismaPromise;
+  if (!globalForPrisma.prisma) {
+    globalForPrisma.prisma = client;
+  }
+  return client;
 }
 const orgModels = ["WorkOrder", "User", "Site"];
-function createPrismaClient(orgId) {
+async function createPrismaClient(orgId) {
+  const baseClient = await getPrismaSingleton();
   if (!orgId) {
-    return prismaSingleton;
+    return baseClient;
   }
-  return prismaSingleton.$extends({
+  return baseClient.$extends({
     query: {
       $allModels: {
         async findMany({ model, args, query }) {
@@ -56,11 +107,14 @@ function createPrismaClient(orgId) {
     }
   });
 }
-function createRequestPrisma(event) {
+async function createRequestPrisma(event) {
   const orgId = event.locals.user?.orgId;
+  if (isCloudflareWorker() && event.platform?.env) {
+    return createPrismaClient(orgId);
+  }
   return createPrismaClient(orgId);
 }
-const prisma = prismaSingleton;
+const prisma = getPrismaSingleton();
 export {
   createRequestPrisma as c,
   prisma as p

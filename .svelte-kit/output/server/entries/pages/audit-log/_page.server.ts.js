@@ -9,7 +9,8 @@ const load = async (event) => {
   const page = parseInt(event.url.searchParams.get("page") || "1");
   const limit = 50;
   const skip = (page - 1) * limit;
-  const auditLogs = await prisma.auditLog.findMany({
+  const client = await prisma;
+  const auditLogs = await client.auditLog.findMany({
     where: {
       user: { orgId }
     },
@@ -26,7 +27,7 @@ const load = async (event) => {
       }
     }
   });
-  const totalCount = await prisma.auditLog.count({
+  const totalCount = await client.auditLog.count({
     where: {
       user: { orgId }
     }

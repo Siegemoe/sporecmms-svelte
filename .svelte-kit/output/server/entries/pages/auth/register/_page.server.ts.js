@@ -31,14 +31,15 @@ const actions = {
     if (password !== confirmPassword) {
       return fail(400, { error: "Passwords do not match", orgName, firstName, lastName, email });
     }
-    const existingUser = await prisma.user.findUnique({
+    const client = await prisma;
+    const existingUser = await client.user.findUnique({
       where: { email: email.toLowerCase().trim() }
     });
     if (existingUser) {
       return fail(400, { error: "An account with this email already exists", orgName, firstName, lastName, email });
     }
     const hashedPassword = await hashPassword(password);
-    const { user } = await prisma.$transaction(async (tx) => {
+    const { user } = await client.$transaction(async (tx) => {
       const org = await tx.org.create({
         data: { name: orgName.trim() }
       });

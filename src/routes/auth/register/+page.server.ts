@@ -12,13 +12,15 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
 	default: async ({ request, cookies }) => {
-		const formData = await request.formData();
-		const orgName = formData.get('orgName') as string;
-		const firstName = formData.get('firstName') as string;
-		const lastName = formData.get('lastName') as string;
-		const email = formData.get('email') as string;
-		const password = formData.get('password') as string;
-		const confirmPassword = formData.get('confirmPassword') as string;
+		try {
+			console.log('[REGISTER] Starting registration process');
+			const formData = await request.formData();
+			const orgName = formData.get('orgName') as string;
+			const firstName = formData.get('firstName') as string;
+			const lastName = formData.get('lastName') as string;
+			const email = formData.get('email') as string;
+			const password = formData.get('password') as string;
+			const confirmPassword = formData.get('confirmPassword') as string;
 
 		// Validation
 		if (!orgName?.trim()) {
@@ -38,10 +40,13 @@ export const actions: Actions = {
 		}
 
 		// Check if email already exists
+		console.log('[REGISTER] Getting Prisma client');
 		const client = await prisma;
+		console.log('[REGISTER] Prisma client obtained, checking for existing user');
 		const existingUser = await client.user.findUnique({
 			where: { email: email.toLowerCase().trim() }
 		});
+		console.log('[REGISTER] Existing user check complete');
 		if (existingUser) {
 			return fail(400, { error: 'An account with this email already exists', orgName, firstName, lastName, email });
 		}
@@ -73,5 +78,13 @@ export const actions: Actions = {
 		setSessionCookie(cookies, sessionId);
 
 		throw redirect(303, '/dashboard');
+		} catch (error) {
+			console.error('[REGISTER] Error:', error);
+			console.error('[REGISTER] Stack:', error.stack);
+			return fail(500, {
+				error: 'Internal server error during registration. Please try again.',
+				details: error.message
+			});
+		}
 	}
 };

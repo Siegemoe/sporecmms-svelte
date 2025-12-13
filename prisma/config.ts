@@ -1,11 +1,7 @@
-import type { PrismaClientOptions } from '@prisma/client'
+import type { Config } from '@prisma/client';
 
-const config: PrismaClientOptions = {
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL,
-    },
-  },
-}
+const config: Config = {
+  datasourceUrl: process.env.DIRECT_URL || process.env.DATABASE_URL,
+};
 
-export default config
+export default config;
