@@ -5,7 +5,7 @@ import { r as requireAuth, i as isManagerOrAbove } from "../../../../chunks/guar
 import { l as logAudit } from "../../../../chunks/audit.js";
 const load = async (event) => {
   requireAuth(event);
-  const prisma = createRequestPrisma(event);
+  const prisma = await createRequestPrisma(event);
   const { id } = event.params;
   const workOrder = await prisma.workOrder.findUnique({
     where: { id },
@@ -38,7 +38,7 @@ const load = async (event) => {
 };
 const actions = {
   updateStatus: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const { id } = event.params;
     const newStatus = formData.get("status");
@@ -63,7 +63,7 @@ const actions = {
     return { success: true, workOrder: updatedWo };
   },
   update: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const { id } = event.params;
     const title = formData.get("title");
@@ -91,7 +91,7 @@ const actions = {
     if (!isManagerOrAbove(event)) {
       return fail(403, { error: "Permission denied. Only managers can delete work orders." });
     }
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const { id } = event.params;
     const wo = await prisma.workOrder.findUnique({
       where: { id },

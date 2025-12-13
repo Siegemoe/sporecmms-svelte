@@ -31,7 +31,21 @@
       "Bash(npm run check:*)",
       "Bash(powershell:*)",
       "Bash(git checkout:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(claude:*)",
+      "Bash(npx @modelcontextprotocol/server-database:*)",
+      "Bash(npm search @modelcontextprotocol)",
+      "WebFetch(domain:github.com)",
+      "Bash(C:/Dev/Obsidian/Spore/.obsidian/plugins/mcp-tools/bin/mcp-server.exe:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(npm --version)",
+      "Bash(npx tsc:*)",
+      "Bash(echo:*)",
+      "Bash(cat:*)",
+      "Bash(npx dotenv -e .env -- npm run db:seed:*)",
+      "Bash(ls:*)",
+      "Bash(wrangler:*)"
     ],
     "deny": [],
     "ask": []

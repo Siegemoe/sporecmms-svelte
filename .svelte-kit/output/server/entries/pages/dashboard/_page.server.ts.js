@@ -4,7 +4,7 @@ const load = async (event) => {
   try {
     requireAuth(event);
     console.log("[DASHBOARD] Loading dashboard for user:", event.locals.user?.id);
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const [total, pending, inProgress, completed] = await Promise.all([
       prisma.workOrder.count(),
       prisma.workOrder.count({ where: { status: "PENDING" } }),

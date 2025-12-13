@@ -9,14 +9,16 @@ const load = async ({ locals }) => {
 };
 const actions = {
   default: async ({ request, cookies }) => {
+    let formData;
     try {
-      const formData2 = await request.formData();
-      const email = formData2.get("email");
-      const password = formData2.get("password");
+      formData = await request.formData();
+      const email = formData.get("email");
+      const password = formData.get("password");
       if (!email || !password) {
         return fail(400, { error: "Email and password are required", email });
       }
-      const user = await prisma.user.findUnique({
+      const client = await prisma;
+      const user = await client.user.findUnique({
         where: { email: email.toLowerCase().trim() }
       });
       if (!user) {

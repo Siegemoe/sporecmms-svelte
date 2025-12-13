@@ -4,7 +4,7 @@ import { r as requireAuth, i as isManagerOrAbove } from "../../../chunks/guards.
 import { l as logAudit } from "../../../chunks/audit.js";
 const load = async (event) => {
   requireAuth(event);
-  const prisma = createRequestPrisma(event);
+  const prisma = await createRequestPrisma(event);
   const roomFilter = event.url.searchParams.get("room");
   const assets = await prisma.asset.findMany({
     where: roomFilter ? { roomId: roomFilter } : void 0,
@@ -38,7 +38,7 @@ const load = async (event) => {
 };
 const actions = {
   create: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const name = formData.get("name");
     const roomId = formData.get("roomId");
@@ -65,7 +65,7 @@ const actions = {
     if (!isManagerOrAbove(event)) {
       return fail(403, { error: "Permission denied. Only managers can delete assets." });
     }
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const assetId = formData.get("assetId");
     if (!assetId) {
@@ -85,7 +85,7 @@ const actions = {
     return { success: true };
   },
   update: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const assetId = formData.get("assetId");
     const name = formData.get("name");

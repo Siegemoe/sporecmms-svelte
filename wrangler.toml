@@ -9,10 +9,14 @@ pages_build_output_dir = ".svelte-kit/cloudflare"
 # main = ".svelte-kit/cloudflare/_worker.js"
 
 # Environment variables for Prisma
-# You must set these when deploying:
+# You must set these when deploying using wrangler secret put:
 # wrangler secret put DATABASE_URL
-# wrangler secret put DIRECT_URL
+# wrangler secret put ACCELERATE_URL
+# wrangler secret put SESSION_SECRET
+# wrangler secret put NODE_ENV
 
+# Note: These variables are stored as secrets, not in this file
 # DATABASE_URL = ""
-# DIRECT_URL = ""
-# JWT_SECRET = ""
+# ACCELERATE_URL = ""
+# SESSION_SECRET = ""
+# NODE_ENV = ""

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "node server.dev.js",
+    "dev": "node server.dev.mjs",
     "dev:vite": "vite dev --debug",
     "dev:server": "npm run build && node server.js",
     "build": "vite build",
@@ -15,7 +15,8 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
-    "db:reset": "prisma migrate reset --force && npm run db:seed"
+    "db:reset": "prisma migrate reset --force && npm run db:seed",
+    "db:seed:prod": "tsx prisma/seed-production-users.ts"
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "^1.0.0",
@@ -23,7 +24,7 @@
     "@types/bcryptjs": "^2.4.6",
     "autoprefixer": "^10.4.22",
     "postcss": "^8.5.6",
-    "prisma": "^5.22.0",
+    "prisma": "^7.0.0",
     "svelte": "^4.0.5",
     "svelte-check": "^3.4.3",
     "tailwindcss": "^3.4.18",
@@ -34,8 +35,8 @@
   },
   "type": "module",
   "dependencies": {
-    "@prisma/client": "^5.22.0",
-    "@prisma/extension-accelerate": "^3.0.1",
+    "@prisma/client": "^7.0.0",
+    "@prisma/adapter-pg": "^7.0.0",
     "@sveltejs/adapter-cloudflare": "^2.3.4",
     "bcryptjs": "^3.0.3",
     "cookie": "^1.0.2",

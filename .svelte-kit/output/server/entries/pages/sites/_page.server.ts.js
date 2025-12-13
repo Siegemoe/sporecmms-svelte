@@ -4,7 +4,7 @@ import { r as requireAuth, i as isManagerOrAbove } from "../../../chunks/guards.
 import { l as logAudit } from "../../../chunks/audit.js";
 const load = async (event) => {
   requireAuth(event);
-  const prisma = createRequestPrisma(event);
+  const prisma = await createRequestPrisma(event);
   const sites = await prisma.site.findMany({
     orderBy: { createdAt: "desc" },
     include: {
@@ -17,7 +17,7 @@ const load = async (event) => {
 };
 const actions = {
   create: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const name = formData.get("name");
     if (!name || name.trim() === "") {
@@ -39,7 +39,7 @@ const actions = {
     if (!isManagerOrAbove(event)) {
       return fail(403, { error: "Permission denied. Only managers can delete sites." });
     }
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const siteId = formData.get("siteId");
     if (!siteId) {
@@ -59,7 +59,7 @@ const actions = {
     return { success: true };
   },
   update: async (event) => {
-    const prisma = createRequestPrisma(event);
+    const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const siteId = formData.get("siteId");
     const name = formData.get("name");

@@ -1,5 +1,6 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 // Runtime detection helper
 function isCloudflareWorker(): boolean {
@@ -10,43 +11,67 @@ function isCloudflareWorker(): boolean {
          !g.Buffer;
 }
 
+// Helper to get environment variables reliably
+function getEnvVar(key: string): string | undefined {
+  const g = globalThis as any;
+
+  // Try Cloudflare Workers secrets/bindings first
+  if (g[key]) {
+    return g[key];
+  }
+
+  // Try platform env (Cloudflare Pages/Workers)
+  if (g.platform?.env?.[key]) {
+    return g.platform.env[key];
+  }
+
+  // Fallback to process.env (Node.js)
+  return g.process?.env?.[key];
+}
+
 // Create appropriate Prisma client based on runtime
 async function createBasePrismaClient(): Promise<PrismaClient> {
+  // Get database URLs from environment
+  const databaseUrl = getEnvVar('DATABASE_URL');
+  const accelerateUrl = getEnvVar('ACCELERATE_URL');
+  const directUrl = getEnvVar('DIRECT_URL');
+
+  // Determine which URL to use
+  const effectiveUrl = accelerateUrl || databaseUrl || directUrl;
+
+  if (!effectiveUrl) {
+    throw new Error('DATABASE_URL, ACCELERATE_URL, or DIRECT_URL environment variable is required');
+  }
+
+  // Common logging configuration - temporarily enable all logs for debugging
+  const nodeEnv = getEnvVar('NODE_ENV') || 'development';
+  const logLevel = ['query', 'info', 'warn', 'error']; // Enable all logs temporarily
+
   if (isCloudflareWorker()) {
-    // Cloudflare Worker environment - use edge client
+    // Cloudflare Worker environment - use edge client with serverless driver
     const { PrismaClient: EdgePrismaClient } = await import('@prisma/client/edge');
-    const { withAccelerate } = await import('@prisma/extension-accelerate');
-    
-    // For Cloudflare, we need to get the Accelerate connection string
-    // This will be provided via environment variables in the worker
-    const g = globalThis as any;
-    const accelerateUrl = g.process?.env?.ACCELERATE_URL ||
-                         g.process?.env?.DATABASE_URL ||
-                         g.ACCELERATE_URL ||
-                         g.DATABASE_URL;
-    
-    if (!accelerateUrl) {
-      throw new Error('ACCELERATE_URL or DATABASE_URL environment variable is required for Cloudflare Workers');
-    }
+
+    // For Cloudflare Workers, use the serverless PostgreSQL driver
+    const adapter = new PrismaPg({
+      url: effectiveUrl
+    });
 
     return new EdgePrismaClient({
-      datasources: {
-        db: {
-          url: accelerateUrl
-        }
-      },
-      log: (globalThis as any).process?.env?.NODE_ENV === 'development' ?
-            ['query', 'info', 'warn', 'error'] : ['warn', 'error'],
-    }).$extends(withAccelerate()) as PrismaClient;
+      adapter,
+      log: logLevel as any,
+    }) as PrismaClient;
   } else {
-    // Node.js environment - use standard client
+    // Node.js environment - use standard client with regular adapter
     const { PrismaClient: NodePrismaClient } = await import('@prisma/client');
-    const { withAccelerate } = await import('@prisma/extension-accelerate');
-    
+
+    const adapter = new PrismaPg({
+      url: effectiveUrl
+    });
+
     return new NodePrismaClient({
-      log: (globalThis as any).process?.env?.NODE_ENV === 'development' ?
-            ['query', 'info', 'warn', 'error'] : ['warn', 'error'],
-    }).$extends(withAccelerate()) as PrismaClient;
+      adapter,
+      log: logLevel as any,
+    }) as PrismaClient;
   }
 }
 
@@ -63,17 +88,17 @@ async function getPrismaSingleton(): Promise<PrismaClient> {
   if (globalForPrisma.prisma) {
     return globalForPrisma.prisma;
   }
-  
+
   if (!globalForPrisma.prismaPromise) {
     globalForPrisma.prismaPromise = createBasePrismaClient();
   }
-  
+
   const client = await globalForPrisma.prismaPromise;
-  
+
   if (!globalForPrisma.prisma) {
     globalForPrisma.prisma = client;
   }
-  
+
   return client;
 }
 
@@ -94,7 +119,7 @@ interface QueryParams {
  */
 async function createPrismaClient(orgId?: string): Promise<PrismaClient> {
   const baseClient = await getPrismaSingleton();
-  
+
   if (!orgId) {
     // No org context - return base client (for system operations)
     return baseClient;
@@ -153,14 +178,13 @@ async function createPrismaClient(orgId?: string): Promise<PrismaClient> {
  */
 export async function createRequestPrisma(event: RequestEvent): Promise<PrismaClient> {
   const orgId = event.locals.user?.orgId;
-  
-  // For Cloudflare Workers, we need to ensure the client has access to the worker's env and fetch
+
+  // For Cloudflare Workers, ensure environment variables are accessible
   if (isCloudflareWorker() && (event.platform as any)?.env) {
-    // In Cloudflare, we might need to create a client with the platform context
-    // This is handled by the edge client initialization above
+    // The environment variables should be accessible through getEnvVar()
     return createPrismaClient(orgId);
   }
-  
+
   return createPrismaClient(orgId);
 }
 
@@ -177,12 +201,23 @@ export const prisma: Promise<PrismaClient> = getPrismaSingleton();
 export async function createNodePrismaClient(): Promise<PrismaClient> {
   // Force Node.js client for scripts
   const { PrismaClient: NodePrismaClient } = await import('@prisma/client');
-  const { withAccelerate } = await import('@prisma/extension-accelerate');
-  
+
+  const databaseUrl = getEnvVar('DATABASE_URL') || getEnvVar('DIRECT_URL');
+  const nodeEnv = getEnvVar('NODE_ENV') || 'development';
+  const logLevel = ['query', 'info', 'warn', 'error']; // Enable all logs temporarily
+
+  if (!databaseUrl) {
+    throw new Error('DATABASE_URL or DIRECT_URL environment variable is required for Node.js client');
+  }
+
+  const adapter = new PrismaPg({
+    url: databaseUrl
+  });
+
   return new NodePrismaClient({
-    log: (globalThis as any).process?.env?.NODE_ENV === 'development' ?
-          ['query', 'info', 'warn', 'error'] : ['warn', 'error'],
-  }).$extends(withAccelerate()) as PrismaClient;
+    adapter,
+    log: logLevel as any,
+  }) as PrismaClient;
 }
 
 /**

@@ -12,7 +12,8 @@ async function createSession(userId) {
   try {
     const expiresAt = /* @__PURE__ */ new Date();
     expiresAt.setDate(expiresAt.getDate() + SESSION_EXPIRY_DAYS);
-    const session = await prisma.session.create({
+    const client = await prisma;
+    const session = await client.session.create({
       data: {
         userId,
         expiresAt
@@ -29,7 +30,8 @@ async function validateSession(cookies) {
   if (!sessionId) {
     return null;
   }
-  const session = await prisma.session.findUnique({
+  const client = await prisma;
+  const session = await client.session.findUnique({
     where: { id: sessionId },
     include: {
       user: {
@@ -48,7 +50,7 @@ async function validateSession(cookies) {
     return null;
   }
   if (session.expiresAt < /* @__PURE__ */ new Date()) {
-    await prisma.session.delete({ where: { id: sessionId } });
+    await client.session.delete({ where: { id: sessionId } });
     return null;
   }
   return session.user;
@@ -56,7 +58,8 @@ async function validateSession(cookies) {
 async function destroySession(cookies) {
   const sessionId = cookies.get(SESSION_COOKIE);
   if (sessionId) {
-    await prisma.session.delete({ where: { id: sessionId } }).catch(() => {
+    const client = await prisma;
+    await client.session.delete({ where: { id: sessionId } }).catch(() => {
     });
     cookies.delete(SESSION_COOKIE, { path: "/" });
   }
@@ -66,7 +69,7 @@ function setSessionCookie(cookies, sessionId) {
     path: "/",
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: globalThis.process?.env?.NODE_ENV === "production",
     maxAge: 60 * 60 * 24 * SESSION_EXPIRY_DAYS
   });
 }

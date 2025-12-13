@@ -1,11 +1,12 @@
 import { p as prisma } from "./prisma.js";
 async function logAudit(userId, action, details) {
   try {
-    await prisma.auditLog.create({
+    const client = await prisma;
+    await client.auditLog.create({
       data: {
         userId,
         action,
-        details: details || null
+        details
       }
     });
   } catch (e) {
