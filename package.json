@@ -15,7 +15,8 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
-    "db:reset": "prisma migrate reset --force && npm run db:seed"
+    "db:reset": "prisma migrate reset --force && npm run db:seed",
+    "db:seed:prod": "tsx prisma/seed-production-users.ts"
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "^1.0.0",
