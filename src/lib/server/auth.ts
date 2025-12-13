@@ -84,8 +84,8 @@ export function setSessionCookie(cookies: Cookies, sessionId: string): void {
 	cookies.set(SESSION_COOKIE, sessionId, {
 		path: '/',
 		httpOnly: true,
-		sameSite: 'lax',
-		secure: (globalThis as any).process?.env?.NODE_ENV === 'production',
+		sameSite: 'strict', // Upgrade from 'lax' for better security
+		secure: true, // Always secure in production (Cloudflare Pages enforces HTTPS)
 		maxAge: 60 * 60 * 24 * SESSION_EXPIRY_DAYS
 	});
 }

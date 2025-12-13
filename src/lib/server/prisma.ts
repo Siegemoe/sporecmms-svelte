@@ -55,9 +55,11 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
     throw new Error('DATABASE_URL, ACCELERATE_URL, or DIRECT_URL environment variable is required');
   }
 
-  // Common logging configuration - temporarily enable all logs for debugging
+  // Common logging configuration
   const nodeEnv = getEnvVar('NODE_ENV') || 'development';
-  const logLevel = ['query', 'info', 'warn', 'error']; // Enable all logs temporarily
+  const logLevel = nodeEnv === 'development'
+    ? ['query', 'info', 'warn', 'error'] // Enable all logs in development
+    : ['warn', 'error']; // Production: only log warnings and errors
 
   // Import the Accelerate extension
   const { withAccelerate } = await import('@prisma/extension-accelerate');
