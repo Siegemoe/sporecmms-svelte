@@ -45,7 +45,8 @@
       "Bash(cat:*)",
       "Bash(npx dotenv -e .env -- npm run db:seed:*)",
       "Bash(ls:*)",
-      "Bash(wrangler:*)"
+      "Bash(wrangler:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

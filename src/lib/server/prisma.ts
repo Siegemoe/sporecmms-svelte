@@ -47,31 +47,35 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
   const logLevel = ['query', 'info', 'warn', 'error']; // Enable all logs temporarily
 
   if (isCloudflareWorker()) {
-    // Cloudflare Worker environment - use edge client without adapter
-    // Prisma Accelerate handles the connection directly
+    // Cloudflare Worker environment - use edge client with Accelerate extension
     const { PrismaClient: EdgePrismaClient } = await import('@prisma/client/edge');
+    const { withAccelerate } = await import('@prisma/extension-accelerate');
 
-    return new EdgePrismaClient({
+    const client = new EdgePrismaClient({
       datasources: {
         db: {
           url: effectiveUrl
         }
       },
       log: logLevel as any,
-    }) as PrismaClient;
-  } else {
-    // Node.js environment - use standard client with adapter
-    const { PrismaClient: NodePrismaClient } = await import('@prisma/client');
-    const { PrismaPg } = await import('@prisma/adapter-pg');
-
-    const adapter = new PrismaPg({
-      url: effectiveUrl
     });
 
-    return new NodePrismaClient({
-      adapter,
+    return client.$extends(withAccelerate()) as PrismaClient;
+  } else {
+    // Node.js environment - use standard client
+    const { PrismaClient: NodePrismaClient } = await import('@prisma/client');
+    const { withAccelerate } = await import('@prisma/extension-accelerate');
+
+    const client = new NodePrismaClient({
+      datasources: {
+        db: {
+          url: effectiveUrl
+        }
+      },
       log: logLevel as any,
-    }) as PrismaClient;
+    });
+
+    return client.$extends(withAccelerate()) as PrismaClient;
   }
 }
 
