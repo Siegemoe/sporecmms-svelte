@@ -8,5 +8,10 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig({
 	root: __dirname,
-	plugins: [sveltekit()]
+	plugins: [sveltekit()],
+	build: {
+		rollupOptions: {
+			external: ['@prisma/adapter-pg']
+		}
+	}
 });
