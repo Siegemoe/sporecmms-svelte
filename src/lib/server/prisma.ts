@@ -1,6 +1,5 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
 
 // Runtime detection helper
 function isCloudflareWorker(): boolean {
@@ -48,21 +47,22 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
   const logLevel = ['query', 'info', 'warn', 'error']; // Enable all logs temporarily
 
   if (isCloudflareWorker()) {
-    // Cloudflare Worker environment - use edge client with serverless driver
+    // Cloudflare Worker environment - use edge client without adapter
+    // Prisma Accelerate handles the connection directly
     const { PrismaClient: EdgePrismaClient } = await import('@prisma/client/edge');
 
-    // For Cloudflare Workers, use the serverless PostgreSQL driver
-    const adapter = new PrismaPg({
-      url: effectiveUrl
-    });
-
     return new EdgePrismaClient({
-      adapter,
+      datasources: {
+        db: {
+          url: effectiveUrl
+        }
+      },
       log: logLevel as any,
     }) as PrismaClient;
   } else {
-    // Node.js environment - use standard client with regular adapter
+    // Node.js environment - use standard client with adapter
     const { PrismaClient: NodePrismaClient } = await import('@prisma/client');
+    const { PrismaPg } = await import('@prisma/adapter-pg');
 
     const adapter = new PrismaPg({
       url: effectiveUrl
