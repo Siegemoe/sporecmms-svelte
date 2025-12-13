@@ -52,11 +52,7 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
     const { withAccelerate } = await import('@prisma/extension-accelerate');
 
     const client = new EdgePrismaClient({
-      datasources: {
-        db: {
-          url: effectiveUrl
-        }
-      },
+      datasourceUrl: effectiveUrl,
       log: logLevel as any,
     });
 
@@ -67,11 +63,7 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
     const { withAccelerate } = await import('@prisma/extension-accelerate');
 
     const client = new NodePrismaClient({
-      datasources: {
-        db: {
-          url: effectiveUrl
-        }
-      },
+      datasourceUrl: effectiveUrl,
       log: logLevel as any,
     });
 
