@@ -20,7 +20,19 @@ export const actions: Actions = {
 		const ip = getClientAddress() || 'unknown';
 
 		try {
-			// Enhanced rate limiting with IP blocking
+			// First check if IP is blocked
+			const blockStatus = await security.isIPBlocked(ip);
+			if (blockStatus.blocked) {
+				await security.logSecurityEvent({
+					ipAddress: ip,
+					action: 'LOGIN_BLOCKED',
+					details: { reason: blockStatus.reason },
+					severity: 'WARNING'
+				});
+				return fail(403, { error: 'Access denied. Your IP address has been blocked.' });
+			}
+
+			// Then apply rate limiting
 			const rateLimitResult = await security.checkRateLimit(
 				{ event: { request, getClientAddress: () => ip } as any, action: 'login' },
 				SECURITY_RATE_LIMITS.AUTH
@@ -34,9 +46,9 @@ export const actions: Actions = {
 						details: { reason: 'Too many login attempts' },
 						severity: 'WARNING'
 					});
-					throw error(429, 'Too many login attempts. Your IP has been temporarily blocked.');
+					return fail(429, { error: 'Too many login attempts. Your IP has been temporarily blocked.' });
 				}
-				throw error(429, 'Too many login attempts. Please try again later.');
+				return fail(429, { error: 'Too many login attempts. Please try again later.' });
 			}
 
 			formData = await request.formData();
