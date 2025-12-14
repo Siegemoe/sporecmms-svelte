@@ -121,6 +121,8 @@ model User {
   sessions          Session[]
   auditLogs         AuditLog[]
   assignedWorkOrders WorkOrder[] @relation("AssignedWorkOrders")
+  securityLogs      SecurityLog[]
+  blockedIPs        IPBlock[] @relation("BlockedBy")
 }
 
 model Session {
@@ -140,7 +142,48 @@ model AuditLog {
   createdAt DateTime @default(now())
   action    String
   details   Json?
-  
+
   userId    String
   user      User     @relation(fields: [userId], references: [id])
+}
+
+// Security Models
+model SecurityLog {
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  ipAddress   String      // IP address of the request
+  userAgent   String?     // Browser/user agent
+  action      String      // Type of security event
+  details     Json?       // Additional details
+  severity    String      @default("INFO") // INFO, WARNING, CRITICAL
+  userId      String?     // User ID if applicable
+
+  // Optional relationship to user
+  user        User?       @relation(fields: [userId], references: [id])
+
+  // Index for efficient queries
+  @@index([createdAt])
+  @@index([ipAddress])
+  @@index([severity])
+}
+
+model IPBlock {
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  ipAddress   String      @unique
+  reason      String      // Reason for blocking
+  severity    String      // TEMPORARY, PERSISTENT
+  blockedAt   DateTime    @default(now())
+  expiresAt   DateTime?   // When block expires (null for permanent)
+  violationCount Int      @default(1) // Number of violations
+  blockedBy   String?     // Admin user ID who manually blocked
+
+  // Optional relationship to user
+  blockedByUser User?      @relation("BlockedBy", fields: [blockedBy], references: [id])
+
+  // Index for efficient queries
+  @@index([ipAddress])
+  @@index([expiresAt])
+  @@index([severity])
 }

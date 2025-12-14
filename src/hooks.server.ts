@@ -1,6 +1,7 @@
 import type { Handle, handleError } from '@sveltejs/kit';
 import { redirect, error } from '@sveltejs/kit';
 import { validateSession } from '$lib/server/auth';
+import { SecurityManager, SECURITY_RATE_LIMITS } from '$lib/server/security';
 import { building } from '$app/environment';
 
 // Routes that don't require authentication
@@ -12,13 +13,60 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
+	// Initialize security manager
+	const security = SecurityManager.getInstance();
+	const ip = event.getClientAddress();
+
+	// Check if IP is blocked
+	const blockStatus = await security.isIPBlocked(ip);
+	if (blockStatus.blocked) {
+		return error(403, {
+			message: 'Access denied',
+			code: 'IP_BLOCKED'
+		});
+	}
+
+	// Determine if this is an auth route for rate limiting
+	const isAuthRoute = publicRoutes.some(route => event.url.pathname.startsWith(route));
+
+	// Apply rate limiting for auth routes
+	if (isAuthRoute) {
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'auth' },
+			SECURITY_RATE_LIMITS.AUTH
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return error(429, {
+					message: 'Too many requests. Your IP has been temporarily blocked.',
+					code: 'IP_BLOCKED'
+				});
+			}
+			return error(429, {
+				message: 'Too many requests. Please try again later.',
+				code: 'RATE_LIMITED'
+			});
+		}
+	}
+
 	// Validate session and attach user to locals
 	const user = await validateSession(event.cookies);
 	event.locals.user = user;
 
+	// Log successful authentication
+	if (user) {
+		await security.logSecurityEvent({
+			event,
+			action: 'AUTH_SUCCESS',
+			severity: 'INFO',
+			userId: user.id
+		});
+	}
+
 	// Check if route requires authentication
 	const isPublicRoute = publicRoutes.some(route => event.url.pathname.startsWith(route));
-	
+
 	if (!user && !isPublicRoute) {
 		// Redirect to login if not authenticated and not on public route
 		throw redirect(303, '/auth/login');
@@ -43,6 +91,21 @@ export const handle: Handle = async ({ event, resolve }) => {
 		response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
 		// HSTS (only add if you have a valid SSL certificate)
 		response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+
+		// Content Security Policy (Strict mode)
+		const csp = [
+			"default-src 'self'",
+			"script-src 'self' 'unsafe-eval'", // unsafe-eval needed for SvelteKit
+			"style-src 'self' 'unsafe-inline'", // unsafe-inline needed for Svelte styling
+			"img-src 'self' data: https:",
+			"font-src 'self'",
+			"connect-src 'self' https://*.prisma-data.net", // Allow Prisma Accelerate
+			"frame-ancestors 'none'",
+			"base-uri 'self'",
+			"form-action 'self'"
+		].join('; ');
+
+		response.headers.set('Content-Security-Policy', csp);
 	}
 
 	return response;

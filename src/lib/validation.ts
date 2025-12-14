@@ -156,7 +156,10 @@ export function validateInput<T>(schema: z.ZodSchema<T>, data: unknown): { succe
   if (!result.success) {
     const errors: Record<string, string> = {};
     result.error.issues.forEach((issue) => {
-      errors[issue.path[0]] = issue.message;
+      const key = issue.path[0];
+      if (typeof key === 'string') {
+        errors[key] = issue.message;
+      }
     });
     return { success: false, errors };
   }

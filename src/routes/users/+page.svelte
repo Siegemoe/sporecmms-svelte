@@ -26,12 +26,20 @@
 			<h1 class="text-4xl font-extrabold text-spore-cream tracking-tight">Users</h1>
 			<p class="text-spore-cream/60 mt-2 text-sm font-medium">{users.length} team member{users.length !== 1 ? 's' : ''}</p>
 		</div>
-		<button 
-			on:click={() => showCreateForm = !showCreateForm}
-			class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide"
-		>
-			{showCreateForm ? 'CANCEL' : '+ ADD USER'}
-		</button>
+		<div class="flex gap-3">
+			<a
+				href="/users/security"
+				class="bg-spore-steel text-spore-cream px-6 py-3 rounded-xl hover:bg-spore-steel/90 transition-colors text-sm font-bold tracking-wide"
+			>
+				🔒 Security
+			</a>
+			<button
+				on:click={() => showCreateForm = !showCreateForm}
+				class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide"
+			>
+				{showCreateForm ? 'CANCEL' : '+ ADD USER'}
+			</button>
+		</div>
 	</div>
 
 	<!-- Create Form -->
