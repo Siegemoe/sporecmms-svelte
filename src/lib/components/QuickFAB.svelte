@@ -169,7 +169,7 @@
 								id="fab-wo-asset"
 								name="assetId"
 								bind:value={newWO.assetId}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
+								class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
 								required
 								aria-required="true"
 							>
@@ -190,7 +190,7 @@
 								id="fab-wo-room"
 								name="roomId"
 								bind:value={newWO.roomId}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
+								class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
 								required
 								aria-required="true"
 							>
@@ -211,7 +211,7 @@
 								id="fab-wo-building"
 								name="buildingId"
 								bind:value={newWO.buildingId}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
+								class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
 								required
 								aria-required="true"
 							>
@@ -231,7 +231,7 @@
 							id="fab-wo-failure"
 							name="failureMode"
 							bind:value={newWO.failureMode}
-							class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
+							class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
 						>
 							{#each failureModes as mode}
 								<option value={mode}>{mode}</option>
@@ -353,7 +353,7 @@
 								id="fab-wo-asset-desktop"
 								name="assetId"
 								bind:value={newWO.assetId}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
+								class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
 								required
 								aria-required="true"
 							>
@@ -374,7 +374,7 @@
 								id="fab-wo-room-desktop"
 								name="roomId"
 								bind:value={newWO.roomId}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
+								class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
 								required
 								aria-required="true"
 							>
@@ -395,7 +395,7 @@
 								id="fab-wo-building-desktop"
 								name="buildingId"
 								bind:value={newWO.buildingId}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
+								class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
 								required
 								aria-required="true"
 							>
@@ -415,7 +415,7 @@
 							id="fab-wo-failure-desktop"
 							name="failureMode"
 							bind:value={newWO.failureMode}
-							class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
+							class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
 						>
 							{#each failureModes as mode}
 								<option value={mode}>{mode}</option>
