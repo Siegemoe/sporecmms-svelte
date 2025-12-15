@@ -24,15 +24,28 @@
 
 	function handleFormSubmit() {
 		isSubmitting = true;
+		console.log('QuickFAB: Form submitted with data:', {
+			title: newWO.title,
+			assetId: newWO.assetId,
+			roomId: newWO.roomId,
+			buildingId: newWO.buildingId,
+			description: newWO.description,
+			failureMode: newWO.failureMode,
+			selectionMode
+		});
 	}
 </script>
+
 
 <!-- Floating Action Button -->
 {#if !showCreateForm}
 	<!-- Mobile FAB - hidden on desktop -->
 	<button
 		type="button"
-		on:click={() => showCreateForm = true}
+		on:click={() => {
+			console.log('QuickFAB: FAB clicked, showing form');
+			showCreateForm = true;
+		}}
 		class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 lg:hidden"
 		title="Create Work Order"
 		aria-label="Create Work Order"
@@ -45,7 +58,10 @@
 	<!-- Desktop FAB - hidden on mobile -->
 	<button
 		type="button"
-		on:click={() => showCreateForm = true}
+		on:click={() => {
+			console.log('QuickFAB: FAB clicked, showing form');
+			showCreateForm = true;
+		}}
 		class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 hidden lg:flex"
 		title="Create Work Order"
 		aria-label="Create Work Order"
@@ -76,9 +92,13 @@
 			use:enhance={() => {
 				handleFormSubmit();
 				return async ({ update }) => {
-					await update();
-					closeForm();
-					isSubmitting = false;
+					const result = await update();
+					if (result.type === 'success') {
+						closeForm();
+						isSubmitting = false;
+					} else {
+						isSubmitting = false;
+					}
 				};
 			}}
 		>
