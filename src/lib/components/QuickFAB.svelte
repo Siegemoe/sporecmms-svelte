@@ -8,8 +8,8 @@
 
 	let showCreateForm = false;
 	let isSubmitting = false;
-	let selectionMode = 'asset'; // 'asset' | 'room' | 'building'
 	let newWO = { title: '', description: '', assetId: '', failureMode: 'General', roomId: '', buildingId: '' };
+	let selectedLocation = ''; // Holds the combined location selection
 
 	const dispatch = createEventDispatcher();
 
@@ -18,7 +18,7 @@
 	function closeForm() {
 		showCreateForm = false;
 		newWO = { title: '', description: '', assetId: '', failureMode: 'General', roomId: '', buildingId: '' };
-		selectionMode = 'asset';
+		selectedLocation = '';
 		dispatch('close');
 	}
 
@@ -119,33 +119,10 @@
 
 				<!-- Form -->
 				<div class="p-4 space-y-4">
-					<!-- Selection Mode Toggle -->
-					<div class="flex gap-2 flex-wrap">
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'asset' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'asset'; newWO.assetId = ''; }}
-						>
-							Asset
-						</button>
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'room' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'room'; newWO.roomId = ''; }}
-						>
-							Room
-						</button>
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'building' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'building'; newWO.buildingId = ''; }}
-						>
-							Building
-						</button>
-					</div>
-
-					<!-- Hidden field for selection mode -->
-					<input type="hidden" name="selectionMode" value={selectionMode} />
+					<!-- Hidden fields for form submission -->
+					<input type="hidden" name="assetId" bind:value={newWO.assetId} />
+					<input type="hidden" name="roomId" bind:value={newWO.roomId} />
+					<input type="hidden" name="buildingId" bind:value={newWO.buildingId} />
 
 					<div>
 						<label for="fab-wo-title" class="block text-sm font-semibold text-gray-900 mb-2">Title *</label>
@@ -161,69 +138,57 @@
 						/>
 					</div>
 
-					<!-- Asset Selection -->
-					{#if selectionMode === 'asset'}
-						<div>
-							<label for="fab-wo-asset" class="block text-sm font-semibold text-gray-900 mb-2">Asset *</label>
-							<select
-								id="fab-wo-asset"
-								name="assetId"
-								bind:value={newWO.assetId}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
-								required
-								aria-required="true"
-							>
-								<option value="">Select an asset...</option>
+					<!-- Single Selection Field -->
+					<div>
+						<label for="fab-wo-location" class="block text-sm font-semibold text-gray-900 mb-2">Location *</label>
+						<select
+							id="fab-wo-location"
+							name="locationId"
+							bind:value={selectedLocation}
+							on:change={() => {
+								// Update the appropriate field based on selection
+								if (selectedLocation.startsWith('asset:')) {
+									newWO.assetId = selectedLocation.substring(6);
+									newWO.roomId = '';
+									newWO.buildingId = '';
+								} else if (selectedLocation.startsWith('room:')) {
+									newWO.roomId = selectedLocation.substring(5);
+									newWO.assetId = '';
+									newWO.buildingId = '';
+								} else if (selectedLocation.startsWith('building:')) {
+									newWO.buildingId = selectedLocation.substring(9);
+									newWO.assetId = '';
+									newWO.roomId = '';
+								}
+							}}
+							class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
+							required
+							aria-required="true"
+						>
+							<option value="">Select a location...</option>
+							<optgroup label="Assets">
 								{#each assets as asset}
-									<option value={asset.id}>
+									<option value="asset:{asset.id}">
 										{asset.name} {asset.room?.site?.name ? `- ${asset.room.site.name}` : ''}
 									</option>
 								{/each}
-							</select>
-						</div>
-
-					<!-- Room Selection -->
-					{:else if selectionMode === 'room'}
-						<div>
-							<label for="fab-wo-room" class="block text-sm font-semibold text-gray-900 mb-2">Room *</label>
-							<select
-								id="fab-wo-room"
-								name="roomId"
-								bind:value={newWO.roomId}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
-								required
-								aria-required="true"
-							>
-								<option value="">Select a room...</option>
+							</optgroup>
+							<optgroup label="Rooms">
 								{#each rooms as room}
-									<option value={room.id}>
+									<option value="room:{room.id}">
 										{room.name} {room.building ? `- ${room.building.name}` : ''} {room.site?.name ? `- ${room.site.name}` : ''}
 									</option>
 								{/each}
-							</select>
-						</div>
-
-					<!-- Building Selection -->
-					{:else if selectionMode === 'building'}
-						<div>
-							<label for="fab-wo-building" class="block text-sm font-semibold text-gray-900 mb-2">Building *</label>
-							<select
-								id="fab-wo-building"
-								name="buildingId"
-								bind:value={newWO.buildingId}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
-								required
-								aria-required="true"
-							>
-								<option value="">Select a building...</option>
+							</optgroup>
+							<optgroup label="Buildings">
 								{#each buildings as building}
-									<option value={building.id}>
+									<option value="building:{building.id}">
 										{building.name} {building.site?.name ? `- ${building.site.name}` : ''}
 									</option>
 								{/each}
-							</select>
-						</div>
-					{/if}
+							</optgroup>
+						</select>
+					</div>
 
 					<div>
 						<label for="fab-wo-failure" class="block text-sm font-semibold text-gray-900 mb-2">Failure Mode</label>
@@ -262,7 +227,7 @@
 						</button>
 						<button
 							type="submit"
-							disabled={isSubmitting || !newWO.title.trim() || (selectionMode === 'asset' && !newWO.assetId) || (selectionMode === 'room' && !newWO.roomId) || (selectionMode === 'building' && !newWO.buildingId)}
+							disabled={isSubmitting || !newWO.title.trim() || !selectedLocation}
 							class="flex-1 bg-spore-orange text-white px-4 py-3 rounded-lg font-semibold hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 							aria-busy={isSubmitting}
 						>
@@ -303,33 +268,10 @@
 
 				<!-- Form Content -->
 				<div class="p-6 space-y-4">
-					<!-- Selection Mode Toggle -->
-					<div class="flex gap-2 flex-wrap">
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'asset' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'asset'; newWO.assetId = ''; }}
-						>
-							Asset
-						</button>
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'room' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'room'; newWO.roomId = ''; }}
-						>
-							Room
-						</button>
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'building' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'building'; newWO.buildingId = ''; }}
-						>
-							Building
-						</button>
-					</div>
-
-					<!-- Hidden field for selection mode -->
-					<input type="hidden" name="selectionMode" value={selectionMode} />
+					<!-- Hidden fields for form submission -->
+					<input type="hidden" name="assetId" bind:value={newWO.assetId} />
+					<input type="hidden" name="roomId" bind:value={newWO.roomId} />
+					<input type="hidden" name="buildingId" bind:value={newWO.buildingId} />
 
 					<div>
 						<label for="fab-wo-title-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Title *</label>
@@ -345,69 +287,57 @@
 						/>
 					</div>
 
-					<!-- Asset Selection -->
-					{#if selectionMode === 'asset'}
-						<div>
-							<label for="fab-wo-asset-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Asset *</label>
-							<select
-								id="fab-wo-asset-desktop"
-								name="assetId"
-								bind:value={newWO.assetId}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
-								required
-								aria-required="true"
-							>
-								<option value="">Select an asset...</option>
+					<!-- Single Selection Field -->
+					<div>
+						<label for="fab-wo-location-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Location *</label>
+						<select
+							id="fab-wo-location-desktop"
+							name="locationId"
+							bind:value={selectedLocation}
+							on:change={() => {
+								// Update the appropriate field based on selection
+								if (selectedLocation.startsWith('asset:')) {
+									newWO.assetId = selectedLocation.substring(6);
+									newWO.roomId = '';
+									newWO.buildingId = '';
+								} else if (selectedLocation.startsWith('room:')) {
+									newWO.roomId = selectedLocation.substring(5);
+									newWO.assetId = '';
+									newWO.buildingId = '';
+								} else if (selectedLocation.startsWith('building:')) {
+									newWO.buildingId = selectedLocation.substring(9);
+									newWO.assetId = '';
+									newWO.roomId = '';
+								}
+							}}
+							class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
+							required
+							aria-required="true"
+						>
+							<option value="">Select a location...</option>
+							<optgroup label="Assets">
 								{#each assets as asset}
-									<option value={asset.id}>
+									<option value="asset:{asset.id}">
 										{asset.name} {asset.room?.site?.name ? `- ${asset.room.site.name}` : ''}
 									</option>
 								{/each}
-							</select>
-						</div>
-
-					<!-- Room Selection -->
-					{:else if selectionMode === 'room'}
-						<div>
-							<label for="fab-wo-room-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Room *</label>
-							<select
-								id="fab-wo-room-desktop"
-								name="roomId"
-								bind:value={newWO.roomId}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
-								required
-								aria-required="true"
-							>
-								<option value="">Select a room...</option>
+							</optgroup>
+							<optgroup label="Rooms">
 								{#each rooms as room}
-									<option value={room.id}>
+									<option value="room:{room.id}">
 										{room.name} {room.building ? `- ${room.building.name}` : ''} {room.site?.name ? `- ${room.site.name}` : ''}
 									</option>
 								{/each}
-							</select>
-						</div>
-
-					<!-- Building Selection -->
-					{:else if selectionMode === 'building'}
-						<div>
-							<label for="fab-wo-building-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Building *</label>
-							<select
-								id="fab-wo-building-desktop"
-								name="buildingId"
-								bind:value={newWO.buildingId}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
-								required
-								aria-required="true"
-							>
-								<option value="">Select a building...</option>
+							</optgroup>
+							<optgroup label="Buildings">
 								{#each buildings as building}
-									<option value={building.id}>
+									<option value="building:{building.id}">
 										{building.name} {building.site?.name ? `- ${building.site.name}` : ''}
 									</option>
 								{/each}
-							</select>
-						</div>
-					{/if}
+							</optgroup>
+						</select>
+					</div>
 
 					<div>
 						<label for="fab-wo-failure-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Failure Mode</label>
@@ -446,7 +376,7 @@
 						</button>
 						<button
 							type="submit"
-							disabled={isSubmitting || !newWO.title.trim() || (selectionMode === 'asset' && !newWO.assetId) || (selectionMode === 'room' && !newWO.roomId) || (selectionMode === 'building' && !newWO.buildingId)}
+							disabled={isSubmitting || !newWO.title.trim() || !selectedLocation}
 							class="flex-1 bg-spore-orange text-white px-4 py-3 rounded-lg font-semibold hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 							aria-busy={isSubmitting}
 						>
