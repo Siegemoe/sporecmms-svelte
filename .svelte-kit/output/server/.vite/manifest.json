@@ -11,7 +11,8 @@
   "_audit.js": {
     "file": "chunks/audit.js",
     "imports": [
-      "_prisma.js"
+      "_prisma.js",
+      "_security.js"
     ]
   },
   "_auth.js": {
@@ -51,8 +52,11 @@
   "_prisma.js": {
     "file": "chunks/prisma.js"
   },
-  "_rateLimit.js": {
-    "file": "chunks/rateLimit.js"
+  "_security.js": {
+    "file": "chunks/security.js",
+    "imports": [
+      "_prisma.js"
+    ]
   },
   "_ssr.js": {
     "file": "chunks/ssr.js"
@@ -62,6 +66,9 @@
     "imports": [
       "_ssr.js"
     ]
+  },
+  "_validation.js": {
+    "file": "chunks/validation.js"
   },
   "_websocket-handler.js": {
     "file": "chunks/websocket-handler.js"
@@ -102,7 +109,7 @@
     "src": "src/hooks.server.ts"
   },
   "src/routes/+layout.css": {
-    "file": "_app/immutable/assets/_layout.fadb47e1.css",
+    "file": "_app/immutable/assets/_layout.1c598841.css",
     "src": "src/routes/+layout.css"
   },
   "src/routes/+layout.server.ts": {
@@ -115,7 +122,7 @@
   },
   "src/routes/+layout.svelte": {
     "css": [
-      "_app/immutable/assets/_layout.fadb47e1.css"
+      "_app/immutable/assets/_layout.1c598841.css"
     ],
     "file": "entries/pages/_layout.svelte.js",
     "imports": [
@@ -150,6 +157,24 @@
     ],
     "isEntry": true,
     "src": "src/routes/api/activity/+server.ts"
+  },
+  "src/routes/api/security/blocks/+server.ts": {
+    "file": "entries/endpoints/api/security/blocks/_server.ts.js",
+    "imports": [
+      "_index.js",
+      "_security.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/api/security/blocks/+server.ts"
+  },
+  "src/routes/api/security/logs/+server.ts": {
+    "file": "entries/endpoints/api/security/logs/_server.ts.js",
+    "imports": [
+      "_index.js",
+      "_security.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/api/security/logs/+server.ts"
   },
   "src/routes/assets/+page.server.ts": {
     "file": "entries/pages/assets/_page.server.ts.js",
@@ -212,7 +237,8 @@
       "_index.js",
       "_auth.js",
       "_prisma.js",
-      "_rateLimit.js"
+      "_validation.js",
+      "_security.js"
     ],
     "isEntry": true,
     "src": "src/routes/auth/login/+page.server.ts"
@@ -240,7 +266,8 @@
       "_index.js",
       "_auth.js",
       "_prisma.js",
-      "_rateLimit.js"
+      "_validation.js",
+      "_security.js"
     ],
     "isEntry": true,
     "src": "src/routes/auth/register/+page.server.ts"
@@ -345,6 +372,14 @@
     ],
     "isEntry": true,
     "src": "src/routes/users/+page.svelte"
+  },
+  "src/routes/users/security/+page.svelte": {
+    "file": "entries/pages/users/security/_page.svelte.js",
+    "imports": [
+      "_ssr.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/users/security/+page.svelte"
   },
   "src/routes/work-orders/+page.server.ts": {
     "file": "entries/pages/work-orders/_page.server.ts.js",

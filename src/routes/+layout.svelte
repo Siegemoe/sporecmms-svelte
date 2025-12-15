@@ -160,5 +160,5 @@
 
 <!-- Quick FAB -->
 {#if showFAB}
-	<QuickFAB assets={data.assets || []} />
+	<QuickFAB assets={data.assets || []} buildings={data.buildings || []} rooms={data.rooms || []} />
 {/if}

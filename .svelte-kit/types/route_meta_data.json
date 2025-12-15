@@ -7,6 +7,12 @@
 	"/api/activity": [
 		"src/routes/api/activity/+server.ts"
 	],
+	"/api/security/blocks": [
+		"src/routes/api/security/blocks/+server.ts"
+	],
+	"/api/security/logs": [
+		"src/routes/api/security/logs/+server.ts"
+	],
 	"/assets": [
 		"src/routes/assets/+page.server.ts",
 		"src/routes/+layout.server.ts"
@@ -49,6 +55,9 @@
 	],
 	"/users": [
 		"src/routes/users/+page.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/users/security": [
 		"src/routes/+layout.server.ts"
 	],
 	"/work-orders": [

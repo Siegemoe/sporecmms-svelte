@@ -39,18 +39,13 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
   const effectiveUrl = accelerateUrl || databaseUrl || directUrl;
 
   if (!effectiveUrl) {
-    // During build, check if we're in a build environment
-    // In build/SSR generation, we might not have access to environment variables
+    // During build/SSR, we might not have access to environment variables
+    // This is normal for static generation - the real client will be created at runtime
     if (typeof globalThis !== 'undefined' && (globalThis as any).__SVELTEKIT__) {
-      // Build environment - return a minimal client for type checking
-      const { PrismaClient } = await import('@prisma/client');
-      return new PrismaClient({
-        datasources: {
-          db: {
-            url: "postgresql://localhost:5432/dummy"
-          }
-        }
-      }) as any;
+      // Build environment - don't create a client, let it fail gracefully
+      console.warn('Prisma client not available during build/SSR generation');
+      // Return a null that will be handled by the singleton pattern
+      return null as any;
     }
     throw new Error('DATABASE_URL, ACCELERATE_URL, or DIRECT_URL environment variable is required');
   }
@@ -106,6 +101,11 @@ async function getPrismaSingleton(): Promise<PrismaClient> {
   }
 
   const client = await globalForPrisma.prismaPromise;
+
+  // Handle the case where createBasePrismaClient returns null (build/SSR)
+  if (!client) {
+    throw new Error('Prisma client not available. This may occur during build/SSR generation.');
+  }
 
   if (!globalForPrisma.prisma) {
     globalForPrisma.prisma = client;

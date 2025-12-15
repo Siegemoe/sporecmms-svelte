@@ -4,7 +4,7 @@ import { fail, redirect, error } from '@sveltejs/kit';
 import { verifyPassword, createSession, setSessionCookie } from '$lib/server/auth';
 import { getPrisma } from '$lib/server/prisma';
 import { validateInput, loginSchema } from '$lib/validation';
-import { checkRateLimit, RATE_LIMITS } from '$lib/server/rateLimit';
+import { SecurityManager, SECURITY_RATE_LIMITS } from '$lib/server/security';
 
 export const load = async ({ locals }: Parameters<PageServerLoad>[0]) => {
 	// Already logged in
@@ -17,17 +17,39 @@ export const load = async ({ locals }: Parameters<PageServerLoad>[0]) => {
 export const actions = {
 	default: async ({ request, cookies, getClientAddress }: import('./$types').RequestEvent) => {
 		let formData: FormData | undefined;
+		const security = SecurityManager.getInstance();
+		const ip = getClientAddress() || 'unknown';
+
 		try {
-			// Rate limiting based on IP
-			const ip = getClientAddress() || 'unknown';
-			const rateLimitResult = checkRateLimit(
-				`login:${ip}`,
-				RATE_LIMITS.AUTH.limit,
-				RATE_LIMITS.AUTH.windowMs
+			// First check if IP is blocked
+			const blockStatus = await security.isIPBlocked(ip);
+			if (blockStatus.blocked) {
+				await security.logSecurityEvent({
+					ipAddress: ip,
+					action: 'LOGIN_BLOCKED',
+					details: { reason: blockStatus.reason },
+					severity: 'WARNING'
+				});
+				return fail(403, { error: 'Access denied. Your IP address has been blocked.' });
+			}
+
+			// Then apply rate limiting
+			const rateLimitResult = await security.checkRateLimit(
+				{ event: { request, getClientAddress: () => ip } as any, action: 'login' },
+				SECURITY_RATE_LIMITS.AUTH
 			);
 
 			if (!rateLimitResult.success) {
-				throw error(429, 'Too many login attempts. Please try again later.');
+				if (rateLimitResult.blocked) {
+					await security.logSecurityEvent({
+						ipAddress: ip,
+						action: 'LOGIN_BLOCKED',
+						details: { reason: 'Too many login attempts' },
+						severity: 'WARNING'
+					});
+					return fail(429, { error: 'Too many login attempts. Your IP has been temporarily blocked.' });
+				}
+				return fail(429, { error: 'Too many login attempts. Please try again later.' });
 			}
 
 			formData = await request.formData();
@@ -50,18 +72,44 @@ export const actions = {
 			});
 
 			if (!user) {
+				// Log failed login attempt
+				await security.logSecurityEvent({
+					ipAddress: ip,
+					action: 'LOGIN_FAILED',
+					details: { email: validation.data.email, reason: 'User not found' },
+					severity: 'WARNING'
+				});
+
 				return fail(400, { error: 'Invalid email or password', email: formData.get('email') });
 			}
 
 			// Verify password
 			const valid = await verifyPassword(validation.data.password, user.password);
 			if (!valid) {
+				// Log failed login attempt
+				await security.logSecurityEvent({
+					ipAddress: ip,
+					action: 'LOGIN_FAILED',
+					details: { email: validation.data.email, userId: user.id, reason: 'Invalid password' },
+					severity: 'WARNING',
+					userId: user.id
+				});
+
 				return fail(400, { error: 'Invalid email or password', email: formData.get('email') });
 			}
 
 			// Create session
 			const sessionId = await createSession(user.id);
 			setSessionCookie(cookies, sessionId);
+
+			// Log successful login
+			await security.logSecurityEvent({
+				ipAddress: ip,
+				action: 'LOGIN_SUCCESS',
+				details: { email: user.email },
+				severity: 'INFO',
+				userId: user.id
+			});
 
 			throw redirect(303, '/dashboard');
 		} catch (error) {

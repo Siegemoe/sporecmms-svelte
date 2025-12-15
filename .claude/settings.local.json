@@ -50,7 +50,8 @@
       "Bash(git reset:*)",
       "mcp__filesystem__directory_tree",
       "Bash(tree:*)",
-      "Bash(del:*)"
+      "Bash(del:*)",
+      "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"reset the database with consent, it''s all test data, there is zero real data in that db today.\" npx prisma migrate reset --force)"
     ],
     "deny": [],
     "ask": []

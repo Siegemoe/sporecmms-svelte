@@ -1,7 +1,8 @@
-import { r as redirect, e as error, f as fail } from "../../../../chunks/index.js";
+import { r as redirect, f as fail } from "../../../../chunks/index.js";
 import { h as hashPassword, c as createSession, s as setSessionCookie } from "../../../../chunks/auth.js";
 import { g as getPrisma } from "../../../../chunks/prisma.js";
-import { c as checkRateLimit, R as RATE_LIMITS, v as validateInput, r as registerSchema } from "../../../../chunks/rateLimit.js";
+import { v as validateInput, r as registerSchema } from "../../../../chunks/validation.js";
+import { a as SECURITY_RATE_LIMITS, S as SecurityManager } from "../../../../chunks/security.js";
 const load = async ({ locals }) => {
   if (locals.user) {
     throw redirect(303, "/dashboard");
@@ -10,15 +11,34 @@ const load = async ({ locals }) => {
 };
 const actions = {
   default: async ({ request, cookies, getClientAddress }) => {
+    const security = SecurityManager.getInstance();
+    const ip = getClientAddress() || "unknown";
     try {
-      const ip = getClientAddress() || "unknown";
-      const rateLimitResult = checkRateLimit(
-        `register:${ip}`,
-        RATE_LIMITS.AUTH.limit,
-        RATE_LIMITS.AUTH.windowMs
+      const blockStatus = await security.isIPBlocked(ip);
+      if (blockStatus.blocked) {
+        await security.logSecurityEvent({
+          ipAddress: ip,
+          action: "REGISTER_BLOCKED",
+          details: { reason: blockStatus.reason },
+          severity: "WARNING"
+        });
+        return fail(403, { error: "Access denied. Your IP address has been blocked." });
+      }
+      const rateLimitResult = await security.checkRateLimit(
+        { event: { request, getClientAddress: () => ip }, action: "register" },
+        SECURITY_RATE_LIMITS.AUTH
       );
       if (!rateLimitResult.success) {
-        throw error(429, "Too many registration attempts. Please try again later.");
+        if (rateLimitResult.blocked) {
+          await security.logSecurityEvent({
+            ipAddress: ip,
+            action: "REGISTER_BLOCKED",
+            details: { reason: "Too many registration attempts" },
+            severity: "WARNING"
+          });
+          return fail(429, { error: "Too many registration attempts. Your IP has been temporarily blocked." });
+        }
+        return fail(429, { error: "Too many registration attempts. Please try again later." });
       }
       const formData = await request.formData();
       const confirmPassword = formData.get("confirmPassword");

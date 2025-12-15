@@ -1,7 +1,8 @@
-import { r as redirect, e as error, f as fail } from "../../../../chunks/index.js";
+import { r as redirect, f as fail } from "../../../../chunks/index.js";
 import { v as verifyPassword, c as createSession, s as setSessionCookie } from "../../../../chunks/auth.js";
 import { g as getPrisma } from "../../../../chunks/prisma.js";
-import { c as checkRateLimit, R as RATE_LIMITS, v as validateInput, l as loginSchema } from "../../../../chunks/rateLimit.js";
+import { v as validateInput, l as loginSchema } from "../../../../chunks/validation.js";
+import { a as SECURITY_RATE_LIMITS, S as SecurityManager } from "../../../../chunks/security.js";
 const load = async ({ locals }) => {
   if (locals.user) {
     throw redirect(303, "/dashboard");
@@ -11,15 +12,34 @@ const load = async ({ locals }) => {
 const actions = {
   default: async ({ request, cookies, getClientAddress }) => {
     let formData;
+    const security = SecurityManager.getInstance();
+    const ip = getClientAddress() || "unknown";
     try {
-      const ip = getClientAddress() || "unknown";
-      const rateLimitResult = checkRateLimit(
-        `login:${ip}`,
-        RATE_LIMITS.AUTH.limit,
-        RATE_LIMITS.AUTH.windowMs
+      const blockStatus = await security.isIPBlocked(ip);
+      if (blockStatus.blocked) {
+        await security.logSecurityEvent({
+          ipAddress: ip,
+          action: "LOGIN_BLOCKED",
+          details: { reason: blockStatus.reason },
+          severity: "WARNING"
+        });
+        return fail(403, { error: "Access denied. Your IP address has been blocked." });
+      }
+      const rateLimitResult = await security.checkRateLimit(
+        { event: { request, getClientAddress: () => ip }, action: "login" },
+        SECURITY_RATE_LIMITS.AUTH
       );
       if (!rateLimitResult.success) {
-        throw error(429, "Too many login attempts. Please try again later.");
+        if (rateLimitResult.blocked) {
+          await security.logSecurityEvent({
+            ipAddress: ip,
+            action: "LOGIN_BLOCKED",
+            details: { reason: "Too many login attempts" },
+            severity: "WARNING"
+          });
+          return fail(429, { error: "Too many login attempts. Your IP has been temporarily blocked." });
+        }
+        return fail(429, { error: "Too many login attempts. Please try again later." });
       }
       formData = await request.formData();
       const validation = validateInput(loginSchema, {
@@ -35,14 +55,34 @@ const actions = {
         where: { email: validation.data.email }
       });
       if (!user) {
+        await security.logSecurityEvent({
+          ipAddress: ip,
+          action: "LOGIN_FAILED",
+          details: { email: validation.data.email, reason: "User not found" },
+          severity: "WARNING"
+        });
         return fail(400, { error: "Invalid email or password", email: formData.get("email") });
       }
       const valid = await verifyPassword(validation.data.password, user.password);
       if (!valid) {
+        await security.logSecurityEvent({
+          ipAddress: ip,
+          action: "LOGIN_FAILED",
+          details: { email: validation.data.email, userId: user.id, reason: "Invalid password" },
+          severity: "WARNING",
+          userId: user.id
+        });
         return fail(400, { error: "Invalid email or password", email: formData.get("email") });
       }
       const sessionId = await createSession(user.id);
       setSessionCookie(cookies, sessionId);
+      await security.logSecurityEvent({
+        ipAddress: ip,
+        action: "LOGIN_SUCCESS",
+        details: { email: user.email },
+        severity: "INFO",
+        userId: user.id
+      });
       throw redirect(303, "/dashboard");
     } catch (error2) {
       if (error2 && typeof error2 === "object" && "location" in error2) {

@@ -22,6 +22,21 @@ const handle = async ({ event, resolve }) => {
     response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
     response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");
     response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+    const csp = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-eval'",
+      // unsafe-eval needed for SvelteKit
+      "style-src 'self' 'unsafe-inline'",
+      // unsafe-inline needed for Svelte styling
+      "img-src 'self' data: https:",
+      "font-src 'self'",
+      "connect-src 'self' https://*.prisma-data.net",
+      // Allow Prisma Accelerate
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'"
+    ].join("; ");
+    response.headers.set("Content-Security-Policy", csp);
   }
   return response;
 };

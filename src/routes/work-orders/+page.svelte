@@ -225,7 +225,7 @@
 							<th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider">Title</th>
 							<th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider">Status</th>
 							<th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider">Assigned</th>
-							<th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider">Asset</th>
+							<th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider">Location</th>
 							<th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider">Actions</th>
 						</tr>
 					</thead>
@@ -268,7 +268,15 @@
 									</form>
 								</td>
 								<td class="px-6 py-4 whitespace-nowrap text-sm text-spore-steel font-medium">
-									{workOrder.asset?.name || 'N/A'}
+									{#if workOrder.asset}
+										{workOrder.asset.name}
+									{:else if workOrder.building}
+										{workOrder.building.name} {workOrder.building.site?.name ? `- ${workOrder.building.site.name}` : ''}
+									{:else if workOrder.room}
+										{workOrder.room.name} {workOrder.room.building?.name ? `- ${workOrder.room.building.name}` : ''} {workOrder.room.site?.name ? `- ${workOrder.room.site.name}` : ''}
+									{:else}
+										N/A
+									{/if}
 								</td>
 								<td class="px-6 py-4 whitespace-nowrap text-sm font-bold space-x-4">
 									<form method="POST" action="?/updateStatus" class="inline" use:enhance>
@@ -336,8 +344,18 @@
 						</div>
 						<div class="space-y-2 mb-4">
 							<div class="flex items-center justify-between">
-								<span class="text-sm font-medium text-spore-steel">Asset:</span>
-								<span class="text-sm text-spore-dark">{workOrder.asset?.name || 'N/A'}</span>
+								<span class="text-sm font-medium text-spore-steel">Location:</span>
+								<span class="text-sm text-spore-dark">
+									{#if workOrder.asset}
+										{workOrder.asset.name}
+									{:else if workOrder.building}
+										{workOrder.building.name} {workOrder.building.site?.name ? `- ${workOrder.building.site.name}` : ''}
+									{:else if workOrder.room}
+										{workOrder.room.name} {workOrder.room.building?.name ? `- ${workOrder.room.building.name}` : ''} {workOrder.room.site?.name ? `- ${workOrder.room.site.name}` : ''}
+									{:else}
+										N/A
+									{/if}
+								</span>
 							</div>
 							<div class="flex items-center justify-between">
 								<span class="text-sm font-medium text-spore-steel">Assigned:</span>

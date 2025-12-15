@@ -10,7 +10,7 @@ return {
 	assets: new Set(["favicon.png","favicon.svg"]),
 	mimeTypes: {".png":"image/png",".svg":"image/svg+xml"},
 	_: {
-		client: {"start":"_app/immutable/entry/start.1a7544d3.js","app":"_app/immutable/entry/app.3e661aca.js","imports":["_app/immutable/entry/start.1a7544d3.js","_app/immutable/chunks/scheduler.82236372.js","_app/immutable/chunks/singletons.94292769.js","_app/immutable/chunks/index.8162ef61.js","_app/immutable/chunks/parse.bee59afc.js","_app/immutable/entry/app.3e661aca.js","_app/immutable/chunks/scheduler.82236372.js","_app/immutable/chunks/index.a73b1e10.js"],"stylesheets":[],"fonts":[]},
+		client: {"start":"_app/immutable/entry/start.b04a8799.js","app":"_app/immutable/entry/app.8a6d6d0a.js","imports":["_app/immutable/entry/start.b04a8799.js","_app/immutable/chunks/scheduler.82236372.js","_app/immutable/chunks/singletons.b20dc6d4.js","_app/immutable/chunks/index.8162ef61.js","_app/immutable/chunks/parse.bee59afc.js","_app/immutable/entry/app.8a6d6d0a.js","_app/immutable/chunks/scheduler.82236372.js","_app/immutable/chunks/index.a73b1e10.js"],"stylesheets":[],"fonts":[]},
 		nodes: [
 			__memo(() => import('../output/server/nodes/0.js')),
 			__memo(() => import('../output/server/nodes/1.js')),
@@ -27,7 +27,8 @@ return {
 			__memo(() => import('../output/server/nodes/12.js')),
 			__memo(() => import('../output/server/nodes/13.js')),
 			__memo(() => import('../output/server/nodes/14.js')),
-			__memo(() => import('../output/server/nodes/15.js'))
+			__memo(() => import('../output/server/nodes/15.js')),
+			__memo(() => import('../output/server/nodes/16.js'))
 		],
 		routes: [
 			{
@@ -43,6 +44,20 @@ return {
 				params: [],
 				page: null,
 				endpoint: __memo(() => import('../output/server/entries/endpoints/api/activity/_server.ts.js'))
+			},
+			{
+				id: "/api/security/blocks",
+				pattern: /^\/api\/security\/blocks\/?$/,
+				params: [],
+				page: null,
+				endpoint: __memo(() => import('../output/server/entries/endpoints/api/security/blocks/_server.ts.js'))
+			},
+			{
+				id: "/api/security/logs",
+				pattern: /^\/api\/security\/logs\/?$/,
+				params: [],
+				page: null,
+				endpoint: __memo(() => import('../output/server/entries/endpoints/api/security/logs/_server.ts.js'))
 			},
 			{
 				id: "/assets",
@@ -122,17 +137,24 @@ return {
 				endpoint: null
 			},
 			{
+				id: "/users/security",
+				pattern: /^\/users\/security\/?$/,
+				params: [],
+				page: { layouts: [0,], errors: [1,], leaf: 14 },
+				endpoint: null
+			},
+			{
 				id: "/work-orders",
 				pattern: /^\/work-orders\/?$/,
 				params: [],
-				page: { layouts: [0,], errors: [1,], leaf: 14 },
+				page: { layouts: [0,], errors: [1,], leaf: 15 },
 				endpoint: null
 			},
 			{
 				id: "/work-orders/[id]",
 				pattern: /^\/work-orders\/([^/]+?)\/?$/,
 				params: [{"name":"id","optional":false,"rest":false,"chained":false}],
-				page: { layouts: [0,], errors: [1,], leaf: 15 },
+				page: { layouts: [0,], errors: [1,], leaf: 16 },
 				endpoint: null
 			}
 		],

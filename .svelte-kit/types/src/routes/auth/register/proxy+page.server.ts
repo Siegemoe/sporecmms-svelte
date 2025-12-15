@@ -4,7 +4,7 @@ import { fail, redirect, error } from '@sveltejs/kit';
 import { hashPassword, createSession, setSessionCookie } from '$lib/server/auth';
 import { getPrisma } from '$lib/server/prisma';
 import { validateInput, registerSchema } from '$lib/validation';
-import { checkRateLimit, RATE_LIMITS } from '$lib/server/rateLimit';
+import { SecurityManager, SECURITY_RATE_LIMITS } from '$lib/server/security';
 
 export const load = async ({ locals }: Parameters<PageServerLoad>[0]) => {
 	if (locals.user) {
@@ -15,17 +15,39 @@ export const load = async ({ locals }: Parameters<PageServerLoad>[0]) => {
 
 export const actions = {
 	default: async ({ request, cookies, getClientAddress }: import('./$types').RequestEvent) => {
+		const security = SecurityManager.getInstance();
+		const ip = getClientAddress() || 'unknown';
+
 		try {
-			// Rate limiting based on IP
-			const ip = getClientAddress() || 'unknown';
-			const rateLimitResult = checkRateLimit(
-				`register:${ip}`,
-				RATE_LIMITS.AUTH.limit,
-				RATE_LIMITS.AUTH.windowMs
+			// First check if IP is blocked
+			const blockStatus = await security.isIPBlocked(ip);
+			if (blockStatus.blocked) {
+				await security.logSecurityEvent({
+					ipAddress: ip,
+					action: 'REGISTER_BLOCKED',
+					details: { reason: blockStatus.reason },
+					severity: 'WARNING'
+				});
+				return fail(403, { error: 'Access denied. Your IP address has been blocked.' });
+			}
+
+			// Then apply rate limiting
+			const rateLimitResult = await security.checkRateLimit(
+				{ event: { request, getClientAddress: () => ip } as any, action: 'register' },
+				SECURITY_RATE_LIMITS.AUTH
 			);
 
 			if (!rateLimitResult.success) {
-				throw error(429, 'Too many registration attempts. Please try again later.');
+				if (rateLimitResult.blocked) {
+					await security.logSecurityEvent({
+						ipAddress: ip,
+						action: 'REGISTER_BLOCKED',
+						details: { reason: 'Too many registration attempts' },
+						severity: 'WARNING'
+					});
+					return fail(429, { error: 'Too many registration attempts. Your IP has been temporarily blocked.' });
+				}
+				return fail(429, { error: 'Too many registration attempts. Please try again later.' });
 			}
 
 			const formData = await request.formData();

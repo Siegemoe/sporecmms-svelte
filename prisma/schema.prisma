@@ -50,8 +50,22 @@ model Site {
 
   orgId     String
   org       Org      @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  
+
+  buildings Building[]
   rooms     Room[]
+}
+
+model Building {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+
+  siteId    String
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  rooms     Room[]
+  workOrders WorkOrder[]
 }
 
 model Room {
@@ -59,13 +73,16 @@ model Room {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
-  building  String?  // "A", "B", "Main", etc.
   floor     Int?     // 1, 2, 3, etc.
 
   siteId    String
   site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
-  assets    Asset[]
+  buildingId String?
+  building   Building? @relation(fields: [buildingId], references: [id], onDelete: SetNull)
+
+  assets     Asset[]
+  workOrders WorkOrder[]
 }
 
 model Asset {
@@ -89,13 +106,21 @@ model WorkOrder {
   status          WorkOrderStatus @default(PENDING)
   failureMode     String
   revisitSchedule DateTime?
-  
-  assetId         String
-  asset           Asset           @relation(fields: [assetId], references: [id], onDelete: Cascade)
-  
+
+  // Polymorphic relationship - can be Asset, Building, or Room
+  assetId         String?
+  asset           Asset?          @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  buildingId      String?
+  building        Building?       @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+
+  roomId          String?
+  room            Room?           @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  // At least one of these must be set
   orgId           String
   org             Org             @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  
+
   assignedToId    String?
   assignedTo      User?           @relation("AssignedWorkOrders", fields: [assignedToId], references: [id], onDelete: SetNull)
 }
