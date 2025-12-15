@@ -251,7 +251,7 @@
 						</button>
 						<button
 							type="submit"
-							disabled={isSubmitting || !newWO.title.trim() || (selectionMode === 'asset' && !newWO.assetId) || (selectionMode === 'room' && !newWO.roomId)}
+							disabled={isSubmitting || !newWO.title.trim() || (selectionMode === 'asset' && !newWO.assetId) || (selectionMode === 'room' && !newWO.roomId) || (selectionMode === 'building' && !newWO.buildingId)}
 							class="flex-1 bg-spore-orange text-white px-4 py-3 rounded-lg font-semibold hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 							aria-busy={isSubmitting}
 						>
@@ -404,42 +404,20 @@
 							<label for="fab-wo-building-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Building *</label>
 							<select
 								id="fab-wo-building-desktop"
-								name="building"
-								bind:value={newWO.building}
+								name="buildingId"
+								bind:value={newWO.buildingId}
 								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
 								required
 								aria-required="true"
 							>
 								<option value="">Select a building...</option>
-								{#each Object.entries(sites) as [siteName, buildings]}
-									<optgroup label={siteName}>
-										{#each Object.keys(buildings) as buildingName}
-											<option value={buildingName}>{buildingName}</option>
-										{/each}
-									</optgroup>
+								{#each buildings as building}
+									<option value={building.id}>
+										{building.name} {building.site?.name ? `- ${building.site.name}` : ''}
+									</option>
 								{/each}
 							</select>
 						</div>
-
-					<!-- Site Selection -->
-					{:else if selectionMode === 'site'}
-						<div>
-							<label for="fab-wo-site-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Site *</label>
-							<select
-								id="fab-wo-site-desktop"
-								name="site"
-								bind:value={newWO.site}
-								class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900"
-								required
-								aria-required="true"
-							>
-								<option value="">Select a site...</option>
-								{#each Object.keys(sites) as siteName}
-									<option value={siteName}>{siteName}</option>
-								{/each}
-							</select>
-						</div>
-					{/if}
 
 					<div>
 						<label for="fab-wo-failure-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Failure Mode</label>
@@ -478,7 +456,7 @@
 						</button>
 						<button
 							type="submit"
-							disabled={isSubmitting || !newWO.title.trim() || (selectionMode === 'asset' && !newWO.assetId) || (selectionMode === 'room' && !newWO.roomId)}
+							disabled={isSubmitting || !newWO.title.trim() || (selectionMode === 'asset' && !newWO.assetId) || (selectionMode === 'room' && !newWO.roomId) || (selectionMode === 'building' && !newWO.buildingId)}
 							class="flex-1 bg-spore-orange text-white px-4 py-3 rounded-lg font-semibold hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 							aria-busy={isSubmitting}
 						>
