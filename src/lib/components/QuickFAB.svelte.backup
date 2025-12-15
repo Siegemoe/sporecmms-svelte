@@ -69,70 +69,70 @@
 			aria-label="Close form"
 		></div>
 
-		<!-- Single Form Element -->
-		<form
-			method="POST"
-			action="/work-orders?/create"
-			use:enhance={() => {
-				handleFormSubmit();
-				return async ({ update }) => {
-					await update();
-					closeForm();
-					isSubmitting = false;
-				};
-			}}
-		>
-			<!-- Mobile: Bottom Sheet -->
-			<div class="lg:hidden relative bg-white rounded-t-2xl w-full max-h-[85vh] overflow-y-auto">
-				<!-- Handle -->
-				<div class="flex justify-center py-3">
-					<div class="w-12 h-1 bg-gray-300 rounded-full"></div>
+		<!-- Mobile: Bottom Sheet -->
+		<div class="relative bg-white rounded-t-2xl w-full max-h-[85vh] overflow-y-auto lg:hidden">
+			<!-- Handle -->
+			<div class="flex justify-center py-3">
+				<div class="w-12 h-1 bg-gray-300 rounded-full"></div>
+			</div>
+
+			<!-- Header -->
+			<div class="sticky top-0 bg-white border-b border-gray-200 px-4 py-4">
+				<div class="flex items-center justify-between">
+					<h2 class="text-xl font-bold text-gray-900">Quick Work Order</h2>
+					<button
+						type="button"
+						on:click={closeForm}
+						class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+						aria-label="Close"
+					>
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+						</svg>
+					</button>
+				</div>
+			</div>
+
+			<!-- Form -->
+			<div class="p-4 space-y-4">
+				<!-- Selection Mode Toggle -->
+				<div class="flex gap-2 flex-wrap">
+					<button
+						type="button"
+						class="px-3 py-1 text-xs rounded-full {selectionMode === 'asset' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
+						on:click={() => { selectionMode = 'asset'; newWO.assetId = ''; }}
+					>
+						Asset
+					</button>
+					<button
+						type="button"
+						class="px-3 py-1 text-xs rounded-full {selectionMode === 'room' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
+						on:click={() => { selectionMode = 'room'; newWO.roomId = ''; }}
+					>
+						Room
+					</button>
+					<button
+						type="button"
+						class="px-3 py-1 text-xs rounded-full {selectionMode === 'building' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
+						on:click={() => { selectionMode = 'building'; newWO.buildingId = ''; }}
+					>
+						Building
+					</button>
 				</div>
 
-				<!-- Header -->
-				<div class="sticky top-0 bg-white border-b border-gray-200 px-4 py-4">
-					<div class="flex items-center justify-between">
-						<h2 class="text-xl font-bold text-gray-900">Quick Work Order</h2>
-						<button
-							type="button"
-							on:click={closeForm}
-							class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-							aria-label="Close"
-						>
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-							</svg>
-						</button>
-					</div>
-				</div>
-
-				<!-- Form -->
-				<div class="p-4 space-y-4">
-					<!-- Selection Mode Toggle -->
-					<div class="flex gap-2 flex-wrap">
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'asset' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'asset'; newWO.assetId = ''; }}
-						>
-							Asset
-						</button>
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'room' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'room'; newWO.roomId = ''; }}
-						>
-							Room
-						</button>
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'building' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'building'; newWO.buildingId = ''; }}
-						>
-							Building
-						</button>
-					</div>
-
+				<form
+					method="POST"
+					action="/work-orders?/create"
+					use:enhance={() => {
+						handleFormSubmit();
+						return async ({ update }) => {
+							await update();
+							closeForm();
+							isSubmitting = false;
+						};
+					}}
+					class="space-y-4"
+				>
 					<!-- Hidden field for selection mode -->
 					<input type="hidden" name="selectionMode" value={selectionMode} />
 
@@ -268,55 +268,51 @@
 							{/if}
 						</button>
 					</div>
+			<!-- Desktop: Modal -->
+		<div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 hidden lg:block">
+			<!-- Header -->
+			<div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl">
+				<div class="flex items-center justify-between">
+					<h2 class="text-xl font-bold text-gray-900">Quick Work Order</h2>
+					<button
+						type="button"
+						on:click={closeForm}
+						class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+						aria-label="Close"
+					>
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+						</svg>
+					</button>
 				</div>
 			</div>
 
-			<!-- Desktop: Modal -->
-			<div class="hidden lg:block relative bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4">
-				<!-- Header -->
-				<div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl">
-					<div class="flex items-center justify-between">
-						<h2 class="text-xl font-bold text-gray-900">Quick Work Order</h2>
-						<button
-							type="button"
-							on:click={closeForm}
-							class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-							aria-label="Close"
-						>
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-							</svg>
-						</button>
-					</div>
+			<!-- Form Content (no form tag needed) -->
+			<div class="p-6 space-y-4">
+				<!-- Selection Mode Toggle -->
+				<div class="flex gap-2 flex-wrap">
+					<button
+						type="button"
+						class="px-3 py-1 text-xs rounded-full {selectionMode === 'asset' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
+						on:click={() => { selectionMode = 'asset'; newWO.assetId = ''; }}
+					>
+						Asset
+					</button>
+					<button
+						type="button"
+						class="px-3 py-1 text-xs rounded-full {selectionMode === 'room' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
+						on:click={() => { selectionMode = 'room'; newWO.roomId = ''; }}
+					>
+						Room
+					</button>
+					<button
+						type="button"
+						class="px-3 py-1 text-xs rounded-full {selectionMode === 'building' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
+						on:click={() => { selectionMode = 'building'; newWO.buildingId = ''; }}
+					>
+						Building
+					</button>
 				</div>
-
-				<!-- Form Content -->
-				<div class="p-6 space-y-4">
-					<!-- Selection Mode Toggle -->
-					<div class="flex gap-2 flex-wrap">
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'asset' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'asset'; newWO.assetId = ''; }}
-						>
-							Asset
-						</button>
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'room' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'room'; newWO.roomId = ''; }}
-						>
-							Room
-						</button>
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'building' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'building'; newWO.buildingId = ''; }}
-						>
-							Building
-						</button>
-					</div>
-
 					<!-- Hidden field for selection mode -->
 					<input type="hidden" name="selectionMode" value={selectionMode} />
 
@@ -368,10 +364,18 @@
 								aria-required="true"
 							>
 								<option value="">Select a room...</option>
-								{#each rooms as room}
-									<option value={room.id}>
-										{room.name} {room.building ? `- ${room.building.name}` : ''} {room.site?.name ? `- ${room.site.name}` : ''}
-									</option>
+								{#each Object.entries(sites) as [siteName, buildings]}
+									<optgroup label={siteName}>
+										{#each Object.entries(buildings) as [buildingName, rooms]}
+											<optgroup label="&nbsp;&nbsp;{buildingName}">
+												{#each Object.entries(rooms) as [roomName, roomAssets]}
+													{#if roomAssets[0]?.room}
+														<option value={roomAssets[0].room.id}>{roomName}</option>
+													{/if}
+												{/each}
+											</optgroup>
+										{/each}
+									</optgroup>
 								{/each}
 							</select>
 						</div>
@@ -396,7 +400,6 @@
 								{/each}
 							</select>
 						</div>
-					{/if}
 
 					<div>
 						<label for="fab-wo-failure-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Failure Mode</label>
@@ -452,8 +455,9 @@
 							{/if}
 						</button>
 					</div>
-				</div>
 			</div>
-		</form>
+			</form>
+		</div>
+	</div>
 	</div>
 {/if}

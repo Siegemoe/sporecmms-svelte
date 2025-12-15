@@ -109,7 +109,7 @@
     "src": "src/hooks.server.ts"
   },
   "src/routes/+layout.css": {
-    "file": "_app/immutable/assets/_layout.1c598841.css",
+    "file": "_app/immutable/assets/_layout.1f686fa6.css",
     "src": "src/routes/+layout.css"
   },
   "src/routes/+layout.server.ts": {
@@ -122,7 +122,7 @@
   },
   "src/routes/+layout.svelte": {
     "css": [
-      "_app/immutable/assets/_layout.1c598841.css"
+      "_app/immutable/assets/_layout.1f686fa6.css"
     ],
     "file": "entries/pages/_layout.svelte.js",
     "imports": [

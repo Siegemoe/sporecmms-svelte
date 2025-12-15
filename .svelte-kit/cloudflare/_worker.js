@@ -2070,6 +2070,357 @@ var init_bcryptjs = __esm({
   }
 });
 
+// node_modules/@prisma/client/scripts/default-index.js
+var require_default_index = __commonJS({
+  "node_modules/@prisma/client/scripts/default-index.js"(exports, module) {
+    "use strict";
+    var __defProp2 = Object.defineProperty;
+    var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
+    var __getOwnPropNames2 = Object.getOwnPropertyNames;
+    var __hasOwnProp2 = Object.prototype.hasOwnProperty;
+    var __export2 = (target, all) => {
+      for (var name in all)
+        __defProp2(target, name, { get: all[name], enumerable: true });
+    };
+    var __copyProps2 = (to, from, except, desc) => {
+      if (from && typeof from === "object" || typeof from === "function") {
+        for (let key2 of __getOwnPropNames2(from))
+          if (!__hasOwnProp2.call(to, key2) && key2 !== except)
+            __defProp2(to, key2, { get: () => from[key2], enumerable: !(desc = __getOwnPropDesc2(from, key2)) || desc.enumerable });
+      }
+      return to;
+    };
+    var __toCommonJS = (mod) => __copyProps2(__defProp2({}, "__esModule", { value: true }), mod);
+    var default_index_exports = {};
+    __export2(default_index_exports, {
+      Prisma: () => Prisma,
+      PrismaClient: () => PrismaClient,
+      default: () => default_index_default
+    });
+    module.exports = __toCommonJS(default_index_exports);
+    var prisma = {
+      enginesVersion: "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba"
+    };
+    var version2 = "7.1.0";
+    var clientVersion = version2;
+    var PrismaClient = class {
+      constructor() {
+        throw new Error('@prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.');
+      }
+    };
+    function defineExtension(ext) {
+      if (typeof ext === "function") {
+        return ext;
+      }
+      return (client) => client.$extends(ext);
+    }
+    function getExtensionContext(that) {
+      return that;
+    }
+    var Prisma = {
+      defineExtension,
+      getExtensionContext,
+      prismaVersion: { client: clientVersion, engine: prisma.enginesVersion }
+    };
+    var default_index_default = { Prisma };
+  }
+});
+
+// node_modules/@prisma/extension-accelerate/dist/esm/semver.js
+function compareSemVer(a, b) {
+  const [major1 = 0, minor1 = 0, patch1 = 0] = a.split(".").map(Number);
+  const [major2 = 0, minor2 = 0, patch2 = 0] = b.split(".").map(Number);
+  const major = major2 - major1;
+  const minor = minor2 - minor1;
+  const patch = patch2 - patch1;
+  return major || minor || patch;
+}
+var init_semver = __esm({
+  "node_modules/@prisma/extension-accelerate/dist/esm/semver.js"() {
+  }
+});
+
+// node_modules/@prisma/extension-accelerate/dist/esm/user-agent.js
+function getUserAgent() {
+  const prismaVersion = import_default_index.default.Prisma.prismaVersion;
+  const parts = [
+    getRuntimeSegment(),
+    `PrismaEngine/${prismaVersion.engine}`,
+    `PrismaClient/${prismaVersion.client}`
+  ];
+  return parts.join(" ");
+}
+function getRuntimeSegment() {
+  if (typeof navigator !== "undefined") {
+    return navigator.userAgent;
+  } else if (typeof process !== "undefined" && typeof process.versions !== "undefined") {
+    return `Node/${process.versions.node} (${process.platform}; ${process.arch})`;
+  } else if ("EdgeRuntime" in globalThis) {
+    return `Vercel-Edge-Runtime`;
+  } else {
+    return `UnknownRuntime`;
+  }
+}
+var import_default_index;
+var init_user_agent = __esm({
+  "node_modules/@prisma/extension-accelerate/dist/esm/user-agent.js"() {
+    import_default_index = __toESM(require_default_index(), 1);
+  }
+});
+
+// node_modules/@prisma/extension-accelerate/dist/esm/extension.js
+function makeWithCacheHeaders(fetcher) {
+  const userAgent = getUserAgent();
+  let machineHint = void 0;
+  return async (params) => {
+    const { args } = params;
+    const { cacheStrategy, __accelerateInfo = false, ...rest } = args;
+    let info = null;
+    const { __internalParams, query } = params;
+    __internalParams.customDataProxyFetch = () => {
+      return async (url2, options2) => {
+        const cacheControl = new Array();
+        if (typeof cacheStrategy?.ttl === "number") {
+          cacheControl.push(`max-age=${cacheStrategy.ttl}`);
+        }
+        if (typeof cacheStrategy?.swr === "number") {
+          cacheControl.push(`stale-while-revalidate=${cacheStrategy.swr}`);
+        }
+        const cacheTags = cacheStrategy?.tags?.join(",") ?? "";
+        options2.headers = {
+          ...options2.headers,
+          "cache-control": cacheControl.length > 0 ? cacheControl.join(",") : `no-cache`,
+          "user-agent": userAgent,
+          ...cacheTags.length > 0 ? { "accelerate-cache-tags": cacheTags } : {}
+        };
+        if (machineHint) {
+          options2.headers["accelerate-query-engine-jwt"] = machineHint;
+        }
+        try {
+          const response = await fetcher(url2, options2);
+          info = {
+            cacheStatus: response.headers.get("accelerate-cache-status"),
+            lastModified: new Date(response.headers.get("last-modified") ?? ""),
+            region: response.headers.get("cf-ray")?.split("-")[1] ?? "unspecified",
+            requestId: response.headers.get("cf-ray") ?? "unspecified",
+            signature: response.headers.get("accelerate-signature") ?? "unspecified"
+          };
+          machineHint = response.headers.get("accelerate-query-engine-jwt") ?? void 0;
+          return response;
+        } catch (e3) {
+          throw new Error(FETCH_FAILURE_MESSAGE);
+        }
+      };
+    };
+    if (__accelerateInfo) {
+      const data = await query(rest, __internalParams);
+      return { data, info };
+    } else {
+      return query(rest, __internalParams);
+    }
+  };
+}
+function makeAccelerateExtension(fetcher) {
+  const enableCtxParent = compareSemVer("5.1.0", import_default_index2.default.Prisma.prismaVersion.client) >= 0;
+  return import_default_index2.default.Prisma.defineExtension((client) => {
+    const withCacheHeaders = makeWithCacheHeaders(fetcher);
+    const apiKeyPromise = client._engine.start().then(() => client._engine.apiKey?.());
+    async function invalidate(input) {
+      const apiKey = await apiKeyPromise;
+      if (!apiKey) {
+        return { requestId: "unspecified" };
+      }
+      let response;
+      try {
+        response = await fetcher(`https://accelerate.prisma-data.net/invalidate`, {
+          method: "POST",
+          headers: {
+            authorization: `Bearer ${apiKey}`,
+            "content-type": "application/json"
+          },
+          body: JSON.stringify(input)
+        });
+      } catch (e3) {
+        throw new Error(FETCH_FAILURE_MESSAGE);
+      }
+      if (!response?.ok) {
+        const body = await response.text();
+        throw new Error(`Failed to invalidate Accelerate cache. Response was ${response.status} ${response.statusText}. ${body}`);
+      }
+      void response.body?.cancel();
+      return {
+        requestId: response.headers.get("cf-ray") ?? "unspecified"
+      };
+    }
+    const xclient = client.$extends({
+      name: EXTENSION_NAME,
+      query: {
+        $allModels: {
+          // also apply withCacheHeaders to mutations for machine hint benefit
+          $allOperations: withCacheHeaders
+        }
+      }
+    });
+    return xclient.$extends({
+      name: EXTENSION_NAME,
+      client: {
+        $accelerate: {
+          /**
+           * Initiates an invalidation request for the specified cache tag values.
+           *
+           * A tag may only contain alphanumeric characters and underscores.
+           * Each tag may contain a maximum of 64 characters.
+           * A maximum of 5 tags may be invalidated per call.
+           */
+          invalidate: (input) => invalidate(input),
+          /**
+           * Initiates an invalidation request of all cache entries for this
+           * environment.
+           */
+          invalidateAll: () => invalidate({ tags: "all" })
+        }
+      },
+      model: {
+        $allModels: {
+          // TODO: these functions are repetitive. Is there a type we can use to generic this?
+          // TODO: can we define these in a map that ensures query and model overrides stay in sync/
+          aggregate(args) {
+            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
+            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
+            const prismaPromise = model.aggregate(args);
+            return Object.assign(prismaPromise, {
+              withAccelerateInfo() {
+                return model.aggregate({
+                  ...args,
+                  __accelerateInfo: true
+                });
+              }
+            });
+          },
+          count(args) {
+            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
+            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
+            const prismaPromise = model.count(args);
+            return Object.assign(prismaPromise, {
+              withAccelerateInfo() {
+                return model.count({
+                  ...args,
+                  __accelerateInfo: true
+                });
+              }
+            });
+          },
+          findFirst(args) {
+            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
+            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
+            const prismaPromise = model.findFirst(args);
+            return Object.assign(prismaPromise, {
+              withAccelerateInfo() {
+                return model.findFirst({
+                  ...args,
+                  __accelerateInfo: true
+                });
+              }
+            });
+          },
+          findFirstOrThrow(args) {
+            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
+            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
+            const prismaPromise = model.findFirstOrThrow(args);
+            return Object.assign(prismaPromise, {
+              withAccelerateInfo() {
+                return model.findFirstOrThrow({
+                  ...args,
+                  __accelerateInfo: true
+                });
+              }
+            });
+          },
+          findMany(args) {
+            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
+            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
+            const prismaPromise = model.findMany(args);
+            return Object.assign(prismaPromise, {
+              withAccelerateInfo() {
+                return model.findMany({
+                  ...args,
+                  __accelerateInfo: true
+                });
+              }
+            });
+          },
+          findUnique(args) {
+            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
+            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
+            const prismaPromise = model.findUnique(args);
+            return Object.assign(prismaPromise, {
+              withAccelerateInfo() {
+                return model.findUnique({
+                  ...args,
+                  __accelerateInfo: true
+                });
+              }
+            });
+          },
+          findUniqueOrThrow(args) {
+            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
+            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
+            const prismaPromise = model.findUniqueOrThrow(args);
+            return Object.assign(prismaPromise, {
+              withAccelerateInfo() {
+                return model.findUniqueOrThrow({
+                  ...args,
+                  __accelerateInfo: true
+                });
+              }
+            });
+          },
+          groupBy(args) {
+            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
+            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
+            const prismaPromise = model.groupBy(args);
+            return Object.assign(prismaPromise, {
+              withAccelerateInfo() {
+                return model.groupBy({
+                  ...args,
+                  __accelerateInfo: true
+                });
+              }
+            });
+          }
+        }
+      }
+    });
+  });
+}
+var import_default_index2, EXTENSION_NAME, FETCH_FAILURE_MESSAGE;
+var init_extension = __esm({
+  "node_modules/@prisma/extension-accelerate/dist/esm/extension.js"() {
+    import_default_index2 = __toESM(require_default_index(), 1);
+    init_semver();
+    init_user_agent();
+    EXTENSION_NAME = "@prisma/extension-accelerate";
+    FETCH_FAILURE_MESSAGE = "Unable to connect to the Accelerate API. This may be due to a network or DNS issue. Please check your connection and the Accelerate connection string. For details, visit https://www.prisma.io/docs/accelerate/troubleshoot.";
+  }
+});
+
+// node_modules/@prisma/extension-accelerate/dist/esm/entry.fetch.js
+var entry_fetch_exports = {};
+__export(entry_fetch_exports, {
+  FETCH_FAILURE_MESSAGE: () => FETCH_FAILURE_MESSAGE,
+  makeAccelerateExtension: () => makeAccelerateExtension,
+  withAccelerate: () => withAccelerate
+});
+function withAccelerate() {
+  return makeAccelerateExtension(globalThis.fetch);
+}
+var init_entry_fetch = __esm({
+  "node_modules/@prisma/extension-accelerate/dist/esm/entry.fetch.js"() {
+    init_extension();
+    init_extension();
+  }
+});
+
 // node_modules/@prisma/client-runtime-utils/dist/index.js
 var require_dist = __commonJS({
   "node_modules/@prisma/client-runtime-utils/dist/index.js"(exports, module) {
@@ -12259,14 +12610,21 @@ var require_edge = __commonJS({
       name: "name",
       orgId: "orgId"
     };
+    exports.Prisma.BuildingScalarFieldEnum = {
+      id: "id",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+      name: "name",
+      siteId: "siteId"
+    };
     exports.Prisma.RoomScalarFieldEnum = {
       id: "id",
       createdAt: "createdAt",
       updatedAt: "updatedAt",
       name: "name",
-      building: "building",
       floor: "floor",
-      siteId: "siteId"
+      siteId: "siteId",
+      buildingId: "buildingId"
     };
     exports.Prisma.AssetScalarFieldEnum = {
       id: "id",
@@ -12285,6 +12643,8 @@ var require_edge = __commonJS({
       failureMode: "failureMode",
       revisitSchedule: "revisitSchedule",
       assetId: "assetId",
+      buildingId: "buildingId",
+      roomId: "roomId",
       orgId: "orgId",
       assignedToId: "assignedToId"
     };
@@ -12371,6 +12731,7 @@ var require_edge = __commonJS({
     exports.Prisma.ModelName = {
       Org: "Org",
       Site: "Site",
+      Building: "Building",
       Room: "Room",
       Asset: "Asset",
       WorkOrder: "WorkOrder",
@@ -12385,9 +12746,9 @@ var require_edge = __commonJS({
       "clientVersion": "7.1.0",
       "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
       "activeProvider": "postgresql",
-      "inlineSchema": '// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ndatasource db {\n  provider = "postgresql"\n}\n\ngenerator client {\n  provider = "prisma-client-js"\n  output   = "../node_modules/.prisma/client"\n}\n\n// --------------------------------------\n// Enums\n// --------------------------------------\n\nenum UserRole {\n  ADMIN\n  MANAGER\n  TECHNICIAN\n}\n\nenum WorkOrderStatus {\n  PENDING\n  IN_PROGRESS\n  COMPLETED\n  ON_HOLD\n  CANCELLED\n}\n\n// --------------------------------------\n// Core Models\n// --------------------------------------\n\nmodel Org {\n  id         String      @id @default(cuid())\n  createdAt  DateTime    @default(now())\n  updatedAt  DateTime    @updatedAt\n  name       String\n  users      User[]\n  sites      Site[]\n  workOrders WorkOrder[]\n}\n\nmodel Site {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  name      String\n\n  orgId String\n  org   Org    @relation(fields: [orgId], references: [id], onDelete: Cascade)\n\n  rooms Room[]\n}\n\nmodel Room {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  name      String\n  building  String? // "A", "B", "Main", etc.\n  floor     Int? // 1, 2, 3, etc.\n\n  siteId String\n  site   Site   @relation(fields: [siteId], references: [id], onDelete: Cascade)\n\n  assets Asset[]\n}\n\nmodel Asset {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  name      String\n\n  roomId String\n  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)\n\n  workOrders WorkOrder[]\n}\n\nmodel WorkOrder {\n  id              String          @id @default(cuid())\n  createdAt       DateTime        @default(now())\n  updatedAt       DateTime        @updatedAt\n  title           String\n  description     String\n  status          WorkOrderStatus @default(PENDING)\n  failureMode     String\n  revisitSchedule DateTime?\n\n  assetId String\n  asset   Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)\n\n  orgId String\n  org   Org    @relation(fields: [orgId], references: [id], onDelete: Cascade)\n\n  assignedToId String?\n  assignedTo   User?   @relation("AssignedWorkOrders", fields: [assignedToId], references: [id], onDelete: SetNull)\n}\n\n// --------------------------------------\n// Authentication & Security\n// --------------------------------------\n\nmodel User {\n  id          String   @id @default(cuid())\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  email       String   @unique\n  password    String // Hashed password\n  firstName   String?\n  lastName    String?\n  phoneNumber String?\n  role        UserRole @default(TECHNICIAN)\n\n  orgId String\n  org   Org    @relation(fields: [orgId], references: [id])\n\n  sessions           Session[]\n  auditLogs          AuditLog[]\n  assignedWorkOrders WorkOrder[]   @relation("AssignedWorkOrders")\n  securityLogs       SecurityLog[]\n  blockedIPs         IPBlock[]     @relation("BlockedBy")\n}\n\nmodel Session {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  expiresAt DateTime\n\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([userId])\n  @@index([expiresAt])\n}\n\nmodel AuditLog {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  action    String\n  details   Json?\n\n  userId String\n  user   User   @relation(fields: [userId], references: [id])\n}\n\n// Security Models\nmodel SecurityLog {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  ipAddress String // IP address of the request\n  userAgent String? // Browser/user agent\n  action    String // Type of security event\n  details   Json? // Additional details\n  severity  String   @default("INFO") // INFO, WARNING, CRITICAL\n  userId    String? // User ID if applicable\n\n  // Optional relationship to user\n  user User? @relation(fields: [userId], references: [id])\n\n  // Index for efficient queries\n  @@index([createdAt])\n  @@index([ipAddress])\n  @@index([severity])\n}\n\nmodel IPBlock {\n  id             String    @id @default(cuid())\n  createdAt      DateTime  @default(now())\n  updatedAt      DateTime  @updatedAt\n  ipAddress      String    @unique\n  reason         String // Reason for blocking\n  severity       String // TEMPORARY, PERSISTENT\n  blockedAt      DateTime  @default(now())\n  expiresAt      DateTime? // When block expires (null for permanent)\n  violationCount Int       @default(1) // Number of violations\n  blockedBy      String? // Admin user ID who manually blocked\n\n  // Optional relationship to user\n  blockedByUser User? @relation("BlockedBy", fields: [blockedBy], references: [id])\n\n  // Index for efficient queries\n  @@index([ipAddress])\n  @@index([expiresAt])\n  @@index([severity])\n}\n'
+      "inlineSchema": '// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ndatasource db {\n  provider = "postgresql"\n}\n\ngenerator client {\n  provider = "prisma-client-js"\n  output   = "../node_modules/.prisma/client"\n}\n\n// --------------------------------------\n// Enums\n// --------------------------------------\n\nenum UserRole {\n  ADMIN\n  MANAGER\n  TECHNICIAN\n}\n\nenum WorkOrderStatus {\n  PENDING\n  IN_PROGRESS\n  COMPLETED\n  ON_HOLD\n  CANCELLED\n}\n\n// --------------------------------------\n// Core Models\n// --------------------------------------\n\nmodel Org {\n  id         String      @id @default(cuid())\n  createdAt  DateTime    @default(now())\n  updatedAt  DateTime    @updatedAt\n  name       String\n  users      User[]\n  sites      Site[]\n  workOrders WorkOrder[]\n}\n\nmodel Site {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  name      String\n\n  orgId String\n  org   Org    @relation(fields: [orgId], references: [id], onDelete: Cascade)\n\n  buildings Building[]\n  rooms     Room[]\n}\n\nmodel Building {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  name      String\n\n  siteId String\n  site   Site   @relation(fields: [siteId], references: [id], onDelete: Cascade)\n\n  rooms      Room[]\n  workOrders WorkOrder[]\n}\n\nmodel Room {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  name      String\n  floor     Int? // 1, 2, 3, etc.\n\n  siteId String\n  site   Site   @relation(fields: [siteId], references: [id], onDelete: Cascade)\n\n  buildingId String?\n  building   Building? @relation(fields: [buildingId], references: [id], onDelete: SetNull)\n\n  assets     Asset[]\n  workOrders WorkOrder[]\n}\n\nmodel Asset {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  name      String\n\n  roomId String\n  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)\n\n  workOrders WorkOrder[]\n}\n\nmodel WorkOrder {\n  id              String          @id @default(cuid())\n  createdAt       DateTime        @default(now())\n  updatedAt       DateTime        @updatedAt\n  title           String\n  description     String\n  status          WorkOrderStatus @default(PENDING)\n  failureMode     String\n  revisitSchedule DateTime?\n\n  // Polymorphic relationship - can be Asset, Building, or Room\n  assetId String?\n  asset   Asset?  @relation(fields: [assetId], references: [id], onDelete: Cascade)\n\n  buildingId String?\n  building   Building? @relation(fields: [buildingId], references: [id], onDelete: Cascade)\n\n  roomId String?\n  room   Room?   @relation(fields: [roomId], references: [id], onDelete: Cascade)\n\n  // At least one of these must be set\n  orgId String\n  org   Org    @relation(fields: [orgId], references: [id], onDelete: Cascade)\n\n  assignedToId String?\n  assignedTo   User?   @relation("AssignedWorkOrders", fields: [assignedToId], references: [id], onDelete: SetNull)\n}\n\n// --------------------------------------\n// Authentication & Security\n// --------------------------------------\n\nmodel User {\n  id          String   @id @default(cuid())\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  email       String   @unique\n  password    String // Hashed password\n  firstName   String?\n  lastName    String?\n  phoneNumber String?\n  role        UserRole @default(TECHNICIAN)\n\n  orgId String\n  org   Org    @relation(fields: [orgId], references: [id])\n\n  sessions           Session[]\n  auditLogs          AuditLog[]\n  assignedWorkOrders WorkOrder[]   @relation("AssignedWorkOrders")\n  securityLogs       SecurityLog[]\n  blockedIPs         IPBlock[]     @relation("BlockedBy")\n}\n\nmodel Session {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  expiresAt DateTime\n\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([userId])\n  @@index([expiresAt])\n}\n\nmodel AuditLog {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  action    String\n  details   Json?\n\n  userId String\n  user   User   @relation(fields: [userId], references: [id])\n}\n\n// Security Models\nmodel SecurityLog {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  ipAddress String // IP address of the request\n  userAgent String? // Browser/user agent\n  action    String // Type of security event\n  details   Json? // Additional details\n  severity  String   @default("INFO") // INFO, WARNING, CRITICAL\n  userId    String? // User ID if applicable\n\n  // Optional relationship to user\n  user User? @relation(fields: [userId], references: [id])\n\n  // Index for efficient queries\n  @@index([createdAt])\n  @@index([ipAddress])\n  @@index([severity])\n}\n\nmodel IPBlock {\n  id             String    @id @default(cuid())\n  createdAt      DateTime  @default(now())\n  updatedAt      DateTime  @updatedAt\n  ipAddress      String    @unique\n  reason         String // Reason for blocking\n  severity       String // TEMPORARY, PERSISTENT\n  blockedAt      DateTime  @default(now())\n  expiresAt      DateTime? // When block expires (null for permanent)\n  violationCount Int       @default(1) // Number of violations\n  blockedBy      String? // Admin user ID who manually blocked\n\n  // Optional relationship to user\n  blockedByUser User? @relation("BlockedBy", fields: [blockedBy], references: [id])\n\n  // Index for efficient queries\n  @@index([ipAddress])\n  @@index([expiresAt])\n  @@index([severity])\n}\n'
     };
-    config2.runtimeDataModel = JSON.parse('{"models":{"Org":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"name","kind":"scalar","type":"String"},{"name":"users","kind":"object","type":"User","relationName":"OrgToUser"},{"name":"sites","kind":"object","type":"Site","relationName":"OrgToSite"},{"name":"workOrders","kind":"object","type":"WorkOrder","relationName":"OrgToWorkOrder"}],"dbName":null},"Site":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"name","kind":"scalar","type":"String"},{"name":"orgId","kind":"scalar","type":"String"},{"name":"org","kind":"object","type":"Org","relationName":"OrgToSite"},{"name":"rooms","kind":"object","type":"Room","relationName":"RoomToSite"}],"dbName":null},"Room":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"name","kind":"scalar","type":"String"},{"name":"building","kind":"scalar","type":"String"},{"name":"floor","kind":"scalar","type":"Int"},{"name":"siteId","kind":"scalar","type":"String"},{"name":"site","kind":"object","type":"Site","relationName":"RoomToSite"},{"name":"assets","kind":"object","type":"Asset","relationName":"AssetToRoom"}],"dbName":null},"Asset":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"name","kind":"scalar","type":"String"},{"name":"roomId","kind":"scalar","type":"String"},{"name":"room","kind":"object","type":"Room","relationName":"AssetToRoom"},{"name":"workOrders","kind":"object","type":"WorkOrder","relationName":"AssetToWorkOrder"}],"dbName":null},"WorkOrder":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"title","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"status","kind":"enum","type":"WorkOrderStatus"},{"name":"failureMode","kind":"scalar","type":"String"},{"name":"revisitSchedule","kind":"scalar","type":"DateTime"},{"name":"assetId","kind":"scalar","type":"String"},{"name":"asset","kind":"object","type":"Asset","relationName":"AssetToWorkOrder"},{"name":"orgId","kind":"scalar","type":"String"},{"name":"org","kind":"object","type":"Org","relationName":"OrgToWorkOrder"},{"name":"assignedToId","kind":"scalar","type":"String"},{"name":"assignedTo","kind":"object","type":"User","relationName":"AssignedWorkOrders"}],"dbName":null},"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"email","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"firstName","kind":"scalar","type":"String"},{"name":"lastName","kind":"scalar","type":"String"},{"name":"phoneNumber","kind":"scalar","type":"String"},{"name":"role","kind":"enum","type":"UserRole"},{"name":"orgId","kind":"scalar","type":"String"},{"name":"org","kind":"object","type":"Org","relationName":"OrgToUser"},{"name":"sessions","kind":"object","type":"Session","relationName":"SessionToUser"},{"name":"auditLogs","kind":"object","type":"AuditLog","relationName":"AuditLogToUser"},{"name":"assignedWorkOrders","kind":"object","type":"WorkOrder","relationName":"AssignedWorkOrders"},{"name":"securityLogs","kind":"object","type":"SecurityLog","relationName":"SecurityLogToUser"},{"name":"blockedIPs","kind":"object","type":"IPBlock","relationName":"BlockedBy"}],"dbName":null},"Session":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"SessionToUser"}],"dbName":null},"AuditLog":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"action","kind":"scalar","type":"String"},{"name":"details","kind":"scalar","type":"Json"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"AuditLogToUser"}],"dbName":null},"SecurityLog":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"ipAddress","kind":"scalar","type":"String"},{"name":"userAgent","kind":"scalar","type":"String"},{"name":"action","kind":"scalar","type":"String"},{"name":"details","kind":"scalar","type":"Json"},{"name":"severity","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"SecurityLogToUser"}],"dbName":null},"IPBlock":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"ipAddress","kind":"scalar","type":"String"},{"name":"reason","kind":"scalar","type":"String"},{"name":"severity","kind":"scalar","type":"String"},{"name":"blockedAt","kind":"scalar","type":"DateTime"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"violationCount","kind":"scalar","type":"Int"},{"name":"blockedBy","kind":"scalar","type":"String"},{"name":"blockedByUser","kind":"object","type":"User","relationName":"BlockedBy"}],"dbName":null}},"enums":{},"types":{}}');
+    config2.runtimeDataModel = JSON.parse('{"models":{"Org":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"name","kind":"scalar","type":"String"},{"name":"users","kind":"object","type":"User","relationName":"OrgToUser"},{"name":"sites","kind":"object","type":"Site","relationName":"OrgToSite"},{"name":"workOrders","kind":"object","type":"WorkOrder","relationName":"OrgToWorkOrder"}],"dbName":null},"Site":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"name","kind":"scalar","type":"String"},{"name":"orgId","kind":"scalar","type":"String"},{"name":"org","kind":"object","type":"Org","relationName":"OrgToSite"},{"name":"buildings","kind":"object","type":"Building","relationName":"BuildingToSite"},{"name":"rooms","kind":"object","type":"Room","relationName":"RoomToSite"}],"dbName":null},"Building":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"name","kind":"scalar","type":"String"},{"name":"siteId","kind":"scalar","type":"String"},{"name":"site","kind":"object","type":"Site","relationName":"BuildingToSite"},{"name":"rooms","kind":"object","type":"Room","relationName":"BuildingToRoom"},{"name":"workOrders","kind":"object","type":"WorkOrder","relationName":"BuildingToWorkOrder"}],"dbName":null},"Room":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"name","kind":"scalar","type":"String"},{"name":"floor","kind":"scalar","type":"Int"},{"name":"siteId","kind":"scalar","type":"String"},{"name":"site","kind":"object","type":"Site","relationName":"RoomToSite"},{"name":"buildingId","kind":"scalar","type":"String"},{"name":"building","kind":"object","type":"Building","relationName":"BuildingToRoom"},{"name":"assets","kind":"object","type":"Asset","relationName":"AssetToRoom"},{"name":"workOrders","kind":"object","type":"WorkOrder","relationName":"RoomToWorkOrder"}],"dbName":null},"Asset":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"name","kind":"scalar","type":"String"},{"name":"roomId","kind":"scalar","type":"String"},{"name":"room","kind":"object","type":"Room","relationName":"AssetToRoom"},{"name":"workOrders","kind":"object","type":"WorkOrder","relationName":"AssetToWorkOrder"}],"dbName":null},"WorkOrder":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"title","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"status","kind":"enum","type":"WorkOrderStatus"},{"name":"failureMode","kind":"scalar","type":"String"},{"name":"revisitSchedule","kind":"scalar","type":"DateTime"},{"name":"assetId","kind":"scalar","type":"String"},{"name":"asset","kind":"object","type":"Asset","relationName":"AssetToWorkOrder"},{"name":"buildingId","kind":"scalar","type":"String"},{"name":"building","kind":"object","type":"Building","relationName":"BuildingToWorkOrder"},{"name":"roomId","kind":"scalar","type":"String"},{"name":"room","kind":"object","type":"Room","relationName":"RoomToWorkOrder"},{"name":"orgId","kind":"scalar","type":"String"},{"name":"org","kind":"object","type":"Org","relationName":"OrgToWorkOrder"},{"name":"assignedToId","kind":"scalar","type":"String"},{"name":"assignedTo","kind":"object","type":"User","relationName":"AssignedWorkOrders"}],"dbName":null},"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"email","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"firstName","kind":"scalar","type":"String"},{"name":"lastName","kind":"scalar","type":"String"},{"name":"phoneNumber","kind":"scalar","type":"String"},{"name":"role","kind":"enum","type":"UserRole"},{"name":"orgId","kind":"scalar","type":"String"},{"name":"org","kind":"object","type":"Org","relationName":"OrgToUser"},{"name":"sessions","kind":"object","type":"Session","relationName":"SessionToUser"},{"name":"auditLogs","kind":"object","type":"AuditLog","relationName":"AuditLogToUser"},{"name":"assignedWorkOrders","kind":"object","type":"WorkOrder","relationName":"AssignedWorkOrders"},{"name":"securityLogs","kind":"object","type":"SecurityLog","relationName":"SecurityLogToUser"},{"name":"blockedIPs","kind":"object","type":"IPBlock","relationName":"BlockedBy"}],"dbName":null},"Session":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"SessionToUser"}],"dbName":null},"AuditLog":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"action","kind":"scalar","type":"String"},{"name":"details","kind":"scalar","type":"Json"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"AuditLogToUser"}],"dbName":null},"SecurityLog":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"ipAddress","kind":"scalar","type":"String"},{"name":"userAgent","kind":"scalar","type":"String"},{"name":"action","kind":"scalar","type":"String"},{"name":"details","kind":"scalar","type":"Json"},{"name":"severity","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"SecurityLogToUser"}],"dbName":null},"IPBlock":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"ipAddress","kind":"scalar","type":"String"},{"name":"reason","kind":"scalar","type":"String"},{"name":"severity","kind":"scalar","type":"String"},{"name":"blockedAt","kind":"scalar","type":"DateTime"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"violationCount","kind":"scalar","type":"Int"},{"name":"blockedBy","kind":"scalar","type":"String"},{"name":"blockedByUser","kind":"object","type":"User","relationName":"BlockedBy"}],"dbName":null}},"enums":{},"types":{}}');
     defineDmmfProperty2(exports.Prisma, config2.runtimeDataModel);
     config2.compilerWasm = {
       getRuntime: async () => require_query_compiler_bg(),
@@ -12406,6 +12767,16 @@ var require_edge = __commonJS({
   }
 });
 
+// node_modules/@prisma/client/edge.js
+var require_edge2 = __commonJS({
+  "node_modules/@prisma/client/edge.js"(exports, module) {
+    module.exports = {
+      // https://github.com/prisma/prisma/pull/12907
+      ...require_edge()
+    };
+  }
+});
+
 // node_modules/.prisma/client/default.js
 var require_default = __commonJS({
   "node_modules/.prisma/client/default.js"(exports, module) {
@@ -12418,367 +12789,6 @@ var require_default2 = __commonJS({
   "node_modules/@prisma/client/default.js"(exports, module) {
     module.exports = {
       ...require_default()
-    };
-  }
-});
-
-// node_modules/@prisma/client/scripts/default-index.js
-var require_default_index = __commonJS({
-  "node_modules/@prisma/client/scripts/default-index.js"(exports, module) {
-    "use strict";
-    var __defProp2 = Object.defineProperty;
-    var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
-    var __getOwnPropNames2 = Object.getOwnPropertyNames;
-    var __hasOwnProp2 = Object.prototype.hasOwnProperty;
-    var __export2 = (target, all) => {
-      for (var name in all)
-        __defProp2(target, name, { get: all[name], enumerable: true });
-    };
-    var __copyProps2 = (to, from, except, desc) => {
-      if (from && typeof from === "object" || typeof from === "function") {
-        for (let key2 of __getOwnPropNames2(from))
-          if (!__hasOwnProp2.call(to, key2) && key2 !== except)
-            __defProp2(to, key2, { get: () => from[key2], enumerable: !(desc = __getOwnPropDesc2(from, key2)) || desc.enumerable });
-      }
-      return to;
-    };
-    var __toCommonJS = (mod) => __copyProps2(__defProp2({}, "__esModule", { value: true }), mod);
-    var default_index_exports = {};
-    __export2(default_index_exports, {
-      Prisma: () => Prisma,
-      PrismaClient: () => PrismaClient,
-      default: () => default_index_default
-    });
-    module.exports = __toCommonJS(default_index_exports);
-    var prisma = {
-      enginesVersion: "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba"
-    };
-    var version2 = "7.1.0";
-    var clientVersion = version2;
-    var PrismaClient = class {
-      constructor() {
-        throw new Error('@prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.');
-      }
-    };
-    function defineExtension(ext) {
-      if (typeof ext === "function") {
-        return ext;
-      }
-      return (client) => client.$extends(ext);
-    }
-    function getExtensionContext(that) {
-      return that;
-    }
-    var Prisma = {
-      defineExtension,
-      getExtensionContext,
-      prismaVersion: { client: clientVersion, engine: prisma.enginesVersion }
-    };
-    var default_index_default = { Prisma };
-  }
-});
-
-// node_modules/@prisma/extension-accelerate/dist/esm/semver.js
-function compareSemVer(a, b) {
-  const [major1 = 0, minor1 = 0, patch1 = 0] = a.split(".").map(Number);
-  const [major2 = 0, minor2 = 0, patch2 = 0] = b.split(".").map(Number);
-  const major = major2 - major1;
-  const minor = minor2 - minor1;
-  const patch = patch2 - patch1;
-  return major || minor || patch;
-}
-var init_semver = __esm({
-  "node_modules/@prisma/extension-accelerate/dist/esm/semver.js"() {
-  }
-});
-
-// node_modules/@prisma/extension-accelerate/dist/esm/user-agent.js
-function getUserAgent() {
-  const prismaVersion = import_default_index.default.Prisma.prismaVersion;
-  const parts = [
-    getRuntimeSegment(),
-    `PrismaEngine/${prismaVersion.engine}`,
-    `PrismaClient/${prismaVersion.client}`
-  ];
-  return parts.join(" ");
-}
-function getRuntimeSegment() {
-  if (typeof navigator !== "undefined") {
-    return navigator.userAgent;
-  } else if (typeof process !== "undefined" && typeof process.versions !== "undefined") {
-    return `Node/${process.versions.node} (${process.platform}; ${process.arch})`;
-  } else if ("EdgeRuntime" in globalThis) {
-    return `Vercel-Edge-Runtime`;
-  } else {
-    return `UnknownRuntime`;
-  }
-}
-var import_default_index;
-var init_user_agent = __esm({
-  "node_modules/@prisma/extension-accelerate/dist/esm/user-agent.js"() {
-    import_default_index = __toESM(require_default_index(), 1);
-  }
-});
-
-// node_modules/@prisma/extension-accelerate/dist/esm/extension.js
-function makeWithCacheHeaders(fetcher) {
-  const userAgent = getUserAgent();
-  let machineHint = void 0;
-  return async (params) => {
-    const { args } = params;
-    const { cacheStrategy, __accelerateInfo = false, ...rest } = args;
-    let info = null;
-    const { __internalParams, query } = params;
-    __internalParams.customDataProxyFetch = () => {
-      return async (url2, options2) => {
-        const cacheControl = new Array();
-        if (typeof cacheStrategy?.ttl === "number") {
-          cacheControl.push(`max-age=${cacheStrategy.ttl}`);
-        }
-        if (typeof cacheStrategy?.swr === "number") {
-          cacheControl.push(`stale-while-revalidate=${cacheStrategy.swr}`);
-        }
-        const cacheTags = cacheStrategy?.tags?.join(",") ?? "";
-        options2.headers = {
-          ...options2.headers,
-          "cache-control": cacheControl.length > 0 ? cacheControl.join(",") : `no-cache`,
-          "user-agent": userAgent,
-          ...cacheTags.length > 0 ? { "accelerate-cache-tags": cacheTags } : {}
-        };
-        if (machineHint) {
-          options2.headers["accelerate-query-engine-jwt"] = machineHint;
-        }
-        try {
-          const response = await fetcher(url2, options2);
-          info = {
-            cacheStatus: response.headers.get("accelerate-cache-status"),
-            lastModified: new Date(response.headers.get("last-modified") ?? ""),
-            region: response.headers.get("cf-ray")?.split("-")[1] ?? "unspecified",
-            requestId: response.headers.get("cf-ray") ?? "unspecified",
-            signature: response.headers.get("accelerate-signature") ?? "unspecified"
-          };
-          machineHint = response.headers.get("accelerate-query-engine-jwt") ?? void 0;
-          return response;
-        } catch (e3) {
-          throw new Error(FETCH_FAILURE_MESSAGE);
-        }
-      };
-    };
-    if (__accelerateInfo) {
-      const data = await query(rest, __internalParams);
-      return { data, info };
-    } else {
-      return query(rest, __internalParams);
-    }
-  };
-}
-function makeAccelerateExtension(fetcher) {
-  const enableCtxParent = compareSemVer("5.1.0", import_default_index2.default.Prisma.prismaVersion.client) >= 0;
-  return import_default_index2.default.Prisma.defineExtension((client) => {
-    const withCacheHeaders = makeWithCacheHeaders(fetcher);
-    const apiKeyPromise = client._engine.start().then(() => client._engine.apiKey?.());
-    async function invalidate(input) {
-      const apiKey = await apiKeyPromise;
-      if (!apiKey) {
-        return { requestId: "unspecified" };
-      }
-      let response;
-      try {
-        response = await fetcher(`https://accelerate.prisma-data.net/invalidate`, {
-          method: "POST",
-          headers: {
-            authorization: `Bearer ${apiKey}`,
-            "content-type": "application/json"
-          },
-          body: JSON.stringify(input)
-        });
-      } catch (e3) {
-        throw new Error(FETCH_FAILURE_MESSAGE);
-      }
-      if (!response?.ok) {
-        const body = await response.text();
-        throw new Error(`Failed to invalidate Accelerate cache. Response was ${response.status} ${response.statusText}. ${body}`);
-      }
-      void response.body?.cancel();
-      return {
-        requestId: response.headers.get("cf-ray") ?? "unspecified"
-      };
-    }
-    const xclient = client.$extends({
-      name: EXTENSION_NAME,
-      query: {
-        $allModels: {
-          // also apply withCacheHeaders to mutations for machine hint benefit
-          $allOperations: withCacheHeaders
-        }
-      }
-    });
-    return xclient.$extends({
-      name: EXTENSION_NAME,
-      client: {
-        $accelerate: {
-          /**
-           * Initiates an invalidation request for the specified cache tag values.
-           *
-           * A tag may only contain alphanumeric characters and underscores.
-           * Each tag may contain a maximum of 64 characters.
-           * A maximum of 5 tags may be invalidated per call.
-           */
-          invalidate: (input) => invalidate(input),
-          /**
-           * Initiates an invalidation request of all cache entries for this
-           * environment.
-           */
-          invalidateAll: () => invalidate({ tags: "all" })
-        }
-      },
-      model: {
-        $allModels: {
-          // TODO: these functions are repetitive. Is there a type we can use to generic this?
-          // TODO: can we define these in a map that ensures query and model overrides stay in sync/
-          aggregate(args) {
-            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
-            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
-            const prismaPromise = model.aggregate(args);
-            return Object.assign(prismaPromise, {
-              withAccelerateInfo() {
-                return model.aggregate({
-                  ...args,
-                  __accelerateInfo: true
-                });
-              }
-            });
-          },
-          count(args) {
-            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
-            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
-            const prismaPromise = model.count(args);
-            return Object.assign(prismaPromise, {
-              withAccelerateInfo() {
-                return model.count({
-                  ...args,
-                  __accelerateInfo: true
-                });
-              }
-            });
-          },
-          findFirst(args) {
-            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
-            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
-            const prismaPromise = model.findFirst(args);
-            return Object.assign(prismaPromise, {
-              withAccelerateInfo() {
-                return model.findFirst({
-                  ...args,
-                  __accelerateInfo: true
-                });
-              }
-            });
-          },
-          findFirstOrThrow(args) {
-            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
-            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
-            const prismaPromise = model.findFirstOrThrow(args);
-            return Object.assign(prismaPromise, {
-              withAccelerateInfo() {
-                return model.findFirstOrThrow({
-                  ...args,
-                  __accelerateInfo: true
-                });
-              }
-            });
-          },
-          findMany(args) {
-            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
-            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
-            const prismaPromise = model.findMany(args);
-            return Object.assign(prismaPromise, {
-              withAccelerateInfo() {
-                return model.findMany({
-                  ...args,
-                  __accelerateInfo: true
-                });
-              }
-            });
-          },
-          findUnique(args) {
-            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
-            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
-            const prismaPromise = model.findUnique(args);
-            return Object.assign(prismaPromise, {
-              withAccelerateInfo() {
-                return model.findUnique({
-                  ...args,
-                  __accelerateInfo: true
-                });
-              }
-            });
-          },
-          findUniqueOrThrow(args) {
-            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
-            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
-            const prismaPromise = model.findUniqueOrThrow(args);
-            return Object.assign(prismaPromise, {
-              withAccelerateInfo() {
-                return model.findUniqueOrThrow({
-                  ...args,
-                  __accelerateInfo: true
-                });
-              }
-            });
-          },
-          groupBy(args) {
-            const ctx = import_default_index2.default.Prisma.getExtensionContext(this);
-            const model = enableCtxParent ? ctx.$parent[ctx.$name] : xclient[ctx.name];
-            const prismaPromise = model.groupBy(args);
-            return Object.assign(prismaPromise, {
-              withAccelerateInfo() {
-                return model.groupBy({
-                  ...args,
-                  __accelerateInfo: true
-                });
-              }
-            });
-          }
-        }
-      }
-    });
-  });
-}
-var import_default_index2, EXTENSION_NAME, FETCH_FAILURE_MESSAGE;
-var init_extension = __esm({
-  "node_modules/@prisma/extension-accelerate/dist/esm/extension.js"() {
-    import_default_index2 = __toESM(require_default_index(), 1);
-    init_semver();
-    init_user_agent();
-    EXTENSION_NAME = "@prisma/extension-accelerate";
-    FETCH_FAILURE_MESSAGE = "Unable to connect to the Accelerate API. This may be due to a network or DNS issue. Please check your connection and the Accelerate connection string. For details, visit https://www.prisma.io/docs/accelerate/troubleshoot.";
-  }
-});
-
-// node_modules/@prisma/extension-accelerate/dist/esm/entry.fetch.js
-var entry_fetch_exports = {};
-__export(entry_fetch_exports, {
-  FETCH_FAILURE_MESSAGE: () => FETCH_FAILURE_MESSAGE,
-  makeAccelerateExtension: () => makeAccelerateExtension,
-  withAccelerate: () => withAccelerate
-});
-function withAccelerate() {
-  return makeAccelerateExtension(globalThis.fetch);
-}
-var init_entry_fetch = __esm({
-  "node_modules/@prisma/extension-accelerate/dist/esm/entry.fetch.js"() {
-    init_extension();
-    init_extension();
-  }
-});
-
-// node_modules/@prisma/client/edge.js
-var require_edge2 = __commonJS({
-  "node_modules/@prisma/client/edge.js"(exports, module) {
-    module.exports = {
-      // https://github.com/prisma/prisma/pull/12907
-      ...require_edge()
     };
   }
 });
@@ -12805,14 +12815,8 @@ async function createBasePrismaClient() {
   const effectiveUrl = accelerateUrl || databaseUrl || directUrl;
   if (!effectiveUrl) {
     if (typeof globalThis !== "undefined" && globalThis.__SVELTEKIT__) {
-      const { PrismaClient } = await Promise.resolve().then(() => __toESM(require_default2(), 1));
-      return new PrismaClient({
-        datasources: {
-          db: {
-            url: "postgresql://localhost:5432/dummy"
-          }
-        }
-      });
+      console.warn("Prisma client not available during build/SSR generation");
+      return null;
     }
     throw new Error("DATABASE_URL, ACCELERATE_URL, or DIRECT_URL environment variable is required");
   }
@@ -12843,6 +12847,9 @@ async function getPrismaSingleton() {
     globalForPrisma.prismaPromise = createBasePrismaClient();
   }
   const client = await globalForPrisma.prismaPromise;
+  if (!client) {
+    throw new Error("Prisma client not available. This may occur during build/SSR generation.");
+  }
   if (!globalForPrisma.prisma) {
     globalForPrisma.prisma = client;
   }
@@ -13971,12 +13978,20 @@ var init_layout_server_ts = __esm({
     init_prisma();
     load = async ({ locals }) => {
       let assets2 = [];
+      let buildings = [];
+      let rooms = [];
       if (locals.user) {
         const prisma = await createRequestPrisma({ locals });
         assets2 = await prisma.asset.findMany({
           include: {
             room: {
               include: {
+                building: {
+                  select: {
+                    id: true,
+                    name: true
+                  }
+                },
                 site: {
                   select: {
                     name: true
@@ -13991,6 +14006,36 @@ var init_layout_server_ts = __esm({
           take: 50
           // Limit to keep it performant
         });
+        buildings = await prisma.building.findMany({
+          include: {
+            site: {
+              select: {
+                name: true
+              }
+            }
+          },
+          orderBy: {
+            name: "asc"
+          }
+        });
+        rooms = await prisma.room.findMany({
+          include: {
+            building: {
+              select: {
+                id: true,
+                name: true
+              }
+            },
+            site: {
+              select: {
+                name: true
+              }
+            }
+          },
+          orderBy: {
+            name: "asc"
+          }
+        });
       }
       return {
         user: locals.user ?? null,
@@ -13998,9 +14043,27 @@ var init_layout_server_ts = __esm({
           id: asset.id,
           name: asset.name,
           room: asset.room ? {
+            id: asset.room.id,
+            name: asset.room.name,
+            building: asset.room.building,
             site: asset.room.site ? {
               name: asset.room.site.name
             } : void 0
+          } : void 0
+        })),
+        buildings: buildings.map((building2) => ({
+          id: building2.id,
+          name: building2.name,
+          site: building2.site ? {
+            name: building2.site.name
+          } : void 0
+        })),
+        rooms: rooms.map((room) => ({
+          id: room.id,
+          name: room.name,
+          building: room.building,
+          site: room.site ? {
+            name: room.site.name
           } : void 0
         }))
       };
@@ -14050,10 +14113,16 @@ var init_layout_svelte = __esm({
     init_devalue();
     QuickFAB = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let { assets: assets2 = [] } = $$props;
+      let { buildings = [] } = $$props;
+      let { rooms = [] } = $$props;
       createEventDispatcher();
       if ($$props.assets === void 0 && $$bindings.assets && assets2 !== void 0)
         $$bindings.assets(assets2);
-      return ` ${`<button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 lg:hidden" title="Create Work Order" aria-label="Create Work Order"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>  <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 hidden lg:flex" title="Create Work Order" aria-label="Create Work Order"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>`}  ${``}`;
+      if ($$props.buildings === void 0 && $$bindings.buildings && buildings !== void 0)
+        $$bindings.buildings(buildings);
+      if ($$props.rooms === void 0 && $$bindings.rooms && rooms !== void 0)
+        $$bindings.rooms(rooms);
+      return ` ${` <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 lg:hidden" title="Create Work Order" aria-label="Create Work Order"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>  <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 hidden lg:flex" title="Create Work Order" aria-label="Create Work Order"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>`}  ${``}`;
     });
     Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let currentPath;
@@ -14113,7 +14182,16 @@ var init_layout_svelte = __esm({
         "class",
         isAuthPage || isLandingPage ? "" : "bg-spore-steel min-h-screen",
         0
-      )}>${slots.default ? slots.default({}) : ``}</main>  ${showFAB ? `${validate_component(QuickFAB, "QuickFAB").$$render($$result, { assets: data.assets || [] }, {}, {})}` : ``}`;
+      )}>${slots.default ? slots.default({}) : ``}</main>  ${showFAB ? `${validate_component(QuickFAB, "QuickFAB").$$render(
+        $$result,
+        {
+          assets: data.assets || [],
+          buildings: data.buildings || [],
+          rooms: data.rooms || []
+        },
+        {},
+        {}
+      )}` : ``}`;
     });
   }
 });
@@ -14136,8 +14214,8 @@ var init__ = __esm({
     index = 0;
     component = async () => component_cache ??= (await Promise.resolve().then(() => (init_layout_svelte(), layout_svelte_exports))).default;
     server_id = "src/routes/+layout.server.ts";
-    imports = ["_app/immutable/chunks/0.b0a908c7.js", "_app/immutable/chunks/_layout.4a017d25.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/stores.93ea7195.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/index.8162ef61.js", "_app/immutable/chunks/forms.e1260b91.js", "_app/immutable/chunks/parse.bee59afc.js"];
-    stylesheets = ["_app/immutable/assets/_layout.635d9cb8.css"];
+    imports = ["_app/immutable/chunks/0.f328e84e.js", "_app/immutable/chunks/_layout.ddaea7ef.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/stores.65cb5f2c.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/index.8162ef61.js", "_app/immutable/chunks/forms.5409edbc.js", "_app/immutable/chunks/parse.bee59afc.js"];
+    stylesheets = ["_app/immutable/assets/_layout.0b7be66b.css"];
     fonts = [];
   }
 });
@@ -14176,7 +14254,7 @@ var init__2 = __esm({
   ".svelte-kit/output/server/nodes/1.js"() {
     index2 = 1;
     component2 = async () => component_cache2 ??= (await Promise.resolve().then(() => (init_error_svelte(), error_svelte_exports))).default;
-    imports2 = ["_app/immutable/chunks/1.7cedfe16.js", "_app/immutable/chunks/error.5f4922d0.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/stores.93ea7195.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/index.8162ef61.js"];
+    imports2 = ["_app/immutable/chunks/1.2a3688ed.js", "_app/immutable/chunks/error.87a4abeb.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/stores.65cb5f2c.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/index.8162ef61.js"];
     stylesheets2 = [];
     fonts2 = [];
   }
@@ -14237,7 +14315,7 @@ var init__3 = __esm({
     index3 = 2;
     component3 = async () => component_cache3 ??= (await Promise.resolve().then(() => (init_page_svelte(), page_svelte_exports))).default;
     server_id2 = "src/routes/+page.server.ts";
-    imports3 = ["_app/immutable/nodes/2.75d156fe.js", "_app/immutable/chunks/_page.f88cb188.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js"];
+    imports3 = ["_app/immutable/chunks/2.5355f740.js", "_app/immutable/chunks/_page.f88cb188.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js"];
     stylesheets3 = [];
     fonts3 = [];
   }
@@ -14843,7 +14921,7 @@ var init__4 = __esm({
     index4 = 3;
     component4 = async () => component_cache4 ??= (await Promise.resolve().then(() => (init_page_svelte2(), page_svelte_exports2))).default;
     server_id3 = "src/routes/assets/+page.server.ts";
-    imports4 = ["_app/immutable/nodes/3.b8b0c817.js", "_app/immutable/chunks/_page.9ad6d6ee.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.e1260b91.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/index.8162ef61.js"];
+    imports4 = ["_app/immutable/nodes/3.8d034159.js", "_app/immutable/chunks/_page.48701412.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.5409edbc.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/index.8162ef61.js"];
     stylesheets4 = [];
     fonts4 = [];
   }
@@ -15012,7 +15090,7 @@ var init__5 = __esm({
     index5 = 4;
     component5 = async () => component_cache5 ??= (await Promise.resolve().then(() => (init_page_svelte3(), page_svelte_exports3))).default;
     server_id4 = "src/routes/assets/[id]/+page.server.ts";
-    imports5 = ["_app/immutable/chunks/4.0e7263cf.js", "_app/immutable/chunks/_page.f3159867.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.e1260b91.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/index.8162ef61.js"];
+    imports5 = ["_app/immutable/chunks/4.50c3c403.js", "_app/immutable/chunks/_page.94cfdc31.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.5409edbc.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/index.8162ef61.js"];
     stylesheets5 = [];
     fonts5 = [];
   }
@@ -15141,7 +15219,7 @@ var init__6 = __esm({
     index6 = 5;
     component6 = async () => component_cache6 ??= (await Promise.resolve().then(() => (init_page_svelte4(), page_svelte_exports4))).default;
     server_id5 = "src/routes/audit-log/+page.server.ts";
-    imports6 = ["_app/immutable/chunks/5.9fb10012.js", "_app/immutable/chunks/_page.c93a40eb.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.a73b1e10.js"];
+    imports6 = ["_app/immutable/nodes/5.341bd501.js", "_app/immutable/chunks/_page.c93a40eb.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.a73b1e10.js"];
     stylesheets6 = [];
     fonts6 = [];
   }
@@ -28536,7 +28614,7 @@ var init__7 = __esm({
     index7 = 6;
     component7 = async () => component_cache7 ??= (await Promise.resolve().then(() => (init_page_svelte5(), page_svelte_exports5))).default;
     server_id6 = "src/routes/auth/login/+page.server.ts";
-    imports7 = ["_app/immutable/chunks/6.2b238d30.js", "_app/immutable/chunks/_page.7d47bfa7.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.e1260b91.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/index.8162ef61.js"];
+    imports7 = ["_app/immutable/chunks/6.84928c13.js", "_app/immutable/chunks/_page.bb58eab2.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.5409edbc.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/index.8162ef61.js"];
     stylesheets7 = [];
     fonts7 = [];
   }
@@ -28746,7 +28824,7 @@ var init__9 = __esm({
     index9 = 8;
     component8 = async () => component_cache8 ??= (await Promise.resolve().then(() => (init_page_svelte6(), page_svelte_exports6))).default;
     server_id8 = "src/routes/auth/register/+page.server.ts";
-    imports9 = ["_app/immutable/nodes/8.da29df0e.js", "_app/immutable/chunks/_page.912bcdc2.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.e1260b91.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/index.8162ef61.js"];
+    imports9 = ["_app/immutable/chunks/8.6974cb0a.js", "_app/immutable/chunks/_page.f9c1aa13.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.5409edbc.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/index.8162ef61.js"];
     stylesheets9 = [];
     fonts9 = [];
   }
@@ -29086,7 +29164,7 @@ var init__11 = __esm({
     index11 = 10;
     component10 = async () => component_cache10 ??= (await Promise.resolve().then(() => (init_page_svelte8(), page_svelte_exports8))).default;
     server_id10 = "src/routes/profile/+page.server.ts";
-    imports11 = ["_app/immutable/chunks/10.8c1d680d.js", "_app/immutable/chunks/_page.3540a7cf.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.e1260b91.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/index.8162ef61.js"];
+    imports11 = ["_app/immutable/nodes/10.92e9f4f3.js", "_app/immutable/chunks/_page.6275f2ab.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.5409edbc.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/index.8162ef61.js"];
     stylesheets11 = [];
     fonts11 = [];
   }
@@ -29226,7 +29304,7 @@ var init__12 = __esm({
     index12 = 11;
     component11 = async () => component_cache11 ??= (await Promise.resolve().then(() => (init_page_svelte9(), page_svelte_exports9))).default;
     server_id11 = "src/routes/sites/+page.server.ts";
-    imports12 = ["_app/immutable/chunks/11.2f8f63a9.js", "_app/immutable/chunks/_page.34765624.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.e1260b91.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/index.8162ef61.js"];
+    imports12 = ["_app/immutable/chunks/11.15b86ca5.js", "_app/immutable/chunks/_page.4bc684ac.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.5409edbc.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/index.8162ef61.js"];
     stylesheets12 = [];
     fonts12 = [];
   }
@@ -29404,7 +29482,7 @@ var init__13 = __esm({
     index13 = 12;
     component12 = async () => component_cache12 ??= (await Promise.resolve().then(() => (init_page_svelte10(), page_svelte_exports10))).default;
     server_id12 = "src/routes/sites/[id]/+page.server.ts";
-    imports13 = ["_app/immutable/chunks/12.dff4465c.js", "_app/immutable/chunks/_page.53cb366b.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.e1260b91.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/index.8162ef61.js"];
+    imports13 = ["_app/immutable/chunks/12.927433b3.js", "_app/immutable/chunks/_page.7bb4bc87.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.5409edbc.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/index.8162ef61.js"];
     stylesheets13 = [];
     fonts13 = [];
   }
@@ -29603,7 +29681,7 @@ var init__14 = __esm({
     index14 = 13;
     component13 = async () => component_cache13 ??= (await Promise.resolve().then(() => (init_page_svelte11(), page_svelte_exports11))).default;
     server_id13 = "src/routes/users/+page.server.ts";
-    imports14 = ["_app/immutable/chunks/13.608ab5c1.js", "_app/immutable/chunks/_page.e17942e6.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.e1260b91.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/index.8162ef61.js"];
+    imports14 = ["_app/immutable/nodes/13.502e7645.js", "_app/immutable/chunks/_page.51ff81a6.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.5409edbc.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/index.8162ef61.js"];
     stylesheets14 = [];
     fonts14 = [];
   }
@@ -29690,7 +29768,7 @@ var init__15 = __esm({
   ".svelte-kit/output/server/nodes/14.js"() {
     index15 = 14;
     component14 = async () => component_cache14 ??= (await Promise.resolve().then(() => (init_page_svelte12(), page_svelte_exports12))).default;
-    imports15 = ["_app/immutable/nodes/14.df9eb481.js", "_app/immutable/chunks/_page.f340ad49.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.a73b1e10.js"];
+    imports15 = ["_app/immutable/chunks/14.e6c7aff5.js", "_app/immutable/chunks/_page.f340ad49.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.a73b1e10.js"];
     stylesheets15 = [];
     fonts15 = [];
   }
@@ -29752,6 +29830,33 @@ var init_page_server_ts13 = __esm({
               name: true
             }
           },
+          building: {
+            select: {
+              id: true,
+              name: true,
+              site: {
+                select: {
+                  name: true
+                }
+              }
+            }
+          },
+          room: {
+            select: {
+              id: true,
+              name: true,
+              building: {
+                select: {
+                  name: true
+                }
+              },
+              site: {
+                select: {
+                  name: true
+                }
+              }
+            }
+          },
           assignedTo: {
             select: {
               id: true,
@@ -29795,27 +29900,38 @@ var init_page_server_ts13 = __esm({
         const data = await event.request.formData();
         const title = data.get("title");
         const description = data.get("description");
-        const assetId = data.get("assetId");
         const failureMode = data.get("failureMode") || "General";
-        if (!title || !assetId) {
-          return { success: false, error: "Title and asset are required." };
+        const selectionMode = data.get("selectionMode") || "asset";
+        const assetId = data.get("assetId");
+        const roomId = data.get("roomId");
+        const buildingId = data.get("buildingId");
+        if (!title) {
+          return { success: false, error: "Title is required." };
         }
-        const orgId = event.locals.user.orgId;
+        if (!assetId && !roomId && !buildingId) {
+          return { success: false, error: "Please select an asset, room, or building." };
+        }
         try {
+          const orgId = event.locals.user.orgId;
           const newWo = await prisma.workOrder.create({
             data: {
               title: title.trim(),
               description: description?.trim() || "",
-              assetId,
               failureMode,
               orgId,
-              status: "PENDING"
+              status: "PENDING",
+              // Only set the relevant ID based on selection mode
+              ...selectionMode === "asset" && { assetId },
+              ...selectionMode === "room" && { roomId },
+              ...selectionMode === "building" && { buildingId }
             },
             select: {
               id: true,
               title: true,
               status: true,
               assetId: true,
+              buildingId: true,
+              roomId: true,
               orgId: true,
               createdAt: true
             }
@@ -29827,7 +29943,8 @@ var init_page_server_ts13 = __esm({
           await logAudit(event.locals.user.id, "WORK_ORDER_CREATED", {
             workOrderId: newWo.id,
             title: newWo.title,
-            assetId: newWo.assetId
+            selectionMode,
+            selectionDetails: selectionMode === "asset" ? { assetId } : selectionMode === "room" ? { roomId } : selectionMode === "building" ? { buildingId } : {}
           });
           return { success: true, workOrder: newWo };
         } catch (e3) {
@@ -29999,7 +30116,7 @@ var init_page_svelte13 = __esm({
       )}" role="status" aria-live="polite"><span class="${"w-2 h-2 rounded-full " + escape(
         wsConnected ? "bg-spore-orange animate-pulse" : "bg-spore-cream/30",
         true
-      )}" aria-hidden="true"></span> ${escape(wsConnected ? "Live updates enabled" : "Connecting...")}</span> ${lastUpdate ? `<span class="text-sm font-medium text-spore-orange animate-pulse" role="status" aria-live="polite">${escape(lastUpdate)}</span>` : ``}</div></div> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:ring-offset-2 focus:ring-offset-spore-steel transition-colors text-sm font-bold tracking-wide"${add_attribute("aria-expanded", showCreateForm, 0)} aria-controls="create-form">${escape("+ NEW WORK ORDER")}</button></div>  <div class="flex items-center gap-3 mb-6"><span class="text-sm font-medium text-spore-cream/70" data-svelte-h="svelte-snu8mb">All</span> <a${add_attribute("href", myOnly ? "/work-orders" : "/work-orders?my=true", 0)} class="${"relative inline-flex h-6 w-11 items-center rounded-full transition-colors " + escape(myOnly ? "bg-spore-orange" : "bg-spore-steel/50", true)}" role="switch"${add_attribute("aria-checked", myOnly, 0)}><span class="${"inline-block h-4 w-4 transform rounded-full bg-white transition-transform " + escape(myOnly ? "translate-x-6" : "translate-x-1", true)}"></span></a> <span class="text-sm font-medium text-spore-cream/70" data-svelte-h="svelte-10q70yy">My Work Orders</span></div>  ${``}  ${workOrders && workOrders.length > 0 ? `<div class="bg-spore-white rounded-xl shadow-sm border border-spore-cream/50 overflow-hidden"> <div class="hidden md:block overflow-x-auto"><table class="min-w-full" role="table" aria-label="Work orders list"><thead class="bg-spore-dark"><tr><th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1gaugch">Title</th> <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-esg2m9">Status</th> <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1yp9u9b">Assigned</th> <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-v4dhaf">Asset</th> <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-58w39q">Actions</th></tr></thead> <tbody class="divide-y divide-spore-cream/50">${each(workOrders, (workOrder) => {
+      )}" aria-hidden="true"></span> ${escape(wsConnected ? "Live updates enabled" : "Connecting...")}</span> ${lastUpdate ? `<span class="text-sm font-medium text-spore-orange animate-pulse" role="status" aria-live="polite">${escape(lastUpdate)}</span>` : ``}</div></div> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:ring-offset-2 focus:ring-offset-spore-steel transition-colors text-sm font-bold tracking-wide"${add_attribute("aria-expanded", showCreateForm, 0)} aria-controls="create-form">${escape("+ NEW WORK ORDER")}</button></div>  <div class="flex items-center gap-3 mb-6"><span class="text-sm font-medium text-spore-cream/70" data-svelte-h="svelte-snu8mb">All</span> <a${add_attribute("href", myOnly ? "/work-orders" : "/work-orders?my=true", 0)} class="${"relative inline-flex h-6 w-11 items-center rounded-full transition-colors " + escape(myOnly ? "bg-spore-orange" : "bg-spore-steel/50", true)}" role="switch"${add_attribute("aria-checked", myOnly, 0)}><span class="${"inline-block h-4 w-4 transform rounded-full bg-white transition-transform " + escape(myOnly ? "translate-x-6" : "translate-x-1", true)}"></span></a> <span class="text-sm font-medium text-spore-cream/70" data-svelte-h="svelte-10q70yy">My Work Orders</span></div>  ${``}  ${workOrders && workOrders.length > 0 ? `<div class="bg-spore-white rounded-xl shadow-sm border border-spore-cream/50 overflow-hidden"> <div class="hidden md:block overflow-x-auto"><table class="min-w-full" role="table" aria-label="Work orders list"><thead class="bg-spore-dark"><tr><th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1gaugch">Title</th> <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-esg2m9">Status</th> <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1yp9u9b">Assigned</th> <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1fv7xew">Location</th> <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-58w39q">Actions</th></tr></thead> <tbody class="divide-y divide-spore-cream/50">${each(workOrders, (workOrder) => {
         return `<tr class="hover:bg-spore-cream/20 transition-colors"><td class="px-6 py-4 whitespace-nowrap"><a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-sm font-bold text-spore-dark hover:text-spore-orange transition-colors focus:outline-none focus:underline">${escape(workOrder.title)} </a></td> <td class="px-6 py-4 whitespace-nowrap"><span class="${"px-3 py-1.5 inline-flex text-xs font-bold uppercase tracking-wide rounded-full " + escape(
           workOrder.status === "COMPLETED" ? "bg-spore-forest text-white" : "",
           true
@@ -30017,7 +30134,7 @@ var init_page_svelte13 = __esm({
           true
         )}">${escape(workOrder.status.replace("_", " "))} </span></td> <td class="px-6 py-4 whitespace-nowrap"><form method="POST" action="?/assign" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="text-sm bg-transparent border-0 text-spore-steel cursor-pointer hover:text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange rounded"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
           return `<option${add_attribute("value", user.id, 0)}>${escape(getUserName2(user))}</option>`;
-        })}</select> </form></td> <td class="px-6 py-4 whitespace-nowrap text-sm text-spore-steel font-medium">${escape(workOrder.asset?.name || "N/A")}</td> <td class="px-6 py-4 whitespace-nowrap text-sm font-bold space-x-4"><form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="text-spore-orange hover:text-spore-orange/70 focus:outline-none focus:underline disabled:opacity-30 disabled:cursor-not-allowed" ${workOrder.status === "IN_PROGRESS" ? "disabled" : ""} title="${"Start working on " + escape(workOrder.title, true)}" aria-label="${"Start work order: " + escape(workOrder.title, true)}">Start
+        })}</select> </form></td> <td class="px-6 py-4 whitespace-nowrap text-sm text-spore-steel font-medium">${workOrder.asset ? `${escape(workOrder.asset.name)}` : `${workOrder.building ? `${escape(workOrder.building.name)} ${escape(workOrder.building.site?.name ? `- ${workOrder.building.site.name}` : "")}` : `${workOrder.room ? `${escape(workOrder.room.name)} ${escape(workOrder.room.building?.name ? `- ${workOrder.room.building.name}` : "")} ${escape(workOrder.room.site?.name ? `- ${workOrder.room.site.name}` : "")}` : `N/A`}`}`}</td> <td class="px-6 py-4 whitespace-nowrap text-sm font-bold space-x-4"><form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="text-spore-orange hover:text-spore-orange/70 focus:outline-none focus:underline disabled:opacity-30 disabled:cursor-not-allowed" ${workOrder.status === "IN_PROGRESS" ? "disabled" : ""} title="${"Start working on " + escape(workOrder.title, true)}" aria-label="${"Start work order: " + escape(workOrder.title, true)}">Start
 										</button></form> <form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="COMPLETED"> <button type="submit" class="text-spore-forest hover:text-spore-forest/70 focus:outline-none focus:underline disabled:opacity-30 disabled:cursor-not-allowed" ${workOrder.status === "COMPLETED" ? "disabled" : ""} title="${"Mark " + escape(workOrder.title, true) + " as completed"}" aria-label="${"Complete work order: " + escape(workOrder.title, true)}">Complete
 										</button></form> <a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-spore-steel hover:text-spore-dark focus:outline-none focus:underline" title="${"View details for " + escape(workOrder.title, true)}">View
 									</a></td> </tr>`;
@@ -30037,7 +30154,7 @@ var init_page_svelte13 = __esm({
         ) + " " + escape(
           workOrder.status === "CANCELLED" ? "bg-red-600 text-white" : "",
           true
-        )}">${escape(workOrder.status.replace("_", " "))} </span></div> <div class="space-y-2 mb-4"><div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1x2hujd">Asset:</span> <span class="text-sm text-spore-dark">${escape(workOrder.asset?.name || "N/A")}</span></div> <div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1es34l">Assigned:</span> <form method="POST" action="?/assign" class="flex-1 max-w-[150px]"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="w-full text-sm bg-spore-cream/30 border border-spore-cream/50 rounded-lg px-2 py-1 text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
+        )}">${escape(workOrder.status.replace("_", " "))} </span></div> <div class="space-y-2 mb-4"><div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-8jdlm4">Location:</span> <span class="text-sm text-spore-dark">${workOrder.asset ? `${escape(workOrder.asset.name)}` : `${workOrder.building ? `${escape(workOrder.building.name)} ${escape(workOrder.building.site?.name ? `- ${workOrder.building.site.name}` : "")}` : `${workOrder.room ? `${escape(workOrder.room.name)} ${escape(workOrder.room.building?.name ? `- ${workOrder.room.building.name}` : "")} ${escape(workOrder.room.site?.name ? `- ${workOrder.room.site.name}` : "")}` : `N/A`}`}`} </span></div> <div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1es34l">Assigned:</span> <form method="POST" action="?/assign" class="flex-1 max-w-[150px]"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="w-full text-sm bg-spore-cream/30 border border-spore-cream/50 rounded-lg px-2 py-1 text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
           return `<option${add_attribute("value", user.id, 0)}>${escape(getUserName2(user))}</option>`;
         })}</select></form> </div></div> <div class="flex gap-2 text-sm font-bold"><form method="POST" action="?/updateStatus" class="flex-1"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="w-full bg-spore-orange text-white py-2 px-3 rounded-lg font-medium hover:bg-spore-orange/90 focus:outline-none focus:ring-1 focus:ring-spore-orange disabled:opacity-30 disabled:cursor-not-allowed transition-colors" ${workOrder.status === "IN_PROGRESS" ? "disabled" : ""} aria-label="${"Start work order: " + escape(workOrder.title, true)}">Start
 								</button></form> <form method="POST" action="?/updateStatus" class="flex-1"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="COMPLETED"> <button type="submit" class="w-full bg-spore-forest text-white py-2 px-3 rounded-lg font-medium hover:bg-spore-forest/90 focus:outline-none focus:ring-1 focus:ring-spore-forest disabled:opacity-30 disabled:cursor-not-allowed transition-colors" ${workOrder.status === "COMPLETED" ? "disabled" : ""} aria-label="${"Complete work order: " + escape(workOrder.title, true)}">Complete
@@ -30066,7 +30183,7 @@ var init__16 = __esm({
     index16 = 15;
     component15 = async () => component_cache15 ??= (await Promise.resolve().then(() => (init_page_svelte13(), page_svelte_exports13))).default;
     server_id14 = "src/routes/work-orders/+page.server.ts";
-    imports16 = ["_app/immutable/chunks/15.87ee384d.js", "_app/immutable/chunks/_page.0caf8a78.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/websocket.3039a98f.js", "_app/immutable/chunks/index.8162ef61.js", "_app/immutable/chunks/forms.e1260b91.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/stores.93ea7195.js"];
+    imports16 = ["_app/immutable/nodes/15.6c1e701c.js", "_app/immutable/chunks/_page.1f99a7e1.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/websocket.3039a98f.js", "_app/immutable/chunks/index.8162ef61.js", "_app/immutable/chunks/forms.5409edbc.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/stores.65cb5f2c.js"];
     stylesheets16 = [];
     fonts16 = [];
   }
@@ -30252,7 +30369,7 @@ var init__17 = __esm({
     index17 = 16;
     component16 = async () => component_cache16 ??= (await Promise.resolve().then(() => (init_page_svelte14(), page_svelte_exports14))).default;
     server_id15 = "src/routes/work-orders/[id]/+page.server.ts";
-    imports17 = ["_app/immutable/nodes/16.86b00c53.js", "_app/immutable/chunks/_page.e2701cc0.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.e1260b91.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/index.8162ef61.js"];
+    imports17 = ["_app/immutable/nodes/16.eceb09ef.js", "_app/immutable/chunks/_page.daf19f4d.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js", "_app/immutable/chunks/forms.5409edbc.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/index.8162ef61.js"];
     stylesheets17 = [];
     fonts17 = [];
   }
@@ -30632,7 +30749,7 @@ var options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1qvtdzy"
+  version_hash: "1ytte53"
 };
 function get_hooks() {
   return Promise.resolve().then(() => (init_hooks_server(), hooks_server_exports));
@@ -33683,7 +33800,7 @@ var manifest = (() => {
     assets: /* @__PURE__ */ new Set(["favicon.png", "favicon.svg"]),
     mimeTypes: { ".png": "image/png", ".svg": "image/svg+xml" },
     _: {
-      client: { "start": "_app/immutable/entry/start.b04a8799.js", "app": "_app/immutable/entry/app.8a6d6d0a.js", "imports": ["_app/immutable/entry/start.b04a8799.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/singletons.b20dc6d4.js", "_app/immutable/chunks/index.8162ef61.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.8a6d6d0a.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js"], "stylesheets": [], "fonts": [] },
+      client: { "start": "_app/immutable/entry/start.21d15f4d.js", "app": "_app/immutable/entry/app.ff2d145a.js", "imports": ["_app/immutable/entry/start.21d15f4d.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/singletons.043e8d30.js", "_app/immutable/chunks/index.8162ef61.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.ff2d145a.js", "_app/immutable/chunks/scheduler.82236372.js", "_app/immutable/chunks/index.a73b1e10.js"], "stylesheets": [], "fonts": [] },
       nodes: [
         __memo(() => Promise.resolve().then(() => (init__(), __exports))),
         __memo(() => Promise.resolve().then(() => (init__2(), __exports2))),

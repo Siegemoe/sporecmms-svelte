@@ -17,6 +17,33 @@ const load = async (event) => {
           name: true
         }
       },
+      building: {
+        select: {
+          id: true,
+          name: true,
+          site: {
+            select: {
+              name: true
+            }
+          }
+        }
+      },
+      room: {
+        select: {
+          id: true,
+          name: true,
+          building: {
+            select: {
+              name: true
+            }
+          },
+          site: {
+            select: {
+              name: true
+            }
+          }
+        }
+      },
       assignedTo: {
         select: {
           id: true,
@@ -60,27 +87,38 @@ const actions = {
     const data = await event.request.formData();
     const title = data.get("title");
     const description = data.get("description");
-    const assetId = data.get("assetId");
     const failureMode = data.get("failureMode") || "General";
-    if (!title || !assetId) {
-      return { success: false, error: "Title and asset are required." };
+    const selectionMode = data.get("selectionMode") || "asset";
+    const assetId = data.get("assetId");
+    const roomId = data.get("roomId");
+    const buildingId = data.get("buildingId");
+    if (!title) {
+      return { success: false, error: "Title is required." };
     }
-    const orgId = event.locals.user.orgId;
+    if (!assetId && !roomId && !buildingId) {
+      return { success: false, error: "Please select an asset, room, or building." };
+    }
     try {
+      const orgId = event.locals.user.orgId;
       const newWo = await prisma.workOrder.create({
         data: {
           title: title.trim(),
           description: description?.trim() || "",
-          assetId,
           failureMode,
           orgId,
-          status: "PENDING"
+          status: "PENDING",
+          // Only set the relevant ID based on selection mode
+          ...selectionMode === "asset" && { assetId },
+          ...selectionMode === "room" && { roomId },
+          ...selectionMode === "building" && { buildingId }
         },
         select: {
           id: true,
           title: true,
           status: true,
           assetId: true,
+          buildingId: true,
+          roomId: true,
           orgId: true,
           createdAt: true
         }
@@ -92,7 +130,8 @@ const actions = {
       await logAudit(event.locals.user.id, "WORK_ORDER_CREATED", {
         workOrderId: newWo.id,
         title: newWo.title,
-        assetId: newWo.assetId
+        selectionMode,
+        selectionDetails: selectionMode === "asset" ? { assetId } : selectionMode === "room" ? { roomId } : selectionMode === "building" ? { buildingId } : {}
       });
       return { success: true, workOrder: newWo };
     } catch (e) {

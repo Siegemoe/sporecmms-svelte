@@ -19,14 +19,8 @@ async function createBasePrismaClient() {
   const effectiveUrl = accelerateUrl || databaseUrl || directUrl;
   if (!effectiveUrl) {
     if (typeof globalThis !== "undefined" && globalThis.__SVELTEKIT__) {
-      const { PrismaClient } = await import("@prisma/client");
-      return new PrismaClient({
-        datasources: {
-          db: {
-            url: "postgresql://localhost:5432/dummy"
-          }
-        }
-      });
+      console.warn("Prisma client not available during build/SSR generation");
+      return null;
     }
     throw new Error("DATABASE_URL, ACCELERATE_URL, or DIRECT_URL environment variable is required");
   }
@@ -58,6 +52,9 @@ async function getPrismaSingleton() {
     globalForPrisma.prismaPromise = createBasePrismaClient();
   }
   const client = await globalForPrisma.prismaPromise;
+  if (!client) {
+    throw new Error("Prisma client not available. This may occur during build/SSR generation.");
+  }
   if (!globalForPrisma.prisma) {
     globalForPrisma.prisma = client;
   }

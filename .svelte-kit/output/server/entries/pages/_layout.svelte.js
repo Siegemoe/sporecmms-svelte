@@ -4,10 +4,16 @@ import "devalue";
 const app = "";
 const QuickFAB = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { assets = [] } = $$props;
+  let { buildings = [] } = $$props;
+  let { rooms = [] } = $$props;
   createEventDispatcher();
   if ($$props.assets === void 0 && $$bindings.assets && assets !== void 0)
     $$bindings.assets(assets);
-  return ` ${`<button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 lg:hidden" title="Create Work Order" aria-label="Create Work Order"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>  <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 hidden lg:flex" title="Create Work Order" aria-label="Create Work Order"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>`}  ${``}`;
+  if ($$props.buildings === void 0 && $$bindings.buildings && buildings !== void 0)
+    $$bindings.buildings(buildings);
+  if ($$props.rooms === void 0 && $$bindings.rooms && rooms !== void 0)
+    $$bindings.rooms(rooms);
+  return ` ${` <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 lg:hidden" title="Create Work Order" aria-label="Create Work Order"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>  <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 hidden lg:flex" title="Create Work Order" aria-label="Create Work Order"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>`}  ${``}`;
 });
 const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let currentPath;
@@ -67,7 +73,16 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     "class",
     isAuthPage || isLandingPage ? "" : "bg-spore-steel min-h-screen",
     0
-  )}>${slots.default ? slots.default({}) : ``}</main>  ${showFAB ? `${validate_component(QuickFAB, "QuickFAB").$$render($$result, { assets: data.assets || [] }, {}, {})}` : ``}`;
+  )}>${slots.default ? slots.default({}) : ``}</main>  ${showFAB ? `${validate_component(QuickFAB, "QuickFAB").$$render(
+    $$result,
+    {
+      assets: data.assets || [],
+      buildings: data.buildings || [],
+      rooms: data.rooms || []
+    },
+    {},
+    {}
+  )}` : ``}`;
 });
 export {
   Layout as default
