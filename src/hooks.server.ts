@@ -47,7 +47,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		// Content Security Policy (Relaxed for now to troubleshoot)
 		const csp = [
 			"default-src 'self'",
-			"script-src 'self' 'unsafe-eval'", // unsafe-eval needed for SvelteKit
+			"script-src 'self' 'unsafe-eval' 'unsafe-inline'", // unsafe-inline needed for use:enhance
 			"style-src 'self' 'unsafe-inline'", // unsafe-inline needed for Svelte styling
 			"img-src 'self' data: https:",
 			"font-src 'self'",

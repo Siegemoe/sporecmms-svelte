@@ -24,15 +24,6 @@
 
 	function handleFormSubmit() {
 		isSubmitting = true;
-		console.log('QuickFAB: Form submitted with data:', {
-			title: newWO.title,
-			assetId: newWO.assetId,
-			roomId: newWO.roomId,
-			buildingId: newWO.buildingId,
-			description: newWO.description,
-			failureMode: newWO.failureMode,
-			selectionMode
-		});
 	}
 </script>
 
