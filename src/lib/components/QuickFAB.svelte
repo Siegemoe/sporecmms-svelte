@@ -118,7 +118,7 @@
 				</div>
 
 				<!-- Form -->
-				<div class="p-4 space-y-4">
+				<div class="p-4 space-y-4 w-full min-w-0">
 					<!-- Selection Mode Toggle -->
 					<div class="flex gap-2 flex-wrap">
 						<button
@@ -147,7 +147,7 @@
 					<!-- Hidden field for selection mode -->
 					<input type="hidden" name="selectionMode" value={selectionMode} />
 
-					<div>
+					<div class="w-full">
 						<label for="fab-wo-title" class="block text-sm font-semibold text-gray-900 mb-2">Title *</label>
 						<input
 							type="text"
@@ -163,7 +163,7 @@
 
 					<!-- Asset Selection -->
 					{#if selectionMode === 'asset'}
-						<div>
+						<div class="w-full">
 							<label for="fab-wo-asset" class="block text-sm font-semibold text-gray-900 mb-2">Asset *</label>
 							<select
 								id="fab-wo-asset"
@@ -184,7 +184,7 @@
 
 					<!-- Room Selection -->
 					{:else if selectionMode === 'room'}
-						<div>
+						<div class="w-full">
 							<label for="fab-wo-room" class="block text-sm font-semibold text-gray-900 mb-2">Room *</label>
 							<select
 								id="fab-wo-room"
@@ -205,7 +205,7 @@
 
 					<!-- Building Selection -->
 					{:else if selectionMode === 'building'}
-						<div>
+						<div class="w-full">
 							<label for="fab-wo-building" class="block text-sm font-semibold text-gray-900 mb-2">Building *</label>
 							<select
 								id="fab-wo-building"
@@ -225,7 +225,7 @@
 						</div>
 					{/if}
 
-					<div>
+					<div class="w-full">
 						<label for="fab-wo-failure" class="block text-sm font-semibold text-gray-900 mb-2">Failure Mode</label>
 						<select
 							id="fab-wo-failure"
@@ -239,7 +239,7 @@
 						</select>
 					</div>
 
-					<div>
+					<div class="w-full">
 						<label for="fab-wo-description" class="block text-sm font-semibold text-gray-900 mb-2">Description</label>
 						<textarea
 							id="fab-wo-description"
@@ -302,7 +302,7 @@
 				</div>
 
 				<!-- Form Content -->
-				<div class="p-6 space-y-4">
+				<div class="p-6 space-y-4 w-full min-w-0">
 					<!-- Selection Mode Toggle -->
 					<div class="flex gap-2 flex-wrap">
 						<button
@@ -331,7 +331,7 @@
 					<!-- Hidden field for selection mode -->
 					<input type="hidden" name="selectionMode" value={selectionMode} />
 
-					<div>
+					<div class="w-full">
 						<label for="fab-wo-title-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Title *</label>
 						<input
 							type="text"
