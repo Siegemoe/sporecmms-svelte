@@ -17,11 +17,20 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	// Validate session with organization state
-	const authResult = await validateSessionWithOrg(event.cookies);
-	event.locals.user = authResult.user;
-	event.locals.authState = authResult.state;
-	event.locals.organizations = authResult.organizations || [];
-	event.locals.currentOrganization = authResult.currentOrganization || null;
+	try {
+		const authResult = await validateSessionWithOrg(event.cookies);
+		event.locals.user = authResult.user;
+		event.locals.authState = authResult.state;
+		event.locals.organizations = authResult.organizations || [];
+		event.locals.currentOrganization = authResult.currentOrganization || null;
+	} catch (err) {
+		// If there's an error with auth (e.g., database connection), continue without auth
+		console.error('Auth validation error:', err);
+		event.locals.user = null;
+		event.locals.authState = 'unauthenticated';
+		event.locals.organizations = [];
+		event.locals.currentOrganization = null;
+	}
 
 	// Check if route requires authentication
 	const isPublicRoute = publicRoutes.some(route => event.url.pathname.startsWith(route));
