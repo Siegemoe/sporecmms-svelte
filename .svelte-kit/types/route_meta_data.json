@@ -41,8 +41,20 @@
 		"src/routes/dashboard/+page.server.ts",
 		"src/routes/+layout.server.ts"
 	],
+	"/join-organization": [
+		"src/routes/join-organization/+page.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/onboarding": [
+		"src/routes/onboarding/+page.server.ts",
+		"src/routes/+layout.server.ts"
+	],
 	"/profile": [
 		"src/routes/profile/+page.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/select-organization": [
+		"src/routes/select-organization/+page.server.ts",
 		"src/routes/+layout.server.ts"
 	],
 	"/sites": [

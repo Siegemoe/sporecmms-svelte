@@ -13,7 +13,25 @@ export const load: PageServerLoad = async (event) => {
 		orderBy: { createdAt: 'desc' },
 		include: {
 			_count: {
-				select: { rooms: true }
+				select: {
+					units: true,
+					buildings: true,
+					assets: true
+				}
+			},
+			units: {
+				include: {
+					_count: {
+						select: { assets: true }
+					}
+				}
+			},
+			buildings: {
+				include: {
+					_count: {
+						select: { units: true }
+					}
+				}
 			}
 		}
 	});

@@ -24,10 +24,6 @@ const errorMessages = {
 
 // Registration validation schema
 export const registerSchema = z.object({
-  orgName: z.string()
-    .min(2, errorMessages.orgName)
-    .max(100, errorMessages.orgName)
-    .trim(),
   firstName: z.string()
     .min(1, errorMessages.name)
     .max(50, errorMessages.name)
@@ -46,6 +42,21 @@ export const registerSchema = z.object({
     .regex(passwordPatterns.lowercase, errorMessages.password.lowercase)
     .regex(passwordPatterns.number, errorMessages.password.number)
     .regex(passwordPatterns.special, errorMessages.password.special)
+});
+
+// Organization creation validation schema
+export const createOrganizationSchema = z.object({
+  orgName: z.string()
+    .min(2, errorMessages.orgName)
+    .max(100, errorMessages.orgName)
+    .trim()
+});
+
+// Join organization validation schema
+export const joinOrganizationSchema = z.object({
+  inviteToken: z.string()
+    .min(1, 'Invite token is required')
+    .trim()
 });
 
 // Login validation schema

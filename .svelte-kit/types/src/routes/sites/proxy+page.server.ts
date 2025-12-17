@@ -14,7 +14,25 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		orderBy: { createdAt: 'desc' },
 		include: {
 			_count: {
-				select: { rooms: true }
+				select: {
+					units: true,
+					buildings: true,
+					assets: true
+				}
+			},
+			units: {
+				include: {
+					_count: {
+						select: { assets: true }
+					}
+				}
+			},
+			buildings: {
+				include: {
+					_count: {
+						select: { units: true }
+					}
+				}
 			}
 		}
 	});

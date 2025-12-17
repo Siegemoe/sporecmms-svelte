@@ -71,6 +71,75 @@ export async function validateSession(cookies: Cookies) {
 	return session.user;
 }
 
+export async function validateSessionWithOrg(cookies: Cookies) {
+	const sessionId = cookies.get(SESSION_COOKIE);
+	if (!sessionId) {
+		return { user: null, state: 'unauthenticated' };
+	}
+
+	const client = await getPrisma();
+	const session = await client.session.findUnique({
+		where: { id: sessionId },
+		include: {
+			user: {
+				select: {
+					id: true,
+					email: true,
+					firstName: true,
+					lastName: true,
+					role: true,
+					orgId: true,
+					organization: {
+						select: {
+							id: true,
+							name: true
+						}
+					}
+				}
+			}
+		}
+	});
+
+	if (!session) {
+		return { user: null, state: 'unauthenticated' };
+	}
+
+	// Check if session is expired
+	if (session.expiresAt < new Date()) {
+		await client.session.delete({ where: { id: sessionId } });
+		return { user: null, state: 'unauthenticated' };
+	}
+
+	const user = session.user;
+
+	// Determine authentication state
+	if (!user.orgId) {
+		return { user, state: 'lobby' };
+	}
+
+	// Get all organizations the user belongs to
+	const userOrgs = await client.organization.findMany({
+		where: {
+			users: {
+				some: {
+					id: user.id
+				}
+			}
+		},
+		select: {
+			id: true,
+			name: true
+		}
+	});
+
+	return {
+		user,
+		state: 'org_member',
+		organizations: userOrgs,
+		currentOrganization: user.organization
+	};
+}
+
 export async function destroySession(cookies: Cookies): Promise<void> {
 	const sessionId = cookies.get(SESSION_COOKIE);
 	if (sessionId) {

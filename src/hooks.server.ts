@@ -1,10 +1,14 @@
 import type { Handle } from '@sveltejs/kit';
 import { redirect, error } from '@sveltejs/kit';
-import { validateSession } from '$lib/server/auth';
+import { validateSessionWithOrg } from '$lib/server/auth';
 import { building } from '$app/environment';
 
 // Routes that don't require authentication
 const publicRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password', '/'];
+// Routes that require organization membership
+const orgRoutes = ['/dashboard', '/work-orders', '/sites', '/assets', '/users', '/audit-log'];
+// Routes for lobby state (authenticated but no org)
+const lobbyRoutes = ['/onboarding', '/join-organization'];
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// Skip auth checks during build/prerender (for Cloudflare fallback generation)
@@ -12,21 +16,49 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	// Validate session and attach user to locals
-	const user = await validateSession(event.cookies);
-	event.locals.user = user;
+	// Validate session with organization state
+	const authResult = await validateSessionWithOrg(event.cookies);
+	event.locals.user = authResult.user;
+	event.locals.authState = authResult.state;
+	event.locals.organizations = authResult.organizations || [];
+	event.locals.currentOrganization = authResult.currentOrganization || null;
 
 	// Check if route requires authentication
 	const isPublicRoute = publicRoutes.some(route => event.url.pathname.startsWith(route));
+	const isOrgRoute = orgRoutes.some(route => event.url.pathname.startsWith(route));
+	const isLobbyRoute = lobbyRoutes.some(route => event.url.pathname.startsWith(route));
 
-	if (!user && !isPublicRoute) {
-		// Redirect to login if not authenticated and not on public route
+	// Handle unauthenticated users
+	if (authResult.state === 'unauthenticated' && !isPublicRoute) {
 		throw redirect(303, '/auth/login');
 	}
 
-	// If logged in and trying to access auth pages, redirect to dashboard
-	if (user && event.url.pathname.startsWith('/auth/')) {
+	// Handle authenticated users accessing auth pages
+	if (authResult.user && event.url.pathname.startsWith('/auth/')) {
+		// If user is in lobby, send to onboarding
+		if (authResult.state === 'lobby') {
+			throw redirect(303, '/onboarding');
+		}
+		// If user has org, send to dashboard
 		throw redirect(303, '/dashboard');
+	}
+
+	// Handle lobby state users (authenticated but no org)
+	if (authResult.state === 'lobby' && !isLobbyRoute && !isPublicRoute) {
+		throw redirect(303, '/onboarding');
+	}
+
+	// Handle org members accessing lobby routes
+	if (authResult.state === 'org_member' && isLobbyRoute) {
+		throw redirect(303, '/dashboard');
+	}
+
+	// Ensure org members are accessing org routes
+	if (authResult.state === 'org_member' && isOrgRoute) {
+		// Check if user has selected an active organization
+		if (!authResult.currentOrganization) {
+			throw redirect(303, '/select-organization');
+		}
 	}
 
 	const response = await resolve(event);

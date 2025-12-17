@@ -9,21 +9,21 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	requireAuth(event);
 
 	const prisma = await createRequestPrisma(event);
-	const roomFilter = event.url.searchParams.get('room');
+	const unitFilter = event.url.searchParams.get('unit');
 	const orgId = event.locals.user!.orgId;
 
 	const assets = await prisma.asset.findMany({
 		where: {
-			room: {
+			unit: {
 				site: {
 					orgId
 				}
 			},
-			...(roomFilter && { roomId: roomFilter })
+			...(unitFilter && { unitId: unitFilter })
 		},
 		orderBy: { createdAt: 'desc' },
 		include: {
-			room: {
+			unit: {
 				include: {
 					site: {
 						select: { name: true }
@@ -39,8 +39,8 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		}
 	});
 
-	// Get all rooms for the create form dropdown
-	const rooms = await prisma.room.findMany({
+	// Get all units for the create form dropdown
+	const units = await prisma.unit.findMany({
 		where: {
 			site: {
 				orgId
@@ -49,7 +49,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		orderBy: [
 			{ site: { name: 'asc' } },
 			{ building: { name: 'asc' } },
-			{ name: 'asc' }
+			{ roomNumber: 'asc' }
 		],
 		include: {
 			site: {
@@ -61,7 +61,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		}
 	});
 
-	return { assets, rooms, roomFilter };
+	return { assets, units, unitFilter };
 };
 
 export const actions = {
@@ -70,42 +70,56 @@ export const actions = {
 		const formData = await event.request.formData();
 
 		const name = formData.get('name') as string;
-		const roomId = formData.get('roomId') as string;
+		const unitId = formData.get('unitId') as string;
+		const type = formData.get('type') as string;
+		const status = formData.get('status') as string || 'OPERATIONAL';
+		const description = formData.get('description') as string;
+		const purchaseDate = formData.get('purchaseDate') as string;
+		const warrantyExpiry = formData.get('warrantyExpiry') as string;
 		const orgId = event.locals.user!.orgId;
 
 		if (!name || name.trim() === '') {
 			return fail(400, { error: 'Asset name is required' });
 		}
 
-		if (!roomId) {
-			return fail(400, { error: 'Room is required' });
+		if (!unitId) {
+			return fail(400, { error: 'Unit is required' });
 		}
 
-		// Verify the room belongs to the user's org
-		const room = await prisma.room.findFirst({
+		// Verify the unit belongs to the user's org
+		const unit = await prisma.unit.findFirst({
 			where: {
-				id: roomId,
+				id: unitId,
 				site: {
 					orgId
 				}
 			}
 		});
 
-		if (!room) {
-			return fail(404, { error: 'Room not found' });
+		if (!unit) {
+			return fail(404, { error: 'Unit not found' });
 		}
+
+		// Get site ID from unit
+		const siteId = unit.siteId;
 
 		const asset = await prisma.asset.create({
 			data: {
 				name: name.trim(),
-				roomId
+				type: type as any,
+				status: status as any,
+				description: description?.trim() || null,
+				purchaseDate: purchaseDate ? new Date(purchaseDate) : null,
+				warrantyExpiry: warrantyExpiry ? new Date(warrantyExpiry) : null,
+				unitId,
+				siteId
 			}
 		});
 
 		await logAudit(event.locals.user!.id, 'ASSET_CREATED', {
 			assetId: asset.id,
 			name: asset.name,
-			roomId
+			unitId
 		});
 
 		return { success: true, asset };
@@ -131,7 +145,7 @@ export const actions = {
 		const asset = await prisma.asset.findFirst({
 			where: {
 				id: assetId,
-				room: {
+				unit: {
 					site: {
 						orgId
 					}
@@ -163,7 +177,12 @@ export const actions = {
 
 		const assetId = formData.get('assetId') as string;
 		const name = formData.get('name') as string;
-		const roomId = formData.get('roomId') as string;
+		const unitId = formData.get('unitId') as string;
+		const type = formData.get('type') as string;
+		const status = formData.get('status') as string;
+		const description = formData.get('description') as string;
+		const purchaseDate = formData.get('purchaseDate') as string;
+		const warrantyExpiry = formData.get('warrantyExpiry') as string;
 
 		if (!assetId) {
 			return fail(400, { error: 'Asset ID is required' });
@@ -173,15 +192,15 @@ export const actions = {
 			return fail(400, { error: 'Asset name is required' });
 		}
 
-		if (!roomId) {
-			return fail(400, { error: 'Room is required' });
+		if (!unitId) {
+			return fail(400, { error: 'Unit is required' });
 		}
 
-		// Verify the asset and room belong to the user's org
+		// Verify the asset and unit belong to the user's org
 		const existingAsset = await prisma.asset.findFirst({
 			where: {
 				id: assetId,
-				room: {
+				unit: {
 					site: {
 						orgId
 					}
@@ -193,24 +212,33 @@ export const actions = {
 			return fail(404, { error: 'Asset not found' });
 		}
 
-		const room = await prisma.room.findFirst({
+		const unit = await prisma.unit.findFirst({
 			where: {
-				id: roomId,
+				id: unitId,
 				site: {
 					orgId
 				}
 			}
 		});
 
-		if (!room) {
-			return fail(404, { error: 'Room not found' });
+		if (!unit) {
+			return fail(404, { error: 'Unit not found' });
 		}
+
+		// Get site ID from unit
+		const siteId = unit.siteId;
 
 		const asset = await prisma.asset.update({
 			where: { id: assetId },
 			data: {
 				name: name.trim(),
-				roomId
+				type: type ? type as any : undefined,
+				status: status ? status as any : undefined,
+				description: description ? description.trim() : undefined,
+				purchaseDate: purchaseDate ? new Date(purchaseDate) : null,
+				warrantyExpiry: warrantyExpiry ? new Date(warrantyExpiry) : null,
+				unitId,
+				siteId
 			}
 		});
 

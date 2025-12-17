@@ -1,10 +1,20 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
+	import { onMount } from 'svelte';
 
 	export let form: ActionData;
 
 	let isSubmitting = false;
+	let redirectTimeout: number;
+
+	// Handle redirect after successful join
+	$: if (form?.redirect) {
+		clearTimeout(redirectTimeout);
+		redirectTimeout = setTimeout(() => {
+			window.location.href = '/dashboard';
+		}, 2000);
+	}
 </script>
 
 <div class="min-h-screen bg-spore-dark flex items-center justify-center px-4 py-8">
@@ -12,16 +22,21 @@
 		<!-- Logo -->
 		<div class="text-center mb-8">
 			<h1 class="text-4xl font-extrabold text-spore-cream tracking-tight">🌿 SPORE</h1>
-			<p class="text-spore-cream/60 mt-2 text-lg">CMMS for Technicians</p>
+			<p class="text-spore-cream/60 mt-2 text-lg">Join Organization</p>
+			<p class="text-spore-cream/40 mt-1">Enter your invite code to get started</p>
 		</div>
 
-		<!-- Login Card -->
+		<!-- Join Card -->
 		<div class="bg-spore-white rounded-2xl p-6 sm:p-8 shadow-2xl">
-			<h2 class="text-2xl font-bold text-spore-dark mb-6">Welcome Back</h2>
-
 			{#if form?.error}
 				<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-4 rounded-xl mb-6 text-base font-medium">
 					{form.error}
+				</div>
+			{/if}
+
+			{#if form?.success}
+				<div class="bg-green-50 border border-green-200 text-green-700 px-4 py-4 rounded-xl mb-6 text-base font-medium">
+					{form.success}
 				</div>
 			{/if}
 
@@ -37,32 +52,28 @@
 				class="space-y-5"
 			>
 				<div>
-					<label for="email" class="block text-base font-bold text-spore-steel mb-3">Email</label>
+					<label for="inviteToken" class="block text-base font-bold text-spore-steel mb-3">Invite Code</label>
 					<input
-						type="email"
-						id="email"
-						name="email"
-						value={form?.email ?? ''}
+						type="text"
+						id="inviteToken"
+						name="inviteToken"
+						value={form?.inviteToken ?? ''}
 						class="w-full px-5 py-4 text-lg rounded-xl border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:bg-spore-white transition-all"
-						placeholder="Enter your email"
-						autocapitalize="none"
-						autocomplete="email"
+						placeholder="Enter your invite code"
+						autocapitalize="characters"
+						autocorrect="off"
+						spellcheck="false"
 						required
 					/>
+					<p class="text-sm text-spore-steel mt-2">Ask your organization admin for the invite code</p>
 				</div>
 
-				<div>
-					<label for="password" class="block text-base font-bold text-spore-steel mb-3">Password</label>
-					<input
-						type="password"
-						id="password"
-						name="password"
-						class="w-full px-5 py-4 text-lg rounded-xl border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:bg-spore-white transition-all"
-						placeholder="Enter your password"
-						autocomplete="current-password"
-						required
-					/>
-				</div>
+				{#if form?.organization}
+					<div class="bg-spore-cream/10 rounded-xl p-4">
+						<p class="text-sm font-semibold text-spore-steel mb-1">You're joining:</p>
+						<p class="text-lg font-bold text-spore-dark">{form.organization}</p>
+					</div>
+				{/if}
 
 				<button
 					type="submit"
@@ -75,20 +86,31 @@
 								<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 								<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 							</svg>
-							Signing In...
+							Joining Organization...
 						</span>
 					{:else}
-						SIGN IN
+						JOIN ORGANIZATION
 					{/if}
 				</button>
 			</form>
 
 			<div class="mt-8 pt-6 border-t border-spore-cream/20 text-center">
-				<p class="text-base text-spore-steel">
-					Don't have an account?
-					<a href="/auth/register" class="text-spore-orange font-bold hover:text-spore-orange/80 transition-colors">Create one</a>
-				</p>
+				<a href="/onboarding" class="text-spore-orange font-bold hover:text-spore-orange/80 transition-colors">
+					← Back to onboarding
+				</a>
 			</div>
+		</div>
+
+		<!-- Sign Out Link -->
+		<div class="mt-6 text-center">
+			<form method="POST" action="/auth/logout" use:enhance>
+				<button
+					type="submit"
+					class="text-spore-cream/60 hover:text-spore-cream/80 text-sm transition-colors"
+				>
+					Sign out
+				</button>
+			</form>
 		</div>
 	</div>
 </div>

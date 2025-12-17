@@ -11,7 +11,16 @@ declare global {
 				firstName: string | null;
 				lastName: string | null;
 				role: 'ADMIN' | 'MANAGER' | 'TECHNICIAN';
-				orgId: string;
+				orgId: string | null;
+			} | null;
+			authState: 'unauthenticated' | 'lobby' | 'org_member';
+			organizations: Array<{
+				id: string;
+				name: string;
+			}>;
+			currentOrganization: {
+				id: string;
+				name: string;
 			} | null;
 		}
 		// interface PageData {}

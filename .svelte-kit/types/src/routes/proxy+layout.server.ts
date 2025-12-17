@@ -3,12 +3,12 @@ import type { LayoutServerLoad } from './$types';
 import { createRequestPrisma } from '$lib/server/prisma';
 
 export const load = async ({ locals }: Parameters<LayoutServerLoad>[0]) => {
-	// Get data for Quick FAB if user is authenticated
+	// Get data for Quick FAB if user is authenticated and has organization
 	let assets = [];
 	let buildings = [];
 	let rooms = [];
 
-	if (locals.user) {
+	if (locals.user && locals.authState === 'org_member') {
 		const prisma = await createRequestPrisma({ locals } as any);
 
 		// Get assets
@@ -73,6 +73,9 @@ export const load = async ({ locals }: Parameters<LayoutServerLoad>[0]) => {
 
 	return {
 		user: locals.user ?? null,
+		authState: locals.authState,
+		organizations: locals.organizations,
+		currentOrganization: locals.currentOrganization,
 		assets: assets.map(asset => ({
 			id: asset.id,
 			name: asset.name,

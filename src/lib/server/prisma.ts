@@ -115,7 +115,7 @@ async function getPrismaSingleton(): Promise<PrismaClient> {
 }
 
 // Models that have direct orgId field and need tenant filtering
-// Note: Asset and Room don't have orgId - they inherit through Site
+// Note: Asset and Unit don't have orgId - they inherit through Site
 const orgModels = ['WorkOrder', 'User', 'Site'];
 
 // Type for query callback parameters
