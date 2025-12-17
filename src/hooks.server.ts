@@ -30,6 +30,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event.locals.authState = 'unauthenticated';
 		event.locals.organizations = [];
 		event.locals.currentOrganization = null;
+		event.locals.authError = true; // Set flag for database connection issues
 	}
 
 	// Check if route requires authentication

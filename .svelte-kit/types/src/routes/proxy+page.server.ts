@@ -8,7 +8,12 @@ export const load = async ({ locals }: Parameters<PageServerLoad>[0]) => {
 	if (building) {
 		return {};
 	}
-	
+
+	// If there's an auth error (database connection issues), show landing page
+	if ((locals as any).authError) {
+		return { authError: true };
+	}
+
 	if (locals.user) {
 		throw redirect(302, '/dashboard');
 	}
