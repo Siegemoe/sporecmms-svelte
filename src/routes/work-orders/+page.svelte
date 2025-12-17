@@ -424,9 +424,9 @@
 								<td class="px-4 py-3 text-sm text-spore-steel hidden lg:table-cell">
 									{#if workOrder.dueDate}
 										{new Date(workOrder.dueDate).toLocaleDateString()}
-										{new Date(workOrder.dueDate) < new Date() && workOrder.status !== 'COMPLETED' ? (
+										{#if new Date(workOrder.dueDate) < new Date() && workOrder.status !== 'COMPLETED'}
 											<span class="text-red-500 font-semibold"> (Overdue)</span>
-										) : ''}
+										{/if}
 									{:else}
 										-
 									{/if}
@@ -518,7 +518,9 @@
 									<span class="text-sm font-medium text-spore-steel">Due:</span>
 									<span class="text-sm {new Date(workOrder.dueDate) < new Date() && workOrder.status !== 'COMPLETED' ? 'text-red-500 font-semibold' : 'text-spore-dark'}">
 										{new Date(workOrder.dueDate).toLocaleDateString()}
-										{new Date(workOrder.dueDate) < new Date() && workOrder.status !== 'COMPLETED' ? ' (Overdue)' : ''}
+										{#if new Date(workOrder.dueDate) < new Date() && workOrder.status !== 'COMPLETED'}
+											 (Overdue)
+										{/if}
 									</span>
 								</div>
 							{/if}
