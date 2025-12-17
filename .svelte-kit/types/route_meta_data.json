@@ -41,9 +41,6 @@
 		"src/routes/dashboard/+page.server.ts",
 		"src/routes/+layout.server.ts"
 	],
-	"/favicon.png": [
-		"src/routes/favicon.png/+server.js"
-	],
 	"/join-organization": [
 		"src/routes/join-organization/+page.server.ts",
 		"src/routes/+layout.server.ts"

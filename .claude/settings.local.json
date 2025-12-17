@@ -54,7 +54,8 @@
       "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"reset the database with consent, it''s all test data, there is zero real data in that db today.\" npx prisma migrate reset --force)",
       "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"yes, flush the database\" npx prisma migrate reset:*)",
       "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"yes, reset the database to apply new schema\" npx prisma migrate reset:*)",
-      "Bash(npx wrangler tail:*)"
+      "Bash(npx wrangler tail:*)",
+      "Bash(npx @modelcontextprotocol/server-list:*)"
     ],
     "deny": [],
     "ask": []
