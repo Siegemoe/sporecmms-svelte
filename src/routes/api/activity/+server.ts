@@ -38,7 +38,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 			include: {
 				asset: {
 					include: {
-						room: true
+						unit: true // Changed from room
 					}
 				},
 				assignedTo: true

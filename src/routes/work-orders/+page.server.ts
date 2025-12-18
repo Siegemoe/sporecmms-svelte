@@ -157,7 +157,7 @@ export const actions: Actions = {
 
 		// Selection inputs
 		const assetId = data.get('assetId') as string;
-		const unitId = data.get('unitId') as string;
+		const unitId = (data.get('unitId') || data.get('roomId')) as string;
 		const buildingId = data.get('buildingId') as string;
 		const siteId = data.get('siteId') as string;
 
@@ -187,7 +187,7 @@ export const actions: Actions = {
 					status: 'PENDING',
 					// Only set the relevant ID based on selection mode
 					...(selectionMode === 'asset' && { assetId }),
-					...(selectionMode === 'unit' && { unitId }),
+					...((selectionMode === 'unit' || selectionMode === 'room') && { unitId }),
 					...(selectionMode === 'building' && { buildingId }),
 					...(selectionMode === 'site' && { siteId })
 				},
@@ -220,7 +220,7 @@ export const actions: Actions = {
 				dueDate: newWo.dueDate,
 				selectionMode,
 				selectionDetails: selectionMode === 'asset' ? { assetId } :
-					selectionMode === 'unit' ? { unitId } :
+					(selectionMode === 'unit' || selectionMode === 'room') ? { unitId } :
 					selectionMode === 'building' ? { buildingId } :
 					selectionMode === 'site' ? { siteId } :
 					{}

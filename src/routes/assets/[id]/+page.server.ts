@@ -13,14 +13,14 @@ export const load: PageServerLoad = async (event) => {
 	const asset = await prisma.asset.findFirst({
 		where: {
 			id,
-			room: {
+			unit: {
 				site: {
 					orgId
 				}
 			}
 		},
 		include: {
-			room: {
+			unit: {
 				include: {
 					site: { select: { id: true, name: true } },
 					building: { select: { id: true, name: true } }
@@ -48,8 +48,8 @@ export const load: PageServerLoad = async (event) => {
 		throw error(404, 'Asset not found');
 	}
 
-	// Get all rooms for edit dropdown
-	const rooms = await prisma.room.findMany({
+	// Get all rooms (units) for edit dropdown
+	const units = await prisma.unit.findMany({
 		where: {
 			site: {
 				orgId
@@ -58,13 +58,30 @@ export const load: PageServerLoad = async (event) => {
 		orderBy: [
 			{ site: { name: 'asc' } },
 			{ building: { name: 'asc' } },
-			{ name: 'asc' }
+			{ roomNumber: 'asc' }
 		],
+		take: 50,
 		include: {
 			site: { select: { name: true } },
 			building: { select: { name: true } }
 		}
 	});
+
+	// Transform asset to include 'room' property for frontend compatibility
+	const assetWithRoom = {
+		...asset,
+		room: asset.unit ? {
+			...asset.unit,
+			name: asset.unit.name || asset.unit.roomNumber
+		} : null,
+		unit: undefined // Optional: remove unit if we want to be strict, but keeping it is fine
+	};
+
+	// Transform units to rooms
+	const rooms = units.map(unit => ({
+		...unit,
+		name: unit.name || unit.roomNumber
+	}));
 
 	// Work order stats for this asset
 	const [totalWO, pendingWO, inProgressWO, completedWO] = await Promise.all([
@@ -75,7 +92,7 @@ export const load: PageServerLoad = async (event) => {
 	]);
 
 	return { 
-		asset, 
+		asset: assetWithRoom, 
 		rooms,
 		woStats: { total: totalWO, pending: pendingWO, inProgress: inProgressWO, completed: completedWO }
 	};
@@ -103,7 +120,7 @@ export const actions: Actions = {
 		const existingAsset = await prisma.asset.findFirst({
 			where: {
 				id,
-				room: {
+				unit: {
 					site: {
 						orgId
 					}
@@ -115,8 +132,8 @@ export const actions: Actions = {
 			return fail(404, { error: 'Asset not found' });
 		}
 
-		// Verify the room belongs to the user's org
-		const room = await prisma.room.findFirst({
+		// Verify the room (unit) belongs to the user's org
+		const unit = await prisma.unit.findFirst({
 			where: {
 				id: roomId,
 				site: {
@@ -125,7 +142,7 @@ export const actions: Actions = {
 			}
 		});
 
-		if (!room) {
+		if (!unit) {
 			return fail(404, { error: 'Room not found' });
 		}
 
@@ -133,7 +150,7 @@ export const actions: Actions = {
 			where: { id },
 			data: {
 				name: name.trim(),
-				roomId
+				unitId: roomId
 			}
 		});
 
@@ -154,7 +171,7 @@ export const actions: Actions = {
 		const asset = await prisma.asset.findFirst({
 			where: {
 				id,
-				room: {
+				unit: {
 					site: {
 						orgId
 					}

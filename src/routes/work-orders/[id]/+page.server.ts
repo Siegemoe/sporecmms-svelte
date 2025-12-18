@@ -17,7 +17,7 @@ export const load: PageServerLoad = async (event) => {
 		include: {
 			asset: {
 				include: {
-					room: {
+					unit: {
 						include: {
 							site: { select: { id: true, name: true } }
 						}
@@ -34,7 +34,7 @@ export const load: PageServerLoad = async (event) => {
 	// Get all assets for edit dropdown
 	const assets = await prisma.asset.findMany({
 		include: {
-			room: {
+			unit: {
 				include: {
 					site: { select: { name: true } }
 				}
@@ -43,7 +43,27 @@ export const load: PageServerLoad = async (event) => {
 		orderBy: { name: 'asc' }
 	});
 
-	return { workOrder, assets };
+	// Map unit to room for frontend compatibility
+	const workOrderWithRoom = workOrder ? {
+		...workOrder,
+		asset: workOrder.asset ? {
+			...workOrder.asset,
+			room: workOrder.asset.unit ? {
+				...workOrder.asset.unit,
+				name: workOrder.asset.unit.name || workOrder.asset.unit.roomNumber
+			} : null
+		} : null
+	} : null;
+
+	const assetsWithRoom = assets.map(asset => ({
+		...asset,
+		room: asset.unit ? {
+			...asset.unit,
+			name: asset.unit.name || asset.unit.roomNumber
+		} : null
+	}));
+
+	return { workOrder: workOrderWithRoom, assets: assetsWithRoom };
 };
 
 export const actions: Actions = {
@@ -102,7 +122,7 @@ export const actions: Actions = {
 				title: title.trim(),
 				description: description?.trim() || '',
 				assetId,
-				failureMode: failureMode || 'General'
+				// failureMode: failureMode || 'General' // Removed: Field does not exist in WorkOrder schema
 			}
 		});
 

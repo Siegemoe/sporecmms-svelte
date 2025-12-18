@@ -13,7 +13,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		// Get assets
 		assets = await prisma.asset.findMany({
 			include: {
-				room: {
+				unit: {
 					include: {
 						building: {
 							select: {
@@ -32,7 +32,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 			orderBy: {
 				name: 'asc'
 			},
-			take: 50 // Limit to keep it performant
+			take: 35 // Limit to keep it performant
 		});
 
 		// Get buildings
@@ -46,11 +46,12 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 			},
 			orderBy: {
 				name: 'asc'
-			}
+			},
+			take: 35 // Limit to keep it performant
 		});
 
-		// Get rooms
-		rooms = await prisma.room.findMany({
+		// Get rooms (units)
+		rooms = await prisma.unit.findMany({
 			include: {
 				building: {
 					select: {
@@ -65,8 +66,9 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 				}
 			},
 			orderBy: {
-				name: 'asc'
-			}
+				roomNumber: 'asc'
+			},
+			take: 35 // Limit to keep it performant
 		});
 	}
 
@@ -78,12 +80,12 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		assets: assets.map(asset => ({
 			id: asset.id,
 			name: asset.name,
-			room: asset.room ? {
-				id: asset.room.id,
-				name: asset.room.name,
-				building: asset.room.building,
-				site: asset.room.site ? {
-					name: asset.room.site.name
+			room: asset.unit ? {
+				id: asset.unit.id,
+				name: asset.unit.name || asset.unit.roomNumber,
+				building: asset.unit.building,
+				site: asset.unit.site ? {
+					name: asset.unit.site.name
 				} : undefined
 			} : undefined
 		})),
@@ -94,12 +96,12 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 				name: building.site.name
 			} : undefined
 		})),
-		rooms: rooms.map(room => ({
-			id: room.id,
-			name: room.name,
-			building: room.building,
-			site: room.site ? {
-				name: room.site.name
+		rooms: rooms.map(unit => ({
+			id: unit.id,
+			name: unit.name || unit.roomNumber,
+			building: unit.building,
+			site: unit.site ? {
+				name: unit.site.name
 			} : undefined
 		}))
 	};

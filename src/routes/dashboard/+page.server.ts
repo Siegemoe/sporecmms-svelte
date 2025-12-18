@@ -27,9 +27,10 @@ export const load: PageServerLoad = async (event) => {
 			include: {
 				asset: {
 					include: {
-						room: {
+						unit: {
 							select: {
 								name: true,
+								roomNumber: true,
 								building: true,
 								floor: true,
 								site: {
@@ -44,21 +45,40 @@ export const load: PageServerLoad = async (event) => {
 
 		console.log('[DASHBOARD] Recent work orders loaded:', recentWorkOrders.length);
 
-		// Get sites with room counts
+		// Get sites with room (unit) counts
 		const sites = await prisma.site.findMany({
 			include: {
 				_count: {
-					select: { rooms: true }
+					select: { units: true }
 				}
 			}
 		});
 
 		console.log('[DASHBOARD] Sites loaded:', sites.length);
 
+		// Map data for frontend compatibility
+		const mappedRecentWorkOrders = recentWorkOrders.map(wo => ({
+			...wo,
+			asset: wo.asset ? {
+				...wo.asset,
+				room: wo.asset.unit ? {
+					...wo.asset.unit,
+					name: wo.asset.unit.name || wo.asset.unit.roomNumber
+				} : null
+			} : null
+		}));
+
+		const mappedSites = sites.map(site => ({
+			...site,
+			_count: {
+				rooms: site._count.units
+			}
+		}));
+
 		return {
 			stats: { total, pending, inProgress, completed },
-			recentWorkOrders,
-			sites
+			recentWorkOrders: mappedRecentWorkOrders,
+			sites: mappedSites
 		};
 	} catch (error) {
 		console.error('[DASHBOARD] Error loading dashboard:', error);
