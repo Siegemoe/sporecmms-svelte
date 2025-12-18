@@ -8,14 +8,14 @@ export const load: PageServerLoad = async (event) => {
 
 	const prisma = await createRequestPrisma(event);
 	const { id } = event.params;
-	const orgId = event.locals.user!.orgId;
+	const organizationId = event.locals.user!.organizationId;
 
 	const asset = await prisma.asset.findFirst({
 		where: {
 			id,
 			unit: {
 				site: {
-					orgId
+					organizationId
 				}
 			}
 		},
@@ -33,7 +33,7 @@ export const load: PageServerLoad = async (event) => {
 					id: true,
 					title: true,
 					status: true,
-					failureMode: true,
+					// failureMode: true, // Removed: Field does not exist in WorkOrder schema
 					createdAt: true,
 					updatedAt: true
 				}
@@ -52,7 +52,7 @@ export const load: PageServerLoad = async (event) => {
 	const units = await prisma.unit.findMany({
 		where: {
 			site: {
-				orgId
+				organizationId
 			}
 		},
 		orderBy: [
@@ -103,7 +103,7 @@ export const actions: Actions = {
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id } = event.params;
-		const orgId = event.locals.user!.orgId;
+		const organizationId = event.locals.user!.organizationId;
 
 		const name = formData.get('name') as string;
 		const roomId = formData.get('roomId') as string;
@@ -122,7 +122,7 @@ export const actions: Actions = {
 				id,
 				unit: {
 					site: {
-						orgId
+						organizationId
 					}
 				}
 			}
@@ -137,7 +137,7 @@ export const actions: Actions = {
 			where: {
 				id: roomId,
 				site: {
-					orgId
+					organizationId
 				}
 			}
 		});
@@ -165,7 +165,7 @@ export const actions: Actions = {
 
 		const prisma = await createRequestPrisma(event);
 		const { id } = event.params;
-		const orgId = event.locals.user!.orgId;
+		const organizationId = event.locals.user!.organizationId;
 
 		// Verify the asset belongs to the user's org before deleting
 		const asset = await prisma.asset.findFirst({
@@ -173,7 +173,7 @@ export const actions: Actions = {
 				id,
 				unit: {
 					site: {
-						orgId
+						organizationId
 					}
 				}
 			}

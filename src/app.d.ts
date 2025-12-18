@@ -11,7 +11,7 @@ declare global {
 				firstName: string | null;
 				lastName: string | null;
 				role: 'ADMIN' | 'MANAGER' | 'TECHNICIAN';
-				orgId: string | null;
+				organizationId: string | null;
 			} | null;
 			authState: 'unauthenticated' | 'lobby' | 'org_member';
 			organizations: Array<{

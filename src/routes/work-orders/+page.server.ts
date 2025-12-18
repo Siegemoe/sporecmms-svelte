@@ -75,7 +75,7 @@ export const load: PageServerLoad = async (event) => {
 		where: {
 			unit: {
 				site: {
-					orgId: event.locals.user!.orgId
+					organizationId: event.locals.user!.organizationId
 				}
 			}
 		},
@@ -94,7 +94,7 @@ export const load: PageServerLoad = async (event) => {
 	const units = await prisma.unit.findMany({
 		where: {
 			site: {
-				orgId: event.locals.user!.orgId
+				organizationId: event.locals.user!.organizationId
 			}
 		},
 		include: {
@@ -112,7 +112,7 @@ export const load: PageServerLoad = async (event) => {
 	const buildings = await prisma.building.findMany({
 		where: {
 			site: {
-				orgId: event.locals.user!.orgId
+				organizationId: event.locals.user!.organizationId
 			}
 		},
 		include: {
@@ -127,14 +127,14 @@ export const load: PageServerLoad = async (event) => {
 	// Get sites for the create form
 	const sites = await prisma.site.findMany({
 		where: {
-			orgId: event.locals.user!.orgId
+			organizationId: event.locals.user!.organizationId
 		},
 		orderBy: { name: 'asc' }
 	});
 
 	// Get users for assignment dropdown
 	const users = await prisma.user.findMany({
-		where: { orgId: event.locals.user!.orgId },
+		where: { organizationId: event.locals.user!.organizationId },
 		select: {
 			id: true,
 			firstName: true,
@@ -178,7 +178,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			const orgId = event.locals.user!.orgId;
+			const organizationId = event.locals.user!.organizationId;
 			const createdById = event.locals.user!.id;
 
 			// Create work order with appropriate relationships
@@ -188,7 +188,7 @@ export const actions: Actions = {
 					description: description?.trim() || '',
 					priority: priority as any,
 					dueDate: dueDate ? new Date(dueDate) : null,
-					orgId,
+					organizationId: organizationId!, // Ensure non-null
 					createdById,
 					assignedToId: assignedToId || null,
 					status: 'PENDING',
@@ -206,7 +206,7 @@ export const actions: Actions = {
 					buildingId: true,
 					unitId: true,
 					siteId: true,
-					orgId: true,
+					organizationId: true,
 					createdAt: true,
 					priority: true,
 					dueDate: true
@@ -214,7 +214,7 @@ export const actions: Actions = {
 			});
 
 			// Broadcast to all connected clients
-			broadcastToOrg(orgId, {
+			broadcastToOrg(organizationId!, {
 				type: 'WO_NEW',
 				payload: newWo
 			});
@@ -256,7 +256,7 @@ export const actions: Actions = {
 
 		try {
 			// 1. DATABASE UPDATE: Uses the secure Prisma client.
-			//    Middleware automatically filters by the user's orgId.
+			//    Middleware automatically filters by the user's organizationId.
 			const updatedWo = await prisma.workOrder.update({
 				where: { id: woId },
 				data: { status: newStatus },
@@ -266,7 +266,7 @@ export const actions: Actions = {
 					title: true,
 					status: true,
 					assetId: true,
-					orgId: true
+					organizationId: true
 				}
 			});
 
@@ -275,7 +275,7 @@ export const actions: Actions = {
 			}
 
 			// 2. REAL-TIME BROADCAST: Push the change instantly to all connected clients in the same organization.
-			broadcastToOrg(updatedWo.orgId, {
+			broadcastToOrg(updatedWo.organizationId, {
 				type: 'WO_UPDATE',
 				payload: updatedWo
 			});
@@ -314,14 +314,14 @@ export const actions: Actions = {
 					title: true,
 					status: true,
 					assignedToId: true,
-					orgId: true,
+					organizationId: true,
 					assignedTo: {
 						select: { firstName: true, lastName: true }
 					}
 				}
 			});
 
-			broadcastToOrg(updatedWo.orgId, {
+			broadcastToOrg(updatedWo.organizationId, {
 				type: 'WO_UPDATE',
 				payload: updatedWo
 			});

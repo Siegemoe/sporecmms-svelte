@@ -15,7 +15,7 @@ export const load: PageServerLoad = async (event) => {
 	const prisma = await createRequestPrisma(event);
 
 	const users = await prisma.user.findMany({
-		where: { orgId: locals.user.orgId },
+		where: { organizationId: locals.user.organizationId },
 		orderBy: { createdAt: 'desc' },
 		select: {
 			id: true,
@@ -74,7 +74,7 @@ export const actions: Actions = {
 				firstName: firstName?.trim() || null,
 				lastName: lastName?.trim() || null,
 				role: role as 'ADMIN' | 'MANAGER' | 'TECHNICIAN',
-				orgId: locals.user.orgId
+				organizationId: locals.user.organizationId!
 			}
 		});
 
@@ -116,8 +116,8 @@ export const actions: Actions = {
 			select: { email: true, role: true }
 		});
 
-		await prisma.user.update({
-			where: { id: userId, orgId: locals.user.orgId },
+		await prisma.user.updateMany({
+			where: { id: userId, organizationId: locals.user.organizationId! },
 			data: { role: role as 'ADMIN' | 'MANAGER' | 'TECHNICIAN' }
 		});
 
@@ -155,8 +155,8 @@ export const actions: Actions = {
 			select: { email: true }
 		});
 
-		await prisma.user.delete({
-			where: { id: userId, orgId: locals.user.orgId }
+		await prisma.user.deleteMany({
+			where: { id: userId, organizationId: locals.user.organizationId! }
 		});
 
 		await logAudit(locals.user.id, 'USER_DELETED', {

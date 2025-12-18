@@ -106,7 +106,7 @@ export const actions: Actions = {
 				firstName: validation.data.firstName,
 				lastName: validation.data.lastName,
 				role: 'TECHNICIAN', // Default role, can be changed when joining org
-				orgId: null // Explicitly set to null for lobby state
+				organizationId: null // Explicitly set to null for lobby state
 			}
 		});
 

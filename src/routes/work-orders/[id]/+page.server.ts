@@ -36,7 +36,7 @@ export const load: PageServerLoad = async (event) => {
 		where: {
 			unit: {
 				site: {
-					orgId: event.locals.user!.orgId
+					organizationId: event.locals.user!.organizationId
 				}
 			}
 		},
@@ -93,11 +93,11 @@ export const actions: Actions = {
 				title: true,
 				status: true,
 				assetId: true,
-				orgId: true
+				organizationId: true
 			}
 		});
 
-		broadcastToOrg(updatedWo.orgId, {
+		broadcastToOrg(updatedWo.organizationId, {
 			type: 'WO_UPDATE',
 			payload: updatedWo
 		});

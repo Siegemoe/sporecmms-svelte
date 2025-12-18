@@ -15,7 +15,8 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 			where: {
 				unit: {
 					site: {
-						orgId: locals.user.orgId
+						                        organizationId: locals.user.organizationId
+
 					}
 				}
 			},
@@ -46,7 +47,8 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		buildings = await prisma.building.findMany({
 			where: {
 				site: {
-					orgId: locals.user.orgId
+					                        organizationId: locals.user.organizationId
+
 				}
 			},
 			include: {
@@ -66,7 +68,8 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		rooms = await prisma.unit.findMany({
 			where: {
 				site: {
-					orgId: locals.user.orgId
+					                        organizationId: locals.user.organizationId
+
 				}
 			},
 			include: {

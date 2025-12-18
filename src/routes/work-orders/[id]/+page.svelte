@@ -231,7 +231,7 @@
 						<button
 							type="submit"
 							class="px-6 py-3 rounded-lg font-bold text-sm text-red-600 border border-red-200 hover:bg-red-50 transition-colors"
-							onclick="return confirm('Are you sure you want to delete this work order?')"
+							on:click={(e) => !confirm('Are you sure you want to delete this work order?') && e.preventDefault()}
 						>
 							DELETE
 						</button>

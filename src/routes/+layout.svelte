@@ -120,7 +120,7 @@
 					<div class="relative hidden sm:block">
 						<button
 							class="text-right hover:opacity-80 transition-opacity"
-							onclick="document.getElementById('org-menu').classList.toggle('hidden')"
+							on:click={() => document.getElementById('org-menu')?.classList.toggle('hidden')}
 						>
 							<p class="text-sm font-semibold text-spore-cream">
 								{user.firstName || user.email.split('@')[0]}

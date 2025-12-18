@@ -101,7 +101,7 @@ export const actions: Actions = {
 				await tx.user.update({
 					where: { id: locals.user!.id },
 					data: {
-						orgId: invite.organizationId,
+						organizationId: invite.organizationId,
 						role: 'TECHNICIAN'
 					}
 				});

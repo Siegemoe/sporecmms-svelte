@@ -74,7 +74,7 @@ export const actions: Actions = {
 			// Update user's current organization
 			await client.user.update({
 				where: { id: locals.user!.id },
-				data: { orgId: organizationId }
+				data: { organizationId: organizationId }
 			});
 
 			throw redirect(303, '/dashboard');

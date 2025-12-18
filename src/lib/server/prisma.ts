@@ -126,13 +126,13 @@ interface QueryParams {
 }
 
 /**
- * Creates a Prisma client that automatically filters by orgId
+ * Creates a Prisma client that automatically filters by organizationId
  * This ensures tenant isolation - users can only see their org's data
  */
-async function createPrismaClient(orgId?: string): Promise<PrismaClient> {
+async function createPrismaClient(organizationId?: string): Promise<PrismaClient> {
   const baseClient = await getPrismaSingleton();
 
-  if (!orgId) {
+  if (!organizationId) {
     // No org context - return base client (for system operations)
     return baseClient;
   }
@@ -142,40 +142,40 @@ async function createPrismaClient(orgId?: string): Promise<PrismaClient> {
       $allModels: {
         async findMany({ model, args, query }: QueryParams): Promise<any> {
           if (orgModels.includes(model)) {
-            args.where = { ...args.where, orgId };
+            args.where = { ...args.where, organizationId };
           }
           return query(args);
         },
         async findFirst({ model, args, query }: QueryParams): Promise<any> {
           if (orgModels.includes(model)) {
-            args.where = { ...args.where, orgId };
+            args.where = { ...args.where, organizationId };
           }
           return query(args);
         },
         async findUnique({ model, args, query }: QueryParams): Promise<any> {
-          // findUnique can't add orgId to where, but we verify after
+          // findUnique can't add organizationId to where, but we verify after
           const result = await query(args);
-          if (result && orgModels.includes(model) && (result as any).orgId !== orgId) {
+          if (result && orgModels.includes(model) && (result as any).organizationId !== organizationId) {
             return null; // Deny access to other orgs
           }
           return result;
         },
         async update({ model, args, query }: QueryParams): Promise<any> {
           if (orgModels.includes(model)) {
-            args.where = { ...args.where, orgId } as any;
+            args.where = { ...args.where, organizationId } as any;
           }
           return query(args);
         },
         async delete({ model, args, query }: QueryParams): Promise<any> {
           if (orgModels.includes(model)) {
-            args.where = { ...args.where, orgId } as any;
+            args.where = { ...args.where, organizationId } as any;
           }
           return query(args);
         },
         async create({ model, args, query }: QueryParams): Promise<any> {
-          // Auto-inject orgId on create
+          // Auto-inject organizationId on create
           if (orgModels.includes(model)) {
-            args.data = { ...args.data, orgId };
+            args.data = { ...args.data, organizationId };
           }
           return query(args);
         }
@@ -189,15 +189,15 @@ async function createPrismaClient(orgId?: string): Promise<PrismaClient> {
  * In Cloudflare Workers, this will use the edge client with proper env/fetch context
  */
 export async function createRequestPrisma(event: RequestEvent): Promise<PrismaClient> {
-  const orgId = event.locals.user?.orgId;
+  const organizationId = event.locals.user?.organizationId;
 
   // For Cloudflare Workers, ensure environment variables are accessible
   if (isCloudflareWorker() && (event.platform as any)?.env) {
     // The environment variables should be accessible through getEnvVar()
-    return createPrismaClient(orgId);
+    return createPrismaClient(organizationId);
   }
 
-  return createPrismaClient(orgId);
+  return createPrismaClient(organizationId);
 }
 
 /**

@@ -53,7 +53,7 @@ export const actions: Actions = {
 		const site = await prisma.site.create({
 			data: {
 				name: name.trim(),
-				orgId: event.locals.user!.orgId
+				organizationId: event.locals.user!.organizationId
 			}
 		});
 
