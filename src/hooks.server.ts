@@ -94,11 +94,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 		// Content Security Policy (Relaxed for now to troubleshoot)
 		const csp = [
 			"default-src 'self'",
-			"script-src 'self' 'unsafe-eval' 'unsafe-inline'", // unsafe-inline needed for use:enhance form handling
+			"script-src 'self' 'unsafe-eval' 'unsafe-inline' https://static.cloudflareinsights.com", // unsafe-inline needed for use:enhance form handling
 			"style-src 'self' 'unsafe-inline'", // unsafe-inline needed for Svelte styling
 			"img-src 'self' data: https:",
 			"font-src 'self'",
-			"connect-src 'self' https://*.prisma-data.net", // Allow Prisma Accelerate
+			"connect-src 'self' https://*.prisma-data.net https://cloudflareinsights.com", // Allow Prisma Accelerate and Cloudflare Analytics
 			"frame-ancestors 'none'",
 			"base-uri 'self'",
 			"form-action 'self'"
