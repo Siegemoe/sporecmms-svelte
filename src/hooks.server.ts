@@ -44,14 +44,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const isLobbyRoute = lobbyRoutes.some(route => event.url.pathname.startsWith(route));
 
 	// Handle unauthenticated users
-	if (authResult.state === 'unauthenticated' && !isPublicRoute) {
+	if (event.locals.authState === 'unauthenticated' && !isPublicRoute) {
 		throw redirect(303, '/auth/login');
 	}
 
 	// Handle authenticated users accessing auth pages
-	if (authResult.user && event.url.pathname.startsWith('/auth/')) {
+	if (event.locals.user && event.url.pathname.startsWith('/auth/')) {
 		// If user is in lobby, send to onboarding
-		if (authResult.state === 'lobby') {
+		if (event.locals.authState === 'lobby') {
 			throw redirect(303, '/onboarding');
 		}
 		// If user has org, send to dashboard
@@ -59,19 +59,19 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	// Handle lobby state users (authenticated but no org)
-	if (authResult.state === 'lobby' && !isLobbyRoute && !isPublicRoute) {
+	if (event.locals.authState === 'lobby' && !isLobbyRoute && !isPublicRoute) {
 		throw redirect(303, '/onboarding');
 	}
 
 	// Handle org members accessing lobby routes
-	if (authResult.state === 'org_member' && isLobbyRoute) {
+	if (event.locals.authState === 'org_member' && isLobbyRoute) {
 		throw redirect(303, '/dashboard');
 	}
 
 	// Ensure org members are accessing org routes
-	if (authResult.state === 'org_member' && isOrgRoute) {
+	if (event.locals.authState === 'org_member' && isOrgRoute) {
 		// Check if user has selected an active organization
-		if (!authResult.currentOrganization) {
+		if (!event.locals.currentOrganization) {
 			throw redirect(303, '/select-organization');
 		}
 	}
