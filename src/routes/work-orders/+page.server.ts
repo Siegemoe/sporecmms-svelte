@@ -72,6 +72,13 @@ export const load: PageServerLoad = async (event) => {
 
 	// Get assets for the create form
 	const assets = await prisma.asset.findMany({
+		where: {
+			unit: {
+				site: {
+					orgId: event.locals.user!.orgId
+				}
+			}
+		},
 		include: {
 			unit: {
 				include: {
