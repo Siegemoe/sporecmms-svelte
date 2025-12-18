@@ -16,6 +16,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
+	// Optimization: Skip auth/DB checks for static assets to prevent 500 errors
+	if (event.url.pathname === '/favicon.ico' || event.url.pathname === '/favicon.png') {
+		return resolve(event);
+	}
+
 	// Validate session with organization state
 	try {
 		const authResult = await validateSessionWithOrg(event.cookies);
