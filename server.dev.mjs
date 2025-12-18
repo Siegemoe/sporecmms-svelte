@@ -52,7 +52,7 @@ async function validateSessionFromCookies(cookieHeader) {
 			where: { id: sessionId },
 			include: {
 				user: {
-					select: { id: true, orgId: true }
+					select: { id: true, organizationId: true }
 				}
 			}
 		});
@@ -61,7 +61,7 @@ async function validateSessionFromCookies(cookieHeader) {
 			return null;
 		}
 		
-		return { orgId: session.user.orgId, userId: session.user.id };
+		return { orgId: session.user.organizationId, userId: session.user.id };
 	} catch (e) {
 		console.error('[WS Dev] Session validation error:', e);
 		return null;

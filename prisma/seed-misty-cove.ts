@@ -8,7 +8,7 @@ async function main() {
 	const prisma = await clientPromise;
 	const user = await prisma.user.findFirst({
 		where: { email: { contains: '' } }, // Gets first user
-		select: { orgId: true, email: true }
+		select: { organizationId: true, email: true }
 	});
 
 	if (!user) {

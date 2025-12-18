@@ -52,7 +52,7 @@ export async function validateSession(cookies: Cookies) {
 					firstName: true,
 					lastName: true,
 					role: true,
-					orgId: true
+					organizationId: true
 				}
 			}
 		}
@@ -88,7 +88,7 @@ export async function validateSessionWithOrg(cookies: Cookies) {
 					firstName: true,
 					lastName: true,
 					role: true,
-					orgId: true,
+					organizationId: true,
 					organization: {
 						select: {
 							id: true,
@@ -113,7 +113,7 @@ export async function validateSessionWithOrg(cookies: Cookies) {
 	const user = session.user;
 
 	// Determine authentication state
-	if (!user.orgId) {
+	if (!user.organizationId) {
 		return { user, state: 'lobby' };
 	}
 

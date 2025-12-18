@@ -106,19 +106,20 @@ export const handle: Handle = async ({ event, resolve }) => {
 };
 
 // Sanitize error responses in production
-export const handleError = async ({ error, event }: any) => {
+export const handleError = async ({ error: err, event }: any) => {
 	const isProduction = event.platform?.env?.NODE_ENV === 'production' || event.url.hostname.includes('pages.dev');
 
 	if (isProduction) {
 		// Don't expose detailed errors in production
-		const statusCode = error instanceof Error && 'status' in error ? (error as any).status : 500;
+		const statusCode = err instanceof Error && 'status' in err ? (err as any).status : 500;
+		const message = statusCode === 500 ? 'Something went wrong' : (err as any).message;
 
-		return error(statusCode, {
-			message: statusCode === 500 ? 'Something went wrong' : error.message,
+		return {
+			message,
 			code: 'INTERNAL_ERROR'
-		});
+		};
 	}
 
 	// In development, let SvelteKit handle errors normally
-	return error;
+	// By returning undefined, SvelteKit will use the default error handling
 };

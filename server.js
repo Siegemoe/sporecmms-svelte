@@ -59,7 +59,7 @@ async function validateSessionFromCookies(cookieHeader) {
 				user: {
 					select: {
 						id: true,
-						orgId: true
+						organizationId: true
 					}
 				}
 			}
@@ -70,7 +70,7 @@ async function validateSessionFromCookies(cookieHeader) {
 		}
 
 		return {
-			orgId: session.user.orgId,
+			orgId: session.user.organizationId,
 			userId: session.user.id
 		};
 	} catch (e) {
