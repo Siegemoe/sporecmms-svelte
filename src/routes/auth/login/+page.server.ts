@@ -70,6 +70,8 @@ export const actions: Actions = {
 				where: { email: validation.data.email }
 			});
 
+			console.log(`[Auth Debug] User lookup for ${validation.data.email}:`, user ? 'Found' : 'Not Found');
+
 			if (!user) {
 				// Log failed login attempt
 				await security.logSecurityEvent({
@@ -84,6 +86,8 @@ export const actions: Actions = {
 
 			// Verify password
 			const valid = await verifyPassword(validation.data.password, user.password);
+			console.log(`[Auth Debug] Password verification for ${validation.data.email}:`, valid ? 'Valid' : 'Invalid');
+
 			if (!valid) {
 				// Log failed login attempt
 				await security.logSecurityEvent({

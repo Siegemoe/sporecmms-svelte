@@ -1,6 +1,7 @@
 import type { Cookies } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
 import { getPrisma } from './prisma';
+import { dev } from '$app/environment';
 
 const SESSION_COOKIE = 'spore_session';
 const SESSION_EXPIRY_DAYS = 30;
@@ -24,7 +25,8 @@ export async function createSession(userId: string): Promise<string> {
 		const session = await client.session.create({
 			data: {
 				userId,
-				expiresAt
+				expiresAt,
+				token: crypto.randomUUID()
 			}
 		});
 
@@ -154,7 +156,7 @@ export function setSessionCookie(cookies: Cookies, sessionId: string): void {
 		path: '/',
 		httpOnly: true,
 		sameSite: 'strict', // Upgrade from 'lax' for better security
-		secure: true, // Always secure in production (Cloudflare Pages enforces HTTPS)
+		secure: !dev, // Always secure in production (Cloudflare Pages enforces HTTPS)
 		maxAge: 60 * 60 * 24 * SESSION_EXPIRY_DAYS
 	});
 }
