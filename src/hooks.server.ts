@@ -23,7 +23,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	// Validate session with organization state
 	try {
+		console.log('[Auth] Checking cookies:', event.cookies.get('spore_session') ? 'Found' : 'Missing');
 		const authResult = await validateSessionWithOrg(event.cookies);
+		console.log('[Auth] Result:', authResult.state, authResult.user?.email);
+
 		event.locals.user = authResult.user;
 		event.locals.authState = authResult.state;
 		event.locals.organizations = authResult.organizations || [];
