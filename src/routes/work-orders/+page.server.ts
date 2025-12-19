@@ -1,7 +1,7 @@
 import type { Actions, PageServerLoad } from './$types';
 import { createRequestPrisma } from '$lib/server/prisma';
 import { broadcastToOrg } from '$lib/server/websocket-handler';
-import { WorkOrderStatus } from '@prisma/client';
+import { WorkOrderStatus, Priority } from '@prisma/client';
 import { requireAuth, isManagerOrAbove } from '$lib/server/guards';
 import { fail } from '@sveltejs/kit';
 import { logAudit } from '$lib/server/audit';
@@ -10,11 +10,50 @@ export const load: PageServerLoad = async (event) => {
 	requireAuth(event);
 	
 	const prisma = await createRequestPrisma(event);
-	const myOnly = event.url.searchParams.get('my') === 'true';
 	const userId = event.locals.user!.id;
+	const organizationId = event.locals.user!.organizationId;
+
+	// Parse Query Params
+	const myOnly = event.url.searchParams.get('my') === 'true';
+	const status = event.url.searchParams.get('status');
+	const priority = event.url.searchParams.get('priority');
+	const siteId = event.url.searchParams.get('siteId');
+	const sort = event.url.searchParams.get('sort') || 'dueDate';
+
+	// Build Where Clause
+	const where: any = {
+		organizationId // Implicitly enforced by extension, but explicit is cleaner
+	};
+
+	if (myOnly) where.assignedToId = userId;
+	if (status) where.status = status as WorkOrderStatus;
+	if (priority) where.priority = priority as Priority;
+	if (siteId) where.siteId = siteId;
+
+	// Build OrderBy
+	let orderBy: any = [];
+	if (sort === 'priority') {
+		// High priority first (EMERGENCY -> HIGH -> MEDIUM -> LOW)
+		// Prisma doesn't sort enums by definition index automatically easily without raw SQL
+		// So we might rely on alphabetical or simple desc for now, or just name
+		// Actually, standard practice is simple field sort. Enum sort requires specialized query or mapping.
+		// For MVP, we'll sort by priority field desc (if Z-A works) or handle in client.
+		// Let's stick to created/due/updated.
+		orderBy = { priority: 'desc' };
+	} else if (sort === 'created') {
+		orderBy = { createdAt: 'desc' };
+	} else if (sort === 'updated') {
+		orderBy = { updatedAt: 'desc' };
+	} else {
+		// Default: Due Date asc, then Priority desc
+		orderBy = [
+			{ dueDate: 'asc' },
+			{ priority: 'desc' }
+		];
+	}
 	
 	const workOrders = await prisma.workOrder.findMany({
-		where: myOnly ? { assignedToId: userId } : undefined,
+		where,
 		include: {
 			asset: {
 				select: {
@@ -64,10 +103,7 @@ export const load: PageServerLoad = async (event) => {
 				}
 			}
 		},
-		orderBy: [
-			{ dueDate: 'asc' },
-			{ createdAt: 'desc' }
-		]
+		orderBy
 	});
 
 	// Get assets for the create form
@@ -75,7 +111,7 @@ export const load: PageServerLoad = async (event) => {
 		where: {
 			unit: {
 				site: {
-					organizationId: event.locals.user!.organizationId
+					organizationId
 				}
 			}
 		},
@@ -94,7 +130,7 @@ export const load: PageServerLoad = async (event) => {
 	const units = await prisma.unit.findMany({
 		where: {
 			site: {
-				organizationId: event.locals.user!.organizationId
+				organizationId
 			}
 		},
 		include: {
@@ -112,7 +148,7 @@ export const load: PageServerLoad = async (event) => {
 	const buildings = await prisma.building.findMany({
 		where: {
 			site: {
-				organizationId: event.locals.user!.organizationId
+				organizationId
 			}
 		},
 		include: {
@@ -124,17 +160,17 @@ export const load: PageServerLoad = async (event) => {
 		]
 	});
 
-	// Get sites for the create form
+	// Get sites for the create form and filters
 	const sites = await prisma.site.findMany({
 		where: {
-			organizationId: event.locals.user!.organizationId
+			organizationId
 		},
 		orderBy: { name: 'asc' }
 	});
 
 	// Get users for assignment dropdown
 	const users = await prisma.user.findMany({
-		where: { organizationId: event.locals.user!.organizationId },
+		where: { organizationId },
 		select: {
 			id: true,
 			firstName: true,
@@ -144,7 +180,7 @@ export const load: PageServerLoad = async (event) => {
 		orderBy: { firstName: 'asc' }
 	});
 
-	return { workOrders, assets, units, buildings, sites, users, myOnly };
+	return { workOrders, assets, units, buildings, sites, users, myOnly, status, priority, siteId, sort };
 };
 
 export const actions: Actions = {

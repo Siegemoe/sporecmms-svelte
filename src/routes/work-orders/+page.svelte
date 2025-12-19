@@ -3,6 +3,8 @@
 	import { wsStore } from '$lib/stores/websocket';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+	import { WORK_ORDER_STATUSES, PRIORITIES } from '$lib/constants';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -15,7 +17,14 @@
 	let users = data.users || [];
 	let myOnly = data.myOnly || false;
 
-	// Sync when page data changes (form submissions, navigation)
+	// Filter State
+	let filterStatus = data.status || '';
+	let filterPriority = data.priority || '';
+	let filterSite = data.siteId || '';
+	let sortOption = data.sort || 'dueDate';
+	let showFilters = false;
+
+	// Sync when page data changes
 	$: if (data.workOrders) workOrders = data.workOrders;
 	$: if (data.assets) assets = data.assets;
 	$: if (data.units) units = data.units;
@@ -23,6 +32,30 @@
 	$: if (data.sites) sites = data.sites;
 	$: if (data.users) users = data.users;
 	$: myOnly = data.myOnly || false;
+
+	function applyFilters() {
+		const params = new URLSearchParams();
+		if (myOnly) params.set('my', 'true');
+		if (filterStatus) params.set('status', filterStatus);
+		if (filterPriority) params.set('priority', filterPriority);
+		if (filterSite) params.set('siteId', filterSite);
+		if (sortOption && sortOption !== 'dueDate') params.set('sort', sortOption);
+		
+		goto(`?${params.toString()}`, { keepFocus: true });
+	}
+
+	function clearFilters() {
+		filterStatus = '';
+		filterPriority = '';
+		filterSite = '';
+		sortOption = 'dueDate';
+		applyFilters();
+	}
+
+	function toggleMyOrders() {
+		myOnly = !myOnly;
+		applyFilters();
+	}
 
 	let wsConnected = false;
 	let lastUpdate: string | null = null;
@@ -41,7 +74,6 @@
 		siteId: ''
 	};
 
-	// Helper to get user display name
 	function getUserName(user: { firstName?: string | null; lastName?: string | null; email?: string } | null) {
 		if (!user) return 'Unassigned';
 		if (user.firstName || user.lastName) {
@@ -58,10 +90,8 @@
 
 	const unsubscribe = wsStore.subscribe((state) => {
 		wsConnected = state.isConnected;
-		
 		if (state.messages.length > 0) {
 			const latest = state.messages[0];
-			
 			if (latest.type === 'WO_UPDATE' && latest.payload) {
 				const updated = latest.payload as { id: string; status: string; title: string };
 				workOrders = workOrders.map((wo) => {
@@ -72,10 +102,8 @@
 					return wo;
 				});
 			}
-			
 			if (latest.type === 'WO_NEW' && latest.payload) {
 				const newWo = latest.payload as typeof workOrders[0];
-				// Only add if not already in list (prevents duplicate from form + websocket)
 				if (!workOrders.some(wo => wo.id === newWo.id)) {
 					workOrders = [newWo, ...workOrders];
 					lastUpdate = `New: ${newWo.title}`;
@@ -86,15 +114,14 @@
 
 	onDestroy(() => unsubscribe());
 
-	const priorities = ['LOW', 'MEDIUM', 'HIGH', 'EMERGENCY'];
-	const statusColors = {
+	const statusColors: Record<string, string> = {
 		PENDING: 'bg-yellow-100 text-yellow-800',
 		IN_PROGRESS: 'bg-blue-100 text-blue-800',
 		COMPLETED: 'bg-green-100 text-green-800',
 		ON_HOLD: 'bg-gray-100 text-gray-800',
 		CANCELLED: 'bg-red-100 text-red-800'
 	};
-	const priorityColors = {
+	const priorityColors: Record<string, string> = {
 		LOW: 'bg-gray-100 text-gray-600',
 		MEDIUM: 'bg-blue-100 text-blue-600',
 		HIGH: 'bg-orange-100 text-orange-600',
@@ -129,7 +156,7 @@
 		</div>
 		<button 
 			on:click={() => showCreateForm = !showCreateForm}
-			class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:ring-offset-2 focus:ring-offset-spore-steel transition-colors text-sm font-bold tracking-wide"
+			class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:ring-offset-2 focus:ring-offset-spore-steel transition-colors text-sm font-bold tracking-wide shadow-lg"
 			aria-expanded={showCreateForm}
 			aria-controls="create-form"
 		>
@@ -137,25 +164,104 @@
 		</button>
 	</div>
 
-	<!-- Filter Toggle -->
-	<div class="flex items-center gap-3 mb-6">
-		<span class="text-sm font-medium text-spore-cream/70">All</span>
-		<a 
-			href={myOnly ? '/work-orders' : '/work-orders?my=true'}
-			class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {myOnly ? 'bg-spore-orange' : 'bg-spore-steel/50'}"
-			role="switch"
-			aria-checked={myOnly}
-		>
-			<span 
-				class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform {myOnly ? 'translate-x-6' : 'translate-x-1'}"
-			></span>
-		</a>
-		<span class="text-sm font-medium text-spore-cream/70">My Work Orders</span>
+	<!-- Filter Bar -->
+	<div class="bg-spore-white rounded-xl mb-6 shadow-sm border border-spore-cream/50 overflow-hidden">
+		<!-- Mobile Filter Toggle -->
+		<div class="md:hidden p-4 border-b border-spore-cream/30 flex justify-between items-center bg-spore-cream/10">
+			<span class="text-sm font-bold text-spore-dark uppercase tracking-wide">Filters & Sort</span>
+			<button 
+				on:click={() => showFilters = !showFilters}
+				class="text-spore-orange font-bold text-sm"
+			>
+				{showFilters ? 'Hide' : 'Show'}
+			</button>
+		</div>
+
+		<!-- Filter Controls -->
+		<div class="{showFilters ? 'block' : 'hidden'} md:block p-4 space-y-4 md:space-y-0">
+			<div class="flex flex-col md:flex-row md:items-center gap-4">
+				<!-- My Orders Toggle -->
+				<button 
+					on:click={toggleMyOrders}
+					class="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors {myOnly ? 'bg-spore-orange/10 text-spore-orange ring-1 ring-spore-orange' : 'bg-spore-cream/20 text-spore-steel hover:bg-spore-cream/30'}"
+				>
+					<span class="w-4 h-4 rounded-full border border-current flex items-center justify-center">
+						{#if myOnly}<span class="w-2 h-2 rounded-full bg-current"></span>{/if}
+					</span>
+					<span class="text-sm font-bold">My Work Orders</span>
+				</button>
+
+				<div class="h-6 w-px bg-spore-cream/50 hidden md:block"></div>
+
+				<!-- Dropdowns -->
+				<div class="grid grid-cols-2 md:flex md:items-center gap-2 md:gap-4 flex-1">
+					<select 
+						bind:value={filterStatus} 
+						on:change={applyFilters}
+						class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+					>
+						<option value="">All Statuses</option>
+						{#each WORK_ORDER_STATUSES as s}
+							<option value={s}>{s.replace('_', ' ')}</option>
+						{/each}
+					</select>
+
+					<select 
+						bind:value={filterPriority} 
+						on:change={applyFilters}
+						class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+					>
+						<option value="">All Priorities</option>
+						{#each PRIORITIES as p}
+							<option value={p}>{p}</option>
+						{/each}
+					</select>
+
+					{#if sites.length > 0}
+						<select 
+							bind:value={filterSite} 
+							on:change={applyFilters}
+							class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+						>
+							<option value="">All Sites</option>
+							{#each sites as s}
+								<option value={s.id}>{s.name}</option>
+							{/each}
+						</select>
+					{/if}
+				</div>
+
+				<!-- Sort -->
+				<div class="flex items-center gap-2 md:ml-auto">
+					<span class="text-xs font-bold text-spore-steel uppercase hidden md:inline">Sort:</span>
+					<select 
+						bind:value={sortOption} 
+						on:change={applyFilters}
+						class="w-full md:w-auto bg-transparent font-bold text-sm text-spore-dark border-none focus:ring-0 cursor-pointer text-right"
+					>
+						<option value="dueDate">Due Date</option>
+						<option value="priority">Priority</option>
+						<option value="created">Newest</option>
+						<option value="updated">Updated</option>
+					</select>
+				</div>
+
+				<!-- Clear Button -->
+				{#if filterStatus || filterPriority || filterSite || sortOption !== 'dueDate' || myOnly}
+					<button 
+						on:click={clearFilters}
+						class="text-xs font-bold text-red-500 hover:text-red-600 underline md:no-underline px-2"
+					>
+						Reset
+					</button>
+				{/if}
+			</div>
+		</div>
 	</div>
 
 	<!-- Create Form -->
 	{#if showCreateForm}
-		<div id="create-form" class="bg-spore-white rounded-xl p-6 mb-8" role="region" aria-label="Create work order form">
+		<div id="create-form" class="bg-spore-white rounded-xl p-6 mb-8 border border-spore-orange/20 shadow-lg" role="region" aria-label="Create work order form">
 			<h2 class="text-lg font-bold text-spore-dark mb-4">Create New Work Order</h2>
 			<form
 				method="POST"
@@ -214,7 +320,7 @@
 							bind:value={newWO.priority}
 							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
 						>
-							{#each priorities as priority}
+							{#each PRIORITIES as priority}
 								<option value={priority}>{priority}</option>
 							{/each}
 						</select>
