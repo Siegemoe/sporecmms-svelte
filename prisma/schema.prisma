@@ -99,6 +99,10 @@ model OrganizationInvite {
 model Waitlist {
   id        String   @id @default(dbgenerated("gen_random_uuid()"))
   email     String   @unique
+  name      String?
+  company   String?
+  role      String?
+  phone     String?
   createdAt DateTime @default(now())
 }
 

@@ -12,7 +12,7 @@
 <!-- Landing Page - Public -->
 <div class="min-h-screen bg-gradient-to-br from-spore-dark via-spore-steel to-spore-dark">
 	<!-- Hero Section -->
-	<section class="px-4 py-20 md:py-32">
+	<section class="px-4 py-16 md:py-24">
 		<div class="max-w-6xl mx-auto text-center">
 			<!-- Logo -->
 			<div class="flex items-center justify-center gap-3 mb-8">
@@ -32,41 +32,102 @@
 			</p>
 
 			<!-- CTA / Waitlist Form -->
-			<div class="flex flex-col items-center justify-center w-full max-w-lg mx-auto">
+			<div class="flex flex-col items-center justify-center w-full max-w-xl mx-auto">
 				{#if form?.success}
-					<div class="bg-spore-forest/30 border border-spore-forest text-spore-cream px-8 py-6 rounded-xl w-full text-center shadow-lg backdrop-blur-sm">
-						<span class="text-2xl mr-2 block mb-2">✅</span>
-						<h3 class="text-xl font-bold mb-1">You're on the list!</h3>
-						<p class="text-spore-cream/70">We'll be in touch with your early access invite soon.</p>
+					<div class="bg-spore-forest/30 border border-spore-forest text-spore-cream px-8 py-8 rounded-2xl w-full text-center shadow-lg backdrop-blur-sm">
+						<div class="text-5xl mb-4">✅</div>
+						<h3 class="text-2xl font-bold mb-2">You're on the list!</h3>
+						<p class="text-spore-cream/70 text-lg">We'll be in touch with your early access invite soon.</p>
 					</div>
 				{:else}
-					<form 
-						method="POST" 
-						action="?/joinWaitlist" 
-						use:enhance={() => {
-							loading = true;
-							return async ({ update }) => {
-								await update();
-								loading = false;
-							};
-						}}
-						class="flex flex-col sm:flex-row gap-3 w-full"
-					>
-						<input
-							type="email"
-							name="email"
-							placeholder="Enter your work email"
-							required
-							class="flex-1 bg-spore-white/10 border border-spore-cream/20 text-spore-cream placeholder-spore-cream/40 rounded-xl px-6 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-spore-orange transition-all backdrop-blur-sm"
-						/>
-						<button
-							type="submit"
-							disabled={loading}
-							class="bg-spore-orange text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-spore-orange/90 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:hover:scale-100 whitespace-nowrap"
+					<div class="bg-spore-white/5 border border-spore-cream/10 rounded-2xl p-6 w-full backdrop-blur-sm">
+						<h3 class="text-spore-cream font-bold text-lg mb-4 text-left">Request Early Access</h3>
+						<form 
+							method="POST" 
+							action="?/joinWaitlist" 
+							use:enhance={() => {
+								loading = true;
+								return async ({ update }) => {
+									await update();
+									loading = false;
+								};
+							}}
+							class="space-y-4"
 						>
-							{loading ? 'Joining...' : 'Join Waitlist'}
-						</button>
-					</form>
+							<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+								<div class="text-left">
+									<label for="name" class="block text-xs font-bold text-spore-cream/60 uppercase tracking-wide mb-1">Name *</label>
+									<input
+										type="text"
+										name="name"
+										id="name"
+										placeholder="John Doe"
+										required
+										value={form?.name ?? ''}
+										class="w-full bg-spore-dark/50 border border-spore-cream/20 text-spore-cream placeholder-spore-cream/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-spore-orange transition-all"
+									/>
+								</div>
+								<div class="text-left">
+									<label for="company" class="block text-xs font-bold text-spore-cream/60 uppercase tracking-wide mb-1">Company</label>
+									<input
+										type="text"
+										name="company"
+										id="company"
+										placeholder="Acme Properties"
+										value={form?.company ?? ''}
+										class="w-full bg-spore-dark/50 border border-spore-cream/20 text-spore-cream placeholder-spore-cream/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-spore-orange transition-all"
+									/>
+								</div>
+							</div>
+
+							<div class="text-left">
+								<label for="email" class="block text-xs font-bold text-spore-cream/60 uppercase tracking-wide mb-1">Work Email *</label>
+								<input
+									type="email"
+									name="email"
+									id="email"
+									placeholder="john@example.com"
+									required
+									value={form?.email ?? ''}
+									class="w-full bg-spore-dark/50 border border-spore-cream/20 text-spore-cream placeholder-spore-cream/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-spore-orange transition-all"
+								/>
+							</div>
+
+							<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+								<div class="text-left">
+									<label for="phone" class="block text-xs font-bold text-spore-cream/60 uppercase tracking-wide mb-1">Phone (Optional)</label>
+									<input
+										type="tel"
+										name="phone"
+										id="phone"
+										placeholder="(555) 123-4567"
+										value={form?.phone ?? ''}
+										class="w-full bg-spore-dark/50 border border-spore-cream/20 text-spore-cream placeholder-spore-cream/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-spore-orange transition-all"
+									/>
+								</div>
+								<div class="text-left">
+									<label for="role" class="block text-xs font-bold text-spore-cream/60 uppercase tracking-wide mb-1">Role (Optional)</label>
+									<input
+										type="text"
+										name="role"
+										id="role"
+										placeholder="Facility Manager"
+										value={form?.role ?? ''}
+										class="w-full bg-spore-dark/50 border border-spore-cream/20 text-spore-cream placeholder-spore-cream/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-spore-orange transition-all"
+									/>
+								</div>
+							</div>
+
+							<button
+								type="submit"
+								disabled={loading}
+								class="w-full bg-spore-orange text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-spore-orange/90 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 transition-all transform hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:hover:scale-100 mt-2"
+							>
+								{loading ? 'Submitting...' : 'Request Early Access'}
+							</button>
+						</form>
+					</div>
+					
 					{#if form?.error}
 						<p class="text-red-400 mt-3 text-sm font-medium bg-red-900/20 px-4 py-2 rounded-lg border border-red-500/20">{form.error}</p>
 					{/if}
