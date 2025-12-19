@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { enhance } from '$app/forms';
+	import { FAILURE_MODES } from '$lib/constants';
 
 	export let assets: Array<{ id: string; name: string; room?: { id: string; name: string; building?: { id: string; name: string }; site?: { name?: string } } }> = [];
 	export let buildings: Array<{ id: string; name: string; site?: { name?: string } }> = [];
@@ -13,7 +14,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	const failureModes = ['General', 'Electrical', 'Plumbing', 'HVAC', 'Structural', 'Safety', 'Cosmetic', 'Other'];
+	const failureModes = FAILURE_MODES;
 
 	function closeForm() {
 		showCreateForm = false;

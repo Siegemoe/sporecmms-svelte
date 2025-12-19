@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import { FAILURE_MODES, WORK_ORDER_STATUSES } from '$lib/constants';
 
 	export let data: PageData;
 
@@ -17,8 +18,8 @@
 	$: workOrder = data.workOrder;
 	$: assets = data.assets || [];
 
-	const failureModes = ['General', 'Electrical', 'Plumbing', 'HVAC', 'Structural', 'Safety', 'Cosmetic', 'Other'];
-	const statuses = ['PENDING', 'IN_PROGRESS', 'ON_HOLD', 'COMPLETED', 'CANCELLED'];
+	const failureModes = FAILURE_MODES;
+	const statuses = WORK_ORDER_STATUSES;
 
 	function startEdit() {
 		editData = {
