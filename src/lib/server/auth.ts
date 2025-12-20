@@ -91,7 +91,7 @@ export async function validateSessionWithOrg(cookies: Cookies) {
 					lastName: true,
 					role: true,
 					organizationId: true,
-					organization: {
+					Organization: {
 						select: {
 							id: true,
 							name: true
@@ -138,7 +138,7 @@ export async function validateSessionWithOrg(cookies: Cookies) {
 		user,
 		state: 'org_member',
 		organizations: userOrgs,
-		currentOrganization: user.organization
+		currentOrganization: user.Organization
 	};
 }
 
