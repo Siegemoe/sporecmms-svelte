@@ -83,6 +83,15 @@
 				</button>
 			</form>
 
+			<div class="mt-6 text-center">
+				<a
+					href="/auth/emergency-reset"
+					class="text-sm text-spore-steel hover:text-spore-orange transition-colors font-medium"
+				>
+					Forgot password? Use recovery passphrase
+				</a>
+			</div>
+
 			<div class="mt-8 pt-6 border-t border-spore-cream/20 text-center">
 				<p class="text-base text-spore-steel">
 					Don't have an account?
