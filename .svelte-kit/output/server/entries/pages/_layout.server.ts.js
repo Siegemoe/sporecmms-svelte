@@ -7,8 +7,8 @@ const load = async ({ locals }) => {
     const prisma = await createRequestPrisma({ locals });
     assets = await prisma.asset.findMany({
       where: {
-        unit: {
-          site: {
+        Unit: {
+          Site: {
             organizationId: locals.user.organizationId ?? void 0
           }
         }
@@ -29,7 +29,7 @@ const load = async ({ locals }) => {
     });
     buildings = await prisma.building.findMany({
       where: {
-        site: {
+        Site: {
           organizationId: locals.user.organizationId ?? void 0
         }
       },
@@ -44,7 +44,7 @@ const load = async ({ locals }) => {
     });
     rooms = await prisma.unit.findMany({
       where: {
-        site: {
+        Site: {
           organizationId: locals.user.organizationId ?? void 0
         }
       },

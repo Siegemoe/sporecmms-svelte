@@ -109,17 +109,17 @@ export const load: PageServerLoad = async (event) => {
 	// Get assets for the create form
 	const assets = await prisma.asset.findMany({
 		where: {
-			unit: {
-				site: {
+			Unit: {
+				Site: {
 					organizationId
 				}
 			}
 		},
 		include: {
-			unit: {
+			Unit: {
 				include: {
-					site: { select: { name: true } },
-					building: { select: { name: true } }
+					Site: { select: { name: true } },
+					Building: { select: { name: true } }
 				}
 			}
 		},
@@ -129,17 +129,17 @@ export const load: PageServerLoad = async (event) => {
 	// Get units for the create form
 	const units = await prisma.unit.findMany({
 		where: {
-			site: {
+			Site: {
 				organizationId
 			}
 		},
 		include: {
-			site: { select: { name: true } },
-			building: { select: { name: true } }
+			Site: { select: { name: true } },
+			Building: { select: { name: true } }
 		},
 		orderBy: [
-			{ site: { name: 'asc' } },
-			{ building: { name: 'asc' } },
+			{ Site: { name: 'asc' } },
+			{ Building: { name: 'asc' } },
 			{ roomNumber: 'asc' }
 		]
 	});
@@ -147,15 +147,15 @@ export const load: PageServerLoad = async (event) => {
 	// Get buildings for the create form
 	const buildings = await prisma.building.findMany({
 		where: {
-			site: {
+			Site: {
 				organizationId
 			}
 		},
 		include: {
-			site: { select: { name: true } }
+			Site: { select: { name: true } }
 		},
 		orderBy: [
-			{ site: { name: 'asc' } },
+			{ Site: { name: 'asc' } },
 			{ name: 'asc' }
 		]
 	});
