@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const client = await getPrisma();
 	const userOrgs = await client.organization.findMany({
 		where: {
-			users: {
+			User: {
 				some: {
 					id: locals.user!.id
 				}

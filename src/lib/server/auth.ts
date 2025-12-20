@@ -122,7 +122,7 @@ export async function validateSessionWithOrg(cookies: Cookies) {
 	// Get all organizations the user belongs to
 	const userOrgs = await client.organization.findMany({
 		where: {
-			users: {
+			User: {
 				some: {
 					id: user.id
 				}
