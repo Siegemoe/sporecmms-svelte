@@ -61,9 +61,9 @@ async function getPrismaSingleton() {
   return client;
 }
 const orgModels = ["WorkOrder", "User", "Site"];
-async function createPrismaClient(orgId) {
+async function createPrismaClient(organizationId) {
   const baseClient = await getPrismaSingleton();
-  if (!orgId) {
+  if (!organizationId) {
     return baseClient;
   }
   return baseClient.$extends({
@@ -71,38 +71,38 @@ async function createPrismaClient(orgId) {
       $allModels: {
         async findMany({ model, args, query }) {
           if (orgModels.includes(model)) {
-            args.where = { ...args.where, orgId };
+            args.where = { ...args.where, organizationId };
           }
           return query(args);
         },
         async findFirst({ model, args, query }) {
           if (orgModels.includes(model)) {
-            args.where = { ...args.where, orgId };
+            args.where = { ...args.where, organizationId };
           }
           return query(args);
         },
         async findUnique({ model, args, query }) {
           const result = await query(args);
-          if (result && orgModels.includes(model) && result.orgId !== orgId) {
+          if (result && orgModels.includes(model) && result.organizationId !== organizationId) {
             return null;
           }
           return result;
         },
         async update({ model, args, query }) {
           if (orgModels.includes(model)) {
-            args.where = { ...args.where, orgId };
+            args.where = { ...args.where, organizationId };
           }
           return query(args);
         },
         async delete({ model, args, query }) {
           if (orgModels.includes(model)) {
-            args.where = { ...args.where, orgId };
+            args.where = { ...args.where, organizationId };
           }
           return query(args);
         },
         async create({ model, args, query }) {
           if (orgModels.includes(model)) {
-            args.data = { ...args.data, orgId };
+            args.data = { ...args.data, organizationId };
           }
           return query(args);
         }
@@ -111,11 +111,11 @@ async function createPrismaClient(orgId) {
   });
 }
 async function createRequestPrisma(event) {
-  const orgId = event.locals.user?.orgId;
+  const organizationId = event.locals.user?.organizationId;
   if (isCloudflareWorker() && event.platform?.env) {
-    return createPrismaClient(orgId);
+    return createPrismaClient(organizationId);
   }
-  return createPrismaClient(orgId);
+  return createPrismaClient(organizationId);
 }
 async function getPrisma() {
   return getPrismaSingleton();

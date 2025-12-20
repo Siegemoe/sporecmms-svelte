@@ -18,9 +18,10 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		include: {
 			asset: {
 				include: {
-					room: {
+					unit: {
 						include: {
-							site: { select: { id: true, name: true } }
+							site: { select: { id: true, name: true } },
+							building: { select: { id: true, name: true } }
 						}
 					}
 				}
@@ -34,8 +35,15 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 
 	// Get all assets for edit dropdown
 	const assets = await prisma.asset.findMany({
+		where: {
+			unit: {
+				site: {
+					organizationId: event.locals.user!.organizationId
+				}
+			}
+		},
 		include: {
-			room: {
+			unit: {
 				include: {
 					site: { select: { name: true } }
 				}
@@ -44,7 +52,29 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		orderBy: { name: 'asc' }
 	});
 
-	return { workOrder, assets };
+	// Map unit to room for frontend compatibility
+	// Since we throw a 404 if workOrder is not found, workOrderWithRoom will never be null
+	const workOrderWithRoom = {
+		...workOrder,
+		asset: workOrder.asset ? {
+			...workOrder.asset,
+			room: workOrder.asset.unit ? {
+				...workOrder.asset.unit,
+				name: workOrder.asset.unit.name || workOrder.asset.unit.roomNumber,
+				building: workOrder.asset.unit.building
+			} : null
+		} : null
+	};
+
+	const assetsWithRoom = assets.map(asset => ({
+		...asset,
+		room: asset.unit ? {
+			...asset.unit,
+			name: asset.unit.name || asset.unit.roomNumber
+		} : null
+	}));
+
+	return { workOrder: workOrderWithRoom, assets: assetsWithRoom };
 };
 
 export const actions = {
@@ -67,11 +97,11 @@ export const actions = {
 				title: true,
 				status: true,
 				assetId: true,
-				orgId: true
+				organizationId: true
 			}
 		});
 
-		broadcastToOrg(updatedWo.orgId, {
+		broadcastToOrg(updatedWo.organizationId, {
 			type: 'WO_UPDATE',
 			payload: updatedWo
 		});
@@ -103,7 +133,7 @@ export const actions = {
 				title: title.trim(),
 				description: description?.trim() || '',
 				assetId,
-				failureMode: failureMode || 'General'
+				// failureMode: failureMode || 'General' // Removed: Field does not exist in WorkOrder schema
 			}
 		});
 

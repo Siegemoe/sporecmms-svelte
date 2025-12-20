@@ -28,9 +28,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 		console.log('[Auth] Result:', authResult.state, authResult.user?.email);
 
 		event.locals.user = authResult.user;
-		event.locals.authState = authResult.state;
-		event.locals.organizations = authResult.organizations || [];
-		event.locals.currentOrganization = authResult.currentOrganization || null;
+		event.locals.authState = authResult.state as 'unauthenticated' | 'lobby' | 'org_member';
+		event.locals.organizations = (authResult as any).organizations || [];
+		event.locals.currentOrganization = (authResult as any).currentOrganization || null;
 	} catch (err) {
 		// If there's an error with auth (e.g., database connection), continue without auth
 		console.error('Auth validation error:', err);
@@ -82,7 +82,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
 
 	// Add security headers in production
-	if (event.platform?.env?.NODE_ENV === 'production' || event.url.hostname.includes('pages.dev')) {
+	if ((event.platform as any)?.env?.NODE_ENV === 'production' || event.url.hostname.includes('pages.dev')) {
 		// Prevent clickjacking
 		response.headers.set('X-Frame-Options', 'DENY');
 		// Prevent MIME type sniffing

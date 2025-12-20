@@ -17,13 +17,16 @@ export const nodes = [
 	() => import('./nodes/13'),
 	() => import('./nodes/14'),
 	() => import('./nodes/15'),
-	() => import('./nodes/16')
+	() => import('./nodes/16'),
+	() => import('./nodes/17'),
+	() => import('./nodes/18'),
+	() => import('./nodes/19')
 ];
 
 export const server_loads = [0];
 
 export const dictionary = {
-		"/": [~2],
+		"/": [2],
 		"/assets": [~3],
 		"/assets/[id]": [~4],
 		"/audit-log": [~5],
@@ -31,13 +34,16 @@ export const dictionary = {
 		"/auth/logout": [7],
 		"/auth/register": [~8],
 		"/dashboard": [~9],
-		"/profile": [~10],
-		"/sites": [~11],
-		"/sites/[id]": [~12],
-		"/users": [~13],
-		"/users/security": [14],
-		"/work-orders": [~15],
-		"/work-orders/[id]": [~16]
+		"/join-organization": [~10],
+		"/onboarding": [~11],
+		"/profile": [~12],
+		"/select-organization": [~13],
+		"/sites": [~14],
+		"/sites/[id]": [~15],
+		"/users": [~16],
+		"/users/security": [17],
+		"/work-orders": [~18],
+		"/work-orders/[id]": [~19]
 	};
 
 export const hooks = {

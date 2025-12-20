@@ -8,7 +8,7 @@ const CACHE_TTL = 5000; // 5 seconds
 
 export const GET: RequestHandler = async ({ locals, url }) => {
 	try {
-		const orgId = locals.user?.orgId;
+		const orgId = locals.user?.organizationId;
 		if (!orgId) {
 			return json({ error: 'Unauthorized' }, { status: 401 });
 		}
@@ -30,18 +30,20 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 		// Get recent activity from work orders
 		const recentWorkOrders = await prisma.workOrder.findMany({
 			where: {
-				orgId,
+				organizationId: orgId,
 				updatedAt: {
 					gte: new Date(now - 60000) // Last minute of activity
 				}
 			},
 			include: {
-				asset: {
-					include: {
-						unit: true // Changed from room
+				asset: true,
+				User_WorkOrder_assignedToIdToUser: {
+					select: {
+						id: true,
+						firstName: true,
+						email: true
 					}
-				},
-				assignedTo: true
+				}
 			},
 			orderBy: {
 				updatedAt: 'desc'
@@ -57,7 +59,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 				title: wo.title,
 				status: wo.status,
 				assetName: wo.asset?.name || 'Unknown Asset',
-				assignedTo: wo.assignedTo?.firstName || wo.assignedTo?.email || 'Unassigned'
+				assignedTo: wo.User_WorkOrder_assignedToIdToUser?.firstName || wo.User_WorkOrder_assignedToIdToUser?.email || 'Unassigned'
 			},
 			timestamp: wo.updatedAt.getTime()
 		}));

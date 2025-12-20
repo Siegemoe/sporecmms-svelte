@@ -10,13 +10,13 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 
 	const prisma = await createRequestPrisma(event);
 	const unitFilter = event.url.searchParams.get('unit');
-	const orgId = event.locals.user!.orgId;
+	const organizationId = event.locals.user!.organizationId;
 
 	const assets = await prisma.asset.findMany({
 		where: {
 			unit: {
 				site: {
-					orgId
+					organizationId
 				}
 			},
 			...(unitFilter && { unitId: unitFilter })
@@ -43,7 +43,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	const units = await prisma.unit.findMany({
 		where: {
 			site: {
-				orgId
+				organizationId
 			}
 		},
 		orderBy: [
@@ -76,7 +76,7 @@ export const actions = {
 		const description = formData.get('description') as string;
 		const purchaseDate = formData.get('purchaseDate') as string;
 		const warrantyExpiry = formData.get('warrantyExpiry') as string;
-		const orgId = event.locals.user!.orgId;
+		const organizationId = event.locals.user!.organizationId;
 
 		if (!name || name.trim() === '') {
 			return fail(400, { error: 'Asset name is required' });
@@ -91,7 +91,7 @@ export const actions = {
 			where: {
 				id: unitId,
 				site: {
-					orgId
+					organizationId
 				}
 			}
 		});
@@ -133,7 +133,7 @@ export const actions = {
 
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
-		const orgId = event.locals.user!.orgId;
+		const organizationId = event.locals.user!.organizationId;
 
 		const assetId = formData.get('assetId') as string;
 
@@ -147,7 +147,7 @@ export const actions = {
 				id: assetId,
 				unit: {
 					site: {
-						orgId
+						organizationId
 					}
 				}
 			},
@@ -173,7 +173,7 @@ export const actions = {
 	update: async (event: import('./$types').RequestEvent) => {
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
-		const orgId = event.locals.user!.orgId;
+		const organizationId = event.locals.user!.organizationId;
 
 		const assetId = formData.get('assetId') as string;
 		const name = formData.get('name') as string;
@@ -202,7 +202,7 @@ export const actions = {
 				id: assetId,
 				unit: {
 					site: {
-						orgId
+						organizationId
 					}
 				}
 			}
@@ -216,7 +216,7 @@ export const actions = {
 			where: {
 				id: unitId,
 				site: {
-					orgId
+					organizationId
 				}
 			}
 		});
@@ -244,5 +244,4 @@ export const actions = {
 
 		return { success: true, asset };
 	}
-};
-;null as any as Actions;
+};;null as any as Actions;

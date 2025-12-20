@@ -1,73 +1,74 @@
 // @ts-nocheck
 import type { LayoutServerLoad } from './$types';
 import { createRequestPrisma } from '$lib/server/prisma';
+import type { Asset, Building, Unit } from '@prisma/client';
 
 export const load = async ({ locals }: Parameters<LayoutServerLoad>[0]) => {
 	// Get data for Quick FAB if user is authenticated and has organization
-	let assets = [];
-	let buildings = [];
-	let rooms = [];
+	let assets: Asset[] = [];
+	let buildings: Building[] = [];
+	let rooms: Unit[] = [];
 
 	if (locals.user && locals.authState === 'org_member') {
 		const prisma = await createRequestPrisma({ locals } as any);
 
 		// Get assets
 		assets = await prisma.asset.findMany({
+			where: {
+				unit: {
+					site: {
+						                        organizationId: locals.user.organizationId ?? undefined
+
+					}
+				}
+			},
 			include: {
-				room: {
+				unit: {
 					include: {
-						building: {
-							select: {
-								id: true,
-								name: true
-							}
-						},
-						site: {
-							select: {
-								name: true
-							}
-						}
+						building: true,
+						site: { select: { name: true } }
 					}
 				}
 			},
 			orderBy: {
 				name: 'asc'
 			},
-			take: 50 // Limit to keep it performant
+			take: 35 // Limit to keep it performant
 		});
 
 		// Get buildings
 		buildings = await prisma.building.findMany({
-			include: {
+			where: {
 				site: {
-					select: {
-						name: true
-					}
+					                        organizationId: locals.user.organizationId ?? undefined
+
 				}
+			},
+			include: {
+				site: true
 			},
 			orderBy: {
 				name: 'asc'
-			}
+			},
+			take: 35 // Limit to keep it performant
 		});
 
-		// Get rooms
-		rooms = await prisma.room.findMany({
-			include: {
-				building: {
-					select: {
-						id: true,
-						name: true
-					}
-				},
+		// Get rooms (units)
+		rooms = await prisma.unit.findMany({
+			where: {
 				site: {
-					select: {
-						name: true
-					}
+					                        organizationId: locals.user.organizationId ?? undefined
+
 				}
 			},
+			include: {
+				building: true,
+				site: true
+			},
 			orderBy: {
-				name: 'asc'
-			}
+				roomNumber: 'asc'
+			},
+			take: 35 // Limit to keep it performant
 		});
 	}
 
@@ -79,12 +80,12 @@ export const load = async ({ locals }: Parameters<LayoutServerLoad>[0]) => {
 		assets: assets.map(asset => ({
 			id: asset.id,
 			name: asset.name,
-			room: asset.room ? {
-				id: asset.room.id,
-				name: asset.room.name,
-				building: asset.room.building,
-				site: asset.room.site ? {
-					name: asset.room.site.name
+			room: asset.unit ? {
+				id: asset.unit.id,
+				name: asset.unit.name || asset.unit.roomNumber,
+				building: asset.unit.building,
+				site: asset.unit.site ? {
+					name: asset.unit.site.name
 				} : undefined
 			} : undefined
 		})),
@@ -95,12 +96,12 @@ export const load = async ({ locals }: Parameters<LayoutServerLoad>[0]) => {
 				name: building.site.name
 			} : undefined
 		})),
-		rooms: rooms.map(room => ({
-			id: room.id,
-			name: room.name,
-			building: room.building,
-			site: room.site ? {
-				name: room.site.name
+		rooms: rooms.map(unit => ({
+			id: unit.id,
+			name: unit.name || unit.roomNumber,
+			building: unit.building,
+			site: unit.site ? {
+				name: unit.site.name
 			} : undefined
 		}))
 	};

@@ -11,22 +11,20 @@
 	let editData = {
 		title: '',
 		description: '',
-		assetId: '',
-		failureMode: ''
+		assetId: ''
 	};
 
 	$: workOrder = data.workOrder;
 	$: assets = data.assets || [];
 
-	const failureModes = FAILURE_MODES;
+	// Failure modes removed from schema
 	const statuses = WORK_ORDER_STATUSES;
 
 	function startEdit() {
 		editData = {
 			title: workOrder.title,
 			description: workOrder.description || '',
-			assetId: workOrder.assetId,
-			failureMode: workOrder.failureMode || 'General'
+			assetId: workOrder.assetId
 		};
 		isEditing = true;
 	}
@@ -99,18 +97,7 @@
 							{/each}
 						</select>
 					</div>
-					<div>
-						<label class="block text-sm font-bold text-spore-steel mb-2">Failure Mode</label>
-						<select
-							name="failureMode"
-							bind:value={editData.failureMode}
-							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-						>
-							{#each failureModes as mode}
-								<option value={mode}>{mode}</option>
-							{/each}
-						</select>
-					</div>
+					<!-- Failure Mode field removed -->
 				</div>
 
 				<div>
@@ -171,9 +158,9 @@
 						<h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-2">Location</h3>
 						<p class="text-spore-dark font-semibold">
 							{#if workOrder.asset?.room}
-								{workOrder.asset.room.site?.name} • Room {workOrder.asset.room.name}
+								{workOrder.asset.room.site?.name ?? 'Unknown Site'} • Room {workOrder.asset.room.name ?? 'Unknown Room'}
 								{#if workOrder.asset.room.building}
-									• {workOrder.asset.room.building}
+									• {workOrder.asset.room.building.name ?? 'Unknown Building'}
 								{/if}
 								{#if workOrder.asset.room.floor}
 									• Floor {workOrder.asset.room.floor}
@@ -183,10 +170,7 @@
 							{/if}
 						</p>
 					</div>
-					<div>
-						<h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-2">Failure Mode</h3>
-						<p class="text-spore-dark font-semibold">{workOrder.failureMode || 'General'}</p>
-					</div>
+					<!-- Failure Mode removed from schema - no longer displayed -->
 					<div>
 						<h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-2">Last Updated</h3>
 						<p class="text-spore-dark font-semibold">{new Date(workOrder.updatedAt).toLocaleString()}</p>

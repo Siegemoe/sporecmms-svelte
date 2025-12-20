@@ -55,7 +55,10 @@
       "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"yes, flush the database\" npx prisma migrate reset:*)",
       "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"yes, reset the database to apply new schema\" npx prisma migrate reset:*)",
       "Bash(npx wrangler tail:*)",
-      "Bash(npx @modelcontextprotocol/server-list:*)"
+      "Bash(npx @modelcontextprotocol/server-list:*)",
+      "Bash(npx prisma db pull:*)",
+      "Bash(npx tsx:*)",
+      "Bash(npx svelte-check:*)"
     ],
     "deny": [],
     "ask": []

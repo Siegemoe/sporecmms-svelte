@@ -189,7 +189,7 @@ async function createPrismaClient(organizationId?: string): Promise<PrismaClient
  * In Cloudflare Workers, this will use the edge client with proper env/fetch context
  */
 export async function createRequestPrisma(event: RequestEvent): Promise<PrismaClient> {
-  const organizationId = event.locals.user?.organizationId;
+  const organizationId = event.locals.user?.organizationId ?? undefined;
 
   // For Cloudflare Workers, ensure environment variables are accessible
   if (isCloudflareWorker() && (event.platform as any)?.env) {

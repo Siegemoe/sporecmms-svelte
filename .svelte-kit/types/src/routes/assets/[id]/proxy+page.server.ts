@@ -9,19 +9,19 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 
 	const prisma = await createRequestPrisma(event);
 	const { id } = event.params;
-	const orgId = event.locals.user!.orgId;
+	const organizationId = event.locals.user!.organizationId;
 
 	const asset = await prisma.asset.findFirst({
 		where: {
 			id,
-			room: {
+			unit: {
 				site: {
-					orgId
+					organizationId
 				}
 			}
 		},
 		include: {
-			room: {
+			unit: {
 				include: {
 					site: { select: { id: true, name: true } },
 					building: { select: { id: true, name: true } }
@@ -34,7 +34,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 					id: true,
 					title: true,
 					status: true,
-					failureMode: true,
+					// failureMode: true, // Removed: Field does not exist in WorkOrder schema
 					createdAt: true,
 					updatedAt: true
 				}
@@ -49,23 +49,40 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		throw error(404, 'Asset not found');
 	}
 
-	// Get all rooms for edit dropdown
-	const rooms = await prisma.room.findMany({
+	// Get all rooms (units) for edit dropdown
+	const units = await prisma.unit.findMany({
 		where: {
 			site: {
-				orgId
+				organizationId
 			}
 		},
 		orderBy: [
 			{ site: { name: 'asc' } },
 			{ building: { name: 'asc' } },
-			{ name: 'asc' }
+			{ roomNumber: 'asc' }
 		],
+		take: 50,
 		include: {
 			site: { select: { name: true } },
 			building: { select: { name: true } }
 		}
 	});
+
+	// Transform asset to include 'room' property for frontend compatibility
+	const assetWithRoom = {
+		...asset,
+		room: asset.unit ? {
+			...asset.unit,
+			name: asset.unit.name || asset.unit.roomNumber
+		} : null,
+		unit: undefined // Optional: remove unit if we want to be strict, but keeping it is fine
+	};
+
+	// Transform units to rooms
+	const rooms = units.map(unit => ({
+		...unit,
+		name: unit.name || unit.roomNumber
+	}));
 
 	// Work order stats for this asset
 	const [totalWO, pendingWO, inProgressWO, completedWO] = await Promise.all([
@@ -76,7 +93,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	]);
 
 	return { 
-		asset, 
+		asset: assetWithRoom, 
 		rooms,
 		woStats: { total: totalWO, pending: pendingWO, inProgress: inProgressWO, completed: completedWO }
 	};
@@ -87,7 +104,7 @@ export const actions = {
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id } = event.params;
-		const orgId = event.locals.user!.orgId;
+		const organizationId = event.locals.user!.organizationId;
 
 		const name = formData.get('name') as string;
 		const roomId = formData.get('roomId') as string;
@@ -104,9 +121,9 @@ export const actions = {
 		const existingAsset = await prisma.asset.findFirst({
 			where: {
 				id,
-				room: {
+				unit: {
 					site: {
-						orgId
+						organizationId
 					}
 				}
 			}
@@ -116,17 +133,17 @@ export const actions = {
 			return fail(404, { error: 'Asset not found' });
 		}
 
-		// Verify the room belongs to the user's org
-		const room = await prisma.room.findFirst({
+		// Verify the room (unit) belongs to the user's org
+		const unit = await prisma.unit.findFirst({
 			where: {
 				id: roomId,
 				site: {
-					orgId
+					organizationId
 				}
 			}
 		});
 
-		if (!room) {
+		if (!unit) {
 			return fail(404, { error: 'Room not found' });
 		}
 
@@ -134,7 +151,7 @@ export const actions = {
 			where: { id },
 			data: {
 				name: name.trim(),
-				roomId
+				unitId: roomId
 			}
 		});
 
@@ -149,15 +166,15 @@ export const actions = {
 
 		const prisma = await createRequestPrisma(event);
 		const { id } = event.params;
-		const orgId = event.locals.user!.orgId;
+		const organizationId = event.locals.user!.organizationId;
 
 		// Verify the asset belongs to the user's org before deleting
 		const asset = await prisma.asset.findFirst({
 			where: {
 				id,
-				room: {
+				unit: {
 					site: {
-						orgId
+						organizationId
 					}
 				}
 			}

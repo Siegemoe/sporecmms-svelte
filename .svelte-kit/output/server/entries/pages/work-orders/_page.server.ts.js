@@ -6,10 +6,40 @@ import { l as logAudit } from "../../../chunks/audit.js";
 const load = async (event) => {
   requireAuth(event);
   const prisma = await createRequestPrisma(event);
-  const myOnly = event.url.searchParams.get("my") === "true";
   const userId = event.locals.user.id;
+  const organizationId = event.locals.user.organizationId;
+  const myOnly = event.url.searchParams.get("my") === "true";
+  const status = event.url.searchParams.get("status");
+  const priority = event.url.searchParams.get("priority");
+  const siteId = event.url.searchParams.get("siteId");
+  const sort = event.url.searchParams.get("sort") || "dueDate";
+  const where = {
+    organizationId
+    // Implicitly enforced by extension, but explicit is cleaner
+  };
+  if (myOnly)
+    where.assignedToId = userId;
+  if (status)
+    where.status = status;
+  if (priority)
+    where.priority = priority;
+  if (siteId)
+    where.siteId = siteId;
+  let orderBy = [];
+  if (sort === "priority") {
+    orderBy = { priority: "desc" };
+  } else if (sort === "created") {
+    orderBy = { createdAt: "desc" };
+  } else if (sort === "updated") {
+    orderBy = { updatedAt: "desc" };
+  } else {
+    orderBy = [
+      { dueDate: "asc" },
+      { priority: "desc" }
+    ];
+  }
   const workOrders = await prisma.workOrder.findMany({
-    where: myOnly ? { assignedToId: userId } : void 0,
+    where,
     include: {
       asset: {
         select: {
@@ -28,9 +58,10 @@ const load = async (event) => {
           }
         }
       },
-      room: {
+      unit: {
         select: {
           id: true,
+          roomNumber: true,
           name: true,
           building: {
             select: {
@@ -44,6 +75,12 @@ const load = async (event) => {
           }
         }
       },
+      site: {
+        select: {
+          id: true,
+          name: true
+        }
+      },
       assignedTo: {
         select: {
           id: true,
@@ -52,22 +89,64 @@ const load = async (event) => {
         }
       }
     },
-    orderBy: {
-      createdAt: "desc"
-    }
+    orderBy
   });
   const assets = await prisma.asset.findMany({
+    where: {
+      unit: {
+        site: {
+          organizationId
+        }
+      }
+    },
     include: {
-      room: {
+      unit: {
         include: {
-          site: { select: { name: true } }
+          site: { select: { name: true } },
+          building: { select: { name: true } }
         }
       }
     },
     orderBy: { name: "asc" }
   });
+  const units = await prisma.unit.findMany({
+    where: {
+      site: {
+        organizationId
+      }
+    },
+    include: {
+      site: { select: { name: true } },
+      building: { select: { name: true } }
+    },
+    orderBy: [
+      { site: { name: "asc" } },
+      { building: { name: "asc" } },
+      { roomNumber: "asc" }
+    ]
+  });
+  const buildings = await prisma.building.findMany({
+    where: {
+      site: {
+        organizationId
+      }
+    },
+    include: {
+      site: { select: { name: true } }
+    },
+    orderBy: [
+      { site: { name: "asc" } },
+      { name: "asc" }
+    ]
+  });
+  const sites = await prisma.site.findMany({
+    where: {
+      organizationId
+    },
+    orderBy: { name: "asc" }
+  });
   const users = await prisma.user.findMany({
-    where: { orgId: event.locals.user.orgId },
+    where: { organizationId },
     select: {
       id: true,
       firstName: true,
@@ -76,7 +155,7 @@ const load = async (event) => {
     },
     orderBy: { firstName: "asc" }
   });
-  return { workOrders, assets, users, myOnly };
+  return { workOrders, assets, units, buildings, sites, users, myOnly, status, priority, siteId, sort };
 };
 const actions = {
   /**
@@ -87,30 +166,39 @@ const actions = {
     const data = await event.request.formData();
     const title = data.get("title");
     const description = data.get("description");
-    const failureMode = data.get("failureMode") || "General";
+    const priority = data.get("priority") || "MEDIUM";
+    const dueDate = data.get("dueDate");
+    const assignedToId = data.get("assignedToId");
     const selectionMode = data.get("selectionMode") || "asset";
     const assetId = data.get("assetId");
-    const roomId = data.get("roomId");
+    const unitId = data.get("unitId") || data.get("roomId");
     const buildingId = data.get("buildingId");
+    const siteId = data.get("siteId");
     if (!title) {
       return { success: false, error: "Title is required." };
     }
-    if (!assetId && !roomId && !buildingId) {
-      return { success: false, error: "Please select an asset, room, or building." };
+    if (!assetId && !unitId && !buildingId && !siteId) {
+      return { success: false, error: "Please select an asset, unit, building, or site." };
     }
     try {
-      const orgId = event.locals.user.orgId;
+      const organizationId = event.locals.user.organizationId;
+      const createdById = event.locals.user.id;
       const newWo = await prisma.workOrder.create({
         data: {
           title: title.trim(),
           description: description?.trim() || "",
-          failureMode,
-          orgId,
+          priority,
+          dueDate: dueDate ? new Date(dueDate) : null,
+          organizationId,
+          // Ensure non-null
+          createdById,
+          assignedToId: assignedToId || null,
           status: "PENDING",
           // Only set the relevant ID based on selection mode
           ...selectionMode === "asset" && { assetId },
-          ...selectionMode === "room" && { roomId },
-          ...selectionMode === "building" && { buildingId }
+          ...(selectionMode === "unit" || selectionMode === "room") && { unitId },
+          ...selectionMode === "building" && { buildingId },
+          ...selectionMode === "site" && { siteId }
         },
         select: {
           id: true,
@@ -118,20 +206,25 @@ const actions = {
           status: true,
           assetId: true,
           buildingId: true,
-          roomId: true,
-          orgId: true,
-          createdAt: true
+          unitId: true,
+          siteId: true,
+          organizationId: true,
+          createdAt: true,
+          priority: true,
+          dueDate: true
         }
       });
-      broadcastToOrg(orgId, {
+      broadcastToOrg(organizationId, {
         type: "WO_NEW",
         payload: newWo
       });
       await logAudit(event.locals.user.id, "WORK_ORDER_CREATED", {
         workOrderId: newWo.id,
         title: newWo.title,
+        priority: newWo.priority,
+        dueDate: newWo.dueDate,
         selectionMode,
-        selectionDetails: selectionMode === "asset" ? { assetId } : selectionMode === "room" ? { roomId } : selectionMode === "building" ? { buildingId } : {}
+        selectionDetails: selectionMode === "asset" ? { assetId } : selectionMode === "unit" || selectionMode === "room" ? { unitId } : selectionMode === "building" ? { buildingId } : selectionMode === "site" ? { siteId } : {}
       });
       return { success: true, workOrder: newWo };
     } catch (e) {
@@ -161,13 +254,13 @@ const actions = {
           title: true,
           status: true,
           assetId: true,
-          orgId: true
+          organizationId: true
         }
       });
       if (!updatedWo) {
         return { success: false, error: "Work order not found." };
       }
-      broadcastToOrg(updatedWo.orgId, {
+      broadcastToOrg(updatedWo.organizationId, {
         type: "WO_UPDATE",
         payload: updatedWo
       });
@@ -199,13 +292,13 @@ const actions = {
           title: true,
           status: true,
           assignedToId: true,
-          orgId: true,
+          organizationId: true,
           assignedTo: {
             select: { firstName: true, lastName: true }
           }
         }
       });
-      broadcastToOrg(updatedWo.orgId, {
+      broadcastToOrg(updatedWo.organizationId, {
         type: "WO_UPDATE",
         payload: updatedWo
       });

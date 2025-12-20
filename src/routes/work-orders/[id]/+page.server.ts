@@ -19,7 +19,8 @@ export const load: PageServerLoad = async (event) => {
 				include: {
 					unit: {
 						include: {
-							site: { select: { id: true, name: true } }
+							site: { select: { id: true, name: true } },
+							building: { select: { id: true, name: true } }
 						}
 					}
 				}
@@ -51,16 +52,18 @@ export const load: PageServerLoad = async (event) => {
 	});
 
 	// Map unit to room for frontend compatibility
-	const workOrderWithRoom = workOrder ? {
+	// Since we throw a 404 if workOrder is not found, workOrderWithRoom will never be null
+	const workOrderWithRoom = {
 		...workOrder,
 		asset: workOrder.asset ? {
 			...workOrder.asset,
 			room: workOrder.asset.unit ? {
 				...workOrder.asset.unit,
-				name: workOrder.asset.unit.name || workOrder.asset.unit.roomNumber
+				name: workOrder.asset.unit.name || workOrder.asset.unit.roomNumber,
+				building: workOrder.asset.unit.building
 			} : null
 		} : null
-	} : null;
+	};
 
 	const assetsWithRoom = assets.map(asset => ({
 		...asset,

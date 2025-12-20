@@ -12,7 +12,7 @@ const load = async (event) => {
     include: {
       asset: {
         include: {
-          room: {
+          unit: {
             include: {
               site: { select: { id: true, name: true } }
             }
@@ -25,8 +25,15 @@ const load = async (event) => {
     throw error(404, "Work order not found");
   }
   const assets = await prisma.asset.findMany({
+    where: {
+      unit: {
+        site: {
+          organizationId: event.locals.user.organizationId
+        }
+      }
+    },
     include: {
-      room: {
+      unit: {
         include: {
           site: { select: { name: true } }
         }
@@ -34,7 +41,24 @@ const load = async (event) => {
     },
     orderBy: { name: "asc" }
   });
-  return { workOrder, assets };
+  const workOrderWithRoom = workOrder ? {
+    ...workOrder,
+    asset: workOrder.asset ? {
+      ...workOrder.asset,
+      room: workOrder.asset.unit ? {
+        ...workOrder.asset.unit,
+        name: workOrder.asset.unit.name || workOrder.asset.unit.roomNumber
+      } : null
+    } : null
+  } : null;
+  const assetsWithRoom = assets.map((asset) => ({
+    ...asset,
+    room: asset.unit ? {
+      ...asset.unit,
+      name: asset.unit.name || asset.unit.roomNumber
+    } : null
+  }));
+  return { workOrder: workOrderWithRoom, assets: assetsWithRoom };
 };
 const actions = {
   updateStatus: async (event) => {
@@ -53,10 +77,10 @@ const actions = {
         title: true,
         status: true,
         assetId: true,
-        orgId: true
+        organizationId: true
       }
     });
-    broadcastToOrg(updatedWo.orgId, {
+    broadcastToOrg(updatedWo.organizationId, {
       type: "WO_UPDATE",
       payload: updatedWo
     });
@@ -69,7 +93,7 @@ const actions = {
     const title = formData.get("title");
     const description = formData.get("description");
     const assetId = formData.get("assetId");
-    const failureMode = formData.get("failureMode");
+    formData.get("failureMode");
     if (!title || title.trim() === "") {
       return fail(400, { error: "Title is required" });
     }
@@ -81,8 +105,8 @@ const actions = {
       data: {
         title: title.trim(),
         description: description?.trim() || "",
-        assetId,
-        failureMode: failureMode || "General"
+        assetId
+        // failureMode: failureMode || 'General' // Removed: Field does not exist in WorkOrder schema
       }
     });
     return { success: true, workOrder };

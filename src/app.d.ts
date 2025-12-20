@@ -22,6 +22,7 @@ declare global {
 				id: string;
 				name: string;
 			} | null;
+			authError?: boolean;
 		}
 		// interface PageData {}
 		// interface PageState {}

@@ -43,7 +43,6 @@ const actions = {
       const formData = await request.formData();
       const confirmPassword = formData.get("confirmPassword");
       const validation = validateInput(registerSchema, {
-        orgName: formData.get("orgName"),
         firstName: formData.get("firstName"),
         lastName: formData.get("lastName"),
         email: formData.get("email"),
@@ -53,7 +52,6 @@ const actions = {
         const firstError = Object.values(validation.errors)[0];
         return fail(400, {
           error: firstError,
-          orgName: formData.get("orgName"),
           firstName: formData.get("firstName"),
           lastName: formData.get("lastName"),
           email: formData.get("email")
@@ -62,7 +60,6 @@ const actions = {
       if (validation.data.password !== confirmPassword) {
         return fail(400, {
           error: "Passwords do not match",
-          orgName: formData.get("orgName"),
           firstName: formData.get("firstName"),
           lastName: formData.get("lastName"),
           email: formData.get("email")
@@ -75,32 +72,27 @@ const actions = {
       if (existingUser) {
         return fail(400, {
           error: "An account with this email already exists",
-          orgName: formData.get("orgName"),
           firstName: formData.get("firstName"),
           lastName: formData.get("lastName"),
           email: formData.get("email")
         });
       }
       const hashedPassword = await hashPassword(validation.data.password);
-      const { user } = await client.$transaction(async (tx) => {
-        const org = await tx.org.create({
-          data: { name: validation.data.orgName }
-        });
-        const user2 = await tx.user.create({
-          data: {
-            email: validation.data.email,
-            password: hashedPassword,
-            firstName: validation.data.firstName,
-            lastName: validation.data.lastName,
-            role: "ADMIN",
-            orgId: org.id
-          }
-        });
-        return { org, user: user2 };
+      const user = await client.user.create({
+        data: {
+          email: validation.data.email,
+          password: hashedPassword,
+          firstName: validation.data.firstName,
+          lastName: validation.data.lastName,
+          role: "TECHNICIAN",
+          // Default role, can be changed when joining org
+          organizationId: null
+          // Explicitly set to null for lobby state
+        }
       });
       const sessionId = await createSession(user.id);
       setSessionCookie(cookies, sessionId);
-      throw redirect(303, "/dashboard");
+      throw redirect(303, "/onboarding");
     } catch (error2) {
       console.error("[REGISTER] Error:", error2);
       console.error("[REGISTER] Stack:", error2.stack);

@@ -1,11 +1,12 @@
 import type { LayoutServerLoad } from './$types';
 import { createRequestPrisma } from '$lib/server/prisma';
+import type { Asset, Building, Unit } from '@prisma/client';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	// Get data for Quick FAB if user is authenticated and has organization
-	let assets = [];
-	let buildings = [];
-	let rooms = [];
+	let assets: Asset[] = [];
+	let buildings: Building[] = [];
+	let rooms: Unit[] = [];
 
 	if (locals.user && locals.authState === 'org_member') {
 		const prisma = await createRequestPrisma({ locals } as any);
@@ -15,7 +16,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 			where: {
 				unit: {
 					site: {
-						                        organizationId: locals.user.organizationId
+						                        organizationId: locals.user.organizationId ?? undefined
 
 					}
 				}
@@ -23,17 +24,8 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 			include: {
 				unit: {
 					include: {
-						building: {
-							select: {
-								id: true,
-								name: true
-							}
-						},
-						site: {
-							select: {
-								name: true
-							}
-						}
+						building: true,
+						site: { select: { name: true } }
 					}
 				}
 			},
@@ -47,16 +39,12 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		buildings = await prisma.building.findMany({
 			where: {
 				site: {
-					                        organizationId: locals.user.organizationId
+					                        organizationId: locals.user.organizationId ?? undefined
 
 				}
 			},
 			include: {
-				site: {
-					select: {
-						name: true
-					}
-				}
+				site: true
 			},
 			orderBy: {
 				name: 'asc'
@@ -68,22 +56,13 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		rooms = await prisma.unit.findMany({
 			where: {
 				site: {
-					                        organizationId: locals.user.organizationId
+					                        organizationId: locals.user.organizationId ?? undefined
 
 				}
 			},
 			include: {
-				building: {
-					select: {
-						id: true,
-						name: true
-					}
-				},
-				site: {
-					select: {
-						name: true
-					}
-				}
+				building: true,
+				site: true
 			},
 			orderBy: {
 				roomNumber: 'asc'

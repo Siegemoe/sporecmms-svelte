@@ -54,6 +54,7 @@ const actions = {
       const user = await client.user.findUnique({
         where: { email: validation.data.email }
       });
+      console.log(`[Auth Debug] User lookup for ${validation.data.email}:`, user ? "Found" : "Not Found");
       if (!user) {
         await security.logSecurityEvent({
           ipAddress: ip,
@@ -64,6 +65,7 @@ const actions = {
         return fail(400, { error: "Invalid email or password", email: formData.get("email") });
       }
       const valid = await verifyPassword(validation.data.password, user.password);
+      console.log(`[Auth Debug] Password verification for ${validation.data.email}:`, valid ? "Valid" : "Invalid");
       if (!valid) {
         await security.logSecurityEvent({
           ipAddress: ip,

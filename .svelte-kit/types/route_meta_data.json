@@ -10,8 +10,8 @@
 	"/api/security/blocks": [
 		"src/routes/api/security/blocks/+server.ts"
 	],
-	"/api/security/logs": [
-		"src/routes/api/security/logs/+server.ts"
+	"/api/security/event-logs": [
+		"src/routes/api/security/event-logs/+server.ts"
 	],
 	"/assets": [
 		"src/routes/assets/+page.server.ts",
@@ -40,6 +40,9 @@
 	"/dashboard": [
 		"src/routes/dashboard/+page.server.ts",
 		"src/routes/+layout.server.ts"
+	],
+	"/favicon.ico": [
+		"src/routes/favicon.ico/+server.ts"
 	],
 	"/join-organization": [
 		"src/routes/join-organization/+page.server.ts",

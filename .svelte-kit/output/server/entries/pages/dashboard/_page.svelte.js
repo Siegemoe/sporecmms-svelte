@@ -1,4 +1,4 @@
-import { c as create_ssr_component, o as onDestroy, e as escape, g as each } from "../../../chunks/ssr.js";
+import { c as create_ssr_component, o as onDestroy, e as escape, f as each } from "../../../chunks/ssr.js";
 import { w as wsStore } from "../../../chunks/websocket.js";
 const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let stats;

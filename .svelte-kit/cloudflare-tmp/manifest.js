@@ -7,10 +7,10 @@ function __memo(fn) {
 return {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set(["favicon.png","favicon.svg"]),
+	assets: new Set(["favicon.png","favicon.svg","_headers"]),
 	mimeTypes: {".png":"image/png",".svg":"image/svg+xml"},
 	_: {
-		client: {"start":"_app/immutable/entry/start.21d15f4d.js","app":"_app/immutable/entry/app.ff2d145a.js","imports":["_app/immutable/entry/start.21d15f4d.js","_app/immutable/chunks/scheduler.82236372.js","_app/immutable/chunks/singletons.043e8d30.js","_app/immutable/chunks/index.8162ef61.js","_app/immutable/chunks/parse.bee59afc.js","_app/immutable/entry/app.ff2d145a.js","_app/immutable/chunks/scheduler.82236372.js","_app/immutable/chunks/index.a73b1e10.js"],"stylesheets":[],"fonts":[]},
+		client: {"start":"_app/immutable/entry/start.6cf17a87.js","app":"_app/immutable/entry/app.0411f405.js","imports":["_app/immutable/entry/start.6cf17a87.js","_app/immutable/chunks/scheduler.a6309769.js","_app/immutable/chunks/singletons.9a0b4e84.js","_app/immutable/chunks/index.7647694d.js","_app/immutable/chunks/parse.bee59afc.js","_app/immutable/entry/app.0411f405.js","_app/immutable/chunks/scheduler.a6309769.js","_app/immutable/chunks/index.e9baf4e7.js"],"stylesheets":[],"fonts":[]},
 		nodes: [
 			__memo(() => import('../output/server/nodes/0.js')),
 			__memo(() => import('../output/server/nodes/1.js')),
@@ -28,7 +28,10 @@ return {
 			__memo(() => import('../output/server/nodes/13.js')),
 			__memo(() => import('../output/server/nodes/14.js')),
 			__memo(() => import('../output/server/nodes/15.js')),
-			__memo(() => import('../output/server/nodes/16.js'))
+			__memo(() => import('../output/server/nodes/16.js')),
+			__memo(() => import('../output/server/nodes/17.js')),
+			__memo(() => import('../output/server/nodes/18.js')),
+			__memo(() => import('../output/server/nodes/19.js'))
 		],
 		routes: [
 			{
@@ -53,11 +56,11 @@ return {
 				endpoint: __memo(() => import('../output/server/entries/endpoints/api/security/blocks/_server.ts.js'))
 			},
 			{
-				id: "/api/security/logs",
-				pattern: /^\/api\/security\/logs\/?$/,
+				id: "/api/security/event-logs",
+				pattern: /^\/api\/security\/event-logs\/?$/,
 				params: [],
 				page: null,
-				endpoint: __memo(() => import('../output/server/entries/endpoints/api/security/logs/_server.ts.js'))
+				endpoint: __memo(() => import('../output/server/entries/endpoints/api/security/event-logs/_server.ts.js'))
 			},
 			{
 				id: "/assets",
@@ -109,52 +112,80 @@ return {
 				endpoint: null
 			},
 			{
+				id: "/favicon.ico",
+				pattern: /^\/favicon\.ico\/?$/,
+				params: [],
+				page: null,
+				endpoint: __memo(() => import('../output/server/entries/endpoints/favicon.ico/_server.ts.js'))
+			},
+			{
+				id: "/join-organization",
+				pattern: /^\/join-organization\/?$/,
+				params: [],
+				page: { layouts: [0,], errors: [1,], leaf: 10 },
+				endpoint: null
+			},
+			{
+				id: "/onboarding",
+				pattern: /^\/onboarding\/?$/,
+				params: [],
+				page: { layouts: [0,], errors: [1,], leaf: 11 },
+				endpoint: null
+			},
+			{
 				id: "/profile",
 				pattern: /^\/profile\/?$/,
 				params: [],
-				page: { layouts: [0,], errors: [1,], leaf: 10 },
+				page: { layouts: [0,], errors: [1,], leaf: 12 },
+				endpoint: null
+			},
+			{
+				id: "/select-organization",
+				pattern: /^\/select-organization\/?$/,
+				params: [],
+				page: { layouts: [0,], errors: [1,], leaf: 13 },
 				endpoint: null
 			},
 			{
 				id: "/sites",
 				pattern: /^\/sites\/?$/,
 				params: [],
-				page: { layouts: [0,], errors: [1,], leaf: 11 },
+				page: { layouts: [0,], errors: [1,], leaf: 14 },
 				endpoint: null
 			},
 			{
 				id: "/sites/[id]",
 				pattern: /^\/sites\/([^/]+?)\/?$/,
 				params: [{"name":"id","optional":false,"rest":false,"chained":false}],
-				page: { layouts: [0,], errors: [1,], leaf: 12 },
+				page: { layouts: [0,], errors: [1,], leaf: 15 },
 				endpoint: null
 			},
 			{
 				id: "/users",
 				pattern: /^\/users\/?$/,
 				params: [],
-				page: { layouts: [0,], errors: [1,], leaf: 13 },
+				page: { layouts: [0,], errors: [1,], leaf: 16 },
 				endpoint: null
 			},
 			{
 				id: "/users/security",
 				pattern: /^\/users\/security\/?$/,
 				params: [],
-				page: { layouts: [0,], errors: [1,], leaf: 14 },
+				page: { layouts: [0,], errors: [1,], leaf: 17 },
 				endpoint: null
 			},
 			{
 				id: "/work-orders",
 				pattern: /^\/work-orders\/?$/,
 				params: [],
-				page: { layouts: [0,], errors: [1,], leaf: 15 },
+				page: { layouts: [0,], errors: [1,], leaf: 18 },
 				endpoint: null
 			},
 			{
 				id: "/work-orders/[id]",
 				pattern: /^\/work-orders\/([^/]+?)\/?$/,
 				params: [{"name":"id","optional":false,"rest":false,"chained":false}],
-				page: { layouts: [0,], errors: [1,], leaf: 16 },
+				page: { layouts: [0,], errors: [1,], leaf: 19 },
 				endpoint: null
 			}
 		],

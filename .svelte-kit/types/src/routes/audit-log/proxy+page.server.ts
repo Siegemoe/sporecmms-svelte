@@ -10,7 +10,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		throw error(403, 'Access denied. Admin privileges required.');
 	}
 
-	const orgId = event.locals.user!.orgId;
+	const organizationId = event.locals.user!.organizationId;
 	const page = parseInt(event.url.searchParams.get('page') || '1');
 	const limit = 50;
 	const skip = (page - 1) * limit;
@@ -19,7 +19,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	const client = await getPrisma();
 	const auditLogs = await client.auditLog.findMany({
 		where: {
-			user: { orgId }
+			user: { organizationId }
 		},
 		orderBy: { createdAt: 'desc' },
 		skip,
@@ -37,7 +37,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 
 	const totalCount = await client.auditLog.count({
 		where: {
-			user: { orgId }
+			user: { organizationId }
 		}
 	});
 

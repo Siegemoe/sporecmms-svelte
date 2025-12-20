@@ -1,4 +1,4 @@
-import { c as create_ssr_component, e as escape, g as each, f as add_attribute } from "../../../chunks/ssr.js";
+import { c as create_ssr_component, e as escape, f as each, g as add_attribute } from "../../../chunks/ssr.js";
 import "devalue";
 function getRoleBadgeColor(role) {
   switch (role) {

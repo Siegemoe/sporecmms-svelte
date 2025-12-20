@@ -79,7 +79,7 @@ async function startPolling() {
 						}));
 
 					if (newMessages.length > 0) {
-						lastPollTimestamp = Math.max(...newMessages.map(m => m.timestamp));
+						lastPollTimestamp = Math.max(...newMessages.map((m: any) => m.timestamp));
 
 						wsStore.update(state => ({
 							...state,

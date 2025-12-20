@@ -9,7 +9,25 @@ const load = async (event) => {
     orderBy: { createdAt: "desc" },
     include: {
       _count: {
-        select: { rooms: true }
+        select: {
+          units: true,
+          buildings: true,
+          assets: true
+        }
+      },
+      units: {
+        include: {
+          _count: {
+            select: { assets: true }
+          }
+        }
+      },
+      buildings: {
+        include: {
+          _count: {
+            select: { units: true }
+          }
+        }
       }
     }
   });
@@ -26,7 +44,7 @@ const actions = {
     const site = await prisma.site.create({
       data: {
         name: name.trim(),
-        orgId: event.locals.user.orgId
+        organizationId: event.locals.user.organizationId
       }
     });
     await logAudit(event.locals.user.id, "SITE_CREATED", {

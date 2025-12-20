@@ -5,12 +5,21 @@ const load = async (event) => {
   requireAuth(event);
   const prisma = await createRequestPrisma(event);
   const { id } = event.params;
-  const asset = await prisma.asset.findUnique({
-    where: { id },
+  const organizationId = event.locals.user.organizationId;
+  const asset = await prisma.asset.findFirst({
+    where: {
+      id,
+      unit: {
+        site: {
+          organizationId
+        }
+      }
+    },
     include: {
-      room: {
+      unit: {
         include: {
-          site: { select: { id: true, name: true } }
+          site: { select: { id: true, name: true } },
+          building: { select: { id: true, name: true } }
         }
       },
       workOrders: {
@@ -20,7 +29,7 @@ const load = async (event) => {
           id: true,
           title: true,
           status: true,
-          failureMode: true,
+          // failureMode: true, // Removed: Field does not exist in WorkOrder schema
           createdAt: true,
           updatedAt: true
         }
@@ -33,16 +42,36 @@ const load = async (event) => {
   if (!asset) {
     throw error(404, "Asset not found");
   }
-  const rooms = await prisma.room.findMany({
+  const units = await prisma.unit.findMany({
+    where: {
+      site: {
+        organizationId
+      }
+    },
     orderBy: [
       { site: { name: "asc" } },
-      { building: "asc" },
-      { name: "asc" }
+      { building: { name: "asc" } },
+      { roomNumber: "asc" }
     ],
+    take: 50,
     include: {
-      site: { select: { name: true } }
+      site: { select: { name: true } },
+      building: { select: { name: true } }
     }
   });
+  const assetWithRoom = {
+    ...asset,
+    room: asset.unit ? {
+      ...asset.unit,
+      name: asset.unit.name || asset.unit.roomNumber
+    } : null,
+    unit: void 0
+    // Optional: remove unit if we want to be strict, but keeping it is fine
+  };
+  const rooms = units.map((unit) => ({
+    ...unit,
+    name: unit.name || unit.roomNumber
+  }));
   const [totalWO, pendingWO, inProgressWO, completedWO] = await Promise.all([
     prisma.workOrder.count({ where: { assetId: id } }),
     prisma.workOrder.count({ where: { assetId: id, status: "PENDING" } }),
@@ -50,7 +79,7 @@ const load = async (event) => {
     prisma.workOrder.count({ where: { assetId: id, status: "COMPLETED" } })
   ]);
   return {
-    asset,
+    asset: assetWithRoom,
     rooms,
     woStats: { total: totalWO, pending: pendingWO, inProgress: inProgressWO, completed: completedWO }
   };
@@ -60,6 +89,7 @@ const actions = {
     const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
     const { id } = event.params;
+    const organizationId = event.locals.user.organizationId;
     const name = formData.get("name");
     const roomId = formData.get("roomId");
     if (!name || name.trim() === "") {
@@ -68,11 +98,35 @@ const actions = {
     if (!roomId) {
       return fail(400, { error: "Room is required" });
     }
+    const existingAsset = await prisma.asset.findFirst({
+      where: {
+        id,
+        unit: {
+          site: {
+            organizationId
+          }
+        }
+      }
+    });
+    if (!existingAsset) {
+      return fail(404, { error: "Asset not found" });
+    }
+    const unit = await prisma.unit.findFirst({
+      where: {
+        id: roomId,
+        site: {
+          organizationId
+        }
+      }
+    });
+    if (!unit) {
+      return fail(404, { error: "Room not found" });
+    }
     const asset = await prisma.asset.update({
       where: { id },
       data: {
         name: name.trim(),
-        roomId
+        unitId: roomId
       }
     });
     return { success: true, asset };
@@ -83,6 +137,20 @@ const actions = {
     }
     const prisma = await createRequestPrisma(event);
     const { id } = event.params;
+    const organizationId = event.locals.user.organizationId;
+    const asset = await prisma.asset.findFirst({
+      where: {
+        id,
+        unit: {
+          site: {
+            organizationId
+          }
+        }
+      }
+    });
+    if (!asset) {
+      return fail(404, { error: "Asset not found" });
+    }
     await prisma.asset.delete({
       where: { id }
     });

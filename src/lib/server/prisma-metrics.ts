@@ -1,6 +1,23 @@
 // Prisma metrics and monitoring
 import type { PrismaClient } from '@prisma/client';
 
+// Define Prisma event types
+interface PrismaQueryEvent {
+  timestamp: Date;
+  query: string;
+  params: string;
+  duration: number;
+  target: string;
+  model?: string;
+  action?: string;
+}
+
+interface PrismaErrorEvent {
+  timestamp: Date;
+  message: string;
+  target: string;
+}
+
 export class PrismaMetrics {
   private static instance: PrismaMetrics;
   private queryTimes: Map<string, number[]> = new Map();
@@ -15,8 +32,8 @@ export class PrismaMetrics {
 
   setupMetrics(prisma: PrismaClient) {
     // Log slow queries (>100ms)
-    prisma.$on('query', (e) => {
-      const queryKey = `${e.model}.${e.action}`;
+    (prisma as any).$on('query', (e: PrismaQueryEvent) => {
+      const queryKey = `${e.model || 'unknown'}.${e.action || 'unknown'}`;
       const duration = e.duration;
 
       // Track metrics
@@ -46,7 +63,7 @@ export class PrismaMetrics {
     });
 
     // Log errors
-    prisma.$on('error', (e) => {
+    (prisma as any).$on('error', (e: PrismaErrorEvent) => {
       console.error(`[PRISMA] Error: ${e.message}`, {
         target: e.target
       });

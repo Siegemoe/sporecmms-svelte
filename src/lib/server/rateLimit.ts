@@ -23,4 +23,4 @@ export const RATE_LIMITS = {
 };
 
 // Export the new security manager for direct access
-export { SecurityManager, SECURITY_RATE_LIMITS };
+export { SecurityManager };

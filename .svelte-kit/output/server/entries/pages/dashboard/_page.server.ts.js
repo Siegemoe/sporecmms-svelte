@@ -5,22 +5,25 @@ const load = async (event) => {
     requireAuth(event);
     console.log("[DASHBOARD] Loading dashboard for user:", event.locals.user?.id);
     const prisma = await createRequestPrisma(event);
+    const organizationId = event.locals.user.organizationId;
     const [total, pending, inProgress, completed] = await Promise.all([
-      prisma.workOrder.count(),
-      prisma.workOrder.count({ where: { status: "PENDING" } }),
-      prisma.workOrder.count({ where: { status: "IN_PROGRESS" } }),
-      prisma.workOrder.count({ where: { status: "COMPLETED" } })
+      prisma.workOrder.count({ where: { organizationId } }),
+      prisma.workOrder.count({ where: { status: "PENDING", organizationId } }),
+      prisma.workOrder.count({ where: { status: "IN_PROGRESS", organizationId } }),
+      prisma.workOrder.count({ where: { status: "COMPLETED", organizationId } })
     ]);
     console.log("[DASHBOARD] Stats loaded:", { total, pending, inProgress, completed });
     const recentWorkOrders = await prisma.workOrder.findMany({
+      where: { organizationId },
       take: 5,
       orderBy: { updatedAt: "desc" },
       include: {
         asset: {
           include: {
-            room: {
+            unit: {
               select: {
                 name: true,
+                roomNumber: true,
                 building: true,
                 floor: true,
                 site: {
@@ -34,17 +37,34 @@ const load = async (event) => {
     });
     console.log("[DASHBOARD] Recent work orders loaded:", recentWorkOrders.length);
     const sites = await prisma.site.findMany({
+      where: { organizationId },
       include: {
         _count: {
-          select: { rooms: true }
+          select: { units: true }
         }
       }
     });
     console.log("[DASHBOARD] Sites loaded:", sites.length);
+    const mappedRecentWorkOrders = recentWorkOrders.map((wo) => ({
+      ...wo,
+      asset: wo.asset ? {
+        ...wo.asset,
+        room: wo.asset.unit ? {
+          ...wo.asset.unit,
+          name: wo.asset.unit.name || wo.asset.unit.roomNumber
+        } : null
+      } : null
+    }));
+    const mappedSites = sites.map((site) => ({
+      ...site,
+      _count: {
+        rooms: site._count.units
+      }
+    }));
     return {
       stats: { total, pending, inProgress, completed },
-      recentWorkOrders,
-      sites
+      recentWorkOrders: mappedRecentWorkOrders,
+      sites: mappedSites
     };
   } catch (error) {
     console.error("[DASHBOARD] Error loading dashboard:", error);
