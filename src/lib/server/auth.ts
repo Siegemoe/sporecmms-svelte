@@ -185,3 +185,61 @@ export function canCreateWorkOrders(role: string): boolean {
 export function canDeleteWorkOrders(role: string): boolean {
 	return role === 'ADMIN' || role === 'MANAGER';
 }
+
+// Password reset functions
+export async function validateResetToken(token: string) {
+	const client = await getPrisma();
+
+	const user = await client.user.findFirst({
+		where: {
+			passwordResetToken: token,
+			passwordResetExpiresAt: {
+				gt: new Date()
+			}
+		},
+		select: {
+			id: true,
+			email: true
+		}
+	});
+
+	return user;
+}
+
+export async function resetPassword(token: string, newPassword: string) {
+	const client = await getPrisma();
+
+	// Validate token first
+	const user = await validateResetToken(token);
+	if (!user) {
+		throw new Error('Invalid or expired reset token');
+	}
+
+	// Hash the new password
+	const hashedPassword = await hashPassword(newPassword);
+
+	// Update user password and clear reset token
+	await client.user.update({
+		where: { id: user.id },
+		data: {
+			password: hashedPassword,
+			passwordResetToken: null,
+			passwordResetExpiresAt: null
+		}
+	});
+
+	return user;
+}
+
+export async function setRecoveryPassphrase(userId: string, passphrase: string) {
+	const client = await getPrisma();
+
+	const hashedPassphrase = await hashPassword(passphrase);
+
+	await client.user.update({
+		where: { id: userId },
+		data: {
+			recoveryPassphrase: hashedPassphrase
+		}
+	});
+}

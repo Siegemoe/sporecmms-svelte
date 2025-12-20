@@ -2,7 +2,7 @@ import { r as redirect, f as fail } from "../../../../chunks/index.js";
 import { v as verifyPassword, c as createSession, s as setSessionCookie } from "../../../../chunks/auth.js";
 import { g as getPrisma } from "../../../../chunks/prisma.js";
 import { v as validateInput, l as loginSchema } from "../../../../chunks/validation.js";
-import { a as SECURITY_RATE_LIMITS, S as SecurityManager } from "../../../../chunks/security.js";
+import { S as SECURITY_RATE_LIMITS, a as SecurityManager } from "../../../../chunks/security.js";
 const load = async ({ locals }) => {
   if (locals.user) {
     throw redirect(303, "/dashboard");

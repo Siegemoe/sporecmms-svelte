@@ -4,7 +4,7 @@ import { validateSessionWithOrg } from '$lib/server/auth';
 import { building } from '$app/environment';
 
 // Routes that don't require authentication
-const publicRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password', '/', '/favicon.ico', '/favicon.png'];
+const publicRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password', '/', '/favicon.ico', '/favicon.png'];
 // Routes that require organization membership
 const orgRoutes = ['/dashboard', '/work-orders', '/sites', '/assets', '/users', '/audit-log'];
 // Routes for lobby state (authenticated but no org)

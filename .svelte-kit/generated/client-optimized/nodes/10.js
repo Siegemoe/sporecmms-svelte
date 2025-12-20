@@ -1,1 +1,1 @@
-export { default as component } from "../../../../src/routes/join-organization/+page.svelte";
+export { default as component } from "../../../../src/routes/auth/reset-password/[token]/+page.svelte";

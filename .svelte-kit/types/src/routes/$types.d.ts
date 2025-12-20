@@ -13,8 +13,8 @@ type OptionalUnion<U extends Record<string, any>, A extends keyof U = U extends 
 export type Snapshot<T = any> = Kit.Snapshot<T>;
 type PageServerParentData = EnsureDefined<LayoutServerData>;
 type PageParentData = EnsureDefined<LayoutData>;
-type LayoutRouteId = RouteId | "/" | "/assets" | "/assets/[id]" | "/audit-log" | "/auth/login" | "/auth/logout" | "/auth/register" | "/dashboard" | "/join-organization" | "/onboarding" | "/profile" | "/select-organization" | "/sites" | "/sites/[id]" | "/users" | "/users/security" | "/work-orders" | "/work-orders/[id]" | null
-type LayoutParams = RouteParams & { id?: string }
+type LayoutRouteId = RouteId | "/" | "/assets" | "/assets/[id]" | "/audit-log" | "/auth/emergency-reset" | "/auth/login" | "/auth/logout" | "/auth/register" | "/auth/reset-password/[token]" | "/dashboard" | "/join-organization" | "/onboarding" | "/profile" | "/select-organization" | "/sites" | "/sites/[id]" | "/users" | "/users/security" | "/work-orders" | "/work-orders/[id]" | null
+type LayoutParams = RouteParams & { id?: string; token?: string }
 type LayoutServerParentData = EnsureDefined<{}>;
 type LayoutParentData = EnsureDefined<{}>;
 

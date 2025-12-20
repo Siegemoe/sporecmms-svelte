@@ -1,5 +1,5 @@
 import { c as createRequestPrisma } from "../../../chunks/prisma.js";
-import { a as canManageUsers, h as hashPassword } from "../../../chunks/auth.js";
+import { b as canManageUsers, h as hashPassword } from "../../../chunks/auth.js";
 import { e as error, f as fail } from "../../../chunks/index.js";
 import { l as logAudit } from "../../../chunks/audit.js";
 const load = async (event) => {

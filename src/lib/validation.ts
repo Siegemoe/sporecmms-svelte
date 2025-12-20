@@ -127,6 +127,35 @@ export const workOrderSchema = z.object({
     .optional()
 });
 
+// Emergency password reset request schema
+export const emergencyResetRequestSchema = z.object({
+  email: z.string()
+    .email(errorMessages.email)
+    .trim()
+    .toLowerCase(),
+  passphrase: z.string()
+    .min(1, 'Passphrase is required')
+    .trim()
+});
+
+// Password reset confirmation schema
+export const passwordResetSchema = z.object({
+  token: z.string()
+    .min(1, 'Reset token is required')
+    .trim(),
+  password: z.string()
+    .min(8, errorMessages.password.minLength)
+    .regex(passwordPatterns.uppercase, errorMessages.password.uppercase)
+    .regex(passwordPatterns.lowercase, errorMessages.password.lowercase)
+    .regex(passwordPatterns.number, errorMessages.password.number)
+    .regex(passwordPatterns.special, errorMessages.password.special),
+  confirmPassword: z.string()
+    .min(1, 'Please confirm your password')
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"]
+});
+
 // User profile update schema
 export const profileUpdateSchema = z.object({
   firstName: z.string()
@@ -156,6 +185,8 @@ export type RoomInput = z.infer<typeof roomSchema>;
 export type AssetInput = z.infer<typeof assetSchema>;
 export type WorkOrderInput = z.infer<typeof workOrderSchema>;
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;
+export type EmergencyResetRequestInput = z.infer<typeof emergencyResetRequestSchema>;
+export type PasswordResetInput = z.infer<typeof passwordResetSchema>;
 
 // Helper function to validate and format errors
 export function validateInput<T>(schema: z.ZodSchema<T>, data: unknown): { success: true; data: T } | { success: false; errors: Record<string, string> } {

@@ -1,7 +1,7 @@
 import { r as redirect } from "./index.js";
-import { b as validateSessionWithOrg } from "./auth.js";
+import { e as validateSessionWithOrg } from "./auth.js";
 import { d as building } from "./internal.js";
-const publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password", "/", "/favicon.ico", "/favicon.png"];
+const publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password", "/", "/favicon.ico", "/favicon.png"];
 const orgRoutes = ["/dashboard", "/work-orders", "/sites", "/assets", "/users", "/audit-log"];
 const lobbyRoutes = ["/onboarding", "/join-organization"];
 const handle = async ({ event, resolve }) => {

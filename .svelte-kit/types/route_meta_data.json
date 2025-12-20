@@ -7,6 +7,9 @@
 	"/api/activity": [
 		"src/routes/api/activity/+server.ts"
 	],
+	"/api/auth/emergency-reset": [
+		"src/routes/api/auth/emergency-reset/+server.ts"
+	],
 	"/api/security/blocks": [
 		"src/routes/api/security/blocks/+server.ts"
 	],
@@ -25,6 +28,9 @@
 		"src/routes/audit-log/+page.server.ts",
 		"src/routes/+layout.server.ts"
 	],
+	"/auth/emergency-reset": [
+		"src/routes/+layout.server.ts"
+	],
 	"/auth/login": [
 		"src/routes/auth/login/+page.server.ts",
 		"src/routes/+layout.server.ts"
@@ -35,6 +41,10 @@
 	],
 	"/auth/register": [
 		"src/routes/auth/register/+page.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/auth/reset-password/[token]": [
+		"src/routes/auth/reset-password/[token]/+page.server.ts",
 		"src/routes/+layout.server.ts"
 	],
 	"/dashboard": [

@@ -72,8 +72,8 @@ function subscribe(store, ...callbacks) {
 function custom_event(type, detail, { bubbles = false, cancelable = false } = {}) {
   return new CustomEvent(type, { detail, bubbles, cancelable });
 }
-function set_current_component(component20) {
-  current_component = component20;
+function set_current_component(component22) {
+  current_component = component22;
 }
 function get_current_component() {
   if (!current_component)
@@ -84,9 +84,9 @@ function onDestroy(fn) {
   get_current_component().$$.on_destroy.push(fn);
 }
 function createEventDispatcher() {
-  const component20 = get_current_component();
+  const component22 = get_current_component();
   return (type, detail, { cancelable = false } = {}) => {
-    const callbacks = component20.$$.callbacks[type];
+    const callbacks = component22.$$.callbacks[type];
     if (callbacks) {
       const event = custom_event(
         /** @type {string} */
@@ -95,7 +95,7 @@ function createEventDispatcher() {
         { cancelable }
       );
       callbacks.slice().forEach((fn) => {
-        fn.call(component20, event);
+        fn.call(component22, event);
       });
       return !event.defaultPrevented;
     }
@@ -134,15 +134,15 @@ function each(items, fn) {
   }
   return str;
 }
-function validate_component(component20, name) {
-  if (!component20 || !component20.$$render) {
+function validate_component(component22, name) {
+  if (!component22 || !component22.$$render) {
     if (name === "svelte:component")
       name += " this={...}";
     throw new Error(
       `<${name}> is not a valid SSR component. You may need to review your build config to ensure that dependencies are compiled, rather than imported as pre-compiled modules. Otherwise you may need to fix a <${name}>.`
     );
   }
-  return component20;
+  return component22;
 }
 function create_ssr_component(fn) {
   function $$render(result, props, bindings, slots, context) {
@@ -12597,44 +12597,26 @@ var require_edge = __commonJS({
       RepeatableRead: "RepeatableRead",
       Serializable: "Serializable"
     });
-    exports.Prisma.OrganizationScalarFieldEnum = {
+    exports.Prisma.AssetScalarFieldEnum = {
       id: "id",
       name: "name",
-      createdAt: "createdAt",
-      updatedAt: "updatedAt"
-    };
-    exports.Prisma.OrganizationInviteScalarFieldEnum = {
-      id: "id",
-      email: "email",
-      token: "token",
+      description: "description",
+      type: "type",
       status: "status",
+      purchaseDate: "purchaseDate",
+      warrantyExpiry: "warrantyExpiry",
+      lastMaintenance: "lastMaintenance",
       createdAt: "createdAt",
       updatedAt: "updatedAt",
-      expiresAt: "expiresAt",
-      organizationId: "organizationId",
-      invitedByUserId: "invitedByUserId"
+      siteId: "siteId",
+      unitId: "unitId"
     };
-    exports.Prisma.WaitlistScalarFieldEnum = {
+    exports.Prisma.AuditLogScalarFieldEnum = {
       id: "id",
-      email: "email",
-      name: "name",
-      company: "company",
-      role: "role",
-      phone: "phone",
-      createdAt: "createdAt"
-    };
-    exports.Prisma.SiteScalarFieldEnum = {
-      id: "id",
-      name: "name",
-      address: "address",
-      city: "city",
-      state: "state",
-      zipCode: "zipCode",
-      country: "country",
-      phoneNumber: "phoneNumber",
+      action: "action",
+      details: "details",
       createdAt: "createdAt",
-      updatedAt: "updatedAt",
-      organizationId: "organizationId"
+      userId: "userId"
     };
     exports.Prisma.BuildingScalarFieldEnum = {
       id: "id",
@@ -12652,6 +12634,64 @@ var require_edge = __commonJS({
       updatedAt: "updatedAt",
       siteId: "siteId"
     };
+    exports.Prisma.IPBlockScalarFieldEnum = {
+      id: "id",
+      ipAddress: "ipAddress",
+      reason: "reason",
+      severity: "severity",
+      violationCount: "violationCount",
+      blockedBy: "blockedBy",
+      blockedAt: "blockedAt",
+      expiresAt: "expiresAt",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt"
+    };
+    exports.Prisma.OrganizationScalarFieldEnum = {
+      id: "id",
+      name: "name",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt"
+    };
+    exports.Prisma.OrganizationInviteScalarFieldEnum = {
+      id: "id",
+      email: "email",
+      token: "token",
+      status: "status",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+      expiresAt: "expiresAt",
+      organizationId: "organizationId",
+      invitedByUserId: "invitedByUserId"
+    };
+    exports.Prisma.SecurityLogScalarFieldEnum = {
+      id: "id",
+      ipAddress: "ipAddress",
+      userAgent: "userAgent",
+      action: "action",
+      details: "details",
+      severity: "severity",
+      userId: "userId",
+      createdAt: "createdAt"
+    };
+    exports.Prisma.SessionScalarFieldEnum = {
+      id: "id",
+      token: "token",
+      expiresAt: "expiresAt",
+      userId: "userId"
+    };
+    exports.Prisma.SiteScalarFieldEnum = {
+      id: "id",
+      name: "name",
+      address: "address",
+      city: "city",
+      state: "state",
+      zipCode: "zipCode",
+      country: "country",
+      phoneNumber: "phoneNumber",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+      organizationId: "organizationId"
+    };
     exports.Prisma.UnitScalarFieldEnum = {
       id: "id",
       roomNumber: "roomNumber",
@@ -12668,6 +12708,9 @@ var require_edge = __commonJS({
       id: "id",
       email: "email",
       password: "password",
+      recoveryPassphrase: "recoveryPassphrase",
+      passwordResetToken: "passwordResetToken",
+      passwordResetExpiresAt: "passwordResetExpiresAt",
       firstName: "firstName",
       lastName: "lastName",
       phoneNumber: "phoneNumber",
@@ -12677,19 +12720,14 @@ var require_edge = __commonJS({
       updatedAt: "updatedAt",
       organizationId: "organizationId"
     };
-    exports.Prisma.AssetScalarFieldEnum = {
+    exports.Prisma.WaitlistScalarFieldEnum = {
       id: "id",
+      email: "email",
       name: "name",
-      description: "description",
-      type: "type",
-      status: "status",
-      purchaseDate: "purchaseDate",
-      warrantyExpiry: "warrantyExpiry",
-      lastMaintenance: "lastMaintenance",
-      createdAt: "createdAt",
-      updatedAt: "updatedAt",
-      siteId: "siteId",
-      unitId: "unitId"
+      company: "company",
+      role: "role",
+      phone: "phone",
+      createdAt: "createdAt"
     };
     exports.Prisma.WorkOrderScalarFieldEnum = {
       id: "id",
@@ -12716,41 +12754,6 @@ var require_edge = __commonJS({
       createdAt: "createdAt",
       workOrderId: "workOrderId",
       userId: "userId"
-    };
-    exports.Prisma.SessionScalarFieldEnum = {
-      id: "id",
-      token: "token",
-      expiresAt: "expiresAt",
-      userId: "userId"
-    };
-    exports.Prisma.AuditLogScalarFieldEnum = {
-      id: "id",
-      action: "action",
-      details: "details",
-      createdAt: "createdAt",
-      userId: "userId"
-    };
-    exports.Prisma.SecurityLogScalarFieldEnum = {
-      id: "id",
-      ipAddress: "ipAddress",
-      userAgent: "userAgent",
-      action: "action",
-      details: "details",
-      severity: "severity",
-      userId: "userId",
-      createdAt: "createdAt"
-    };
-    exports.Prisma.IPBlockScalarFieldEnum = {
-      id: "id",
-      ipAddress: "ipAddress",
-      reason: "reason",
-      severity: "severity",
-      violationCount: "violationCount",
-      blockedBy: "blockedBy",
-      blockedAt: "blockedAt",
-      expiresAt: "expiresAt",
-      createdAt: "createdAt",
-      updatedAt: "updatedAt"
     };
     exports.Prisma.SortOrder = {
       asc: "asc",
@@ -12812,29 +12815,29 @@ var require_edge = __commonJS({
       CANCELLED: "CANCELLED"
     };
     exports.Prisma.ModelName = {
+      Asset: "Asset",
+      AuditLog: "AuditLog",
+      Building: "Building",
+      IPBlock: "IPBlock",
       Organization: "Organization",
       OrganizationInvite: "OrganizationInvite",
-      Waitlist: "Waitlist",
+      SecurityLog: "SecurityLog",
+      Session: "Session",
       Site: "Site",
-      Building: "Building",
       Unit: "Unit",
       User: "User",
-      Asset: "Asset",
+      Waitlist: "Waitlist",
       WorkOrder: "WorkOrder",
-      WorkOrderEvent: "WorkOrderEvent",
-      Session: "Session",
-      AuditLog: "AuditLog",
-      SecurityLog: "SecurityLog",
-      IPBlock: "IPBlock"
+      WorkOrderEvent: "WorkOrderEvent"
     };
     var config2 = {
       "previewFeatures": [],
       "clientVersion": "7.1.0",
       "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
       "activeProvider": "postgresql",
-      "inlineSchema": '// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ndatasource db {\n  provider = "postgresql"\n}\n\ngenerator client {\n  provider   = "prisma-client-js"\n  output     = "../node_modules/.prisma/client"\n  engineType = "library"\n}\n\n// --------------------------------------\n// Enums\n// --------------------------------------\n\nenum AssetStatus {\n  OPERATIONAL\n  NEEDS_MAINTENANCE\n  OUT_OF_SERVICE\n}\n\nenum AssetType {\n  HVAC\n  ELECTRICAL\n  PLUMBING\n  FIRE_SAFETY\n  ELEVATOR\n  SECURITY_SYSTEM\n  OTHER\n}\n\nenum InviteStatus {\n  PENDING\n  ACCEPTED\n  EXPIRED\n  CANCELLED\n}\n\nenum Priority {\n  LOW\n  MEDIUM\n  HIGH\n  EMERGENCY\n}\n\nenum UserRole {\n  ADMIN\n  MANAGER\n  TECHNICIAN\n}\n\nenum WorkOrderStatus {\n  PENDING\n  IN_PROGRESS\n  COMPLETED\n  ON_HOLD\n  CANCELLED\n}\n\n// --------------------------------------\n// Core Models\n// --------------------------------------\n\nmodel Organization {\n  id        String   @id @default(dbgenerated("gen_random_uuid()"))\n  name      String   @unique\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  organizationInvites OrganizationInvite[]\n  sites               Site[]\n  users               User[]\n  workOrders          WorkOrder[]\n\n  @@index([name])\n}\n\nmodel OrganizationInvite {\n  id        String       @id @default(dbgenerated("gen_random_uuid()"))\n  email     String\n  token     String       @unique\n  status    InviteStatus @default(PENDING)\n  createdAt DateTime     @default(now())\n  updatedAt DateTime     @updatedAt\n  expiresAt DateTime\n\n  organizationId  String\n  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n  invitedByUserId String\n  invitedByUser   User         @relation(fields: [invitedByUserId], references: [id], onDelete: Cascade)\n\n  @@index([token])\n  @@index([email])\n  @@index([expiresAt])\n}\n\nmodel Waitlist {\n  id        String   @id @default(dbgenerated("gen_random_uuid()"))\n  email     String   @unique\n  name      String?\n  company   String?\n  role      String?\n  phone     String?\n  createdAt DateTime @default(now())\n}\n\nmodel Site {\n  id          String   @id @default(dbgenerated("gen_random_uuid()"))\n  name        String\n  address     String?\n  city        String?\n  state       String?\n  zipCode     String?\n  country     String?\n  phoneNumber String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  organizationId String\n  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n\n  buildings  Building[]\n  units      Unit[]\n  assets     Asset[]\n  workOrders WorkOrder[]\n\n  @@index([name])\n  @@index([organizationId])\n}\n\nmodel Building {\n  id          String   @id @default(dbgenerated("gen_random_uuid()"))\n  name        String\n  description String?\n  address     String?\n  city        String?\n  state       String?\n  zipCode     String?\n  country     String?\n  yearBuilt   Int?\n  floors      Int?\n  squareFeet  Int?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  siteId String\n  site   Site   @relation(fields: [siteId], references: [id], onDelete: Cascade)\n\n  units      Unit[]\n  workOrders WorkOrder[]\n\n  @@index([name])\n  @@index([siteId])\n}\n\nmodel Unit {\n  id          String   @id @default(dbgenerated("gen_random_uuid()"))\n  roomNumber  String\n  name        String?\n  floor       Int?\n  squareFeet  Int?\n  description String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  siteId     String\n  site       Site      @relation(fields: [siteId], references: [id], onDelete: Cascade)\n  buildingId String?\n  building   Building? @relation(fields: [buildingId], references: [id], onDelete: Cascade)\n\n  assets     Asset[]\n  workOrders WorkOrder[]\n\n  @@index([roomNumber])\n  @@index([siteId])\n  @@index([buildingId])\n}\n\nmodel User {\n  id          String   @id @default(dbgenerated("gen_random_uuid()"))\n  email       String   @unique\n  password    String\n  firstName   String?\n  lastName    String?\n  phoneNumber String?\n  role        UserRole @default(TECHNICIAN)\n  isActive    Boolean  @default(true)\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  organizationId String?\n  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n\n  auditLogs           AuditLog[]\n  organizationInvites OrganizationInvite[]\n  sessions            Session[]\n  createdWorkOrders   WorkOrder[]          @relation("WorkOrderCreator")\n  assignedWorkOrders  WorkOrder[]          @relation("WorkOrderAssignee")\n  workOrderEvents     WorkOrderEvent[]\n  securityLogs        SecurityLog[]\n  blockedIPs          IPBlock[]            @relation("BlockedBy")\n\n  @@index([email])\n  @@index([organizationId])\n}\n\nmodel Asset {\n  id              String      @id @default(dbgenerated("gen_random_uuid()"))\n  name            String\n  description     String?\n  type            AssetType\n  status          AssetStatus @default(OPERATIONAL)\n  purchaseDate    DateTime?\n  warrantyExpiry  DateTime?\n  lastMaintenance DateTime?\n  createdAt       DateTime    @default(now())\n  updatedAt       DateTime    @updatedAt\n\n  siteId String\n  site   Site   @relation(fields: [siteId], references: [id], onDelete: Cascade)\n\n  unitId String\n  unit   Unit   @relation(fields: [unitId], references: [id], onDelete: Cascade)\n\n  workOrders WorkOrder[]\n\n  @@index([name])\n  @@index([type])\n  @@index([status])\n  @@index([siteId])\n  @@index([unitId])\n}\n\nmodel WorkOrder {\n  id          String          @id @default(dbgenerated("gen_random_uuid()"))\n  title       String\n  description String?\n  priority    Priority        @default(MEDIUM)\n  status      WorkOrderStatus @default(PENDING)\n  dueDate     DateTime?\n  completedAt DateTime?\n  createdAt   DateTime        @default(now())\n  updatedAt   DateTime        @updatedAt\n\n  assetId String?\n  asset   Asset?  @relation(fields: [assetId], references: [id], onDelete: Cascade)\n\n  unitId String?\n  unit   Unit?   @relation(fields: [unitId], references: [id], onDelete: Cascade)\n\n  buildingId String?\n  building   Building? @relation(fields: [buildingId], references: [id], onDelete: Cascade)\n\n  siteId String?\n  site   Site?   @relation(fields: [siteId], references: [id], onDelete: Cascade)\n\n  createdById String\n  createdBy   User   @relation("WorkOrderCreator", fields: [createdById], references: [id], onDelete: Cascade)\n\n  assignedToId String?\n  assignedTo   User?   @relation("WorkOrderAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)\n\n  organizationId String\n  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n\n  events WorkOrderEvent[]\n\n  @@index([status])\n  @@index([priority])\n  @@index([dueDate])\n  @@index([createdById])\n  @@index([assignedToId])\n  @@index([organizationId])\n  @@index([assetId])\n  @@index([unitId])\n}\n\nmodel WorkOrderEvent {\n  id          String   @id @default(dbgenerated("gen_random_uuid()"))\n  event       String\n  description String?\n  createdAt   DateTime @default(now())\n\n  workOrderId String\n  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)\n\n  userId String?\n  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)\n\n  @@index([workOrderId])\n  @@index([createdAt])\n}\n\n// --------------------------------------\n// Authentication & Security\n// --------------------------------------\n\nmodel Session {\n  id        String   @id @default(dbgenerated("gen_random_uuid()"))\n  token     String   @unique\n  expiresAt DateTime\n\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([userId])\n  @@index([expiresAt])\n  @@index([token])\n}\n\nmodel AuditLog {\n  id        String   @id @default(dbgenerated("gen_random_uuid()"))\n  action    String\n  details   Json?\n  createdAt DateTime @default(now())\n\n  userId String\n  user   User   @relation(fields: [userId], references: [id])\n\n  @@index([userId])\n  @@index([createdAt])\n}\n\n// Security Models\nmodel SecurityLog {\n  id        String   @id @default(dbgenerated("gen_random_uuid()"))\n  ipAddress String // IP address of the request\n  userAgent String? // Browser/user agent\n  action    String // Type of security event\n  details   Json? // Additional details\n  severity  String   @default("INFO") // INFO, WARNING, CRITICAL\n  userId    String? // User ID if applicable\n  createdAt DateTime @default(now())\n\n  // Optional relationship to user\n  user User? @relation(fields: [userId], references: [id])\n\n  // Index for efficient queries\n  @@index([createdAt])\n  @@index([ipAddress])\n  @@index([severity])\n}\n\nmodel IPBlock {\n  id             String    @id @default(dbgenerated("gen_random_uuid()"))\n  ipAddress      String    @unique\n  reason         String // Reason for blocking\n  severity       String // TEMPORARY, PERSISTENT\n  violationCount Int       @default(1) // Number of violations\n  blockedBy      String? // Admin user ID who manually blocked\n  blockedAt      DateTime  @default(now())\n  expiresAt      DateTime? // When block expires (null for permanent)\n  createdAt      DateTime  @default(now())\n  updatedAt      DateTime  @updatedAt\n\n  // Optional relationship to user\n  blockedByUser User? @relation("BlockedBy", fields: [blockedBy], references: [id])\n\n  // Index for efficient queries\n  @@index([ipAddress])\n  @@index([expiresAt])\n  @@index([severity])\n}\n'
+      "inlineSchema": 'generator client {\n  provider   = "prisma-client-js"\n  output     = "../node_modules/.prisma/client"\n  engineType = "library"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nmodel Asset {\n  id              String      @id @default(dbgenerated("gen_random_uuid()"))\n  name            String\n  description     String?\n  type            AssetType\n  status          AssetStatus @default(OPERATIONAL)\n  purchaseDate    DateTime?\n  warrantyExpiry  DateTime?\n  lastMaintenance DateTime?\n  createdAt       DateTime    @default(now())\n  updatedAt       DateTime\n  siteId          String\n  unitId          String\n  Site            Site        @relation(fields: [siteId], references: [id], onDelete: Cascade)\n  Unit            Unit        @relation(fields: [unitId], references: [id], onDelete: Cascade)\n  WorkOrder       WorkOrder[]\n\n  @@index([name])\n  @@index([siteId])\n  @@index([status])\n  @@index([type])\n  @@index([unitId])\n}\n\nmodel AuditLog {\n  id        String   @id @default(dbgenerated("gen_random_uuid()"))\n  action    String\n  details   Json?\n  createdAt DateTime @default(now())\n  userId    String\n  User      User     @relation(fields: [userId], references: [id])\n\n  @@index([createdAt])\n  @@index([userId])\n}\n\nmodel Building {\n  id          String      @id @default(dbgenerated("gen_random_uuid()"))\n  name        String\n  description String?\n  address     String?\n  city        String?\n  state       String?\n  zipCode     String?\n  country     String?\n  yearBuilt   Int?\n  floors      Int?\n  squareFeet  Int?\n  createdAt   DateTime    @default(now())\n  updatedAt   DateTime\n  siteId      String\n  Site        Site        @relation(fields: [siteId], references: [id], onDelete: Cascade)\n  Unit        Unit[]\n  WorkOrder   WorkOrder[]\n\n  @@index([name])\n  @@index([siteId])\n}\n\nmodel IPBlock {\n  id             String    @id @default(dbgenerated("gen_random_uuid()"))\n  ipAddress      String    @unique\n  reason         String\n  severity       String\n  violationCount Int       @default(1)\n  blockedBy      String?\n  blockedAt      DateTime  @default(now())\n  expiresAt      DateTime?\n  createdAt      DateTime  @default(now())\n  updatedAt      DateTime\n  User           User?     @relation(fields: [blockedBy], references: [id])\n\n  @@index([expiresAt])\n  @@index([ipAddress])\n  @@index([severity])\n}\n\nmodel Organization {\n  id                 String               @id @default(dbgenerated("gen_random_uuid()"))\n  name               String               @unique\n  createdAt          DateTime             @default(now())\n  updatedAt          DateTime\n  OrganizationInvite OrganizationInvite[]\n  Site               Site[]\n  User               User[]\n  WorkOrder          WorkOrder[]\n\n  @@index([name])\n}\n\nmodel OrganizationInvite {\n  id              String       @id @default(dbgenerated("gen_random_uuid()"))\n  email           String\n  token           String       @unique\n  status          InviteStatus @default(PENDING)\n  createdAt       DateTime     @default(now())\n  updatedAt       DateTime\n  expiresAt       DateTime\n  organizationId  String\n  invitedByUserId String\n  User            User         @relation(fields: [invitedByUserId], references: [id], onDelete: Cascade)\n  Organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n\n  @@index([email])\n  @@index([expiresAt])\n  @@index([token])\n}\n\nmodel SecurityLog {\n  id        String   @id @default(dbgenerated("gen_random_uuid()"))\n  ipAddress String\n  userAgent String?\n  action    String\n  details   Json?\n  severity  String   @default("INFO")\n  userId    String?\n  createdAt DateTime @default(now())\n  User      User?    @relation(fields: [userId], references: [id])\n\n  @@index([createdAt])\n  @@index([ipAddress])\n  @@index([severity])\n}\n\nmodel Session {\n  id        String   @id @default(dbgenerated("gen_random_uuid()"))\n  token     String   @unique\n  expiresAt DateTime\n  userId    String\n  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([expiresAt])\n  @@index([token])\n  @@index([userId])\n}\n\nmodel Site {\n  id             String       @id @default(dbgenerated("gen_random_uuid()"))\n  name           String\n  address        String?\n  city           String?\n  state          String?\n  zipCode        String?\n  country        String?\n  phoneNumber    String?\n  createdAt      DateTime     @default(now())\n  updatedAt      DateTime\n  organizationId String\n  Asset          Asset[]\n  Building       Building[]\n  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n  Unit           Unit[]\n  WorkOrder      WorkOrder[]\n\n  @@index([name])\n  @@index([organizationId])\n}\n\nmodel Unit {\n  id          String      @id @default(dbgenerated("gen_random_uuid()"))\n  roomNumber  String\n  name        String?\n  floor       Int?\n  squareFeet  Int?\n  description String?\n  createdAt   DateTime    @default(now())\n  updatedAt   DateTime\n  siteId      String\n  buildingId  String?\n  Asset       Asset[]\n  Building    Building?   @relation(fields: [buildingId], references: [id], onDelete: Cascade)\n  Site        Site        @relation(fields: [siteId], references: [id], onDelete: Cascade)\n  WorkOrder   WorkOrder[]\n\n  @@index([buildingId])\n  @@index([roomNumber])\n  @@index([siteId])\n}\n\nmodel User {\n  id                                     String               @id @default(dbgenerated("gen_random_uuid()"))\n  email                                  String               @unique\n  password                               String\n  recoveryPassphrase                     String? // For emergency password recovery\n  passwordResetToken                     String?              @unique // One-time reset token\n  passwordResetExpiresAt                 DateTime? // Token expiration\n  firstName                              String?\n  lastName                               String?\n  phoneNumber                            String?\n  role                                   UserRole             @default(TECHNICIAN)\n  isActive                               Boolean              @default(true)\n  createdAt                              DateTime             @default(now())\n  updatedAt                              DateTime\n  organizationId                         String?\n  AuditLog                               AuditLog[]\n  IPBlock                                IPBlock[]\n  OrganizationInvite                     OrganizationInvite[]\n  SecurityLog                            SecurityLog[]\n  Session                                Session[]\n  Organization                           Organization?        @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n  WorkOrder_WorkOrder_assignedToIdToUser WorkOrder[]          @relation("WorkOrder_assignedToIdToUser")\n  WorkOrder_WorkOrder_createdByIdToUser  WorkOrder[]          @relation("WorkOrder_createdByIdToUser")\n  WorkOrderEvent                         WorkOrderEvent[]\n\n  @@index([email])\n  @@index([organizationId])\n  @@index([passwordResetToken])\n  @@index([passwordResetExpiresAt])\n}\n\nmodel Waitlist {\n  id        String   @id @default(dbgenerated("gen_random_uuid()"))\n  email     String   @unique\n  name      String?\n  company   String?\n  role      String?\n  phone     String?\n  createdAt DateTime @default(now())\n}\n\nmodel WorkOrder {\n  id                                String           @id @default(dbgenerated("gen_random_uuid()"))\n  title                             String\n  description                       String?\n  priority                          Priority         @default(MEDIUM)\n  status                            WorkOrderStatus  @default(PENDING)\n  dueDate                           DateTime?\n  completedAt                       DateTime?\n  createdAt                         DateTime         @default(now())\n  updatedAt                         DateTime\n  assetId                           String?\n  unitId                            String?\n  buildingId                        String?\n  siteId                            String?\n  createdById                       String\n  assignedToId                      String?\n  organizationId                    String\n  Asset                             Asset?           @relation(fields: [assetId], references: [id], onDelete: Cascade)\n  User_WorkOrder_assignedToIdToUser User?            @relation("WorkOrder_assignedToIdToUser", fields: [assignedToId], references: [id])\n  Building                          Building?        @relation(fields: [buildingId], references: [id], onDelete: Cascade)\n  User_WorkOrder_createdByIdToUser  User             @relation("WorkOrder_createdByIdToUser", fields: [createdById], references: [id], onDelete: Cascade)\n  Organization                      Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)\n  Site                              Site?            @relation(fields: [siteId], references: [id], onDelete: Cascade)\n  Unit                              Unit?            @relation(fields: [unitId], references: [id], onDelete: Cascade)\n  WorkOrderEvent                    WorkOrderEvent[]\n\n  @@index([assetId])\n  @@index([assignedToId])\n  @@index([createdById])\n  @@index([dueDate])\n  @@index([organizationId])\n  @@index([priority])\n  @@index([status])\n  @@index([unitId])\n}\n\nmodel WorkOrderEvent {\n  id          String    @id @default(dbgenerated("gen_random_uuid()"))\n  event       String\n  description String?\n  createdAt   DateTime  @default(now())\n  workOrderId String\n  userId      String?\n  User        User?     @relation(fields: [userId], references: [id])\n  WorkOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)\n\n  @@index([createdAt])\n  @@index([workOrderId])\n}\n\nenum AssetStatus {\n  OPERATIONAL\n  NEEDS_MAINTENANCE\n  OUT_OF_SERVICE\n}\n\nenum AssetType {\n  HVAC\n  ELECTRICAL\n  PLUMBING\n  FIRE_SAFETY\n  ELEVATOR\n  SECURITY_SYSTEM\n  OTHER\n}\n\nenum InviteStatus {\n  PENDING\n  ACCEPTED\n  EXPIRED\n  CANCELLED\n}\n\nenum Priority {\n  LOW\n  MEDIUM\n  HIGH\n  EMERGENCY\n}\n\nenum UserRole {\n  ADMIN\n  MANAGER\n  TECHNICIAN\n}\n\nenum WorkOrderStatus {\n  PENDING\n  IN_PROGRESS\n  COMPLETED\n  ON_HOLD\n  CANCELLED\n}\n'
     };
-    config2.runtimeDataModel = JSON.parse('{"models":{"Organization":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"organizationInvites","kind":"object","type":"OrganizationInvite","relationName":"OrganizationToOrganizationInvite"},{"name":"sites","kind":"object","type":"Site","relationName":"OrganizationToSite"},{"name":"users","kind":"object","type":"User","relationName":"OrganizationToUser"},{"name":"workOrders","kind":"object","type":"WorkOrder","relationName":"OrganizationToWorkOrder"}],"dbName":null},"OrganizationInvite":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"token","kind":"scalar","type":"String"},{"name":"status","kind":"enum","type":"InviteStatus"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"organizationId","kind":"scalar","type":"String"},{"name":"organization","kind":"object","type":"Organization","relationName":"OrganizationToOrganizationInvite"},{"name":"invitedByUserId","kind":"scalar","type":"String"},{"name":"invitedByUser","kind":"object","type":"User","relationName":"OrganizationInviteToUser"}],"dbName":null},"Waitlist":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"company","kind":"scalar","type":"String"},{"name":"role","kind":"scalar","type":"String"},{"name":"phone","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"}],"dbName":null},"Site":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"address","kind":"scalar","type":"String"},{"name":"city","kind":"scalar","type":"String"},{"name":"state","kind":"scalar","type":"String"},{"name":"zipCode","kind":"scalar","type":"String"},{"name":"country","kind":"scalar","type":"String"},{"name":"phoneNumber","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"organizationId","kind":"scalar","type":"String"},{"name":"organization","kind":"object","type":"Organization","relationName":"OrganizationToSite"},{"name":"buildings","kind":"object","type":"Building","relationName":"BuildingToSite"},{"name":"units","kind":"object","type":"Unit","relationName":"SiteToUnit"},{"name":"assets","kind":"object","type":"Asset","relationName":"AssetToSite"},{"name":"workOrders","kind":"object","type":"WorkOrder","relationName":"SiteToWorkOrder"}],"dbName":null},"Building":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"address","kind":"scalar","type":"String"},{"name":"city","kind":"scalar","type":"String"},{"name":"state","kind":"scalar","type":"String"},{"name":"zipCode","kind":"scalar","type":"String"},{"name":"country","kind":"scalar","type":"String"},{"name":"yearBuilt","kind":"scalar","type":"Int"},{"name":"floors","kind":"scalar","type":"Int"},{"name":"squareFeet","kind":"scalar","type":"Int"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"siteId","kind":"scalar","type":"String"},{"name":"site","kind":"object","type":"Site","relationName":"BuildingToSite"},{"name":"units","kind":"object","type":"Unit","relationName":"BuildingToUnit"},{"name":"workOrders","kind":"object","type":"WorkOrder","relationName":"BuildingToWorkOrder"}],"dbName":null},"Unit":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"roomNumber","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"floor","kind":"scalar","type":"Int"},{"name":"squareFeet","kind":"scalar","type":"Int"},{"name":"description","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"siteId","kind":"scalar","type":"String"},{"name":"site","kind":"object","type":"Site","relationName":"SiteToUnit"},{"name":"buildingId","kind":"scalar","type":"String"},{"name":"building","kind":"object","type":"Building","relationName":"BuildingToUnit"},{"name":"assets","kind":"object","type":"Asset","relationName":"AssetToUnit"},{"name":"workOrders","kind":"object","type":"WorkOrder","relationName":"UnitToWorkOrder"}],"dbName":null},"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"firstName","kind":"scalar","type":"String"},{"name":"lastName","kind":"scalar","type":"String"},{"name":"phoneNumber","kind":"scalar","type":"String"},{"name":"role","kind":"enum","type":"UserRole"},{"name":"isActive","kind":"scalar","type":"Boolean"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"organizationId","kind":"scalar","type":"String"},{"name":"organization","kind":"object","type":"Organization","relationName":"OrganizationToUser"},{"name":"auditLogs","kind":"object","type":"AuditLog","relationName":"AuditLogToUser"},{"name":"organizationInvites","kind":"object","type":"OrganizationInvite","relationName":"OrganizationInviteToUser"},{"name":"sessions","kind":"object","type":"Session","relationName":"SessionToUser"},{"name":"createdWorkOrders","kind":"object","type":"WorkOrder","relationName":"WorkOrderCreator"},{"name":"assignedWorkOrders","kind":"object","type":"WorkOrder","relationName":"WorkOrderAssignee"},{"name":"workOrderEvents","kind":"object","type":"WorkOrderEvent","relationName":"UserToWorkOrderEvent"},{"name":"securityLogs","kind":"object","type":"SecurityLog","relationName":"SecurityLogToUser"},{"name":"blockedIPs","kind":"object","type":"IPBlock","relationName":"BlockedBy"}],"dbName":null},"Asset":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"type","kind":"enum","type":"AssetType"},{"name":"status","kind":"enum","type":"AssetStatus"},{"name":"purchaseDate","kind":"scalar","type":"DateTime"},{"name":"warrantyExpiry","kind":"scalar","type":"DateTime"},{"name":"lastMaintenance","kind":"scalar","type":"DateTime"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"siteId","kind":"scalar","type":"String"},{"name":"site","kind":"object","type":"Site","relationName":"AssetToSite"},{"name":"unitId","kind":"scalar","type":"String"},{"name":"unit","kind":"object","type":"Unit","relationName":"AssetToUnit"},{"name":"workOrders","kind":"object","type":"WorkOrder","relationName":"AssetToWorkOrder"}],"dbName":null},"WorkOrder":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"title","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"priority","kind":"enum","type":"Priority"},{"name":"status","kind":"enum","type":"WorkOrderStatus"},{"name":"dueDate","kind":"scalar","type":"DateTime"},{"name":"completedAt","kind":"scalar","type":"DateTime"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"assetId","kind":"scalar","type":"String"},{"name":"asset","kind":"object","type":"Asset","relationName":"AssetToWorkOrder"},{"name":"unitId","kind":"scalar","type":"String"},{"name":"unit","kind":"object","type":"Unit","relationName":"UnitToWorkOrder"},{"name":"buildingId","kind":"scalar","type":"String"},{"name":"building","kind":"object","type":"Building","relationName":"BuildingToWorkOrder"},{"name":"siteId","kind":"scalar","type":"String"},{"name":"site","kind":"object","type":"Site","relationName":"SiteToWorkOrder"},{"name":"createdById","kind":"scalar","type":"String"},{"name":"createdBy","kind":"object","type":"User","relationName":"WorkOrderCreator"},{"name":"assignedToId","kind":"scalar","type":"String"},{"name":"assignedTo","kind":"object","type":"User","relationName":"WorkOrderAssignee"},{"name":"organizationId","kind":"scalar","type":"String"},{"name":"organization","kind":"object","type":"Organization","relationName":"OrganizationToWorkOrder"},{"name":"events","kind":"object","type":"WorkOrderEvent","relationName":"WorkOrderToWorkOrderEvent"}],"dbName":null},"WorkOrderEvent":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"event","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"workOrderId","kind":"scalar","type":"String"},{"name":"workOrder","kind":"object","type":"WorkOrder","relationName":"WorkOrderToWorkOrderEvent"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"UserToWorkOrderEvent"}],"dbName":null},"Session":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"token","kind":"scalar","type":"String"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"SessionToUser"}],"dbName":null},"AuditLog":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"action","kind":"scalar","type":"String"},{"name":"details","kind":"scalar","type":"Json"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"AuditLogToUser"}],"dbName":null},"SecurityLog":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"ipAddress","kind":"scalar","type":"String"},{"name":"userAgent","kind":"scalar","type":"String"},{"name":"action","kind":"scalar","type":"String"},{"name":"details","kind":"scalar","type":"Json"},{"name":"severity","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"user","kind":"object","type":"User","relationName":"SecurityLogToUser"}],"dbName":null},"IPBlock":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"ipAddress","kind":"scalar","type":"String"},{"name":"reason","kind":"scalar","type":"String"},{"name":"severity","kind":"scalar","type":"String"},{"name":"violationCount","kind":"scalar","type":"Int"},{"name":"blockedBy","kind":"scalar","type":"String"},{"name":"blockedAt","kind":"scalar","type":"DateTime"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"blockedByUser","kind":"object","type":"User","relationName":"BlockedBy"}],"dbName":null}},"enums":{},"types":{}}');
+    config2.runtimeDataModel = JSON.parse('{"models":{"Asset":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"type","kind":"enum","type":"AssetType"},{"name":"status","kind":"enum","type":"AssetStatus"},{"name":"purchaseDate","kind":"scalar","type":"DateTime"},{"name":"warrantyExpiry","kind":"scalar","type":"DateTime"},{"name":"lastMaintenance","kind":"scalar","type":"DateTime"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"siteId","kind":"scalar","type":"String"},{"name":"unitId","kind":"scalar","type":"String"},{"name":"Site","kind":"object","type":"Site","relationName":"AssetToSite"},{"name":"Unit","kind":"object","type":"Unit","relationName":"AssetToUnit"},{"name":"WorkOrder","kind":"object","type":"WorkOrder","relationName":"AssetToWorkOrder"}],"dbName":null},"AuditLog":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"action","kind":"scalar","type":"String"},{"name":"details","kind":"scalar","type":"Json"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"userId","kind":"scalar","type":"String"},{"name":"User","kind":"object","type":"User","relationName":"AuditLogToUser"}],"dbName":null},"Building":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"address","kind":"scalar","type":"String"},{"name":"city","kind":"scalar","type":"String"},{"name":"state","kind":"scalar","type":"String"},{"name":"zipCode","kind":"scalar","type":"String"},{"name":"country","kind":"scalar","type":"String"},{"name":"yearBuilt","kind":"scalar","type":"Int"},{"name":"floors","kind":"scalar","type":"Int"},{"name":"squareFeet","kind":"scalar","type":"Int"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"siteId","kind":"scalar","type":"String"},{"name":"Site","kind":"object","type":"Site","relationName":"BuildingToSite"},{"name":"Unit","kind":"object","type":"Unit","relationName":"BuildingToUnit"},{"name":"WorkOrder","kind":"object","type":"WorkOrder","relationName":"BuildingToWorkOrder"}],"dbName":null},"IPBlock":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"ipAddress","kind":"scalar","type":"String"},{"name":"reason","kind":"scalar","type":"String"},{"name":"severity","kind":"scalar","type":"String"},{"name":"violationCount","kind":"scalar","type":"Int"},{"name":"blockedBy","kind":"scalar","type":"String"},{"name":"blockedAt","kind":"scalar","type":"DateTime"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"User","kind":"object","type":"User","relationName":"IPBlockToUser"}],"dbName":null},"Organization":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"OrganizationInvite","kind":"object","type":"OrganizationInvite","relationName":"OrganizationToOrganizationInvite"},{"name":"Site","kind":"object","type":"Site","relationName":"OrganizationToSite"},{"name":"User","kind":"object","type":"User","relationName":"OrganizationToUser"},{"name":"WorkOrder","kind":"object","type":"WorkOrder","relationName":"OrganizationToWorkOrder"}],"dbName":null},"OrganizationInvite":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"token","kind":"scalar","type":"String"},{"name":"status","kind":"enum","type":"InviteStatus"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"organizationId","kind":"scalar","type":"String"},{"name":"invitedByUserId","kind":"scalar","type":"String"},{"name":"User","kind":"object","type":"User","relationName":"OrganizationInviteToUser"},{"name":"Organization","kind":"object","type":"Organization","relationName":"OrganizationToOrganizationInvite"}],"dbName":null},"SecurityLog":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"ipAddress","kind":"scalar","type":"String"},{"name":"userAgent","kind":"scalar","type":"String"},{"name":"action","kind":"scalar","type":"String"},{"name":"details","kind":"scalar","type":"Json"},{"name":"severity","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"User","kind":"object","type":"User","relationName":"SecurityLogToUser"}],"dbName":null},"Session":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"token","kind":"scalar","type":"String"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"userId","kind":"scalar","type":"String"},{"name":"User","kind":"object","type":"User","relationName":"SessionToUser"}],"dbName":null},"Site":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"address","kind":"scalar","type":"String"},{"name":"city","kind":"scalar","type":"String"},{"name":"state","kind":"scalar","type":"String"},{"name":"zipCode","kind":"scalar","type":"String"},{"name":"country","kind":"scalar","type":"String"},{"name":"phoneNumber","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"organizationId","kind":"scalar","type":"String"},{"name":"Asset","kind":"object","type":"Asset","relationName":"AssetToSite"},{"name":"Building","kind":"object","type":"Building","relationName":"BuildingToSite"},{"name":"Organization","kind":"object","type":"Organization","relationName":"OrganizationToSite"},{"name":"Unit","kind":"object","type":"Unit","relationName":"SiteToUnit"},{"name":"WorkOrder","kind":"object","type":"WorkOrder","relationName":"SiteToWorkOrder"}],"dbName":null},"Unit":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"roomNumber","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"floor","kind":"scalar","type":"Int"},{"name":"squareFeet","kind":"scalar","type":"Int"},{"name":"description","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"siteId","kind":"scalar","type":"String"},{"name":"buildingId","kind":"scalar","type":"String"},{"name":"Asset","kind":"object","type":"Asset","relationName":"AssetToUnit"},{"name":"Building","kind":"object","type":"Building","relationName":"BuildingToUnit"},{"name":"Site","kind":"object","type":"Site","relationName":"SiteToUnit"},{"name":"WorkOrder","kind":"object","type":"WorkOrder","relationName":"UnitToWorkOrder"}],"dbName":null},"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"recoveryPassphrase","kind":"scalar","type":"String"},{"name":"passwordResetToken","kind":"scalar","type":"String"},{"name":"passwordResetExpiresAt","kind":"scalar","type":"DateTime"},{"name":"firstName","kind":"scalar","type":"String"},{"name":"lastName","kind":"scalar","type":"String"},{"name":"phoneNumber","kind":"scalar","type":"String"},{"name":"role","kind":"enum","type":"UserRole"},{"name":"isActive","kind":"scalar","type":"Boolean"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"organizationId","kind":"scalar","type":"String"},{"name":"AuditLog","kind":"object","type":"AuditLog","relationName":"AuditLogToUser"},{"name":"IPBlock","kind":"object","type":"IPBlock","relationName":"IPBlockToUser"},{"name":"OrganizationInvite","kind":"object","type":"OrganizationInvite","relationName":"OrganizationInviteToUser"},{"name":"SecurityLog","kind":"object","type":"SecurityLog","relationName":"SecurityLogToUser"},{"name":"Session","kind":"object","type":"Session","relationName":"SessionToUser"},{"name":"Organization","kind":"object","type":"Organization","relationName":"OrganizationToUser"},{"name":"WorkOrder_WorkOrder_assignedToIdToUser","kind":"object","type":"WorkOrder","relationName":"WorkOrder_assignedToIdToUser"},{"name":"WorkOrder_WorkOrder_createdByIdToUser","kind":"object","type":"WorkOrder","relationName":"WorkOrder_createdByIdToUser"},{"name":"WorkOrderEvent","kind":"object","type":"WorkOrderEvent","relationName":"UserToWorkOrderEvent"}],"dbName":null},"Waitlist":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"company","kind":"scalar","type":"String"},{"name":"role","kind":"scalar","type":"String"},{"name":"phone","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"}],"dbName":null},"WorkOrder":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"title","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"priority","kind":"enum","type":"Priority"},{"name":"status","kind":"enum","type":"WorkOrderStatus"},{"name":"dueDate","kind":"scalar","type":"DateTime"},{"name":"completedAt","kind":"scalar","type":"DateTime"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"assetId","kind":"scalar","type":"String"},{"name":"unitId","kind":"scalar","type":"String"},{"name":"buildingId","kind":"scalar","type":"String"},{"name":"siteId","kind":"scalar","type":"String"},{"name":"createdById","kind":"scalar","type":"String"},{"name":"assignedToId","kind":"scalar","type":"String"},{"name":"organizationId","kind":"scalar","type":"String"},{"name":"Asset","kind":"object","type":"Asset","relationName":"AssetToWorkOrder"},{"name":"User_WorkOrder_assignedToIdToUser","kind":"object","type":"User","relationName":"WorkOrder_assignedToIdToUser"},{"name":"Building","kind":"object","type":"Building","relationName":"BuildingToWorkOrder"},{"name":"User_WorkOrder_createdByIdToUser","kind":"object","type":"User","relationName":"WorkOrder_createdByIdToUser"},{"name":"Organization","kind":"object","type":"Organization","relationName":"OrganizationToWorkOrder"},{"name":"Site","kind":"object","type":"Site","relationName":"SiteToWorkOrder"},{"name":"Unit","kind":"object","type":"Unit","relationName":"UnitToWorkOrder"},{"name":"WorkOrderEvent","kind":"object","type":"WorkOrderEvent","relationName":"WorkOrderToWorkOrderEvent"}],"dbName":null},"WorkOrderEvent":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"event","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"workOrderId","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"User","kind":"object","type":"User","relationName":"UserToWorkOrderEvent"},{"name":"WorkOrder","kind":"object","type":"WorkOrder","relationName":"WorkOrderToWorkOrderEvent"}],"dbName":null}},"enums":{},"types":{}}');
     defineDmmfProperty2(exports.Prisma, config2.runtimeDataModel);
     config2.compilerWasm = {
       getRuntime: async () => require_query_compiler_bg(),
@@ -13050,7 +13053,7 @@ async function validateSessionWithOrg(cookies) {
           lastName: true,
           role: true,
           organizationId: true,
-          organization: {
+          Organization: {
             select: {
               id: true,
               name: true
@@ -13088,7 +13091,7 @@ async function validateSessionWithOrg(cookies) {
     user,
     state: "org_member",
     organizations: userOrgs,
-    currentOrganization: user.organization
+    currentOrganization: user.Organization
   };
 }
 async function destroySession(cookies) {
@@ -13114,6 +13117,39 @@ function setSessionCookie(cookies, sessionId) {
 function canManageUsers(role) {
   return role === "ADMIN";
 }
+async function validateResetToken(token) {
+  const client = await getPrisma();
+  const user = await client.user.findFirst({
+    where: {
+      passwordResetToken: token,
+      passwordResetExpiresAt: {
+        gt: /* @__PURE__ */ new Date()
+      }
+    },
+    select: {
+      id: true,
+      email: true
+    }
+  });
+  return user;
+}
+async function resetPassword(token, newPassword) {
+  const client = await getPrisma();
+  const user = await validateResetToken(token);
+  if (!user) {
+    throw new Error("Invalid or expired reset token");
+  }
+  const hashedPassword = await hashPassword(newPassword);
+  await client.user.update({
+    where: { id: user.id },
+    data: {
+      password: hashedPassword,
+      passwordResetToken: null,
+      passwordResetExpiresAt: null
+    }
+  });
+  return user;
+}
 var dev, SESSION_COOKIE, SESSION_EXPIRY_DAYS;
 var init_auth = __esm({
   ".svelte-kit/output/server/chunks/auth.js"() {
@@ -13138,7 +13174,7 @@ var init_hooks_server = __esm({
     init_chunks();
     init_auth();
     init_internal();
-    publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password", "/", "/favicon.ico", "/favicon.png"];
+    publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password", "/", "/favicon.ico", "/favicon.png"];
     orgRoutes = ["/dashboard", "/work-orders", "/sites", "/assets", "/users", "/audit-log"];
     lobbyRoutes = ["/onboarding", "/join-organization"];
     handle = async ({ event, resolve: resolve2 }) => {
@@ -13410,7 +13446,7 @@ var init_internal = __esm({
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
       },
-      version_hash: "1quublg"
+      version_hash: "q7uk1d"
     };
   }
 });
@@ -13772,13 +13808,13 @@ function stringify(value, reducers) {
       return NEGATIVE_INFINITY;
     if (thing === 0 && 1 / thing < 0)
       return NEGATIVE_ZERO;
-    const index22 = p++;
-    indexes.set(thing, index22);
+    const index24 = p++;
+    indexes.set(thing, index24);
     for (const { key: key2, fn } of custom2) {
       const value2 = fn(thing);
       if (value2) {
-        stringified[index22] = `["${key2}",${flatten(value2)}]`;
-        return index22;
+        stringified[index24] = `["${key2}",${flatten(value2)}]`;
+        return index24;
       }
     }
     let str = "";
@@ -13872,12 +13908,12 @@ function stringify(value, reducers) {
           }
       }
     }
-    stringified[index22] = str;
-    return index22;
+    stringified[index24] = str;
+    return index24;
   }
-  const index21 = flatten(value);
-  if (index21 < 0)
-    return `${index21}`;
+  const index23 = flatten(value);
+  if (index23 < 0)
+    return `${index23}`;
   return `[${stringified.join(",")}]`;
 }
 function stringify_primitive2(thing) {
@@ -13989,18 +14025,18 @@ var require_dist2 = __commonJS({
       if (len < 2)
         return obj;
       const dec = options2?.decode || decode3;
-      let index21 = 0;
+      let index23 = 0;
       do {
-        const eqIdx = str.indexOf("=", index21);
+        const eqIdx = str.indexOf("=", index23);
         if (eqIdx === -1)
           break;
-        const colonIdx = str.indexOf(";", index21);
+        const colonIdx = str.indexOf(";", index23);
         const endIdx = colonIdx === -1 ? len : colonIdx;
         if (eqIdx > endIdx) {
-          index21 = str.lastIndexOf(";", eqIdx - 1) + 1;
+          index23 = str.lastIndexOf(";", eqIdx - 1) + 1;
           continue;
         }
-        const keyStartIdx = startIndex(str, index21, eqIdx);
+        const keyStartIdx = startIndex(str, index23, eqIdx);
         const keyEndIdx = endIndex(str, eqIdx, keyStartIdx);
         const key2 = str.slice(keyStartIdx, keyEndIdx);
         if (obj[key2] === void 0) {
@@ -14009,23 +14045,23 @@ var require_dist2 = __commonJS({
           const value = dec(str.slice(valStartIdx, valEndIdx));
           obj[key2] = value;
         }
-        index21 = endIdx + 1;
-      } while (index21 < len);
+        index23 = endIdx + 1;
+      } while (index23 < len);
       return obj;
     }
-    function startIndex(str, index21, max) {
+    function startIndex(str, index23, max) {
       do {
-        const code = str.charCodeAt(index21);
+        const code = str.charCodeAt(index23);
         if (code !== 32 && code !== 9)
-          return index21;
-      } while (++index21 < max);
+          return index23;
+      } while (++index23 < max);
       return max;
     }
-    function endIndex(str, index21, min) {
-      while (index21 > min) {
-        const code = str.charCodeAt(--index21);
+    function endIndex(str, index23, min) {
+      while (index23 > min) {
+        const code = str.charCodeAt(--index23);
         if (code !== 32 && code !== 9)
-          return index21 + 1;
+          return index23 + 1;
       }
       return min;
     }
@@ -14566,8 +14602,8 @@ var init__ = __esm({
     index = 0;
     component = async () => component_cache ??= (await Promise.resolve().then(() => (init_layout_svelte(), layout_svelte_exports))).default;
     server_id = "src/routes/+layout.server.ts";
-    imports = ["_app/immutable/chunks/0.889d3e4b.js", "_app/immutable/chunks/_layout.27ed3650.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/stores.fbf1ae59.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/constants.d02042fd.js"];
-    stylesheets = ["_app/immutable/assets/_layout.e56c15d8.css"];
+    imports = ["_app/immutable/nodes/0.9d51752a.js", "_app/immutable/chunks/_layout.a7c44e1b.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/stores.1292cc3e.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/constants.d02042fd.js"];
+    stylesheets = ["_app/immutable/assets/_layout.c4997d4b.css"];
     fonts = [];
   }
 });
@@ -14606,7 +14642,7 @@ var init__2 = __esm({
   ".svelte-kit/output/server/nodes/1.js"() {
     index2 = 1;
     component2 = async () => component_cache2 ??= (await Promise.resolve().then(() => (init_error_svelte(), error_svelte_exports))).default;
-    imports2 = ["_app/immutable/nodes/1.0b29b3f8.js", "_app/immutable/chunks/error.396f1199.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/stores.fbf1ae59.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports2 = ["_app/immutable/nodes/1.d59865a2.js", "_app/immutable/chunks/error.4e5cb404.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/stores.1292cc3e.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
     stylesheets2 = [];
     fonts2 = [];
   }
@@ -14697,7 +14733,7 @@ var init__3 = __esm({
     index3 = 2;
     component3 = async () => component_cache3 ??= (await Promise.resolve().then(() => (init_page_svelte(), page_svelte_exports))).default;
     server_id2 = "src/routes/+page.server.ts";
-    imports3 = ["_app/immutable/nodes/2.78b1e579.js", "_app/immutable/chunks/_page.7bedfa23.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports3 = ["_app/immutable/chunks/2.81428a09.js", "_app/immutable/chunks/_page.76d50cc1.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
     stylesheets3 = [];
     fonts3 = [];
   }
@@ -15406,7 +15442,7 @@ var init__4 = __esm({
     index4 = 3;
     component4 = async () => component_cache4 ??= (await Promise.resolve().then(() => (init_page_svelte2(), page_svelte_exports2))).default;
     server_id3 = "src/routes/assets/+page.server.ts";
-    imports4 = ["_app/immutable/chunks/3.51e22fb7.js", "_app/immutable/chunks/_page.17dfb6d9.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports4 = ["_app/immutable/nodes/3.e80205a0.js", "_app/immutable/chunks/_page.87666a06.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
     stylesheets4 = [];
     fonts4 = [];
   }
@@ -15643,7 +15679,7 @@ var init__5 = __esm({
     index5 = 4;
     component5 = async () => component_cache5 ??= (await Promise.resolve().then(() => (init_page_svelte3(), page_svelte_exports3))).default;
     server_id4 = "src/routes/assets/[id]/+page.server.ts";
-    imports5 = ["_app/immutable/chunks/4.c9f983f1.js", "_app/immutable/chunks/_page.95414f5a.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports5 = ["_app/immutable/chunks/4.9ddf73b1.js", "_app/immutable/chunks/_page.24b87429.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
     stylesheets5 = [];
     fonts5 = [];
   }
@@ -15772,7 +15808,7 @@ var init__6 = __esm({
     index6 = 5;
     component6 = async () => component_cache6 ??= (await Promise.resolve().then(() => (init_page_svelte4(), page_svelte_exports4))).default;
     server_id5 = "src/routes/audit-log/+page.server.ts";
-    imports6 = ["_app/immutable/nodes/5.758fea83.js", "_app/immutable/chunks/_page.423ea7ef.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js"];
+    imports6 = ["_app/immutable/nodes/5.c4af26c6.js", "_app/immutable/chunks/_page.b8114dce.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.aa9ac6db.js"];
     stylesheets6 = [];
     fonts6 = [];
   }
@@ -17548,11 +17584,11 @@ function isValidJWT(token, algorithm = null) {
     return false;
   }
 }
-function handleArrayResult(result, final, index21) {
+function handleArrayResult(result, final, index23) {
   if (result.issues.length) {
-    final.issues.push(...prefixIssues(index21, result.issues));
+    final.issues.push(...prefixIssues(index23, result.issues));
   }
-  final.value[index21] = result.value;
+  final.value[index23] = result.value;
 }
 function handlePropertyResult(result, final, key2, input) {
   if (result.issues.length) {
@@ -17663,14 +17699,14 @@ function mergeValues(a, b) {
       return { valid: false, mergeErrorPath: [] };
     }
     const newArray = [];
-    for (let index21 = 0; index21 < a.length; index21++) {
-      const itemA = a[index21];
-      const itemB = b[index21];
+    for (let index23 = 0; index23 < a.length; index23++) {
+      const itemA = a[index23];
+      const itemB = b[index23];
       const sharedValue = mergeValues(itemA, itemB);
       if (!sharedValue.valid) {
         return {
           valid: false,
-          mergeErrorPath: [index21, ...sharedValue.mergeErrorPath]
+          mergeErrorPath: [index23, ...sharedValue.mergeErrorPath]
         };
       }
       newArray.push(sharedValue.data);
@@ -17695,11 +17731,11 @@ function handleIntersectionResults(result, left, right) {
   result.value = merged.data;
   return result;
 }
-function handleTupleResult(result, final, index21) {
+function handleTupleResult(result, final, index23) {
   if (result.issues.length) {
-    final.issues.push(...prefixIssues(index21, result.issues));
+    final.issues.push(...prefixIssues(index23, result.issues));
   }
-  final.value[index21] = result.value;
+  final.value[index23] = result.value;
 }
 function handleMapResult(keyResult, valueResult, final, key2, input, inst, ctx) {
   if (keyResult.issues.length) {
@@ -28956,7 +28992,7 @@ function validateInput(schema, data) {
   }
   return { success: true, data: result.data };
 }
-var passwordPatterns, errorMessages, registerSchema, createOrganizationSchema, joinOrganizationSchema, loginSchema;
+var passwordPatterns, errorMessages, registerSchema, createOrganizationSchema, joinOrganizationSchema, loginSchema, emergencyResetRequestSchema, passwordResetSchema;
 var init_validation = __esm({
   ".svelte-kit/output/server/chunks/validation.js"() {
     init_zod();
@@ -29013,12 +29049,63 @@ var init_validation = __esm({
       assignedToId: external_exports.string().cuid("Invalid user selection").optional(),
       revisitSchedule: external_exports.string().datetime("Invalid date format").optional()
     });
+    emergencyResetRequestSchema = external_exports.object({
+      email: external_exports.string().email(errorMessages.email).trim().toLowerCase(),
+      passphrase: external_exports.string().min(1, "Passphrase is required").trim()
+    });
+    passwordResetSchema = external_exports.object({
+      token: external_exports.string().min(1, "Reset token is required").trim(),
+      password: external_exports.string().min(8, errorMessages.password.minLength).regex(passwordPatterns.uppercase, errorMessages.password.uppercase).regex(passwordPatterns.lowercase, errorMessages.password.lowercase).regex(passwordPatterns.number, errorMessages.password.number).regex(passwordPatterns.special, errorMessages.password.special),
+      confirmPassword: external_exports.string().min(1, "Please confirm your password")
+    }).refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords don't match",
+      path: ["confirmPassword"]
+    });
     external_exports.object({
       firstName: external_exports.string().min(1, errorMessages.name).max(50, errorMessages.name).trim().optional(),
       lastName: external_exports.string().max(50, errorMessages.name).trim().optional(),
       email: external_exports.string().email(errorMessages.email).trim().toLowerCase().optional(),
       phoneNumber: external_exports.string().regex(/^[+]?[\d\s\-\(\)]+$/, "Please enter a valid phone number").optional()
     });
+  }
+});
+
+// .svelte-kit/output/server/entries/pages/auth/emergency-reset/_page.svelte.js
+var page_svelte_exports5 = {};
+__export(page_svelte_exports5, {
+  default: () => Page5
+});
+var Page5;
+var init_page_svelte5 = __esm({
+  ".svelte-kit/output/server/entries/pages/auth/emergency-reset/_page.svelte.js"() {
+    init_ssr();
+    init_devalue();
+    init_validation();
+    Page5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+      let form = { email: "", passphrase: "" };
+      let errors = {};
+      return `${$$result.head += `<!-- HEAD_svelte-1hgi8ho_START -->${$$result.title = `<title>Emergency Password Reset | Spore CMMS</title>`, ""}<!-- HEAD_svelte-1hgi8ho_END -->`, ""} <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"><div class="max-w-md w-full space-y-8"><div><div class="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-spore-orange"><svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div> <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900" data-svelte-h="svelte-1mvnnob">Emergency Password Reset</h2> <p class="mt-2 text-center text-sm text-gray-600" data-svelte-h="svelte-15tb0qq">Use your recovery passphrase to reset your password</p></div> <form method="POST" action="/api/auth/emergency-reset" class="mt-8 space-y-6"><div class="space-y-4"><div><label for="email" class="block text-sm font-medium text-gray-700" data-svelte-h="svelte-10usu5b">Email Address</label> <input id="email" name="email" type="email" autocomplete="email" required class="${"mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-spore-orange focus:border-spore-orange sm:text-sm " + escape(errors.email ? "border-red-500" : "", true)}" placeholder="Enter your email"${add_attribute("value", form.email, 0)}> ${errors.email ? `<p class="mt-1 text-sm text-red-600">${escape(errors.email)}</p>` : ``}</div> <div><label for="passphrase" class="block text-sm font-medium text-gray-700" data-svelte-h="svelte-nh8t6s">Recovery Passphrase</label> <div class="mt-1 relative">${`<input id="passphrase" name="passphrase" type="password" required class="${"appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-spore-orange focus:border-spore-orange sm:text-sm " + escape(errors.passphrase ? "border-red-500" : "", true)}" placeholder="Enter your recovery passphrase"${add_attribute("value", form.passphrase, 0)}>`} <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center">${`<svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>`}</button></div> ${errors.passphrase ? `<p class="mt-1 text-sm text-red-600">${escape(errors.passphrase)}</p>` : ``}</div></div> ${errors.general ? `<div class="rounded-md bg-red-50 p-4"><div class="flex"><div class="flex-shrink-0"><svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg></div> <div class="ml-3"><p class="text-sm font-medium text-red-800">${escape(errors.general)}</p></div></div></div>` : ``} ${``} <div><button type="submit" ${""} class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-spore-orange hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-spore-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors">${`Request Password Reset`}</button></div></form> <div class="mt-6"><div class="relative"><div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-300"></div></div> <div class="relative flex justify-center text-sm"><span class="px-2 bg-gray-50 text-gray-500" data-svelte-h="svelte-1ld5my3">or</span></div></div> <div class="mt-6 text-center"><a href="/auth/login" class="font-medium text-spore-orange hover:text-spore-orange/90 transition-colors" data-svelte-h="svelte-1b7g68d">Back to login</a></div></div></div></div>`;
+    });
+  }
+});
+
+// .svelte-kit/output/server/nodes/6.js
+var __exports7 = {};
+__export(__exports7, {
+  component: () => component7,
+  fonts: () => fonts7,
+  imports: () => imports7,
+  index: () => index7,
+  stylesheets: () => stylesheets7
+});
+var index7, component_cache7, component7, imports7, stylesheets7, fonts7;
+var init__7 = __esm({
+  ".svelte-kit/output/server/nodes/6.js"() {
+    index7 = 6;
+    component7 = async () => component_cache7 ??= (await Promise.resolve().then(() => (init_page_svelte5(), page_svelte_exports5))).default;
+    imports7 = ["_app/immutable/chunks/6.766fa327.js", "_app/immutable/chunks/_page.490841b1.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js", "_app/immutable/chunks/validation.3f53e523.js"];
+    stylesheets7 = [];
+    fonts7 = [];
   }
 });
 
@@ -29136,16 +29223,16 @@ var init_page_server_ts5 = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/auth/login/_page.svelte.js
-var page_svelte_exports5 = {};
-__export(page_svelte_exports5, {
-  default: () => Page5
+var page_svelte_exports6 = {};
+__export(page_svelte_exports6, {
+  default: () => Page6
 });
-var Page5;
-var init_page_svelte5 = __esm({
+var Page6;
+var init_page_svelte6 = __esm({
   ".svelte-kit/output/server/entries/pages/auth/login/_page.svelte.js"() {
     init_ssr();
     init_devalue();
-    Page5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let { form } = $$props;
       if ($$props.form === void 0 && $$bindings.form && form !== void 0)
         $$bindings.form(form);
@@ -29155,27 +29242,27 @@ var init_page_svelte5 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/6.js
-var __exports7 = {};
-__export(__exports7, {
-  component: () => component7,
-  fonts: () => fonts7,
-  imports: () => imports7,
-  index: () => index7,
+// .svelte-kit/output/server/nodes/7.js
+var __exports8 = {};
+__export(__exports8, {
+  component: () => component8,
+  fonts: () => fonts8,
+  imports: () => imports8,
+  index: () => index8,
   server: () => page_server_ts_exports5,
   server_id: () => server_id6,
-  stylesheets: () => stylesheets7
+  stylesheets: () => stylesheets8
 });
-var index7, component_cache7, component7, server_id6, imports7, stylesheets7, fonts7;
-var init__7 = __esm({
-  ".svelte-kit/output/server/nodes/6.js"() {
+var index8, component_cache8, component8, server_id6, imports8, stylesheets8, fonts8;
+var init__8 = __esm({
+  ".svelte-kit/output/server/nodes/7.js"() {
     init_page_server_ts5();
-    index7 = 6;
-    component7 = async () => component_cache7 ??= (await Promise.resolve().then(() => (init_page_svelte5(), page_svelte_exports5))).default;
+    index8 = 7;
+    component8 = async () => component_cache8 ??= (await Promise.resolve().then(() => (init_page_svelte6(), page_svelte_exports6))).default;
     server_id6 = "src/routes/auth/login/+page.server.ts";
-    imports7 = ["_app/immutable/chunks/6.89d32222.js", "_app/immutable/chunks/_page.ee9efabe.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets7 = [];
-    fonts7 = [];
+    imports8 = ["_app/immutable/nodes/7.293c4e8d.js", "_app/immutable/chunks/_page.86ec2aa1.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
+    stylesheets8 = [];
+    fonts8 = [];
   }
 });
 
@@ -29198,25 +29285,25 @@ var init_page_server_ts6 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/7.js
-var __exports8 = {};
-__export(__exports8, {
-  fonts: () => fonts8,
-  imports: () => imports8,
-  index: () => index8,
+// .svelte-kit/output/server/nodes/8.js
+var __exports9 = {};
+__export(__exports9, {
+  fonts: () => fonts9,
+  imports: () => imports9,
+  index: () => index9,
   server: () => page_server_ts_exports6,
   server_id: () => server_id7,
-  stylesheets: () => stylesheets8
+  stylesheets: () => stylesheets9
 });
-var index8, server_id7, imports8, stylesheets8, fonts8;
-var init__8 = __esm({
-  ".svelte-kit/output/server/nodes/7.js"() {
+var index9, server_id7, imports9, stylesheets9, fonts9;
+var init__9 = __esm({
+  ".svelte-kit/output/server/nodes/8.js"() {
     init_page_server_ts6();
-    index8 = 7;
+    index9 = 8;
     server_id7 = "src/routes/auth/logout/+page.server.ts";
-    imports8 = [];
-    stylesheets8 = [];
-    fonts8 = [];
+    imports9 = [];
+    stylesheets9 = [];
+    fonts9 = [];
   }
 });
 
@@ -29338,16 +29425,16 @@ var init_page_server_ts7 = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/auth/register/_page.svelte.js
-var page_svelte_exports6 = {};
-__export(page_svelte_exports6, {
-  default: () => Page6
+var page_svelte_exports7 = {};
+__export(page_svelte_exports7, {
+  default: () => Page7
 });
-var Page6;
-var init_page_svelte6 = __esm({
+var Page7;
+var init_page_svelte7 = __esm({
   ".svelte-kit/output/server/entries/pages/auth/register/_page.svelte.js"() {
     init_ssr();
     init_devalue();
-    Page6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page7 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let { form } = $$props;
       if ($$props.form === void 0 && $$bindings.form && form !== void 0)
         $$bindings.form(form);
@@ -29357,41 +29444,165 @@ var init_page_svelte6 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/8.js
-var __exports9 = {};
-__export(__exports9, {
-  component: () => component8,
-  fonts: () => fonts9,
-  imports: () => imports9,
-  index: () => index9,
+// .svelte-kit/output/server/nodes/9.js
+var __exports10 = {};
+__export(__exports10, {
+  component: () => component9,
+  fonts: () => fonts10,
+  imports: () => imports10,
+  index: () => index10,
   server: () => page_server_ts_exports7,
   server_id: () => server_id8,
-  stylesheets: () => stylesheets9
+  stylesheets: () => stylesheets10
 });
-var index9, component_cache8, component8, server_id8, imports9, stylesheets9, fonts9;
-var init__9 = __esm({
-  ".svelte-kit/output/server/nodes/8.js"() {
+var index10, component_cache9, component9, server_id8, imports10, stylesheets10, fonts10;
+var init__10 = __esm({
+  ".svelte-kit/output/server/nodes/9.js"() {
     init_page_server_ts7();
-    index9 = 8;
-    component8 = async () => component_cache8 ??= (await Promise.resolve().then(() => (init_page_svelte6(), page_svelte_exports6))).default;
+    index10 = 9;
+    component9 = async () => component_cache9 ??= (await Promise.resolve().then(() => (init_page_svelte7(), page_svelte_exports7))).default;
     server_id8 = "src/routes/auth/register/+page.server.ts";
-    imports9 = ["_app/immutable/chunks/8.9b01ae8a.js", "_app/immutable/chunks/_page.d0f2eb30.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets9 = [];
-    fonts9 = [];
+    imports10 = ["_app/immutable/chunks/9.56d0f1f4.js", "_app/immutable/chunks/_page.7c3daf1f.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
+    stylesheets10 = [];
+    fonts10 = [];
+  }
+});
+
+// .svelte-kit/output/server/entries/pages/auth/reset-password/_token_/_page.server.ts.js
+var page_server_ts_exports8 = {};
+__export(page_server_ts_exports8, {
+  actions: () => actions7,
+  load: () => load7
+});
+var load7, actions7;
+var init_page_server_ts8 = __esm({
+  ".svelte-kit/output/server/entries/pages/auth/reset-password/_token_/_page.server.ts.js"() {
+    init_chunks();
+    init_auth();
+    init_security();
+    init_validation();
+    load7 = async ({ params }) => {
+      const { token } = params;
+      const user = await validateResetToken(token);
+      if (!user) {
+        return {
+          token: null,
+          error: "This reset link is invalid or has expired. Please request a new one."
+        };
+      }
+      return {
+        token,
+        email: user.email
+      };
+    };
+    actions7 = {
+      default: async ({ request, getClientAddress }) => {
+        const security = SecurityManager.getInstance();
+        const clientIP = getClientAddress();
+        try {
+          const formData = await request.formData();
+          const token = formData.get("token");
+          const password = formData.get("password");
+          const confirmPassword = formData.get("confirmPassword");
+          const validationResult = passwordResetSchema.safeParse({
+            token,
+            password,
+            confirmPassword
+          });
+          if (!validationResult.success) {
+            const errors = {};
+            validationResult.error.issues.forEach((issue2) => {
+              const key2 = issue2.path[0];
+              errors[key2] = issue2.message;
+            });
+            return fail(400, {
+              errors,
+              token
+            });
+          }
+          const user = await resetPassword(token, password);
+          await security.logEvent("PASSWORD_RESET_COMPLETED", clientIP, {
+            userId: user.id,
+            email: user.email
+          });
+          return {
+            success: true,
+            message: "Password reset successfully"
+          };
+        } catch (error47) {
+          console.error("Password reset error:", error47);
+          await security.logEvent("PASSWORD_RESET_ERROR", clientIP, {
+            error: error47 instanceof Error ? error47.message : "Unknown error"
+          });
+          return fail(500, {
+            errors: {
+              general: "An error occurred while resetting your password. Please try again."
+            }
+          });
+        }
+      }
+    };
+  }
+});
+
+// .svelte-kit/output/server/entries/pages/auth/reset-password/_token_/_page.svelte.js
+var page_svelte_exports8 = {};
+__export(page_svelte_exports8, {
+  default: () => Page8
+});
+var Page8;
+var init_page_svelte8 = __esm({
+  ".svelte-kit/output/server/entries/pages/auth/reset-password/_token_/_page.svelte.js"() {
+    init_ssr();
+    init_devalue();
+    init_validation();
+    Page8 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+      let { data } = $$props;
+      let token = data.token;
+      let form = { password: "", confirmPassword: "" };
+      let errors = {};
+      if ($$props.data === void 0 && $$bindings.data && data !== void 0)
+        $$bindings.data(data);
+      return `${$$result.head += `<!-- HEAD_svelte-5alxut_START -->${$$result.title = `<title>Reset Password | Spore CMMS</title>`, ""}<!-- HEAD_svelte-5alxut_END -->`, ""} <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"><div class="max-w-md w-full space-y-8"><div><div class="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-spore-orange"><svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg></div> <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900" data-svelte-h="svelte-1kmqc0l">Reset your password</h2> <p class="mt-2 text-center text-sm text-gray-600" data-svelte-h="svelte-pfqjbg">Enter your new password below</p></div> ${`<form method="POST" class="mt-8 space-y-6"><input type="hidden" name="token"${add_attribute("value", token, 0)}> <div class="space-y-4"><div><label for="password" class="block text-sm font-medium text-gray-700" data-svelte-h="svelte-t1lz5d">New Password</label> <div class="mt-1 relative">${`<input id="password" name="password" type="password" required class="${"appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-spore-orange focus:border-spore-orange sm:text-sm " + escape(errors.password ? "border-red-500" : "", true)}" placeholder="Enter your new password"${add_attribute("value", form.password, 0)}>`} <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center">${`<svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>`}</button></div> ${errors.password ? `<p class="mt-1 text-sm text-red-600">${escape(errors.password)}</p>` : ``}</div> <div><label for="confirmPassword" class="block text-sm font-medium text-gray-700" data-svelte-h="svelte-1ub4fed">Confirm Password</label> <div class="mt-1 relative">${`<input id="confirmPassword" name="confirmPassword" type="password" required class="${"appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-spore-orange focus:border-spore-orange sm:text-sm " + escape(errors.confirmPassword ? "border-red-500" : "", true)}" placeholder="Confirm your new password"${add_attribute("value", form.confirmPassword, 0)}>`} <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center">${`<svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>`}</button></div> ${errors.confirmPassword ? `<p class="mt-1 text-sm text-red-600">${escape(errors.confirmPassword)}</p>` : ``}</div></div> ${errors.general ? `<div class="rounded-md bg-red-50 p-4"><div class="flex"><div class="flex-shrink-0"><svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg></div> <div class="ml-3"><p class="text-sm font-medium text-red-800">${escape(errors.general)}</p></div></div></div>` : ``} <div><button type="submit" ${""} class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-spore-orange hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-spore-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors">${`Reset Password`}</button></div></form> <div class="mt-6"><div class="relative"><div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-300"></div></div> <div class="relative flex justify-center text-sm"><span class="px-2 bg-gray-50 text-gray-500" data-svelte-h="svelte-1ld5my3">or</span></div></div> <div class="mt-6 text-center"><a href="/auth/login" class="font-medium text-spore-orange hover:text-spore-orange/90 transition-colors" data-svelte-h="svelte-1mwj2a2">Back to login</a></div></div>`}</div></div>`;
+    });
+  }
+});
+
+// .svelte-kit/output/server/nodes/10.js
+var __exports11 = {};
+__export(__exports11, {
+  component: () => component10,
+  fonts: () => fonts11,
+  imports: () => imports11,
+  index: () => index11,
+  server: () => page_server_ts_exports8,
+  server_id: () => server_id9,
+  stylesheets: () => stylesheets11
+});
+var index11, component_cache10, component10, server_id9, imports11, stylesheets11, fonts11;
+var init__11 = __esm({
+  ".svelte-kit/output/server/nodes/10.js"() {
+    init_page_server_ts8();
+    index11 = 10;
+    component10 = async () => component_cache10 ??= (await Promise.resolve().then(() => (init_page_svelte8(), page_svelte_exports8))).default;
+    server_id9 = "src/routes/auth/reset-password/[token]/+page.server.ts";
+    imports11 = ["_app/immutable/chunks/10.de2ac825.js", "_app/immutable/chunks/_page.475c6e58.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js", "_app/immutable/chunks/validation.3f53e523.js"];
+    stylesheets11 = [];
+    fonts11 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/dashboard/_page.server.ts.js
-var page_server_ts_exports8 = {};
-__export(page_server_ts_exports8, {
-  load: () => load7
+var page_server_ts_exports9 = {};
+__export(page_server_ts_exports9, {
+  load: () => load8
 });
-var load7;
-var init_page_server_ts8 = __esm({
+var load8;
+var init_page_server_ts9 = __esm({
   ".svelte-kit/output/server/entries/pages/dashboard/_page.server.ts.js"() {
     init_prisma();
     init_guards();
-    load7 = async (event) => {
+    load8 = async (event) => {
       try {
         requireAuth(event);
         console.log("[DASHBOARD] Loading dashboard for user:", event.locals.user?.id);
@@ -29482,16 +29693,16 @@ var init_websocket = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/dashboard/_page.svelte.js
-var page_svelte_exports7 = {};
-__export(page_svelte_exports7, {
-  default: () => Page7
+var page_svelte_exports9 = {};
+__export(page_svelte_exports9, {
+  default: () => Page9
 });
-var Page7;
-var init_page_svelte7 = __esm({
+var Page9;
+var init_page_svelte9 = __esm({
   ".svelte-kit/output/server/entries/pages/dashboard/_page.svelte.js"() {
     init_ssr();
     init_websocket();
-    Page7 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page9 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let stats;
       let recentWorkOrders;
       let { data } = $$props;
@@ -29576,43 +29787,43 @@ var init_page_svelte7 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/9.js
-var __exports10 = {};
-__export(__exports10, {
-  component: () => component9,
-  fonts: () => fonts10,
-  imports: () => imports10,
-  index: () => index10,
-  server: () => page_server_ts_exports8,
-  server_id: () => server_id9,
-  stylesheets: () => stylesheets10
+// .svelte-kit/output/server/nodes/11.js
+var __exports12 = {};
+__export(__exports12, {
+  component: () => component11,
+  fonts: () => fonts12,
+  imports: () => imports12,
+  index: () => index12,
+  server: () => page_server_ts_exports9,
+  server_id: () => server_id10,
+  stylesheets: () => stylesheets12
 });
-var index10, component_cache9, component9, server_id9, imports10, stylesheets10, fonts10;
-var init__10 = __esm({
-  ".svelte-kit/output/server/nodes/9.js"() {
-    init_page_server_ts8();
-    index10 = 9;
-    component9 = async () => component_cache9 ??= (await Promise.resolve().then(() => (init_page_svelte7(), page_svelte_exports7))).default;
-    server_id9 = "src/routes/dashboard/+page.server.ts";
-    imports10 = ["_app/immutable/chunks/9.69133c90.js", "_app/immutable/chunks/_page.c04ef9fe.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/websocket.29f0dfae.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets10 = [];
-    fonts10 = [];
+var index12, component_cache11, component11, server_id10, imports12, stylesheets12, fonts12;
+var init__12 = __esm({
+  ".svelte-kit/output/server/nodes/11.js"() {
+    init_page_server_ts9();
+    index12 = 11;
+    component11 = async () => component_cache11 ??= (await Promise.resolve().then(() => (init_page_svelte9(), page_svelte_exports9))).default;
+    server_id10 = "src/routes/dashboard/+page.server.ts";
+    imports12 = ["_app/immutable/chunks/11.7b0d2dec.js", "_app/immutable/chunks/_page.f826aad2.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/websocket.c0a1939b.js", "_app/immutable/chunks/index.a42bdb25.js"];
+    stylesheets12 = [];
+    fonts12 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/join-organization/_page.server.ts.js
-var page_server_ts_exports9 = {};
-__export(page_server_ts_exports9, {
-  actions: () => actions7,
-  load: () => load8
+var page_server_ts_exports10 = {};
+__export(page_server_ts_exports10, {
+  actions: () => actions8,
+  load: () => load9
 });
-var load8, actions7;
-var init_page_server_ts9 = __esm({
+var load9, actions8;
+var init_page_server_ts10 = __esm({
   ".svelte-kit/output/server/entries/pages/join-organization/_page.server.ts.js"() {
     init_chunks();
     init_validation();
     init_prisma();
-    load8 = async ({ locals }) => {
+    load9 = async ({ locals }) => {
       if (!locals.user) {
         throw redirect(303, "/auth/login");
       }
@@ -29621,7 +29832,7 @@ var init_page_server_ts9 = __esm({
       }
       return {};
     };
-    actions7 = {
+    actions8 = {
       default: async ({ request, locals }) => {
         if (!locals.user) {
           throw redirect(303, "/auth/login");
@@ -29708,16 +29919,16 @@ var init_page_server_ts9 = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/join-organization/_page.svelte.js
-var page_svelte_exports8 = {};
-__export(page_svelte_exports8, {
-  default: () => Page8
+var page_svelte_exports10 = {};
+__export(page_svelte_exports10, {
+  default: () => Page10
 });
-var Page8;
-var init_page_svelte8 = __esm({
+var Page10;
+var init_page_svelte10 = __esm({
   ".svelte-kit/output/server/entries/pages/join-organization/_page.svelte.js"() {
     init_ssr();
     init_devalue();
-    Page8 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page10 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let { form } = $$props;
       let redirectTimeout;
       if ($$props.form === void 0 && $$bindings.form && form !== void 0)
@@ -29738,43 +29949,43 @@ var init_page_svelte8 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/10.js
-var __exports11 = {};
-__export(__exports11, {
-  component: () => component10,
-  fonts: () => fonts11,
-  imports: () => imports11,
-  index: () => index11,
-  server: () => page_server_ts_exports9,
-  server_id: () => server_id10,
-  stylesheets: () => stylesheets11
+// .svelte-kit/output/server/nodes/12.js
+var __exports13 = {};
+__export(__exports13, {
+  component: () => component12,
+  fonts: () => fonts13,
+  imports: () => imports13,
+  index: () => index13,
+  server: () => page_server_ts_exports10,
+  server_id: () => server_id11,
+  stylesheets: () => stylesheets13
 });
-var index11, component_cache10, component10, server_id10, imports11, stylesheets11, fonts11;
-var init__11 = __esm({
-  ".svelte-kit/output/server/nodes/10.js"() {
-    init_page_server_ts9();
-    index11 = 10;
-    component10 = async () => component_cache10 ??= (await Promise.resolve().then(() => (init_page_svelte8(), page_svelte_exports8))).default;
-    server_id10 = "src/routes/join-organization/+page.server.ts";
-    imports11 = ["_app/immutable/chunks/10.fd6243b8.js", "_app/immutable/chunks/_page.1a83c315.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets11 = [];
-    fonts11 = [];
+var index13, component_cache12, component12, server_id11, imports13, stylesheets13, fonts13;
+var init__13 = __esm({
+  ".svelte-kit/output/server/nodes/12.js"() {
+    init_page_server_ts10();
+    index13 = 12;
+    component12 = async () => component_cache12 ??= (await Promise.resolve().then(() => (init_page_svelte10(), page_svelte_exports10))).default;
+    server_id11 = "src/routes/join-organization/+page.server.ts";
+    imports13 = ["_app/immutable/chunks/12.31ab7eda.js", "_app/immutable/chunks/_page.7971ba15.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
+    stylesheets13 = [];
+    fonts13 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/onboarding/_page.server.ts.js
-var page_server_ts_exports10 = {};
-__export(page_server_ts_exports10, {
-  actions: () => actions8,
-  load: () => load9
+var page_server_ts_exports11 = {};
+__export(page_server_ts_exports11, {
+  actions: () => actions9,
+  load: () => load10
 });
-var load9, actions8;
-var init_page_server_ts10 = __esm({
+var load10, actions9;
+var init_page_server_ts11 = __esm({
   ".svelte-kit/output/server/entries/pages/onboarding/_page.server.ts.js"() {
     init_chunks();
     init_validation();
     init_prisma();
-    load9 = async ({ locals }) => {
+    load10 = async ({ locals }) => {
       if (!locals.user) {
         throw redirect(303, "/auth/login");
       }
@@ -29783,7 +29994,7 @@ var init_page_server_ts10 = __esm({
       }
       return {};
     };
-    actions8 = {
+    actions9 = {
       default: async ({ request, locals }) => {
         if (!locals.user) {
           throw redirect(303, "/auth/login");
@@ -29842,16 +30053,16 @@ var init_page_server_ts10 = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/onboarding/_page.svelte.js
-var page_svelte_exports9 = {};
-__export(page_svelte_exports9, {
-  default: () => Page9
+var page_svelte_exports11 = {};
+__export(page_svelte_exports11, {
+  default: () => Page11
 });
-var Page9;
-var init_page_svelte9 = __esm({
+var Page11;
+var init_page_svelte11 = __esm({
   ".svelte-kit/output/server/entries/pages/onboarding/_page.svelte.js"() {
     init_ssr();
     init_devalue();
-    Page9 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page11 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let { form } = $$props;
       if ($$props.form === void 0 && $$bindings.form && form !== void 0)
         $$bindings.form(form);
@@ -29866,44 +30077,44 @@ var init_page_svelte9 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/11.js
-var __exports12 = {};
-__export(__exports12, {
-  component: () => component11,
-  fonts: () => fonts12,
-  imports: () => imports12,
-  index: () => index12,
-  server: () => page_server_ts_exports10,
-  server_id: () => server_id11,
-  stylesheets: () => stylesheets12
+// .svelte-kit/output/server/nodes/13.js
+var __exports14 = {};
+__export(__exports14, {
+  component: () => component13,
+  fonts: () => fonts14,
+  imports: () => imports14,
+  index: () => index14,
+  server: () => page_server_ts_exports11,
+  server_id: () => server_id12,
+  stylesheets: () => stylesheets14
 });
-var index12, component_cache11, component11, server_id11, imports12, stylesheets12, fonts12;
-var init__12 = __esm({
-  ".svelte-kit/output/server/nodes/11.js"() {
-    init_page_server_ts10();
-    index12 = 11;
-    component11 = async () => component_cache11 ??= (await Promise.resolve().then(() => (init_page_svelte9(), page_svelte_exports9))).default;
-    server_id11 = "src/routes/onboarding/+page.server.ts";
-    imports12 = ["_app/immutable/nodes/11.c2fa7132.js", "_app/immutable/chunks/_page.9ec2562e.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets12 = [];
-    fonts12 = [];
+var index14, component_cache13, component13, server_id12, imports14, stylesheets14, fonts14;
+var init__14 = __esm({
+  ".svelte-kit/output/server/nodes/13.js"() {
+    init_page_server_ts11();
+    index14 = 13;
+    component13 = async () => component_cache13 ??= (await Promise.resolve().then(() => (init_page_svelte11(), page_svelte_exports11))).default;
+    server_id12 = "src/routes/onboarding/+page.server.ts";
+    imports14 = ["_app/immutable/nodes/13.b6219d45.js", "_app/immutable/chunks/_page.8c0f535e.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
+    stylesheets14 = [];
+    fonts14 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/profile/_page.server.ts.js
-var page_server_ts_exports11 = {};
-__export(page_server_ts_exports11, {
-  actions: () => actions9,
-  load: () => load10
+var page_server_ts_exports12 = {};
+__export(page_server_ts_exports12, {
+  actions: () => actions10,
+  load: () => load11
 });
-var load10, actions9;
-var init_page_server_ts11 = __esm({
+var load11, actions10;
+var init_page_server_ts12 = __esm({
   ".svelte-kit/output/server/entries/pages/profile/_page.server.ts.js"() {
     init_prisma();
     init_auth();
     init_guards();
     init_chunks();
-    load10 = async (event) => {
+    load11 = async (event) => {
       requireAuth(event);
       const prisma = await createRequestPrisma(event);
       const userId = event.locals.user.id;
@@ -29921,7 +30132,7 @@ var init_page_server_ts11 = __esm({
       });
       return { profile: user };
     };
-    actions9 = {
+    actions10 = {
       updateProfile: async (event) => {
         requireAuth(event);
         const prisma = await createRequestPrisma(event);
@@ -29980,16 +30191,16 @@ var init_page_server_ts11 = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/profile/_page.svelte.js
-var page_svelte_exports10 = {};
-__export(page_svelte_exports10, {
-  default: () => Page10
+var page_svelte_exports12 = {};
+__export(page_svelte_exports12, {
+  default: () => Page12
 });
-var Page10;
-var init_page_svelte10 = __esm({
+var Page12;
+var init_page_svelte12 = __esm({
   ".svelte-kit/output/server/entries/pages/profile/_page.svelte.js"() {
     init_ssr();
     init_devalue();
-    Page10 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page12 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let { data } = $$props;
       let { form } = $$props;
       let currentPassword = "";
@@ -30007,42 +30218,42 @@ var init_page_svelte10 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/12.js
-var __exports13 = {};
-__export(__exports13, {
-  component: () => component12,
-  fonts: () => fonts13,
-  imports: () => imports13,
-  index: () => index13,
-  server: () => page_server_ts_exports11,
-  server_id: () => server_id12,
-  stylesheets: () => stylesheets13
+// .svelte-kit/output/server/nodes/14.js
+var __exports15 = {};
+__export(__exports15, {
+  component: () => component14,
+  fonts: () => fonts15,
+  imports: () => imports15,
+  index: () => index15,
+  server: () => page_server_ts_exports12,
+  server_id: () => server_id13,
+  stylesheets: () => stylesheets15
 });
-var index13, component_cache12, component12, server_id12, imports13, stylesheets13, fonts13;
-var init__13 = __esm({
-  ".svelte-kit/output/server/nodes/12.js"() {
-    init_page_server_ts11();
-    index13 = 12;
-    component12 = async () => component_cache12 ??= (await Promise.resolve().then(() => (init_page_svelte10(), page_svelte_exports10))).default;
-    server_id12 = "src/routes/profile/+page.server.ts";
-    imports13 = ["_app/immutable/chunks/12.4e942693.js", "_app/immutable/chunks/_page.1b6c723e.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets13 = [];
-    fonts13 = [];
+var index15, component_cache14, component14, server_id13, imports15, stylesheets15, fonts15;
+var init__15 = __esm({
+  ".svelte-kit/output/server/nodes/14.js"() {
+    init_page_server_ts12();
+    index15 = 14;
+    component14 = async () => component_cache14 ??= (await Promise.resolve().then(() => (init_page_svelte12(), page_svelte_exports12))).default;
+    server_id13 = "src/routes/profile/+page.server.ts";
+    imports15 = ["_app/immutable/chunks/14.6dad21ec.js", "_app/immutable/chunks/_page.ba30f86f.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
+    stylesheets15 = [];
+    fonts15 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/select-organization/_page.server.ts.js
-var page_server_ts_exports12 = {};
-__export(page_server_ts_exports12, {
-  actions: () => actions10,
-  load: () => load11
+var page_server_ts_exports13 = {};
+__export(page_server_ts_exports13, {
+  actions: () => actions11,
+  load: () => load12
 });
-var load11, actions10;
-var init_page_server_ts12 = __esm({
+var load12, actions11;
+var init_page_server_ts13 = __esm({
   ".svelte-kit/output/server/entries/pages/select-organization/_page.server.ts.js"() {
     init_chunks();
     init_prisma();
-    load11 = async ({ locals }) => {
+    load12 = async ({ locals }) => {
       if (!locals.user) {
         throw redirect(303, "/auth/login");
       }
@@ -30068,7 +30279,7 @@ var init_page_server_ts12 = __esm({
         currentOrganization: locals.currentOrganization
       };
     };
-    actions10 = {
+    actions11 = {
       default: async ({ request, locals }) => {
         if (!locals.user) {
           throw redirect(303, "/auth/login");
@@ -30114,16 +30325,16 @@ var init_page_server_ts12 = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/select-organization/_page.svelte.js
-var page_svelte_exports11 = {};
-__export(page_svelte_exports11, {
-  default: () => Page11
+var page_svelte_exports13 = {};
+__export(page_svelte_exports13, {
+  default: () => Page13
 });
-var Page11;
-var init_page_svelte11 = __esm({
+var Page13;
+var init_page_svelte13 = __esm({
   ".svelte-kit/output/server/entries/pages/select-organization/_page.svelte.js"() {
     init_ssr();
     init_devalue();
-    Page11 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page13 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let { data } = $$props;
       let selectedOrg = "";
       if ($$props.data === void 0 && $$bindings.data && data !== void 0)
@@ -30137,44 +30348,44 @@ var init_page_svelte11 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/13.js
-var __exports14 = {};
-__export(__exports14, {
-  component: () => component13,
-  fonts: () => fonts14,
-  imports: () => imports14,
-  index: () => index14,
-  server: () => page_server_ts_exports12,
-  server_id: () => server_id13,
-  stylesheets: () => stylesheets14
+// .svelte-kit/output/server/nodes/15.js
+var __exports16 = {};
+__export(__exports16, {
+  component: () => component15,
+  fonts: () => fonts16,
+  imports: () => imports16,
+  index: () => index16,
+  server: () => page_server_ts_exports13,
+  server_id: () => server_id14,
+  stylesheets: () => stylesheets16
 });
-var index14, component_cache13, component13, server_id13, imports14, stylesheets14, fonts14;
-var init__14 = __esm({
-  ".svelte-kit/output/server/nodes/13.js"() {
-    init_page_server_ts12();
-    index14 = 13;
-    component13 = async () => component_cache13 ??= (await Promise.resolve().then(() => (init_page_svelte11(), page_svelte_exports11))).default;
-    server_id13 = "src/routes/select-organization/+page.server.ts";
-    imports14 = ["_app/immutable/chunks/13.e4beab9c.js", "_app/immutable/chunks/_page.3c9be765.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets14 = [];
-    fonts14 = [];
+var index16, component_cache15, component15, server_id14, imports16, stylesheets16, fonts16;
+var init__16 = __esm({
+  ".svelte-kit/output/server/nodes/15.js"() {
+    init_page_server_ts13();
+    index16 = 15;
+    component15 = async () => component_cache15 ??= (await Promise.resolve().then(() => (init_page_svelte13(), page_svelte_exports13))).default;
+    server_id14 = "src/routes/select-organization/+page.server.ts";
+    imports16 = ["_app/immutable/chunks/15.2da19e46.js", "_app/immutable/chunks/_page.ea5cd65e.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
+    stylesheets16 = [];
+    fonts16 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/sites/_page.server.ts.js
-var page_server_ts_exports13 = {};
-__export(page_server_ts_exports13, {
-  actions: () => actions11,
-  load: () => load12
+var page_server_ts_exports14 = {};
+__export(page_server_ts_exports14, {
+  actions: () => actions12,
+  load: () => load13
 });
-var load12, actions11;
-var init_page_server_ts13 = __esm({
+var load13, actions12;
+var init_page_server_ts14 = __esm({
   ".svelte-kit/output/server/entries/pages/sites/_page.server.ts.js"() {
     init_prisma();
     init_chunks();
     init_guards();
     init_audit();
-    load12 = async (event) => {
+    load13 = async (event) => {
       requireAuth(event);
       const prisma = await createRequestPrisma(event);
       const sites = await prisma.site.findMany({
@@ -30205,7 +30416,7 @@ var init_page_server_ts13 = __esm({
       });
       return { sites };
     };
-    actions11 = {
+    actions12 = {
       create: async (event) => {
         const prisma = await createRequestPrisma(event);
         const formData = await event.request.formData();
@@ -30270,16 +30481,16 @@ var init_page_server_ts13 = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/sites/_page.svelte.js
-var page_svelte_exports12 = {};
-__export(page_svelte_exports12, {
-  default: () => Page12
+var page_svelte_exports14 = {};
+__export(page_svelte_exports14, {
+  default: () => Page14
 });
-var Page12;
-var init_page_svelte12 = __esm({
+var Page14;
+var init_page_svelte14 = __esm({
   ".svelte-kit/output/server/entries/pages/sites/_page.svelte.js"() {
     init_ssr();
     init_devalue();
-    Page12 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page14 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let sites;
       let { data } = $$props;
       let editingSiteId = null;
@@ -30295,43 +30506,43 @@ var init_page_svelte12 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/14.js
-var __exports15 = {};
-__export(__exports15, {
-  component: () => component14,
-  fonts: () => fonts15,
-  imports: () => imports15,
-  index: () => index15,
-  server: () => page_server_ts_exports13,
-  server_id: () => server_id14,
-  stylesheets: () => stylesheets15
+// .svelte-kit/output/server/nodes/16.js
+var __exports17 = {};
+__export(__exports17, {
+  component: () => component16,
+  fonts: () => fonts17,
+  imports: () => imports17,
+  index: () => index17,
+  server: () => page_server_ts_exports14,
+  server_id: () => server_id15,
+  stylesheets: () => stylesheets17
 });
-var index15, component_cache14, component14, server_id14, imports15, stylesheets15, fonts15;
-var init__15 = __esm({
-  ".svelte-kit/output/server/nodes/14.js"() {
-    init_page_server_ts13();
-    index15 = 14;
-    component14 = async () => component_cache14 ??= (await Promise.resolve().then(() => (init_page_svelte12(), page_svelte_exports12))).default;
-    server_id14 = "src/routes/sites/+page.server.ts";
-    imports15 = ["_app/immutable/chunks/14.4a03680a.js", "_app/immutable/chunks/_page.eeccd5fa.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets15 = [];
-    fonts15 = [];
+var index17, component_cache16, component16, server_id15, imports17, stylesheets17, fonts17;
+var init__17 = __esm({
+  ".svelte-kit/output/server/nodes/16.js"() {
+    init_page_server_ts14();
+    index17 = 16;
+    component16 = async () => component_cache16 ??= (await Promise.resolve().then(() => (init_page_svelte14(), page_svelte_exports14))).default;
+    server_id15 = "src/routes/sites/+page.server.ts";
+    imports17 = ["_app/immutable/chunks/16.641ff912.js", "_app/immutable/chunks/_page.b61de2fa.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
+    stylesheets17 = [];
+    fonts17 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/sites/_id_/_page.server.ts.js
-var page_server_ts_exports14 = {};
-__export(page_server_ts_exports14, {
-  actions: () => actions12,
-  load: () => load13
+var page_server_ts_exports15 = {};
+__export(page_server_ts_exports15, {
+  actions: () => actions13,
+  load: () => load14
 });
-var load13, actions12;
-var init_page_server_ts14 = __esm({
+var load14, actions13;
+var init_page_server_ts15 = __esm({
   ".svelte-kit/output/server/entries/pages/sites/_id_/_page.server.ts.js"() {
     init_prisma();
     init_chunks();
     init_guards();
-    load13 = async (event) => {
+    load14 = async (event) => {
       requireAuth(event);
       const prisma = await createRequestPrisma(event);
       const { id } = event.params;
@@ -30378,7 +30589,7 @@ var init_page_server_ts14 = __esm({
       }, {});
       return { site, unitsByBuilding };
     };
-    actions12 = {
+    actions13 = {
       createUnit: async (event) => {
         const prisma = await createRequestPrisma(event);
         const formData = await event.request.formData();
@@ -30498,16 +30709,16 @@ var init_page_server_ts14 = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/sites/_id_/_page.svelte.js
-var page_svelte_exports13 = {};
-__export(page_svelte_exports13, {
-  default: () => Page13
+var page_svelte_exports15 = {};
+__export(page_svelte_exports15, {
+  default: () => Page15
 });
-var Page13;
-var init_page_svelte13 = __esm({
+var Page15;
+var init_page_svelte15 = __esm({
   ".svelte-kit/output/server/entries/pages/sites/_id_/_page.svelte.js"() {
     init_ssr();
     init_devalue();
-    Page13 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page15 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let site;
       let roomsByBuilding;
       let buildingNames;
@@ -30531,44 +30742,44 @@ var init_page_svelte13 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/15.js
-var __exports16 = {};
-__export(__exports16, {
-  component: () => component15,
-  fonts: () => fonts16,
-  imports: () => imports16,
-  index: () => index16,
-  server: () => page_server_ts_exports14,
-  server_id: () => server_id15,
-  stylesheets: () => stylesheets16
+// .svelte-kit/output/server/nodes/17.js
+var __exports18 = {};
+__export(__exports18, {
+  component: () => component17,
+  fonts: () => fonts18,
+  imports: () => imports18,
+  index: () => index18,
+  server: () => page_server_ts_exports15,
+  server_id: () => server_id16,
+  stylesheets: () => stylesheets18
 });
-var index16, component_cache15, component15, server_id15, imports16, stylesheets16, fonts16;
-var init__16 = __esm({
-  ".svelte-kit/output/server/nodes/15.js"() {
-    init_page_server_ts14();
-    index16 = 15;
-    component15 = async () => component_cache15 ??= (await Promise.resolve().then(() => (init_page_svelte13(), page_svelte_exports13))).default;
-    server_id15 = "src/routes/sites/[id]/+page.server.ts";
-    imports16 = ["_app/immutable/nodes/15.d831fa0b.js", "_app/immutable/chunks/_page.7d5eb30c.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets16 = [];
-    fonts16 = [];
+var index18, component_cache17, component17, server_id16, imports18, stylesheets18, fonts18;
+var init__18 = __esm({
+  ".svelte-kit/output/server/nodes/17.js"() {
+    init_page_server_ts15();
+    index18 = 17;
+    component17 = async () => component_cache17 ??= (await Promise.resolve().then(() => (init_page_svelte15(), page_svelte_exports15))).default;
+    server_id16 = "src/routes/sites/[id]/+page.server.ts";
+    imports18 = ["_app/immutable/nodes/17.f2eb56be.js", "_app/immutable/chunks/_page.fdd61cfb.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
+    stylesheets18 = [];
+    fonts18 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/users/_page.server.ts.js
-var page_server_ts_exports15 = {};
-__export(page_server_ts_exports15, {
-  actions: () => actions13,
-  load: () => load14
+var page_server_ts_exports16 = {};
+__export(page_server_ts_exports16, {
+  actions: () => actions14,
+  load: () => load15
 });
-var load14, actions13;
-var init_page_server_ts15 = __esm({
+var load15, actions14;
+var init_page_server_ts16 = __esm({
   ".svelte-kit/output/server/entries/pages/users/_page.server.ts.js"() {
     init_prisma();
     init_auth();
     init_chunks();
     init_audit();
-    load14 = async (event) => {
+    load15 = async (event) => {
       const { locals } = event;
       if (!locals.user || !canManageUsers(locals.user.role)) {
         throw error(403, "Access denied. Admin privileges required.");
@@ -30588,7 +30799,7 @@ var init_page_server_ts15 = __esm({
       });
       return { users };
     };
-    actions13 = {
+    actions14 = {
       create: async (event) => {
         const { locals, request } = event;
         if (!locals.user || !canManageUsers(locals.user.role)) {
@@ -30698,9 +30909,9 @@ var init_page_server_ts15 = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/users/_page.svelte.js
-var page_svelte_exports14 = {};
-__export(page_svelte_exports14, {
-  default: () => Page14
+var page_svelte_exports16 = {};
+__export(page_svelte_exports16, {
+  default: () => Page16
 });
 function getRoleBadgeColor(role) {
   switch (role) {
@@ -30712,12 +30923,12 @@ function getRoleBadgeColor(role) {
       return "bg-spore-steel text-white";
   }
 }
-var Page14;
-var init_page_svelte14 = __esm({
+var Page16;
+var init_page_svelte16 = __esm({
   ".svelte-kit/output/server/entries/pages/users/_page.svelte.js"() {
     init_ssr();
     init_devalue();
-    Page14 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page16 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let users;
       let { data } = $$props;
       if ($$props.data === void 0 && $$bindings.data && data !== void 0)
@@ -30730,40 +30941,40 @@ var init_page_svelte14 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/16.js
-var __exports17 = {};
-__export(__exports17, {
-  component: () => component16,
-  fonts: () => fonts17,
-  imports: () => imports17,
-  index: () => index17,
-  server: () => page_server_ts_exports15,
-  server_id: () => server_id16,
-  stylesheets: () => stylesheets17
+// .svelte-kit/output/server/nodes/18.js
+var __exports19 = {};
+__export(__exports19, {
+  component: () => component18,
+  fonts: () => fonts19,
+  imports: () => imports19,
+  index: () => index19,
+  server: () => page_server_ts_exports16,
+  server_id: () => server_id17,
+  stylesheets: () => stylesheets19
 });
-var index17, component_cache16, component16, server_id16, imports17, stylesheets17, fonts17;
-var init__17 = __esm({
-  ".svelte-kit/output/server/nodes/16.js"() {
-    init_page_server_ts15();
-    index17 = 16;
-    component16 = async () => component_cache16 ??= (await Promise.resolve().then(() => (init_page_svelte14(), page_svelte_exports14))).default;
-    server_id16 = "src/routes/users/+page.server.ts";
-    imports17 = ["_app/immutable/nodes/16.2f92262c.js", "_app/immutable/chunks/_page.99b107c7.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets17 = [];
-    fonts17 = [];
+var index19, component_cache18, component18, server_id17, imports19, stylesheets19, fonts19;
+var init__19 = __esm({
+  ".svelte-kit/output/server/nodes/18.js"() {
+    init_page_server_ts16();
+    index19 = 18;
+    component18 = async () => component_cache18 ??= (await Promise.resolve().then(() => (init_page_svelte16(), page_svelte_exports16))).default;
+    server_id17 = "src/routes/users/+page.server.ts";
+    imports19 = ["_app/immutable/chunks/18.cc6ba7c9.js", "_app/immutable/chunks/_page.0846dfe0.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js"];
+    stylesheets19 = [];
+    fonts19 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/users/security/_page.svelte.js
-var page_svelte_exports15 = {};
-__export(page_svelte_exports15, {
-  default: () => Page15
+var page_svelte_exports17 = {};
+__export(page_svelte_exports17, {
+  default: () => Page17
 });
-var Page15;
-var init_page_svelte15 = __esm({
+var Page17;
+var init_page_svelte17 = __esm({
   ".svelte-kit/output/server/entries/pages/users/security/_page.svelte.js"() {
     init_ssr();
-    Page15 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page17 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let { data } = $$props;
       let securityLogs = [];
       let filters = {
@@ -30821,23 +31032,23 @@ var init_page_svelte15 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/17.js
-var __exports18 = {};
-__export(__exports18, {
-  component: () => component17,
-  fonts: () => fonts18,
-  imports: () => imports18,
-  index: () => index18,
-  stylesheets: () => stylesheets18
+// .svelte-kit/output/server/nodes/19.js
+var __exports20 = {};
+__export(__exports20, {
+  component: () => component19,
+  fonts: () => fonts20,
+  imports: () => imports20,
+  index: () => index20,
+  stylesheets: () => stylesheets20
 });
-var index18, component_cache17, component17, imports18, stylesheets18, fonts18;
-var init__18 = __esm({
-  ".svelte-kit/output/server/nodes/17.js"() {
-    index18 = 17;
-    component17 = async () => component_cache17 ??= (await Promise.resolve().then(() => (init_page_svelte15(), page_svelte_exports15))).default;
-    imports18 = ["_app/immutable/nodes/17.bf67d1ef.js", "_app/immutable/chunks/_page.6d829719.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js"];
-    stylesheets18 = [];
-    fonts18 = [];
+var index20, component_cache19, component19, imports20, stylesheets20, fonts20;
+var init__20 = __esm({
+  ".svelte-kit/output/server/nodes/19.js"() {
+    index20 = 19;
+    component19 = async () => component_cache19 ??= (await Promise.resolve().then(() => (init_page_svelte17(), page_svelte_exports17))).default;
+    imports20 = ["_app/immutable/chunks/19.90f33d79.js", "_app/immutable/chunks/_page.62e8dcfb.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.aa9ac6db.js"];
+    stylesheets20 = [];
+    fonts20 = [];
   }
 });
 
@@ -30870,20 +31081,20 @@ var init_websocket_handler = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/work-orders/_page.server.ts.js
-var page_server_ts_exports16 = {};
-__export(page_server_ts_exports16, {
-  actions: () => actions14,
-  load: () => load15
+var page_server_ts_exports17 = {};
+__export(page_server_ts_exports17, {
+  actions: () => actions15,
+  load: () => load16
 });
-var load15, actions14;
-var init_page_server_ts16 = __esm({
+var load16, actions15;
+var init_page_server_ts17 = __esm({
   ".svelte-kit/output/server/entries/pages/work-orders/_page.server.ts.js"() {
     init_prisma();
     init_websocket_handler();
     init_guards();
     init_chunks();
     init_audit();
-    load15 = async (event) => {
+    load16 = async (event) => {
       requireAuth(event);
       const prisma = await createRequestPrisma(event);
       const userId = event.locals.user.id;
@@ -31037,7 +31248,7 @@ var init_page_server_ts16 = __esm({
       });
       return { workOrders, assets: assets2, units, buildings, sites, users, myOnly, status, priority, siteId, sort };
     };
-    actions14 = {
+    actions15 = {
       /**
        * Create a new Work Order
        */
@@ -31219,9 +31430,9 @@ var init_constants2 = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/work-orders/_page.svelte.js
-var page_svelte_exports16 = {};
-__export(page_svelte_exports16, {
-  default: () => Page16
+var page_svelte_exports18 = {};
+__export(page_svelte_exports18, {
+  default: () => Page18
 });
 function getUserName2(user) {
   if (!user)
@@ -31231,15 +31442,15 @@ function getUserName2(user) {
   }
   return user.email || "Unknown";
 }
-var Page16;
-var init_page_svelte16 = __esm({
+var Page18;
+var init_page_svelte18 = __esm({
   ".svelte-kit/output/server/entries/pages/work-orders/_page.svelte.js"() {
     init_ssr();
     init_websocket();
     init_devalue();
     init_stores();
     init_constants2();
-    Page16 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page18 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let $$unsubscribe_page;
       validate_store(page, "page");
       $$unsubscribe_page = subscribe(page, (value) => value);
@@ -31355,45 +31566,45 @@ var init_page_svelte16 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/18.js
-var __exports19 = {};
-__export(__exports19, {
-  component: () => component18,
-  fonts: () => fonts19,
-  imports: () => imports19,
-  index: () => index19,
-  server: () => page_server_ts_exports16,
-  server_id: () => server_id17,
-  stylesheets: () => stylesheets19
+// .svelte-kit/output/server/nodes/20.js
+var __exports21 = {};
+__export(__exports21, {
+  component: () => component20,
+  fonts: () => fonts21,
+  imports: () => imports21,
+  index: () => index21,
+  server: () => page_server_ts_exports17,
+  server_id: () => server_id18,
+  stylesheets: () => stylesheets21
 });
-var index19, component_cache18, component18, server_id17, imports19, stylesheets19, fonts19;
-var init__19 = __esm({
-  ".svelte-kit/output/server/nodes/18.js"() {
-    init_page_server_ts16();
-    index19 = 18;
-    component18 = async () => component_cache18 ??= (await Promise.resolve().then(() => (init_page_svelte16(), page_svelte_exports16))).default;
-    server_id17 = "src/routes/work-orders/+page.server.ts";
-    imports19 = ["_app/immutable/nodes/18.0ab2b721.js", "_app/immutable/chunks/_page.bd35c866.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/websocket.29f0dfae.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/stores.fbf1ae59.js", "_app/immutable/chunks/constants.d02042fd.js"];
-    stylesheets19 = [];
-    fonts19 = [];
+var index21, component_cache20, component20, server_id18, imports21, stylesheets21, fonts21;
+var init__21 = __esm({
+  ".svelte-kit/output/server/nodes/20.js"() {
+    init_page_server_ts17();
+    index21 = 20;
+    component20 = async () => component_cache20 ??= (await Promise.resolve().then(() => (init_page_svelte18(), page_svelte_exports18))).default;
+    server_id18 = "src/routes/work-orders/+page.server.ts";
+    imports21 = ["_app/immutable/chunks/20.6780eaa2.js", "_app/immutable/chunks/_page.27e7367c.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/websocket.c0a1939b.js", "_app/immutable/chunks/index.a42bdb25.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/stores.1292cc3e.js", "_app/immutable/chunks/constants.d02042fd.js"];
+    stylesheets21 = [];
+    fonts21 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/work-orders/_id_/_page.server.ts.js
-var page_server_ts_exports17 = {};
-__export(page_server_ts_exports17, {
-  actions: () => actions15,
-  load: () => load16
+var page_server_ts_exports18 = {};
+__export(page_server_ts_exports18, {
+  actions: () => actions16,
+  load: () => load17
 });
-var load16, actions15;
-var init_page_server_ts17 = __esm({
+var load17, actions16;
+var init_page_server_ts18 = __esm({
   ".svelte-kit/output/server/entries/pages/work-orders/_id_/_page.server.ts.js"() {
     init_prisma();
     init_websocket_handler();
     init_chunks();
     init_guards();
     init_audit();
-    load16 = async (event) => {
+    load17 = async (event) => {
       requireAuth(event);
       const prisma = await createRequestPrisma(event);
       const { id } = event.params;
@@ -31452,7 +31663,7 @@ var init_page_server_ts17 = __esm({
       }));
       return { workOrder: workOrderWithRoom, assets: assetsWithRoom };
     };
-    actions15 = {
+    actions16 = {
       updateStatus: async (event) => {
         const prisma = await createRequestPrisma(event);
         const formData = await event.request.formData();
@@ -31527,9 +31738,9 @@ var init_page_server_ts17 = __esm({
 });
 
 // .svelte-kit/output/server/entries/pages/work-orders/_id_/_page.svelte.js
-var page_svelte_exports17 = {};
-__export(page_svelte_exports17, {
-  default: () => Page17
+var page_svelte_exports19 = {};
+__export(page_svelte_exports19, {
+  default: () => Page19
 });
 function getStatusColor2(status) {
   switch (status) {
@@ -31547,13 +31758,13 @@ function getStatusColor2(status) {
       return "bg-spore-steel text-white";
   }
 }
-var Page17;
-var init_page_svelte17 = __esm({
+var Page19;
+var init_page_svelte19 = __esm({
   ".svelte-kit/output/server/entries/pages/work-orders/_id_/_page.svelte.js"() {
     init_ssr();
     init_devalue();
     init_constants2();
-    Page17 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Page19 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let workOrder;
       let { data } = $$props;
       const statuses = WORK_ORDER_STATUSES;
@@ -31568,27 +31779,27 @@ var init_page_svelte17 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/19.js
-var __exports20 = {};
-__export(__exports20, {
-  component: () => component19,
-  fonts: () => fonts20,
-  imports: () => imports20,
-  index: () => index20,
-  server: () => page_server_ts_exports17,
-  server_id: () => server_id18,
-  stylesheets: () => stylesheets20
+// .svelte-kit/output/server/nodes/21.js
+var __exports22 = {};
+__export(__exports22, {
+  component: () => component21,
+  fonts: () => fonts22,
+  imports: () => imports22,
+  index: () => index22,
+  server: () => page_server_ts_exports18,
+  server_id: () => server_id19,
+  stylesheets: () => stylesheets22
 });
-var index20, component_cache19, component19, server_id18, imports20, stylesheets20, fonts20;
-var init__20 = __esm({
-  ".svelte-kit/output/server/nodes/19.js"() {
-    init_page_server_ts17();
-    index20 = 19;
-    component19 = async () => component_cache19 ??= (await Promise.resolve().then(() => (init_page_svelte17(), page_svelte_exports17))).default;
-    server_id18 = "src/routes/work-orders/[id]/+page.server.ts";
-    imports20 = ["_app/immutable/nodes/19.45c33746.js", "_app/immutable/chunks/_page.acfa676c.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c20b576d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/constants.d02042fd.js"];
-    stylesheets20 = [];
-    fonts20 = [];
+var index22, component_cache21, component21, server_id19, imports22, stylesheets22, fonts22;
+var init__22 = __esm({
+  ".svelte-kit/output/server/nodes/21.js"() {
+    init_page_server_ts18();
+    index22 = 21;
+    component21 = async () => component_cache21 ??= (await Promise.resolve().then(() => (init_page_svelte19(), page_svelte_exports19))).default;
+    server_id19 = "src/routes/work-orders/[id]/+page.server.ts";
+    imports22 = ["_app/immutable/nodes/21.8ec99bb7.js", "_app/immutable/chunks/_page.e7ff71ed.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js", "_app/immutable/chunks/forms.f1c4a5f2.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js", "_app/immutable/chunks/constants.d02042fd.js"];
+    stylesheets22 = [];
+    fonts22 = [];
   }
 });
 
@@ -31670,15 +31881,116 @@ var init_server_ts = __esm({
   }
 });
 
-// .svelte-kit/output/server/entries/endpoints/api/security/blocks/_server.ts.js
+// .svelte-kit/output/server/entries/endpoints/api/auth/emergency-reset/_server.ts.js
 var server_ts_exports2 = {};
 __export(server_ts_exports2, {
-  DELETE: () => DELETE,
-  GET: () => GET2,
   POST: () => POST
 });
-var GET2, POST, DELETE;
+async function POST({ request, getClientAddress }) {
+  const security = SecurityManager.getInstance();
+  const clientIP = getClientAddress();
+  try {
+    const isBlocked = await security.isIPBlocked(clientIP);
+    if (isBlocked.blocked) {
+      await security.logEvent("PASSWORD_RESET_BLOCKED", clientIP, {
+        reason: isBlocked.reason
+      });
+      return json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+    await security.checkRateLimit(clientIP, SECURITY_RATE_LIMITS.PASSWORD_RESET);
+    const body = await request.json();
+    const validationResult = emergencyResetRequestSchema.safeParse(body);
+    if (!validationResult.success) {
+      await security.logEvent("PASSWORD_RESET_FAILED", clientIP, {
+        reason: "Invalid input",
+        errors: validationResult.error.errors
+      });
+      return json({
+        error: "Invalid input",
+        details: validationResult.error.errors.map((e3) => e3.message)
+      }, { status: 400 });
+    }
+    const { email: email3, passphrase } = validationResult.data;
+    const prisma = await getPrisma();
+    const user = await prisma.user.findUnique({
+      where: { email: email3 },
+      select: {
+        id: true,
+        email: true,
+        recoveryPassphrase: true
+      }
+    });
+    if (!user || !user.recoveryPassphrase) {
+      await security.logEvent("PASSWORD_RESET_FAILED", clientIP, {
+        email: email3,
+        reason: "Invalid email or no passphrase set"
+      });
+      return json({
+        error: "If the email exists and has a recovery passphrase, a reset link has been generated.",
+        success: false
+      }, { status: 200 });
+    }
+    const isValidPassphrase = await verifyPassword(passphrase, user.recoveryPassphrase);
+    if (!isValidPassphrase) {
+      await security.logEvent("PASSWORD_RESET_FAILED", clientIP, {
+        userId: user.id,
+        email: email3,
+        reason: "Invalid passphrase"
+      });
+      return json({
+        error: "If the email exists and has a recovery passphrase, a reset link has been generated.",
+        success: false
+      }, { status: 200 });
+    }
+    const resetToken = crypto.randomUUID();
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1e3);
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordResetToken: resetToken,
+        passwordResetExpiresAt: expiresAt
+      }
+    });
+    await security.logEvent("PASSWORD_RESET_INITIATED", clientIP, {
+      userId: user.id,
+      email: email3
+    });
+    const isDevelopment = true;
+    return json({
+      success: true,
+      message: "Password reset token generated successfully",
+      // Only include token in development for direct access
+      ...isDevelopment && { resetToken, resetUrl: `/auth/reset-password/${resetToken}` }
+    });
+  } catch (error47) {
+    console.error("Emergency password reset error:", error47);
+    await security.logEvent("PASSWORD_RESET_ERROR", clientIP, {
+      error: error47 instanceof Error ? error47.message : "Unknown error"
+    });
+    return json({
+      error: "An internal error occurred. Please try again later."
+    }, { status: 500 });
+  }
+}
 var init_server_ts2 = __esm({
+  ".svelte-kit/output/server/entries/endpoints/api/auth/emergency-reset/_server.ts.js"() {
+    init_chunks();
+    init_security();
+    init_auth();
+    init_validation();
+    init_prisma();
+  }
+});
+
+// .svelte-kit/output/server/entries/endpoints/api/security/blocks/_server.ts.js
+var server_ts_exports3 = {};
+__export(server_ts_exports3, {
+  DELETE: () => DELETE,
+  GET: () => GET2,
+  POST: () => POST2
+});
+var GET2, POST2, DELETE;
+var init_server_ts3 = __esm({
   ".svelte-kit/output/server/entries/endpoints/api/security/blocks/_server.ts.js"() {
     init_chunks();
     init_security();
@@ -31697,7 +32009,7 @@ var init_server_ts2 = __esm({
         return json({ error: "Failed to fetch blocked IPs" }, { status: 500 });
       }
     };
-    POST = async ({ locals, request }) => {
+    POST2 = async ({ locals, request }) => {
       if (!locals.user || locals.user.role !== "ADMIN") {
         return json({ error: "Unauthorized" }, { status: 403 });
       }
@@ -31740,12 +32052,12 @@ var init_server_ts2 = __esm({
 });
 
 // .svelte-kit/output/server/entries/endpoints/api/security/event-logs/_server.ts.js
-var server_ts_exports3 = {};
-__export(server_ts_exports3, {
+var server_ts_exports4 = {};
+__export(server_ts_exports4, {
   GET: () => GET3
 });
 var GET3;
-var init_server_ts3 = __esm({
+var init_server_ts4 = __esm({
   ".svelte-kit/output/server/entries/endpoints/api/security/event-logs/_server.ts.js"() {
     init_chunks();
     init_security();
@@ -31781,12 +32093,12 @@ var init_server_ts3 = __esm({
 });
 
 // .svelte-kit/output/server/entries/endpoints/favicon.ico/_server.ts.js
-var server_ts_exports4 = {};
-__export(server_ts_exports4, {
+var server_ts_exports5 = {};
+__export(server_ts_exports5, {
   GET: () => GET4
 });
 var GET4;
-var init_server_ts4 = __esm({
+var init_server_ts5 = __esm({
   ".svelte-kit/output/server/entries/endpoints/favicon.ico/_server.ts.js"() {
     init_chunks();
     GET4 = async () => {
@@ -32186,8 +32498,8 @@ function is_action_json_request(event) {
   return accept === "application/json" && event.request.method === "POST";
 }
 async function handle_action_json_request(event, options2, server2) {
-  const actions16 = server2?.actions;
-  if (!actions16) {
+  const actions17 = server2?.actions;
+  if (!actions17) {
     const no_actions_error = error(405, "POST method not allowed. No actions exist for this page");
     return action_json(
       {
@@ -32204,9 +32516,9 @@ async function handle_action_json_request(event, options2, server2) {
       }
     );
   }
-  check_named_default_separate(actions16);
+  check_named_default_separate(actions17);
   try {
-    const data = await call_action(event, actions16);
+    const data = await call_action(event, actions17);
     if (false)
       ;
     if (data instanceof ActionFailure) {
@@ -32267,8 +32579,8 @@ function is_action_request(event) {
   return event.request.method === "POST";
 }
 async function handle_action_request(event, server2) {
-  const actions16 = server2?.actions;
-  if (!actions16) {
+  const actions17 = server2?.actions;
+  if (!actions17) {
     event.setHeaders({
       // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/405
       // "The server must generate an Allow header field in a 405 status code response"
@@ -32279,9 +32591,9 @@ async function handle_action_request(event, server2) {
       error: error(405, "POST method not allowed. No actions exist for this page")
     };
   }
-  check_named_default_separate(actions16);
+  check_named_default_separate(actions17);
   try {
-    const data = await call_action(event, actions16);
+    const data = await call_action(event, actions17);
     if (false)
       ;
     if (data instanceof ActionFailure) {
@@ -32313,14 +32625,14 @@ async function handle_action_request(event, server2) {
     };
   }
 }
-function check_named_default_separate(actions16) {
-  if (actions16.default && Object.keys(actions16).length > 1) {
+function check_named_default_separate(actions17) {
+  if (actions17.default && Object.keys(actions17).length > 1) {
     throw new Error(
       "When using named actions, the default action cannot be used. See the docs for more info: https://kit.svelte.dev/docs/form-actions#named-actions"
     );
   }
 }
-async function call_action(event, actions16) {
+async function call_action(event, actions17) {
   const url2 = new URL(event.request.url);
   let name = "default";
   for (const param of url2.searchParams) {
@@ -32332,7 +32644,7 @@ async function call_action(event, actions16) {
       break;
     }
   }
-  const action = actions16[name];
+  const action = actions17[name];
   if (!action) {
     throw new Error(`No action with name '${name}' found`);
   }
@@ -33141,8 +33453,8 @@ async function render_response({
   }
   const { client } = manifest2._;
   const modulepreloads = new Set(client.imports);
-  const stylesheets21 = new Set(client.stylesheets);
-  const fonts21 = new Set(client.fonts);
+  const stylesheets23 = new Set(client.stylesheets);
+  const fonts23 = new Set(client.fonts);
   const link_header_preloads = /* @__PURE__ */ new Set();
   const inline_styles = /* @__PURE__ */ new Map();
   let rendered;
@@ -33196,9 +33508,9 @@ async function render_response({
       for (const url2 of node.imports)
         modulepreloads.add(url2);
       for (const url2 of node.stylesheets)
-        stylesheets21.add(url2);
+        stylesheets23.add(url2);
       for (const url2 of node.fonts)
-        fonts21.add(url2);
+        fonts23.add(url2);
       if (node.inline_styles) {
         Object.entries(await node.inline_styles()).forEach(([k, v]) => inline_styles.set(k, v));
       }
@@ -33226,7 +33538,7 @@ async function render_response({
     head += `
 	<style${attributes.join("")}>${content}</style>`;
   }
-  for (const dep of stylesheets21) {
+  for (const dep of stylesheets23) {
     const path = prefixed(dep);
     const attributes = ['rel="stylesheet"'];
     if (inline_styles.has(dep)) {
@@ -33240,7 +33552,7 @@ async function render_response({
     head += `
 		<link href="${path}" ${attributes.join(" ")}>`;
   }
-  for (const dep of fonts21) {
+  for (const dep of fonts23) {
     const path = prefixed(dep);
     if (resolve_opts.preload({ type: "font", path })) {
       const ext = dep.slice(dep.lastIndexOf(".") + 1);
@@ -33972,11 +34284,11 @@ async function render_page(event, page2, options2, manifest2, state, resolve_opt
           const error210 = await handle_error_and_jsonify(event, options2, err);
           while (i--) {
             if (page2.errors[i]) {
-              const index21 = (
+              const index23 = (
                 /** @type {number} */
                 page2.errors[i]
               );
-              const node2 = await manifest2._.nodes[index21]();
+              const node2 = await manifest2._.nodes[index23]();
               let j = i;
               while (!branch[j])
                 j -= 1;
@@ -34841,7 +35153,7 @@ var manifest = (() => {
     assets: /* @__PURE__ */ new Set(["favicon.png", "favicon.svg", "_headers"]),
     mimeTypes: { ".png": "image/png", ".svg": "image/svg+xml" },
     _: {
-      client: { "start": "_app/immutable/entry/start.48f0dd64.js", "app": "_app/immutable/entry/app.5f724a44.js", "imports": ["_app/immutable/entry/start.48f0dd64.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/singletons.53ff7e9a.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.5f724a44.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js"], "stylesheets": [], "fonts": [] },
+      client: { "start": "_app/immutable/entry/start.a0cb6e93.js", "app": "_app/immutable/entry/app.1f144ff0.js", "imports": ["_app/immutable/entry/start.a0cb6e93.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/singletons.db57a7a8.js", "_app/immutable/chunks/index.a42bdb25.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.1f144ff0.js", "_app/immutable/chunks/scheduler.15e411cb.js", "_app/immutable/chunks/index.aa9ac6db.js"], "stylesheets": [], "fonts": [] },
       nodes: [
         __memo(() => Promise.resolve().then(() => (init__(), __exports))),
         __memo(() => Promise.resolve().then(() => (init__2(), __exports2))),
@@ -34862,7 +35174,9 @@ var manifest = (() => {
         __memo(() => Promise.resolve().then(() => (init__17(), __exports17))),
         __memo(() => Promise.resolve().then(() => (init__18(), __exports18))),
         __memo(() => Promise.resolve().then(() => (init__19(), __exports19))),
-        __memo(() => Promise.resolve().then(() => (init__20(), __exports20)))
+        __memo(() => Promise.resolve().then(() => (init__20(), __exports20))),
+        __memo(() => Promise.resolve().then(() => (init__21(), __exports21))),
+        __memo(() => Promise.resolve().then(() => (init__22(), __exports22)))
       ],
       routes: [
         {
@@ -34880,18 +35194,25 @@ var manifest = (() => {
           endpoint: __memo(() => Promise.resolve().then(() => (init_server_ts(), server_ts_exports)))
         },
         {
+          id: "/api/auth/emergency-reset",
+          pattern: /^\/api\/auth\/emergency-reset\/?$/,
+          params: [],
+          page: null,
+          endpoint: __memo(() => Promise.resolve().then(() => (init_server_ts2(), server_ts_exports2)))
+        },
+        {
           id: "/api/security/blocks",
           pattern: /^\/api\/security\/blocks\/?$/,
           params: [],
           page: null,
-          endpoint: __memo(() => Promise.resolve().then(() => (init_server_ts2(), server_ts_exports2)))
+          endpoint: __memo(() => Promise.resolve().then(() => (init_server_ts3(), server_ts_exports3)))
         },
         {
           id: "/api/security/event-logs",
           pattern: /^\/api\/security\/event-logs\/?$/,
           params: [],
           page: null,
-          endpoint: __memo(() => Promise.resolve().then(() => (init_server_ts3(), server_ts_exports3)))
+          endpoint: __memo(() => Promise.resolve().then(() => (init_server_ts4(), server_ts_exports4)))
         },
         {
           id: "/assets",
@@ -34915,31 +35236,45 @@ var manifest = (() => {
           endpoint: null
         },
         {
+          id: "/auth/emergency-reset",
+          pattern: /^\/auth\/emergency-reset\/?$/,
+          params: [],
+          page: { layouts: [0], errors: [1], leaf: 6 },
+          endpoint: null
+        },
+        {
           id: "/auth/login",
           pattern: /^\/auth\/login\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 6 },
+          page: { layouts: [0], errors: [1], leaf: 7 },
           endpoint: null
         },
         {
           id: "/auth/logout",
           pattern: /^\/auth\/logout\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 7 },
+          page: { layouts: [0], errors: [1], leaf: 8 },
           endpoint: null
         },
         {
           id: "/auth/register",
           pattern: /^\/auth\/register\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 8 },
+          page: { layouts: [0], errors: [1], leaf: 9 },
+          endpoint: null
+        },
+        {
+          id: "/auth/reset-password/[token]",
+          pattern: /^\/auth\/reset-password\/([^/]+?)\/?$/,
+          params: [{ "name": "token", "optional": false, "rest": false, "chained": false }],
+          page: { layouts: [0], errors: [1], leaf: 10 },
           endpoint: null
         },
         {
           id: "/dashboard",
           pattern: /^\/dashboard\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 9 },
+          page: { layouts: [0], errors: [1], leaf: 11 },
           endpoint: null
         },
         {
@@ -34947,76 +35282,76 @@ var manifest = (() => {
           pattern: /^\/favicon\.ico\/?$/,
           params: [],
           page: null,
-          endpoint: __memo(() => Promise.resolve().then(() => (init_server_ts4(), server_ts_exports4)))
+          endpoint: __memo(() => Promise.resolve().then(() => (init_server_ts5(), server_ts_exports5)))
         },
         {
           id: "/join-organization",
           pattern: /^\/join-organization\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 10 },
+          page: { layouts: [0], errors: [1], leaf: 12 },
           endpoint: null
         },
         {
           id: "/onboarding",
           pattern: /^\/onboarding\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 11 },
+          page: { layouts: [0], errors: [1], leaf: 13 },
           endpoint: null
         },
         {
           id: "/profile",
           pattern: /^\/profile\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 12 },
+          page: { layouts: [0], errors: [1], leaf: 14 },
           endpoint: null
         },
         {
           id: "/select-organization",
           pattern: /^\/select-organization\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 13 },
+          page: { layouts: [0], errors: [1], leaf: 15 },
           endpoint: null
         },
         {
           id: "/sites",
           pattern: /^\/sites\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 14 },
+          page: { layouts: [0], errors: [1], leaf: 16 },
           endpoint: null
         },
         {
           id: "/sites/[id]",
           pattern: /^\/sites\/([^/]+?)\/?$/,
           params: [{ "name": "id", "optional": false, "rest": false, "chained": false }],
-          page: { layouts: [0], errors: [1], leaf: 15 },
+          page: { layouts: [0], errors: [1], leaf: 17 },
           endpoint: null
         },
         {
           id: "/users",
           pattern: /^\/users\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 16 },
+          page: { layouts: [0], errors: [1], leaf: 18 },
           endpoint: null
         },
         {
           id: "/users/security",
           pattern: /^\/users\/security\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 17 },
+          page: { layouts: [0], errors: [1], leaf: 19 },
           endpoint: null
         },
         {
           id: "/work-orders",
           pattern: /^\/work-orders\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 18 },
+          page: { layouts: [0], errors: [1], leaf: 20 },
           endpoint: null
         },
         {
           id: "/work-orders/[id]",
           pattern: /^\/work-orders\/([^/]+?)\/?$/,
           params: [{ "name": "id", "optional": false, "rest": false, "chained": false }],
-          page: { layouts: [0], errors: [1], leaf: 19 },
+          page: { layouts: [0], errors: [1], leaf: 21 },
           endpoint: null
         }
       ],

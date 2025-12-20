@@ -112,7 +112,7 @@
     "src": "src/hooks.server.ts"
   },
   "src/routes/+layout.css": {
-    "file": "_app/immutable/assets/_layout.5d003b5e.css",
+    "file": "_app/immutable/assets/_layout.723b4296.css",
     "src": "src/routes/+layout.css"
   },
   "src/routes/+layout.server.ts": {
@@ -125,7 +125,7 @@
   },
   "src/routes/+layout.svelte": {
     "css": [
-      "_app/immutable/assets/_layout.5d003b5e.css"
+      "_app/immutable/assets/_layout.723b4296.css"
     ],
     "file": "entries/pages/_layout.svelte.js",
     "imports": [
@@ -160,6 +160,18 @@
     ],
     "isEntry": true,
     "src": "src/routes/api/activity/+server.ts"
+  },
+  "src/routes/api/auth/emergency-reset/+server.ts": {
+    "file": "entries/endpoints/api/auth/emergency-reset/_server.ts.js",
+    "imports": [
+      "_index.js",
+      "_security.js",
+      "_auth.js",
+      "_validation.js",
+      "_prisma.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/api/auth/emergency-reset/+server.ts"
   },
   "src/routes/api/security/blocks/+server.ts": {
     "file": "entries/endpoints/api/security/blocks/_server.ts.js",
@@ -234,6 +246,15 @@
     "isEntry": true,
     "src": "src/routes/audit-log/+page.svelte"
   },
+  "src/routes/auth/emergency-reset/+page.svelte": {
+    "file": "entries/pages/auth/emergency-reset/_page.svelte.js",
+    "imports": [
+      "_ssr.js",
+      "_validation.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/auth/emergency-reset/+page.svelte"
+  },
   "src/routes/auth/login/+page.server.ts": {
     "file": "entries/pages/auth/login/_page.server.ts.js",
     "imports": [
@@ -282,6 +303,26 @@
     ],
     "isEntry": true,
     "src": "src/routes/auth/register/+page.svelte"
+  },
+  "src/routes/auth/reset-password/[token]/+page.server.ts": {
+    "file": "entries/pages/auth/reset-password/_token_/_page.server.ts.js",
+    "imports": [
+      "_index.js",
+      "_auth.js",
+      "_security.js",
+      "_validation.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/auth/reset-password/[token]/+page.server.ts"
+  },
+  "src/routes/auth/reset-password/[token]/+page.svelte": {
+    "file": "entries/pages/auth/reset-password/_token_/_page.svelte.js",
+    "imports": [
+      "_ssr.js",
+      "_validation.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/auth/reset-password/[token]/+page.svelte"
   },
   "src/routes/dashboard/+page.server.ts": {
     "file": "entries/pages/dashboard/_page.server.ts.js",

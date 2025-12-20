@@ -1,5 +1,5 @@
 import { g as getPrisma } from "./prisma.js";
-import { S as SecurityManager } from "./security.js";
+import { a as SecurityManager } from "./security.js";
 async function logAudit(userId, action, details) {
   try {
     const client = await getPrisma();

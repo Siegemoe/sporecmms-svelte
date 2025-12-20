@@ -45,7 +45,7 @@ async function validateSessionWithOrg(cookies) {
           lastName: true,
           role: true,
           organizationId: true,
-          organization: {
+          Organization: {
             select: {
               id: true,
               name: true
@@ -83,7 +83,7 @@ async function validateSessionWithOrg(cookies) {
     user,
     state: "org_member",
     organizations: userOrgs,
-    currentOrganization: user.organization
+    currentOrganization: user.Organization
   };
 }
 async function destroySession(cookies) {
@@ -109,12 +109,47 @@ function setSessionCookie(cookies, sessionId) {
 function canManageUsers(role) {
   return role === "ADMIN";
 }
+async function validateResetToken(token) {
+  const client = await getPrisma();
+  const user = await client.user.findFirst({
+    where: {
+      passwordResetToken: token,
+      passwordResetExpiresAt: {
+        gt: /* @__PURE__ */ new Date()
+      }
+    },
+    select: {
+      id: true,
+      email: true
+    }
+  });
+  return user;
+}
+async function resetPassword(token, newPassword) {
+  const client = await getPrisma();
+  const user = await validateResetToken(token);
+  if (!user) {
+    throw new Error("Invalid or expired reset token");
+  }
+  const hashedPassword = await hashPassword(newPassword);
+  await client.user.update({
+    where: { id: user.id },
+    data: {
+      password: hashedPassword,
+      passwordResetToken: null,
+      passwordResetExpiresAt: null
+    }
+  });
+  return user;
+}
 export {
-  canManageUsers as a,
-  validateSessionWithOrg as b,
+  validateResetToken as a,
+  canManageUsers as b,
   createSession as c,
   destroySession as d,
+  validateSessionWithOrg as e,
   hashPassword as h,
+  resetPassword as r,
   setSessionCookie as s,
   verifyPassword as v
 };
