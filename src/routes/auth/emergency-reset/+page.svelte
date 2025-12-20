@@ -23,7 +23,13 @@
 	function handleResponse({ result, form }) {
 		isSubmitting = false;
 
-		if (result.type === 'success') {
+		// Check if result exists and has the expected structure
+		if (!result || typeof result !== 'object') {
+			errors.general = 'An unexpected error occurred. Please try again.';
+			return;
+		}
+
+		if (result.type === 'success' || result.type === 'redirect') {
 			if (result.data?.success && result.data?.resetUrl) {
 				// Show success and provide the reset link
 				resetUrl = result.data.resetUrl;
@@ -31,13 +37,17 @@
 			} else {
 				message = result.data?.message || 'Reset request processed.';
 			}
-		} else {
+		} else if (result.type === 'failure' || result.type === 'error') {
 			// Handle error response
 			if (result.data?.errors) {
 				errors = result.data.errors;
 			} else {
-				errors.general = result.data?.error || 'An error occurred. Please try again.';
+				errors.general = result.data?.error || result.data?.message || 'An error occurred. Please try again.';
 			}
+		} else {
+			// Unknown result type
+			console.error('Unexpected result type:', result.type, result);
+			errors.general = 'An unexpected error occurred. Please try again.';
 		}
 	}
 </script>
