@@ -117,11 +117,8 @@ export const workOrderSchema = z.object({
     .trim(),
   assetId: z.string()
     .min(1, 'Please select an asset')
-    .cuid('Invalid asset selection'),
-  failureMode: z.string()
-    .min(1, 'Please select a failure mode')
-    .max(100, 'Failure mode must be less than 100 characters')
-    .trim(),
+    .cuid('Invalid asset selection')
+    .optional(),
   assignedToId: z.string()
     .cuid('Invalid user selection')
     .optional(),

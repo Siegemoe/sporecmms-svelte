@@ -15,14 +15,14 @@
 	let buildings = data.buildings || [];
 	let sites = data.sites || [];
 	let users = data.users || [];
-	let myOnly = data.myOnly || false;
 
-	// Filter State
+	// Filter State - initialize from URL params
 	let filterStatus = data.status || '';
 	let filterPriority = data.priority || '';
 	let filterSite = data.siteId || '';
 	let sortOption = data.sort || 'dueDate';
 	let showFilters = false;
+	let myOnly = data.myOnly || false;
 
 	// Sync when page data changes
 	$: if (data.workOrders) workOrders = data.workOrders;
@@ -31,7 +31,6 @@
 	$: if (data.buildings) buildings = data.buildings;
 	$: if (data.sites) sites = data.sites;
 	$: if (data.users) users = data.users;
-	$: myOnly = data.myOnly || false;
 
 	function applyFilters() {
 		const params = new URLSearchParams();

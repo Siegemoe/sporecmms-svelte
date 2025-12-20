@@ -9,19 +9,21 @@ export const load: PageServerLoad = async (event) => {
 		console.log('[DASHBOARD] Loading dashboard for user:', event.locals.user?.id);
 
 		const prisma = await createRequestPrisma(event);
+		const organizationId = event.locals.user!.organizationId;
 
 		// Get work order stats
 		const [total, pending, inProgress, completed] = await Promise.all([
-			prisma.workOrder.count(),
-			prisma.workOrder.count({ where: { status: 'PENDING' } }),
-			prisma.workOrder.count({ where: { status: 'IN_PROGRESS' } }),
-			prisma.workOrder.count({ where: { status: 'COMPLETED' } })
+			prisma.workOrder.count({ where: { organizationId } }),
+			prisma.workOrder.count({ where: { status: 'PENDING', organizationId } }),
+			prisma.workOrder.count({ where: { status: 'IN_PROGRESS', organizationId } }),
+			prisma.workOrder.count({ where: { status: 'COMPLETED', organizationId } })
 		]);
 
 		console.log('[DASHBOARD] Stats loaded:', { total, pending, inProgress, completed });
 
 		// Get recent work orders with location data
 		const recentWorkOrders = await prisma.workOrder.findMany({
+			where: { organizationId },
 			take: 5,
 			orderBy: { updatedAt: 'desc' },
 			include: {
@@ -47,6 +49,7 @@ export const load: PageServerLoad = async (event) => {
 
 		// Get sites with room (unit) counts
 		const sites = await prisma.site.findMany({
+			where: { organizationId },
 			include: {
 				_count: {
 					select: { units: true }

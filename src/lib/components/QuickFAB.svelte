@@ -95,7 +95,7 @@
 			}}
 		>
 			<!-- Mobile: Bottom Sheet -->
-			<div class="lg:hidden relative bg-white rounded-t-2xl w-full max-h-[85vh] overflow-y-auto">
+			<div class="lg:hidden relative bg-white rounded-t-2xl w-full h-[85vh] flex flex-col overflow-hidden">
 				<!-- Handle -->
 				<div class="flex justify-center py-3">
 					<div class="w-12 h-1 bg-gray-300 rounded-full"></div>
@@ -119,7 +119,7 @@
 				</div>
 
 				<!-- Form -->
-				<div class="p-4 space-y-4 w-full min-w-0">
+				<div class="p-4 space-y-4 w-full min-w-0 overflow-y-auto flex-1">
 					<!-- Selection Mode Toggle -->
 					<div class="flex gap-2 flex-wrap">
 						<button
@@ -284,7 +284,7 @@
 			</div>
 
 			<!-- Desktop: Modal -->
-			<div class="hidden lg:block relative bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4">
+			<div class="hidden lg:block relative bg-white rounded-2xl shadow-2xl w-[512px] mx-4 max-h-[90vh] flex flex-col">
 				<!-- Header -->
 				<div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl">
 					<div class="flex items-center justify-between">
@@ -303,7 +303,7 @@
 				</div>
 
 				<!-- Form Content -->
-				<div class="p-6 space-y-4 w-full min-w-0">
+				<div class="p-6 space-y-4 w-full min-w-0 overflow-y-auto flex-1">
 					<!-- Selection Mode Toggle -->
 					<div class="flex gap-2 flex-wrap">
 						<button
@@ -348,7 +348,7 @@
 
 					<!-- Asset Selection -->
 					{#if selectionMode === 'asset'}
-						<div>
+						<div class="min-h-[80px] w-full">
 							<label for="fab-wo-asset-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Asset *</label>
 							<select
 								id="fab-wo-asset-desktop"
@@ -369,7 +369,7 @@
 
 					<!-- Room Selection -->
 					{:else if selectionMode === 'room'}
-						<div>
+						<div class="min-h-[80px] w-full">
 							<label for="fab-wo-room-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Room *</label>
 							<select
 								id="fab-wo-room-desktop"
@@ -390,7 +390,7 @@
 
 					<!-- Building Selection -->
 					{:else if selectionMode === 'building'}
-						<div>
+						<div class="min-h-[80px] w-full">
 							<label for="fab-wo-building-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Building *</label>
 							<select
 								id="fab-wo-building-desktop"

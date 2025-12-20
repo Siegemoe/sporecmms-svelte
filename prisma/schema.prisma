@@ -1,19 +1,277 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider   = "prisma-client-js"
+  output     = "../node_modules/.prisma/client"
+  engineType = "library"
+}
 
 datasource db {
   provider = "postgresql"
 }
 
-generator client {
-  provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
-  engineType = "library"
+model Asset {
+  id              String      @id @default(dbgenerated("gen_random_uuid()"))
+  name            String
+  description     String?
+  type            AssetType
+  status          AssetStatus @default(OPERATIONAL)
+  purchaseDate    DateTime?
+  warrantyExpiry  DateTime?
+  lastMaintenance DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime
+  siteId          String
+  unitId          String
+  Site            Site        @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  Unit            Unit        @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  WorkOrder       WorkOrder[]
+
+  @@index([name])
+  @@index([siteId])
+  @@index([status])
+  @@index([type])
+  @@index([unitId])
 }
 
-// --------------------------------------
-// Enums
-// --------------------------------------
+model AuditLog {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  action    String
+  details   Json?
+  createdAt DateTime @default(now())
+  userId    String
+  User      User     @relation(fields: [userId], references: [id])
+
+  @@index([createdAt])
+  @@index([userId])
+}
+
+model Building {
+  id          String      @id @default(dbgenerated("gen_random_uuid()"))
+  name        String
+  description String?
+  address     String?
+  city        String?
+  state       String?
+  zipCode     String?
+  country     String?
+  yearBuilt   Int?
+  floors      Int?
+  squareFeet  Int?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime
+  siteId      String
+  Site        Site        @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  Unit        Unit[]
+  WorkOrder   WorkOrder[]
+
+  @@index([name])
+  @@index([siteId])
+}
+
+model IPBlock {
+  id             String    @id @default(dbgenerated("gen_random_uuid()"))
+  ipAddress      String    @unique
+  reason         String
+  severity       String
+  violationCount Int       @default(1)
+  blockedBy      String?
+  blockedAt      DateTime  @default(now())
+  expiresAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime
+  User           User?     @relation(fields: [blockedBy], references: [id])
+
+  @@index([expiresAt])
+  @@index([ipAddress])
+  @@index([severity])
+}
+
+model Organization {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()"))
+  name               String               @unique
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime
+  OrganizationInvite OrganizationInvite[]
+  Site               Site[]
+  User               User[]
+  WorkOrder          WorkOrder[]
+
+  @@index([name])
+}
+
+model OrganizationInvite {
+  id              String       @id @default(dbgenerated("gen_random_uuid()"))
+  email           String
+  token           String       @unique
+  status          InviteStatus @default(PENDING)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime
+  expiresAt       DateTime
+  organizationId  String
+  invitedByUserId String
+  User            User         @relation(fields: [invitedByUserId], references: [id], onDelete: Cascade)
+  Organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([email])
+  @@index([expiresAt])
+  @@index([token])
+}
+
+model SecurityLog {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  ipAddress String
+  userAgent String?
+  action    String
+  details   Json?
+  severity  String   @default("INFO")
+  userId    String?
+  createdAt DateTime @default(now())
+  User      User?    @relation(fields: [userId], references: [id])
+
+  @@index([createdAt])
+  @@index([ipAddress])
+  @@index([severity])
+}
+
+model Session {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  token     String   @unique
+  expiresAt DateTime
+  userId    String
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@index([token])
+  @@index([userId])
+}
+
+model Site {
+  id             String       @id @default(dbgenerated("gen_random_uuid()"))
+  name           String
+  address        String?
+  city           String?
+  state          String?
+  zipCode        String?
+  country        String?
+  phoneNumber    String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime
+  organizationId String
+  Asset          Asset[]
+  Building       Building[]
+  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  Unit           Unit[]
+  WorkOrder      WorkOrder[]
+
+  @@index([name])
+  @@index([organizationId])
+}
+
+model Unit {
+  id          String      @id @default(dbgenerated("gen_random_uuid()"))
+  roomNumber  String
+  name        String?
+  floor       Int?
+  squareFeet  Int?
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime
+  siteId      String
+  buildingId  String?
+  Asset       Asset[]
+  Building    Building?   @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  Site        Site        @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  WorkOrder   WorkOrder[]
+
+  @@index([buildingId])
+  @@index([roomNumber])
+  @@index([siteId])
+}
+
+model User {
+  id                                     String               @id @default(dbgenerated("gen_random_uuid()"))
+  email                                  String               @unique
+  password                               String
+  firstName                              String?
+  lastName                               String?
+  phoneNumber                            String?
+  role                                   UserRole             @default(TECHNICIAN)
+  isActive                               Boolean              @default(true)
+  createdAt                              DateTime             @default(now())
+  updatedAt                              DateTime
+  organizationId                         String?
+  AuditLog                               AuditLog[]
+  IPBlock                                IPBlock[]
+  OrganizationInvite                     OrganizationInvite[]
+  SecurityLog                            SecurityLog[]
+  Session                                Session[]
+  Organization                           Organization?        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  WorkOrder_WorkOrder_assignedToIdToUser WorkOrder[]          @relation("WorkOrder_assignedToIdToUser")
+  WorkOrder_WorkOrder_createdByIdToUser  WorkOrder[]          @relation("WorkOrder_createdByIdToUser")
+  WorkOrderEvent                         WorkOrderEvent[]
+
+  @@index([email])
+  @@index([organizationId])
+}
+
+model Waitlist {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  email     String   @unique
+  name      String?
+  company   String?
+  role      String?
+  phone     String?
+  createdAt DateTime @default(now())
+}
+
+model WorkOrder {
+  id                                String           @id @default(dbgenerated("gen_random_uuid()"))
+  title                             String
+  description                       String?
+  priority                          Priority         @default(MEDIUM)
+  status                            WorkOrderStatus  @default(PENDING)
+  dueDate                           DateTime?
+  completedAt                       DateTime?
+  createdAt                         DateTime         @default(now())
+  updatedAt                         DateTime
+  assetId                           String?
+  unitId                            String?
+  buildingId                        String?
+  siteId                            String?
+  createdById                       String
+  assignedToId                      String?
+  organizationId                    String
+  Asset                             Asset?           @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  User_WorkOrder_assignedToIdToUser User?            @relation("WorkOrder_assignedToIdToUser", fields: [assignedToId], references: [id])
+  Building                          Building?        @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  User_WorkOrder_createdByIdToUser  User             @relation("WorkOrder_createdByIdToUser", fields: [createdById], references: [id], onDelete: Cascade)
+  Organization                      Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  Site                              Site?            @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  Unit                              Unit?            @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  WorkOrderEvent                    WorkOrderEvent[]
+
+  @@index([assetId])
+  @@index([assignedToId])
+  @@index([createdById])
+  @@index([dueDate])
+  @@index([organizationId])
+  @@index([priority])
+  @@index([status])
+  @@index([unitId])
+}
+
+model WorkOrderEvent {
+  id          String    @id @default(dbgenerated("gen_random_uuid()"))
+  event       String
+  description String?
+  createdAt   DateTime  @default(now())
+  workOrderId String
+  userId      String?
+  User        User?     @relation(fields: [userId], references: [id])
+  WorkOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([workOrderId])
+}
 
 enum AssetStatus {
   OPERATIONAL
@@ -57,309 +315,4 @@ enum WorkOrderStatus {
   COMPLETED
   ON_HOLD
   CANCELLED
-}
-
-// --------------------------------------
-// Core Models
-// --------------------------------------
-
-model Organization {
-  id              String    @id @default(dbgenerated("gen_random_uuid()"))
-  name            String    @unique
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  organizationInvites OrganizationInvite[]
-  sites            Site[]
-  users            User[]
-  workOrders       WorkOrder[]
-
-  @@index([name])
-}
-
-model OrganizationInvite {
-  id          String       @id @default(dbgenerated("gen_random_uuid()"))
-  email       String
-  token       String       @unique
-  status      InviteStatus @default(PENDING)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  expiresAt   DateTime
-
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  invitedByUserId String
-  invitedByUser   User @relation(fields: [invitedByUserId], references: [id], onDelete: Cascade)
-
-  @@index([token])
-  @@index([email])
-  @@index([expiresAt])
-}
-
-model Waitlist {
-  id        String   @id @default(dbgenerated("gen_random_uuid()"))
-  email     String   @unique
-  name      String?
-  company   String?
-  role      String?
-  phone     String?
-  createdAt DateTime @default(now())
-}
-
-model Site {
-  id          String    @id @default(dbgenerated("gen_random_uuid()"))
-  name        String
-  address     String?
-  city        String?
-  state       String?
-  zipCode     String?
-  country     String?
-  phoneNumber String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  buildings Building[]
-  units     Unit[]
-  assets    Asset[]
-  workOrders WorkOrder[]
-
-  @@index([name])
-  @@index([organizationId])
-}
-
-model Building {
-  id          String    @id @default(dbgenerated("gen_random_uuid()"))
-  name        String
-  description String?
-  address     String?
-  city        String?
-  state       String?
-  zipCode     String?
-  country     String?
-  yearBuilt   Int?
-  floors      Int?
-  squareFeet  Int?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  siteId String
-  site   Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
-
-  units      Unit[]
-  workOrders WorkOrder[]
-
-  @@index([name])
-  @@index([siteId])
-}
-
-model Unit {
-  id          String    @id @default(dbgenerated("gen_random_uuid()"))
-  roomNumber  String
-  name        String?
-  floor       Int?
-  squareFeet  Int?
-  description String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  siteId     String
-  site       Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
-  buildingId String?
-  building   Building? @relation(fields: [buildingId], references: [id], onDelete: Cascade)
-
-  assets     Asset[]
-  workOrders WorkOrder[]
-
-  @@index([roomNumber])
-  @@index([siteId])
-  @@index([buildingId])
-}
-
-model User {
-  id          String    @id @default(dbgenerated("gen_random_uuid()"))
-  email       String    @unique
-  password    String
-  firstName   String?
-  lastName    String?
-  phoneNumber String?
-  role        UserRole  @default(TECHNICIAN)
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  auditLogs        AuditLog[]
-  organizationInvites OrganizationInvite[]
-  sessions         Session[]
-  createdWorkOrders WorkOrder[] @relation("WorkOrderCreator")
-  assignedWorkOrders WorkOrder[] @relation("WorkOrderAssignee")
-  workOrderEvents  WorkOrderEvent[]
-  securityLogs     SecurityLog[]
-  blockedIPs       IPBlock[] @relation("BlockedBy")
-
-  @@index([email])
-  @@index([organizationId])
-}
-
-model Asset {
-  id              String      @id @default(dbgenerated("gen_random_uuid()"))
-  name            String
-  description     String?
-  type            AssetType
-  status          AssetStatus @default(OPERATIONAL)
-  purchaseDate    DateTime?
-  warrantyExpiry  DateTime?
-  lastMaintenance DateTime?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-
-  siteId String
-  site   Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
-
-  unitId String
-  unit   Unit @relation(fields: [unitId], references: [id], onDelete: Cascade)
-
-  workOrders WorkOrder[]
-
-  @@index([name])
-  @@index([type])
-  @@index([status])
-  @@index([siteId])
-  @@index([unitId])
-}
-
-model WorkOrder {
-  id              String          @id @default(dbgenerated("gen_random_uuid()"))
-  title           String
-  description     String?
-  priority        Priority        @default(MEDIUM)
-  status          WorkOrderStatus @default(PENDING)
-  dueDate         DateTime?
-  completedAt     DateTime?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-
-  assetId String?
-  asset   Asset? @relation(fields: [assetId], references: [id], onDelete: Cascade)
-
-  unitId String?
-  unit   Unit? @relation(fields: [unitId], references: [id], onDelete: Cascade)
-
-  buildingId String?
-  building   Building? @relation(fields: [buildingId], references: [id], onDelete: Cascade)
-
-  siteId String?
-  site   Site? @relation(fields: [siteId], references: [id], onDelete: Cascade)
-
-  createdById String
-  createdBy   User @relation("WorkOrderCreator", fields: [createdById], references: [id], onDelete: Cascade)
-
-  assignedToId String?
-  assignedTo   User? @relation("WorkOrderAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
-
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  events WorkOrderEvent[]
-
-  @@index([status])
-  @@index([priority])
-  @@index([dueDate])
-  @@index([createdById])
-  @@index([assignedToId])
-  @@index([organizationId])
-  @@index([assetId])
-  @@index([unitId])
-}
-
-model WorkOrderEvent {
-  id          String    @id @default(dbgenerated("gen_random_uuid()"))
-  event       String
-  description String?
-  createdAt   DateTime  @default(now())
-
-  workOrderId String
-  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
-
-  userId String?
-  user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([workOrderId])
-  @@index([createdAt])
-}
-
-// --------------------------------------
-// Authentication & Security
-// --------------------------------------
-
-model Session {
-  id        String   @id @default(dbgenerated("gen_random_uuid()"))
-  token     String   @unique
-  expiresAt DateTime
-
-  userId String
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([expiresAt])
-  @@index([token])
-}
-
-model AuditLog {
-  id        String   @id @default(dbgenerated("gen_random_uuid()"))
-  action    String
-  details   Json?
-  createdAt DateTime @default(now())
-
-  userId String
-  user   User @relation(fields: [userId], references: [id])
-
-  @@index([userId])
-  @@index([createdAt])
-}
-
-// Security Models
-model SecurityLog {
-  id          String      @id @default(dbgenerated("gen_random_uuid()"))
-  ipAddress   String      // IP address of the request
-  userAgent   String?     // Browser/user agent
-  action      String      // Type of security event
-  details     Json?       // Additional details
-  severity    String      @default("INFO") // INFO, WARNING, CRITICAL
-  userId      String?     // User ID if applicable
-  createdAt   DateTime    @default(now())
-
-  // Optional relationship to user
-  user        User?       @relation(fields: [userId], references: [id])
-
-  // Index for efficient queries
-  @@index([createdAt])
-  @@index([ipAddress])
-  @@index([severity])
-}
-
-model IPBlock {
-  id            String      @id @default(dbgenerated("gen_random_uuid()"))
-  ipAddress     String      @unique
-  reason        String      // Reason for blocking
-  severity      String      // TEMPORARY, PERSISTENT
-  violationCount Int        @default(1) // Number of violations
-  blockedBy     String?     // Admin user ID who manually blocked
-  blockedAt     DateTime    @default(now())
-  expiresAt     DateTime?   // When block expires (null for permanent)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-
-  // Optional relationship to user
-  blockedByUser User?       @relation("BlockedBy", fields: [blockedBy], references: [id])
-
-  // Index for efficient queries
-  @@index([ipAddress])
-  @@index([expiresAt])
-  @@index([severity])
 }
