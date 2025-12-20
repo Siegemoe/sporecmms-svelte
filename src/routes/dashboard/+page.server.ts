@@ -29,13 +29,13 @@ export const load: PageServerLoad = async (event) => {
 			include: {
 				asset: {
 					include: {
-						unit: {
+						Unit: {
 							select: {
 								name: true,
 								roomNumber: true,
-								building: true,
+								Building: true,
 								floor: true,
-								site: {
+								Site: {
 									select: { name: true }
 								}
 							}
@@ -52,7 +52,7 @@ export const load: PageServerLoad = async (event) => {
 			where: { organizationId },
 			include: {
 				_count: {
-					select: { units: true }
+					select: { Unit: true }
 				}
 			}
 		});
@@ -64,9 +64,9 @@ export const load: PageServerLoad = async (event) => {
 			...wo,
 			asset: wo.asset ? {
 				...wo.asset,
-				room: wo.asset.unit ? {
-					...wo.asset.unit,
-					name: wo.asset.unit.name || wo.asset.unit.roomNumber
+				room: wo.asset.Unit ? {
+					...wo.asset.Unit,
+					name: wo.asset.Unit.name || wo.asset.Unit.roomNumber
 				} : null
 			} : null
 		}));
@@ -74,7 +74,7 @@ export const load: PageServerLoad = async (event) => {
 		const mappedSites = sites.map(site => ({
 			...site,
 			_count: {
-				rooms: site._count.units
+				rooms: site._count.Unit
 			}
 		}));
 

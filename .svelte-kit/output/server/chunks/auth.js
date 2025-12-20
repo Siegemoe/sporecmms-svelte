@@ -68,7 +68,7 @@ async function validateSessionWithOrg(cookies) {
   }
   const userOrgs = await client.organization.findMany({
     where: {
-      users: {
+      User: {
         some: {
           id: user.id
         }
