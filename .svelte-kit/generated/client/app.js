@@ -32,7 +32,7 @@ export const dictionary = {
 		"/assets": [~3],
 		"/assets/[id]": [~4],
 		"/audit-log": [~5],
-		"/auth/emergency-reset": [6],
+		"/auth/emergency-reset": [~6],
 		"/auth/login": [~7],
 		"/auth/logout": [~8],
 		"/auth/register": [~9],

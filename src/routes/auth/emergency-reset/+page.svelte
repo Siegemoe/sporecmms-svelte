@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { emergencyResetRequestSchema } from '$lib/validation';
-	import type { EmergencyResetRequestInput } from '$lib/validation';
+	import type { Actions } from './$types';
 
 	let form = {
 		email: '',
@@ -11,45 +10,26 @@
 	let isSubmitting = false;
 	let showPassphrase = false;
 	let message: string | null = null;
-
-	// Validate form on input
-	function validateForm() {
-		const result = emergencyResetRequestSchema.safeParse(form);
-
-		if (!result.success) {
-			errors = {};
-			result.error.issues.forEach((issue) => {
-				const key = issue.path[0] as string;
-				errors[key] = issue.message;
-			});
-			return false;
-		}
-
-		errors = {};
-		return true;
-	}
+	let resetUrl: string | null = null;
 
 	// Handle form submission
 	function handleSubmit() {
 		message = null;
-		if (!validateForm()) {
-			return;
-		}
+		resetUrl = null;
 		isSubmitting = true;
 	}
 
 	// Handle response from form action
-	function handleResponse({ result }) {
+	function handleResponse({ result, form }) {
 		isSubmitting = false;
 
 		if (result.type === 'success') {
-			if (result.data.success) {
-				// In development, show the reset link
-				message = result.data.resetUrl
-					? `Reset link: ${result.data.resetUrl}`
-					: 'If the email exists and has a recovery passphrase, a reset link has been generated.';
+			if (result.data?.success && result.data?.resetUrl) {
+				// Show success and provide the reset link
+				resetUrl = result.data.resetUrl;
+				message = result.data.message || 'Password reset token generated successfully';
 			} else {
-				message = result.data.error || 'Reset request processed.';
+				message = result.data?.message || 'Reset request processed.';
 			}
 		} else {
 			// Handle error response
@@ -84,12 +64,17 @@
 
 		<form
 			method="POST"
-			action="/api/auth/emergency-reset"
 			use:enhance={() => {
 				handleSubmit();
-				return async ({ update }) => {
+				return async ({ update, formElement }) => {
 					const result = await update();
-					handleResponse({ result });
+					handleResponse({ result, form });
+
+					// Reset form on success
+					if (result.type === 'success' && result.data?.success) {
+						formElement.reset();
+						form = { email: '', passphrase: '' };
+					}
 				};
 			}}
 			class="mt-8 space-y-6"
@@ -108,7 +93,6 @@
 						required
 						class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-spore-orange focus:border-spore-orange sm:text-sm {errors.email ? 'border-red-500' : ''}"
 						placeholder="Enter your email"
-						on:input={validateForm}
 					/>
 					{#if errors.email}
 						<p class="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -129,7 +113,6 @@
 								required
 								class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-spore-orange focus:border-spore-orange sm:text-sm {errors.passphrase ? 'border-red-500' : ''}"
 								placeholder="Enter your recovery passphrase"
-								on:input={validateForm}
 							/>
 						{:else}
 							<input
@@ -140,7 +123,6 @@
 								required
 								class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-spore-orange focus:border-spore-orange sm:text-sm {errors.passphrase ? 'border-red-500' : ''}"
 								placeholder="Enter your recovery passphrase"
-								on:input={validateForm}
 							/>
 						{/if}
 						<button
@@ -191,6 +173,14 @@
 						</div>
 						<div class="ml-3">
 							<p class="text-sm font-medium text-blue-800">{message}</p>
+							{#if resetUrl}
+								<p class="mt-2 text-sm text-blue-700">
+									Click here to reset your password:
+									<a href={resetUrl} class="font-medium underline hover:text-blue-600">
+										Reset Password
+									</a>
+								</p>
+							{/if}
 						</div>
 					</div>
 				</div>

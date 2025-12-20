@@ -29,6 +29,7 @@
 		"src/routes/+layout.server.ts"
 	],
 	"/auth/emergency-reset": [
+		"src/routes/auth/emergency-reset/+page.server.ts",
 		"src/routes/+layout.server.ts"
 	],
 	"/auth/login": [
