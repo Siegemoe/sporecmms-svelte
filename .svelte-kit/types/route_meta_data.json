@@ -7,9 +7,6 @@
 	"/api/activity": [
 		"src/routes/api/activity/+server.ts"
 	],
-	"/api/debug/reset-password": [
-		"src/routes/api/debug/reset-password/+server.ts"
-	],
 	"/api/security/blocks": [
 		"src/routes/api/security/blocks/+server.ts"
 	],
