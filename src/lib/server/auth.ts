@@ -83,7 +83,7 @@ export async function validateSessionWithOrg(cookies: Cookies) {
 	const session = await client.session.findUnique({
 		where: { id: sessionId },
 		include: {
-			user: {
+			User: {
 				select: {
 					id: true,
 					email: true,
@@ -112,7 +112,7 @@ export async function validateSessionWithOrg(cookies: Cookies) {
 		return { user: null, state: 'unauthenticated' };
 	}
 
-	const user = session.user;
+	const user = session.User;
 
 	// Determine authentication state
 	if (!user.organizationId) {
