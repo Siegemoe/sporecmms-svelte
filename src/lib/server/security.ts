@@ -362,7 +362,7 @@ export class SecurityManager {
         take: limit,
         skip: offset,
         include: {
-          user: {
+          User: {
             select: {
               id: true,
               firstName: true,
@@ -386,17 +386,7 @@ export class SecurityManager {
       prisma.iPBlock.findMany({
         orderBy: { blockedAt: 'desc' },
         take: limit,
-        skip: offset,
-        include: {
-          blockedByUser: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              email: true
-            }
-          }
-        }
+        skip: offset
       }),
       prisma.iPBlock.count()
     ]);

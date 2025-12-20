@@ -23,10 +23,10 @@ export const load = async ({ locals }: Parameters<LayoutServerLoad>[0]) => {
 				}
 			},
 			include: {
-				unit: {
+				Unit: {
 					include: {
-						building: true,
-						site: { select: { name: true } }
+						Building: true,
+						Site: { select: { name: true } }
 					}
 				}
 			},
@@ -45,7 +45,7 @@ export const load = async ({ locals }: Parameters<LayoutServerLoad>[0]) => {
 				}
 			},
 			include: {
-				site: true
+				Site: true
 			},
 			orderBy: {
 				name: 'asc'
@@ -62,8 +62,8 @@ export const load = async ({ locals }: Parameters<LayoutServerLoad>[0]) => {
 				}
 			},
 			include: {
-				building: true,
-				site: true
+				Building: true,
+				Site: true
 			},
 			orderBy: {
 				roomNumber: 'asc'
@@ -80,28 +80,28 @@ export const load = async ({ locals }: Parameters<LayoutServerLoad>[0]) => {
 		assets: assets.map(asset => ({
 			id: asset.id,
 			name: asset.name,
-			room: asset.unit ? {
-				id: asset.unit.id,
-				name: asset.unit.name || asset.unit.roomNumber,
-				building: asset.unit.building,
-				site: asset.unit.site ? {
-					name: asset.unit.site.name
+			room: asset.Unit ? {
+				id: asset.Unit.id,
+				name: asset.Unit.name || asset.Unit.roomNumber,
+				building: asset.Unit.Building,
+				site: asset.Unit.Site ? {
+					name: asset.Unit.Site.name
 				} : undefined
 			} : undefined
 		})),
 		buildings: buildings.map(building => ({
 			id: building.id,
 			name: building.name,
-			site: building.site ? {
-				name: building.site.name
+			site: building.Site ? {
+				name: building.Site.name
 			} : undefined
 		})),
 		rooms: rooms.map(unit => ({
 			id: unit.id,
 			name: unit.name || unit.roomNumber,
-			building: unit.building,
-			site: unit.site ? {
-				name: unit.site.name
+			building: unit.Building,
+			site: unit.Site ? {
+				name: unit.Site.name
 			} : undefined
 		}))
 	};

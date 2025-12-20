@@ -47,7 +47,7 @@ export async function validateSession(cookies: Cookies) {
 	const session = await client.session.findUnique({
 		where: { id: sessionId },
 		include: {
-			user: {
+			User: {
 				select: {
 					id: true,
 					email: true,
@@ -70,7 +70,7 @@ export async function validateSession(cookies: Cookies) {
 		return null;
 	}
 
-	return session.user;
+	return session.User;
 }
 
 export async function validateSessionWithOrg(cookies: Cookies) {
