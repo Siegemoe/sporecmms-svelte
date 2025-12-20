@@ -111,7 +111,7 @@ async function createPrismaClient(organizationId) {
   });
 }
 async function createRequestPrisma(event) {
-  const organizationId = event.locals.user?.organizationId;
+  const organizationId = event.locals.user?.organizationId ?? void 0;
   if (isCloudflareWorker() && event.platform?.env) {
     return createPrismaClient(organizationId);
   }

@@ -14,7 +14,8 @@ const load = async (event) => {
         include: {
           unit: {
             include: {
-              site: { select: { id: true, name: true } }
+              site: { select: { id: true, name: true } },
+              building: { select: { id: true, name: true } }
             }
           }
         }
@@ -41,16 +42,17 @@ const load = async (event) => {
     },
     orderBy: { name: "asc" }
   });
-  const workOrderWithRoom = workOrder ? {
+  const workOrderWithRoom = {
     ...workOrder,
     asset: workOrder.asset ? {
       ...workOrder.asset,
       room: workOrder.asset.unit ? {
         ...workOrder.asset.unit,
-        name: workOrder.asset.unit.name || workOrder.asset.unit.roomNumber
+        name: workOrder.asset.unit.name || workOrder.asset.unit.roomNumber,
+        building: workOrder.asset.unit.building
       } : null
     } : null
-  } : null;
+  };
   const assetsWithRoom = assets.map((asset) => ({
     ...asset,
     room: asset.unit ? {

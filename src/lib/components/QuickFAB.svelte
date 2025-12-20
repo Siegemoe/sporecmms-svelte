@@ -119,24 +119,23 @@
 				</div>
 
 				<!-- Form -->
-				<div class="p-4 space-y-4 w-full min-w-0 overflow-y-auto flex-1">
-					<!-- Selection Mode Toggle -->
-					<div class="flex gap-2 flex-wrap">
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'asset' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'asset'; newWO.assetId = ''; }}
-						>
-							Asset
-						</button>
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'room' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'room'; newWO.roomId = ''; }}
-						>
-							Room
-						</button>
-						<button
+				                <div class="p-4 space-y-4 w-full min-w-0 overflow-y-auto flex-1">
+				                    <!-- Selection Mode Toggle -->
+				                    <div class="flex gap-2 flex-wrap">
+				                        <button
+				                            type="button"
+				                            class="px-3 py-1 text-xs rounded-full {selectionMode === 'asset' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
+				                            on:click={() => { selectionMode = 'asset'; newWO.assetId = ''; }}
+				                        >
+				                            Asset
+				                        </button>
+				                        <button
+				                            type="button"
+				                            class="px-3 py-1 text-xs rounded-full {selectionMode === 'room' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
+				                            on:click={() => { selectionMode = 'room'; newWO.roomId = ''; }}
+				                        >
+				                            Unit
+				                        </button>						<button
 							type="button"
 							class="px-3 py-1 text-xs rounded-full {selectionMode === 'building' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
 							on:click={() => { selectionMode = 'building'; newWO.buildingId = ''; }}

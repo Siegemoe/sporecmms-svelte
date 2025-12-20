@@ -9,24 +9,15 @@ const load = async ({ locals }) => {
       where: {
         unit: {
           site: {
-            organizationId: locals.user.organizationId
+            organizationId: locals.user.organizationId ?? void 0
           }
         }
       },
       include: {
         unit: {
           include: {
-            building: {
-              select: {
-                id: true,
-                name: true
-              }
-            },
-            site: {
-              select: {
-                name: true
-              }
-            }
+            building: true,
+            site: { select: { name: true } }
           }
         }
       },
@@ -39,15 +30,11 @@ const load = async ({ locals }) => {
     buildings = await prisma.building.findMany({
       where: {
         site: {
-          organizationId: locals.user.organizationId
+          organizationId: locals.user.organizationId ?? void 0
         }
       },
       include: {
-        site: {
-          select: {
-            name: true
-          }
-        }
+        site: true
       },
       orderBy: {
         name: "asc"
@@ -58,21 +45,12 @@ const load = async ({ locals }) => {
     rooms = await prisma.unit.findMany({
       where: {
         site: {
-          organizationId: locals.user.organizationId
+          organizationId: locals.user.organizationId ?? void 0
         }
       },
       include: {
-        building: {
-          select: {
-            id: true,
-            name: true
-          }
-        },
-        site: {
-          select: {
-            name: true
-          }
-        }
+        building: true,
+        site: true
       },
       orderBy: {
         roomNumber: "asc"

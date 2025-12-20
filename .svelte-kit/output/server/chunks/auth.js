@@ -37,7 +37,7 @@ async function validateSessionWithOrg(cookies) {
   const session = await client.session.findUnique({
     where: { id: sessionId },
     include: {
-      user: {
+      User: {
         select: {
           id: true,
           email: true,
@@ -62,7 +62,7 @@ async function validateSessionWithOrg(cookies) {
     await client.session.delete({ where: { id: sessionId } });
     return { user: null, state: "unauthenticated" };
   }
-  const user = session.user;
+  const user = session.User;
   if (!user.organizationId) {
     return { user, state: "lobby" };
   }
