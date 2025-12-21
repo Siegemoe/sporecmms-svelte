@@ -64,7 +64,12 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
     const { PrismaClient: EdgePrismaClient } = await import('@prisma/client/edge');
 
     const client = new EdgePrismaClient({
-      accelerateUrl: effectiveUrl,
+      // @ts-ignore - Prisma types are mismatching but datasources is supported
+      datasources: {
+        db: {
+          url: effectiveUrl,
+        },
+      },
       log: logLevel as any,
     });
 
@@ -74,7 +79,12 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
     const { PrismaClient: NodePrismaClient } = await import('@prisma/client');
 
     const client = new NodePrismaClient({
-      accelerateUrl: effectiveUrl,
+      // @ts-ignore - Prisma types are mismatching but datasources is supported
+      datasources: {
+        db: {
+          url: effectiveUrl,
+        },
+      },
       log: logLevel as any,
     });
 
@@ -227,7 +237,12 @@ export async function createNodePrismaClient(): Promise<PrismaClient> {
   }
 
   const client = new NodePrismaClient({
-    accelerateUrl: databaseUrl,
+    // @ts-ignore - Prisma types are mismatching but datasources is supported
+    datasources: {
+      db: {
+        url: databaseUrl,
+      },
+    },
     log: logLevel as any,
   });
 
