@@ -2,6 +2,7 @@ import type { Cookies } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
 import { getPrisma } from './prisma';
 import { dev } from '$app/environment';
+import { randomUUID } from 'node:crypto';
 
 const SESSION_COOKIE = 'spore_session';
 const SESSION_EXPIRY_DAYS = 30;
@@ -26,7 +27,7 @@ export async function createSession(userId: string): Promise<string> {
 			data: {
 				userId,
 				expiresAt,
-				token: crypto.randomUUID()
+				token: randomUUID()
 			}
 		});
 
