@@ -63,9 +63,15 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
     // Cloudflare Worker environment - use edge client with Accelerate
     const { PrismaClient: EdgePrismaClient } = await import('@prisma/client/edge');
 
+    // Workaround: Prisma Edge client constructor in this version rejects 'datasources' and 'datasourceUrl'.
+    // We explicitly set the environment variable which the client usually reads automatically.
+    // In Cloudflare, we might need to shim this if it wasn't picked up from bindings.
+    if (effectiveUrl) {
+      process.env.DATABASE_URL = effectiveUrl;
+      process.env.ACCELERATE_URL = effectiveUrl;
+    }
+
     const client = new EdgePrismaClient({
-      // @ts-ignore - types might conflict but datasourceUrl is required for runtime
-      datasourceUrl: effectiveUrl,
       log: logLevel as any,
     });
 
@@ -75,8 +81,12 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
     const { PrismaClient: NodePrismaClient } = await import('@prisma/client');
 
     const client = new NodePrismaClient({
-      // @ts-ignore - types might conflict but datasourceUrl is required for runtime
-      datasourceUrl: effectiveUrl,
+      // @ts-ignore - types might conflict but datasources is supported for Node client
+      datasources: {
+        db: {
+          url: effectiveUrl,
+        },
+      },
       log: logLevel as any,
     });
 
@@ -229,8 +239,12 @@ export async function createNodePrismaClient(): Promise<PrismaClient> {
   }
 
   const client = new NodePrismaClient({
-    // @ts-ignore - types might conflict but datasourceUrl is required for runtime
-    datasourceUrl: databaseUrl,
+    // @ts-ignore - types might conflict but datasources is supported
+    datasources: {
+      db: {
+        url: databaseUrl,
+      },
+    },
     log: logLevel as any,
   });
 
