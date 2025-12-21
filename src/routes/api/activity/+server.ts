@@ -36,7 +36,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 				}
 			},
 			include: {
-				asset: true,
+				Asset: true,
 				User_WorkOrder_assignedToIdToUser: {
 					select: {
 						id: true,
@@ -58,7 +58,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 				id: wo.id,
 				title: wo.title,
 				status: wo.status,
-				assetName: wo.asset?.name || 'Unknown Asset',
+				assetName: wo.Asset?.name || 'Unknown Asset',
 				assignedTo: wo.User_WorkOrder_assignedToIdToUser?.firstName || wo.User_WorkOrder_assignedToIdToUser?.email || 'Unassigned'
 			},
 			timestamp: wo.updatedAt.getTime()
