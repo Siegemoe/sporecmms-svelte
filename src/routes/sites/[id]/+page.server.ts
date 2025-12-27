@@ -26,15 +26,15 @@ export const load: PageServerLoad = async (event) => {
 						select: { name: true }
 					},
 					_count: {
-						select: { assets: true }
+						select: { Asset: true }
 					}
 				}
 			},
 			_count: {
 				select: {
-					buildings: true,
-					units: true,
-					assets: true
+					Building: true,
+					Unit: true,
+					Asset: true
 				}
 			}
 		}
