@@ -92,6 +92,15 @@ async function destroySession(cookies) {
     const client = await getPrisma();
     await client.session.delete({ where: { id: sessionId } }).catch(() => {
     });
+    cookies.set(SESSION_COOKIE, "", {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+      // In production
+      expires: /* @__PURE__ */ new Date(0)
+      // Set to expire in the past
+    });
     cookies.delete(SESSION_COOKIE, {
       path: "/",
       sameSite: "strict"

@@ -147,7 +147,17 @@ export async function destroySession(cookies: Cookies): Promise<void> {
 	if (sessionId) {
 		const client = await getPrisma();
 		await client.session.delete({ where: { id: sessionId } }).catch(() => {});
-		// Delete cookie with matching attributes to ensure proper deletion
+
+		// Delete cookie with all matching attributes to ensure proper deletion
+		// Also try setting it to expire immediately as a fallback
+		cookies.set(SESSION_COOKIE, '', {
+			path: '/',
+			httpOnly: true,
+			sameSite: 'strict',
+			secure: true, // In production
+			expires: new Date(0) // Set to expire in the past
+		});
+
 		cookies.delete(SESSION_COOKIE, {
 			path: '/',
 			sameSite: 'strict'
