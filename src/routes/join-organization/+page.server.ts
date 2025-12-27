@@ -49,7 +49,7 @@ export const actions: Actions = {
 			const invite = await client.organizationInvite.findUnique({
 				where: { token: validation.data.inviteToken },
 				include: {
-					organization: {
+					Organization: {
 						select: {
 							id: true,
 							name: true
@@ -109,8 +109,8 @@ export const actions: Actions = {
 
 			// Return success message with organization name
 			return {
-				success: `Successfully joined ${invite.organization.name}! Redirecting to dashboard...`,
-				organization: invite.organization.name,
+				success: `Successfully joined ${invite.Organization.name}! Redirecting to dashboard...`,
+				organization: invite.Organization.name,
 				redirect: true
 			};
 		} catch (error) {

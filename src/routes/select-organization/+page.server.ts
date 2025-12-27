@@ -59,7 +59,7 @@ export const actions: Actions = {
 			const membership = await client.organization.findFirst({
 				where: {
 					id: organizationId,
-					users: {
+					User: {
 						some: {
 							id: locals.user!.id
 						}

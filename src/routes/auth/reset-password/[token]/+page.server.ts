@@ -58,9 +58,14 @@ export const actions: Actions = {
 			const user = await resetPassword(token, password);
 
 			// Log successful password reset
-			await security.logEvent('PASSWORD_RESET_COMPLETED', clientIP, {
-				userId: user.id,
-				email: user.email
+			await security.logSecurityEvent({
+				ipAddress: clientIP,
+				action: 'PASSWORD_RESET_COMPLETED',
+				details: {
+					userId: user.id,
+					email: user.email
+				},
+				severity: 'INFO'
 			});
 
 			return {
@@ -72,8 +77,13 @@ export const actions: Actions = {
 			console.error('Password reset error:', error);
 
 			// Log the error
-			await security.logEvent('PASSWORD_RESET_ERROR', clientIP, {
-				error: error instanceof Error ? error.message : 'Unknown error'
+			await security.logSecurityEvent({
+				ipAddress: clientIP,
+				action: 'PASSWORD_RESET_ERROR',
+				details: {
+					error: error instanceof Error ? error.message : 'Unknown error'
+				},
+				severity: 'CRITICAL'
 			});
 
 			return fail(500, {

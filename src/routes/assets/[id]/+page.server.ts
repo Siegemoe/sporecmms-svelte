@@ -13,20 +13,20 @@ export const load: PageServerLoad = async (event) => {
 	const asset = await prisma.asset.findFirst({
 		where: {
 			id,
-			unit: {
-				site: {
-					organizationId
+			Unit: {
+				Site: {
+					organizationId: organizationId ?? undefined
 				}
 			}
 		},
 		include: {
-			unit: {
+			Unit: {
 				include: {
-					site: { select: { id: true, name: true } },
-					building: { select: { id: true, name: true } }
+					Site: { select: { id: true, name: true } },
+					Building: { select: { id: true, name: true } }
 				}
 			},
-			workOrders: {
+			WorkOrder: {
 				orderBy: { createdAt: 'desc' },
 				take: 20,
 				select: {
@@ -39,7 +39,7 @@ export const load: PageServerLoad = async (event) => {
 				}
 			},
 			_count: {
-				select: { workOrders: true }
+				select: { WorkOrder: true }
 			}
 		}
 	});
@@ -51,30 +51,30 @@ export const load: PageServerLoad = async (event) => {
 	// Get all rooms (units) for edit dropdown
 	const units = await prisma.unit.findMany({
 		where: {
-			site: {
-				organizationId
+			Site: {
+				organizationId: organizationId ?? undefined
 			}
 		},
 		orderBy: [
-			{ site: { name: 'asc' } },
-			{ building: { name: 'asc' } },
+			{ Site: { name: 'asc' } },
+			{ Building: { name: 'asc' } },
 			{ roomNumber: 'asc' }
 		],
 		take: 50,
 		include: {
-			site: { select: { name: true } },
-			building: { select: { name: true } }
+			Site: { select: { name: true } },
+			Building: { select: { name: true } }
 		}
 	});
 
 	// Transform asset to include 'room' property for frontend compatibility
 	const assetWithRoom = {
 		...asset,
-		room: asset.unit ? {
-			...asset.unit,
-			name: asset.unit.name || asset.unit.roomNumber
+		room: asset.Unit ? {
+			...asset.Unit,
+			name: asset.Unit.name || asset.Unit.roomNumber
 		} : null,
-		unit: undefined // Optional: remove unit if we want to be strict, but keeping it is fine
+		Unit: undefined // Optional: remove unit if we want to be strict, but keeping it is fine
 	};
 
 	// Transform units to rooms
@@ -91,8 +91,8 @@ export const load: PageServerLoad = async (event) => {
 		prisma.workOrder.count({ where: { assetId: id, status: 'COMPLETED' } })
 	]);
 
-	return { 
-		asset: assetWithRoom, 
+	return {
+		asset: assetWithRoom,
 		rooms,
 		woStats: { total: totalWO, pending: pendingWO, inProgress: inProgressWO, completed: completedWO }
 	};
@@ -120,9 +120,9 @@ export const actions: Actions = {
 		const existingAsset = await prisma.asset.findFirst({
 			where: {
 				id,
-				unit: {
-					site: {
-						organizationId
+				Unit: {
+					Site: {
+						organizationId: organizationId ?? undefined
 					}
 				}
 			}
@@ -136,8 +136,8 @@ export const actions: Actions = {
 		const unit = await prisma.unit.findFirst({
 			where: {
 				id: roomId,
-				site: {
-					organizationId
+				Site: {
+					organizationId: organizationId ?? undefined
 				}
 			}
 		});
@@ -171,9 +171,9 @@ export const actions: Actions = {
 		const asset = await prisma.asset.findFirst({
 			where: {
 				id,
-				unit: {
-					site: {
-						organizationId
+				Unit: {
+					Site: {
+						organizationId: organizationId ?? undefined
 					}
 				}
 			}

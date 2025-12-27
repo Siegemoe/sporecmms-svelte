@@ -55,51 +55,44 @@ export const load: PageServerLoad = async (event) => {
 	const workOrders = await prisma.workOrder.findMany({
 		where,
 		include: {
-			asset: {
+			Asset: {
 				select: {
 					id: true,
 					name: true
 				}
 			},
-			building: {
+			Building: {
 				select: {
 					id: true,
 					name: true,
-					site: {
+					Site: {
 						select: {
 							name: true
 						}
 					}
 				}
 			},
-			unit: {
+			Unit: {
 				select: {
 					id: true,
 					roomNumber: true,
 					name: true,
-					building: {
+					Building: {
 						select: {
 							name: true
 						}
 					},
-					site: {
+					Site: {
 						select: {
 							name: true
 						}
 					}
 				}
 			},
-			site: {
+			Site: {
 				select: {
 					id: true,
 					name: true
-				}
-			},
-			assignedTo: {
-				select: {
-					id: true,
-					firstName: true,
-					lastName: true
 				}
 			}
 		},
@@ -111,7 +104,7 @@ export const load: PageServerLoad = async (event) => {
 		where: {
 			Unit: {
 				Site: {
-					organizationId
+					organizationId: organizationId ?? undefined
 				}
 			}
 		},
@@ -130,7 +123,7 @@ export const load: PageServerLoad = async (event) => {
 	const units = await prisma.unit.findMany({
 		where: {
 			Site: {
-				organizationId
+				organizationId: organizationId ?? undefined
 			}
 		},
 		include: {
@@ -148,7 +141,7 @@ export const load: PageServerLoad = async (event) => {
 	const buildings = await prisma.building.findMany({
 		where: {
 			Site: {
-				organizationId
+				organizationId: organizationId ?? undefined
 			}
 		},
 		include: {
@@ -163,14 +156,14 @@ export const load: PageServerLoad = async (event) => {
 	// Get sites for the create form and filters
 	const sites = await prisma.site.findMany({
 		where: {
-			organizationId
+			organizationId: organizationId ?? undefined
 		},
 		orderBy: { name: 'asc' }
 	});
 
 	// Get users for assignment dropdown
 	const users = await prisma.user.findMany({
-		where: { organizationId },
+		where: { organizationId: organizationId ?? undefined },
 		select: {
 			id: true,
 			firstName: true,
@@ -180,7 +173,51 @@ export const load: PageServerLoad = async (event) => {
 		orderBy: { firstName: 'asc' }
 	});
 
-	return { workOrders, assets, units, buildings, sites, users, myOnly, status, priority, siteId, sort };
+	// Transform data for frontend compatibility (PascalCase -> lowercase)
+	const transformedWorkOrders = workOrders.map(wo => ({
+		...wo,
+		asset: wo.Asset,
+		building: wo.Building,
+		unit: wo.Unit,
+		site: wo.Site,
+		// Remove PascalCase versions
+		Asset: undefined,
+		Building: undefined,
+		Unit: undefined,
+		Site: undefined
+	}));
+
+	const transformedAssets = assets.map(asset => ({
+		...asset,
+		room: asset.Unit ? {
+			...asset.Unit,
+			name: asset.Unit.name || asset.Unit.roomNumber,
+			site: asset.Unit.Site,
+			building: asset.Unit.Building
+		} : null,
+		Unit: undefined
+	}));
+
+	const transformedUnits = units.map(unit => ({
+		...unit,
+		Site: undefined,
+		Building: undefined
+	}));
+
+	const transformedBuildings = buildings.map(building => ({
+		...building,
+		Site: undefined
+	}));
+
+	return {
+		workOrders: transformedWorkOrders,
+		assets: transformedAssets,
+		units: transformedUnits,
+		buildings: transformedBuildings,
+		sites,
+		users,
+		myOnly, status, priority, siteId, sort
+	};
 };
 
 export const actions: Actions = {
@@ -228,6 +265,7 @@ export const actions: Actions = {
 					createdById,
 					assignedToId: assignedToId || null,
 					status: 'PENDING',
+					updatedAt: new Date(),
 					// Only set the relevant ID based on selection mode
 					...(selectionMode === 'asset' && { assetId }),
 					...((selectionMode === 'unit' || selectionMode === 'room') && { unitId }),
@@ -350,10 +388,7 @@ export const actions: Actions = {
 					title: true,
 					status: true,
 					assignedToId: true,
-					organizationId: true,
-					assignedTo: {
-						select: { firstName: true, lastName: true }
-					}
+					organizationId: true
 				}
 			});
 
@@ -366,10 +401,7 @@ export const actions: Actions = {
 			await logAudit(event.locals.user!.id, 'WORK_ORDER_ASSIGNED', {
 				workOrderId: updatedWo.id,
 				title: updatedWo.title,
-				assignedToId: assignedToId || null,
-				assignedToName: updatedWo.assignedTo 
-					? `${updatedWo.assignedTo.firstName || ''} ${updatedWo.assignedTo.lastName || ''}`.trim()
-					: null
+				assignedToId: assignedToId || null
 			});
 
 			return { success: true };

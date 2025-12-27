@@ -9,7 +9,7 @@ export const load: PageServerLoad = async (event) => {
 		console.log('[DASHBOARD] Loading dashboard for user:', event.locals.user?.id);
 
 		const prisma = await createRequestPrisma(event);
-		const organizationId = event.locals.user!.organizationId;
+		const organizationId = event.locals.user!.organizationId ?? undefined;
 
 		// Get work order stats
 		const [total, pending, inProgress, completed] = await Promise.all([
@@ -27,7 +27,7 @@ export const load: PageServerLoad = async (event) => {
 			take: 5,
 			orderBy: { updatedAt: 'desc' },
 			include: {
-				asset: {
+				Asset: {
 					include: {
 						Unit: {
 							select: {
@@ -62,11 +62,11 @@ export const load: PageServerLoad = async (event) => {
 		// Map data for frontend compatibility
 		const mappedRecentWorkOrders = recentWorkOrders.map(wo => ({
 			...wo,
-			asset: wo.asset ? {
-				...wo.asset,
-				room: wo.asset.Unit ? {
-					...wo.asset.Unit,
-					name: wo.asset.Unit.name || wo.asset.Unit.roomNumber
+			asset: wo.Asset ? {
+				...wo.Asset,
+				room: wo.Asset.Unit ? {
+					...wo.Asset.Unit,
+					name: wo.Asset.Unit.name || wo.Asset.Unit.roomNumber
 				} : null
 			} : null
 		}));

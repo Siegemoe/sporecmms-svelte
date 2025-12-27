@@ -47,12 +47,12 @@ export const actions: Actions = {
 			if (!validationResult.success) {
 				// await security.logEvent('PASSWORD_RESET_FAILED', clientIP, {
 				// 	reason: 'Invalid input',
-				// 	errors: validationResult.error.errors
+				// 	errors: validationResult.error.issues
 				// });
 				return fail(400, {
-					errors: validationResult.error.errors.reduce((acc, error) => {
-						const key = error.path[0] as string;
-						acc[key] = error.message;
+					errors: validationResult.error.issues.reduce((acc: Record<string, string>, issue) => {
+						const key = issue.path[0] as string;
+						acc[key] = issue.message;
 						return acc;
 					}, {} as Record<string, string>)
 				});

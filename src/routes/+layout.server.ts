@@ -1,12 +1,20 @@
 import type { LayoutServerLoad } from './$types';
 import { createRequestPrisma } from '$lib/server/prisma';
 import type { Asset, Building, Unit } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
+
+// Types with relations included
+type AssetWithUnit = Prisma.AssetGetPayload<{
+	include: { Unit: { include: { Building: true; Site: { select: { name: true } } } } };
+}>;
+type BuildingWithSite = Prisma.BuildingGetPayload<{ include: { Site: true } }>;
+type UnitWithBuildingAndSite = Prisma.UnitGetPayload<{ include: { Building: true; Site: true } }>;
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	// Get data for Quick FAB if user is authenticated and has organization
-	let assets: Asset[] = [];
-	let buildings: Building[] = [];
-	let rooms: Unit[] = [];
+	let assets: AssetWithUnit[] = [];
+	let buildings: BuildingWithSite[] = [];
+	let rooms: UnitWithBuildingAndSite[] = [];
 
 	if (locals.user && locals.authState === 'org_member') {
 		const prisma = await createRequestPrisma({ locals } as any);

@@ -106,7 +106,8 @@ export const actions: Actions = {
 				firstName: validation.data.firstName,
 				lastName: validation.data.lastName,
 				role: 'TECHNICIAN', // Default role, can be changed when joining org
-				organizationId: null // Explicitly set to null for lobby state
+				organizationId: null, // Explicitly set to null for lobby state
+				updatedAt: new Date()
 			}
 		});
 
@@ -118,10 +119,11 @@ export const actions: Actions = {
 		throw redirect(303, '/onboarding');
 		} catch (error) {
 			console.error('[REGISTER] Error:', error);
-			console.error('[REGISTER] Stack:', error.stack);
+			const err = error instanceof Error ? error : new Error(String(error));
+			console.error('[REGISTER] Stack:', err.stack);
 			return fail(500, {
 				error: 'Internal server error during registration. Please try again.',
-				details: error.message
+				details: err.message
 			});
 		}
 	}

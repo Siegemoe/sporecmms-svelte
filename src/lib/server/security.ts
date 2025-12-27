@@ -95,25 +95,35 @@ export class SecurityManager {
       expiresAt = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes
     }
 
+    // Build update data - only include blockedBy if defined
+    const updateData: any = {
+      reason,
+      severity,
+      blockedAt: now,
+      expiresAt,
+      violationCount: { increment: 1 }
+    };
+    if (blockedBy !== undefined) {
+      updateData.blockedBy = blockedBy;
+    }
+
+    // Build create data - only include blockedBy if defined
+    const createData: any = {
+      ipAddress: ip,
+      reason,
+      severity,
+      blockedAt: now,
+      expiresAt,
+      violationCount: 1
+    };
+    if (blockedBy !== undefined) {
+      createData.blockedBy = blockedBy;
+    }
+
     await prisma.iPBlock.upsert({
       where: { ipAddress: ip },
-      update: {
-        reason,
-        severity,
-        blockedAt: now,
-        expiresAt,
-        violationCount: { increment: 1 },
-        blockedBy
-      },
-      create: {
-        ipAddress: ip,
-        reason,
-        severity,
-        blockedAt: now,
-        expiresAt,
-        violationCount: 1,
-        blockedBy
-      }
+      update: updateData,
+      create: createData
     });
 
     // Update cache

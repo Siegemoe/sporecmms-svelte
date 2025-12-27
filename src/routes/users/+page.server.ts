@@ -74,7 +74,8 @@ export const actions: Actions = {
 				firstName: firstName?.trim() || null,
 				lastName: lastName?.trim() || null,
 				role: role as 'ADMIN' | 'MANAGER' | 'TECHNICIAN',
-				organizationId: locals.user.organizationId!
+				organizationId: locals.user.organizationId!,
+				updatedAt: new Date()
 			}
 		});
 

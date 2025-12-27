@@ -13,27 +13,27 @@ export const load: PageServerLoad = async (event) => {
 
 	const assets = await prisma.asset.findMany({
 		where: {
-			unit: {
-				site: {
-					organizationId
+			Unit: {
+				Site: {
+					organizationId: organizationId ?? undefined
 				}
 			},
 			...(unitFilter && { unitId: unitFilter })
 		},
 		orderBy: { createdAt: 'desc' },
 		include: {
-			unit: {
+			Unit: {
 				include: {
-					site: {
+					Site: {
 						select: { name: true }
 					},
-					building: {
+					Building: {
 						select: { name: true }
 					}
 				}
 			},
 			_count: {
-				select: { workOrders: true }
+				select: { WorkOrder: true }
 			}
 		}
 	});
@@ -41,20 +41,20 @@ export const load: PageServerLoad = async (event) => {
 	// Get all units for the create form dropdown
 	const units = await prisma.unit.findMany({
 		where: {
-			site: {
-				organizationId
+			Site: {
+				organizationId: organizationId ?? undefined
 			}
 		},
 		orderBy: [
-			{ site: { name: 'asc' } },
-			{ building: { name: 'asc' } },
+			{ Site: { name: 'asc' } },
+			{ Building: { name: 'asc' } },
 			{ roomNumber: 'asc' }
 		],
 		include: {
-			site: {
+			Site: {
 				select: { name: true }
 			},
-			building: {
+			Building: {
 				select: { name: true }
 			}
 		}
@@ -89,8 +89,8 @@ export const actions: Actions = {
 		const unit = await prisma.unit.findFirst({
 			where: {
 				id: unitId,
-				site: {
-					organizationId
+				Site: {
+					organizationId: organizationId ?? undefined
 				}
 			}
 		});
@@ -111,7 +111,8 @@ export const actions: Actions = {
 				purchaseDate: purchaseDate ? new Date(purchaseDate) : null,
 				warrantyExpiry: warrantyExpiry ? new Date(warrantyExpiry) : null,
 				unitId,
-				siteId
+				siteId,
+				updatedAt: new Date()
 			}
 		});
 
@@ -144,9 +145,9 @@ export const actions: Actions = {
 		const asset = await prisma.asset.findFirst({
 			where: {
 				id: assetId,
-				unit: {
-					site: {
-						organizationId
+				Unit: {
+					Site: {
+						organizationId: organizationId ?? undefined
 					}
 				}
 			},
@@ -199,9 +200,9 @@ export const actions: Actions = {
 		const existingAsset = await prisma.asset.findFirst({
 			where: {
 				id: assetId,
-				unit: {
-					site: {
-						organizationId
+				Unit: {
+					Site: {
+						organizationId: organizationId ?? undefined
 					}
 				}
 			}
@@ -214,8 +215,8 @@ export const actions: Actions = {
 		const unit = await prisma.unit.findFirst({
 			where: {
 				id: unitId,
-				site: {
-					organizationId
+				Site: {
+					organizationId: organizationId ?? undefined
 				}
 			}
 		});

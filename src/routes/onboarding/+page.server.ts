@@ -63,7 +63,7 @@ export const actions: Actions = {
 				// Create organization and add user as admin
 				await client.$transaction(async (tx) => {
 					const org = await tx.organization.create({
-						data: { name: validation.data.orgName }
+						data: { name: validation.data.orgName, updatedAt: new Date() }
 					});
 
 					// Update user with org and make them admin
