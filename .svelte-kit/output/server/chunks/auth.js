@@ -97,13 +97,8 @@ async function destroySession(cookies) {
       httpOnly: true,
       sameSite: "strict",
       secure: true,
-      // In production
-      expires: /* @__PURE__ */ new Date(0)
-      // Set to expire in the past
-    });
-    cookies.delete(SESSION_COOKIE, {
-      path: "/",
-      sameSite: "strict"
+      maxAge: 0
+      // Immediately expires the cookie
     });
   }
 }
