@@ -3,8 +3,14 @@ import type { PrismaClient } from '@prisma/client';
 
 // Runtime detection helper
 function isCloudflareWorker(): boolean {
-  // Check for Cloudflare Worker runtime environment
   const g = globalThis as any;
+
+  // Check for Cloudflare Pages environment variable (set automatically by Cloudflare)
+  if (g.process?.env?.CF_PAGES || g.CF_PAGES) {
+    return true;
+  }
+
+  // Check for Cloudflare Worker runtime environment
   return !(g.process?.versions?.node) &&
          typeof g.fetch === 'function' &&
          !g.Buffer;
