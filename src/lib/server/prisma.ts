@@ -95,16 +95,10 @@ async function createBasePrismaClient(): Promise<PrismaClient> {
     // Cloudflare Worker environment - use edge client with Accelerate
     const { PrismaClient: EdgePrismaClient } = await import('@prisma/client/edge');
 
-    // Workaround: Prisma Edge client constructor in this version rejects 'datasources' and 'datasourceUrl'.
-    // We explicitly set the environment variable which the client usually reads automatically.
-    // In Cloudflare, we might need to shim this if it wasn't picked up from bindings.
-    if (effectiveUrl) {
-      process.env.DATABASE_URL = effectiveUrl;
-      process.env.ACCELERATE_URL = effectiveUrl;
-    }
-
+    // Edge client requires accelerateUrl to be passed explicitly
     const client = new EdgePrismaClient({
       log: logLevel as any,
+      accelerateUrl: effectiveUrl,
     });
 
     return client.$extends(withAccelerate()) as PrismaClient;
