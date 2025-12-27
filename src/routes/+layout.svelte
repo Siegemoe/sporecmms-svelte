@@ -122,7 +122,7 @@
 							on:click={() => document.getElementById('org-menu')?.classList.toggle('hidden')}
 						>
 							<p class="text-sm font-semibold text-spore-cream">
-								{user.firstName || user.email.split('@')[0]}
+								{user?.firstName || user?.email?.split('@')[0] || 'User'}
 							</p>
 							<p class="text-xs text-spore-orange flex items-center gap-1">
 								{data.currentOrganization?.name || 'Select Organization'}
@@ -155,9 +155,9 @@
 				{:else}
 					<a href="/profile" class="hidden sm:block text-right hover:opacity-80 transition-opacity">
 						<p class="text-sm font-semibold text-spore-cream">
-							{user.firstName || user.email.split('@')[0]}
+							{user?.firstName || user?.email?.split('@')[0] || 'User'}
 						</p>
-						<p class="text-xs text-spore-steel capitalize">{user.role.toLowerCase()}</p>
+						<p class="text-xs text-spore-steel capitalize">{user?.role?.toLowerCase() || 'member'}</p>
 					</a>
 				{/if}
 				<form method="POST" action="/auth/logout">

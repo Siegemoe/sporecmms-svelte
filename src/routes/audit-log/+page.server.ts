@@ -1,9 +1,12 @@
 import type { PageServerLoad } from './$types';
-import { getPrisma } from '$lib/server/prisma';
+import { getPrisma, initEnvFromEvent } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
 import { isAdmin } from '$lib/server/guards';
 
 export const load: PageServerLoad = async (event) => {
+	// Initialize environment variables for Cloudflare Workers
+	initEnvFromEvent(event);
+
 	// Only admins can view audit logs
 	if (!isAdmin(event)) {
 		throw error(403, 'Access denied. Admin privileges required.');
