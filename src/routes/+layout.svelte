@@ -8,6 +8,17 @@
 
 	export let data: LayoutData;
 
+	// Logout handler - calls server endpoint then forces navigation to login
+	async function handleLogout() {
+		try {
+			await fetch('/auth/logout', { method: 'POST' });
+		} catch (e) {
+			console.error('Logout failed:', e);
+		}
+		// Force hard navigation to login page
+		window.location.href = '/auth/login';
+	}
+
 	// Temporarily disable WebSocket to debug login issue
 	onMount(() => {
 		// if (data.user) {
@@ -160,15 +171,14 @@
 						<p class="text-xs text-spore-steel capitalize">{user?.role?.toLowerCase() || 'member'}</p>
 					</a>
 				{/if}
-				<form method="POST" action="/auth/logout">
-					<button
-						type="submit"
-						class="text-sm font-semibold text-spore-cream/50 hover:text-spore-cream transition-colors"
-						title="Sign out of your account"
-					>
-						Logout
-					</button>
-				</form>
+				<button
+					type="button"
+					on:click={handleLogout}
+					class="text-sm font-semibold text-spore-cream/50 hover:text-spore-cream transition-colors"
+					title="Sign out of your account"
+				>
+					Logout
+				</button>
 			</div>
 		</div>
 	</div>
