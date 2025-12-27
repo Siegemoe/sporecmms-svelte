@@ -148,14 +148,15 @@ export async function destroySession(cookies: Cookies): Promise<void> {
 		const client = await getPrisma();
 		await client.session.delete({ where: { id: sessionId } }).catch(() => {});
 
-		// Delete the session cookie by setting maxAge to 0
-		// This is more reliable than expires: new Date(0) in Edge runtimes
+		// Delete cookie by setting it to empty with maxAge: 0
+		// This ensures all attributes match (including secure) for proper deletion
+		// cookies.delete() doesn't support the 'secure' option, so we use cookies.set() instead
 		cookies.set(SESSION_COOKIE, '', {
 			path: '/',
 			httpOnly: true,
 			sameSite: 'strict',
-			secure: true,
-			maxAge: 0 // Immediately expires the cookie
+			secure: true, // Match production cookie settings
+			maxAge: 0
 		});
 	}
 }
