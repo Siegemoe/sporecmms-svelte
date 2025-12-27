@@ -8,10 +8,10 @@ const load = async (event) => {
   const site = await prisma.site.findUnique({
     where: { id },
     include: {
-      buildings: {
+      Building: {
         orderBy: { name: "asc" }
       },
-      units: {
+      Unit: {
         orderBy: [
           { building: { name: "asc" } },
           { floor: "asc" },
@@ -38,14 +38,14 @@ const load = async (event) => {
   if (!site) {
     throw error(404, "Site not found");
   }
-  const unitsByBuilding = site.units.reduce((acc, unit) => {
+  const unitsByBuilding = {};
+  for (const unit of site.Unit) {
     const building = unit.building?.name || "Unassigned";
-    if (!acc[building]) {
-      acc[building] = [];
+    if (!unitsByBuilding[building]) {
+      unitsByBuilding[building] = [];
     }
-    acc[building].push(unit);
-    return acc;
-  }, {});
+    unitsByBuilding[building].push(unit);
+  }
   return { site, unitsByBuilding };
 };
 const actions = {
@@ -74,7 +74,8 @@ const actions = {
         name: name?.trim() || null,
         floor: floor ? parseInt(floor) : null,
         siteId,
-        buildingId: buildingId || null
+        buildingId: buildingId || null,
+        updatedAt: /* @__PURE__ */ new Date()
       }
     });
     return { success: true, unit };
@@ -118,7 +119,8 @@ const actions = {
       data: {
         name: name.trim(),
         description: description?.trim() || null,
-        siteId
+        siteId,
+        updatedAt: /* @__PURE__ */ new Date()
       }
     });
     return { success: true, building };

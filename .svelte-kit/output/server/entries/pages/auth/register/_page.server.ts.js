@@ -86,8 +86,9 @@ const actions = {
           lastName: validation.data.lastName,
           role: "TECHNICIAN",
           // Default role, can be changed when joining org
-          organizationId: null
+          organizationId: null,
           // Explicitly set to null for lobby state
+          updatedAt: /* @__PURE__ */ new Date()
         }
       });
       const sessionId = await createSession(user.id);
@@ -95,10 +96,11 @@ const actions = {
       throw redirect(303, "/onboarding");
     } catch (error2) {
       console.error("[REGISTER] Error:", error2);
-      console.error("[REGISTER] Stack:", error2.stack);
+      const err = error2 instanceof Error ? error2 : new Error(String(error2));
+      console.error("[REGISTER] Stack:", err.stack);
       return fail(500, {
         error: "Internal server error during registration. Please try again.",
-        details: error2.message
+        details: err.message
       });
     }
   }

@@ -9,20 +9,20 @@ const load = async (event) => {
   const asset = await prisma.asset.findFirst({
     where: {
       id,
-      unit: {
-        site: {
-          organizationId
+      Unit: {
+        Site: {
+          organizationId: organizationId ?? void 0
         }
       }
     },
     include: {
-      unit: {
+      Unit: {
         include: {
-          site: { select: { id: true, name: true } },
-          building: { select: { id: true, name: true } }
+          Site: { select: { id: true, name: true } },
+          Building: { select: { id: true, name: true } }
         }
       },
-      workOrders: {
+      WorkOrder: {
         orderBy: { createdAt: "desc" },
         take: 20,
         select: {
@@ -35,7 +35,7 @@ const load = async (event) => {
         }
       },
       _count: {
-        select: { workOrders: true }
+        select: { WorkOrder: true }
       }
     }
   });
@@ -44,28 +44,28 @@ const load = async (event) => {
   }
   const units = await prisma.unit.findMany({
     where: {
-      site: {
-        organizationId
+      Site: {
+        organizationId: organizationId ?? void 0
       }
     },
     orderBy: [
-      { site: { name: "asc" } },
-      { building: { name: "asc" } },
+      { Site: { name: "asc" } },
+      { Building: { name: "asc" } },
       { roomNumber: "asc" }
     ],
     take: 50,
     include: {
-      site: { select: { name: true } },
-      building: { select: { name: true } }
+      Site: { select: { name: true } },
+      Building: { select: { name: true } }
     }
   });
   const assetWithRoom = {
     ...asset,
-    room: asset.unit ? {
-      ...asset.unit,
-      name: asset.unit.name || asset.unit.roomNumber
+    room: asset.Unit ? {
+      ...asset.Unit,
+      name: asset.Unit.name || asset.Unit.roomNumber
     } : null,
-    unit: void 0
+    Unit: void 0
     // Optional: remove unit if we want to be strict, but keeping it is fine
   };
   const rooms = units.map((unit) => ({
@@ -101,9 +101,9 @@ const actions = {
     const existingAsset = await prisma.asset.findFirst({
       where: {
         id,
-        unit: {
-          site: {
-            organizationId
+        Unit: {
+          Site: {
+            organizationId: organizationId ?? void 0
           }
         }
       }
@@ -114,8 +114,8 @@ const actions = {
     const unit = await prisma.unit.findFirst({
       where: {
         id: roomId,
-        site: {
-          organizationId
+        Site: {
+          organizationId: organizationId ?? void 0
         }
       }
     });
@@ -141,9 +141,9 @@ const actions = {
     const asset = await prisma.asset.findFirst({
       where: {
         id,
-        unit: {
-          site: {
-            organizationId
+        Unit: {
+          Site: {
+            organizationId: organizationId ?? void 0
           }
         }
       }

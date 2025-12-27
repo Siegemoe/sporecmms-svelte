@@ -1,6 +1,6 @@
 import { r as redirect, f as fail } from "../../../../chunks/index.js";
 import { v as verifyPassword, c as createSession, s as setSessionCookie } from "../../../../chunks/auth.js";
-import { g as getPrisma } from "../../../../chunks/prisma.js";
+import { i as initEnvFromEvent, g as getPrisma } from "../../../../chunks/prisma.js";
 import { v as validateInput, l as loginSchema } from "../../../../chunks/validation.js";
 import { a as SECURITY_RATE_LIMITS, S as SecurityManager } from "../../../../chunks/security.js";
 const load = async ({ locals }) => {
@@ -10,8 +10,10 @@ const load = async ({ locals }) => {
   return {};
 };
 const actions = {
-  default: async ({ request, cookies, getClientAddress }) => {
+  default: async (event) => {
+    const { request, cookies, getClientAddress } = event;
     let formData;
+    initEnvFromEvent(event);
     const security = SecurityManager.getInstance();
     const ip = getClientAddress() || "unknown";
     try {
@@ -90,8 +92,18 @@ const actions = {
       if (error2 && typeof error2 === "object" && "location" in error2) {
         throw error2;
       }
-      console.error("Login error:", error2);
+      const errorType = error2?.constructor?.name || "Unknown";
+      const errorMessage = error2?.message || "No message";
+      console.error("[LOGIN ERROR] Type:", errorType);
+      console.error("[LOGIN ERROR] Message:", errorMessage);
+      console.error("[LOGIN ERROR] Full:", error2);
       const emailValue = formData?.get("email");
+      if (errorMessage.includes("DATABASE_URL") || errorMessage.includes("ACCELERATE_URL") || errorMessage.includes("DIRECT_URL") || errorMessage.includes("environment variable")) {
+        return fail(500, {
+          error: "Database configuration error. Please contact support.",
+          email: emailValue
+        });
+      }
       return fail(500, {
         error: "An unexpected error occurred. Please try again.",
         email: emailValue

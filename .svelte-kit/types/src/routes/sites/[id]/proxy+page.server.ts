@@ -6,17 +6,17 @@ import { requireAuth, isManagerOrAbove } from '$lib/server/guards';
 
 export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	requireAuth(event);
-	
+
 	const prisma = await createRequestPrisma(event);
 	const { id } = event.params;
 
 	const site = await prisma.site.findUnique({
 		where: { id },
 		include: {
-			buildings: {
+			Building: {
 				orderBy: { name: 'asc' }
 			},
-			units: {
+			Unit: {
 				orderBy: [
 					{ building: { name: 'asc' } },
 					{ floor: 'asc' },
@@ -46,14 +46,14 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	}
 
 	// Group units by building
-	const unitsByBuilding = site.units.reduce((acc, unit) => {
+	const unitsByBuilding: Record<string, typeof site.Unit[]> = {};
+	for (const unit of site.Unit) {
 		const building = unit.building?.name || 'Unassigned';
-		if (!acc[building]) {
-			acc[building] = [];
+		if (!unitsByBuilding[building]) {
+			unitsByBuilding[building] = [];
 		}
-		acc[building].push(unit);
-		return acc;
-	}, {} as Record<string, typeof site.units>);
+		unitsByBuilding[building].push(unit);
+	}
 
 	return { site, unitsByBuilding };
 };
@@ -89,7 +89,8 @@ export const actions = {
 				name: name?.trim() || null,
 				floor: floor ? parseInt(floor) : null,
 				siteId,
-				buildingId: buildingId || null
+				buildingId: buildingId || null,
+				updatedAt: new Date()
 			}
 		});
 
@@ -148,7 +149,8 @@ export const actions = {
 			data: {
 				name: name.trim(),
 				description: description?.trim() || null,
-				siteId
+				siteId,
+				updatedAt: new Date()
 			}
 		});
 

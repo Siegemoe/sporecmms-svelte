@@ -1,10 +1,12 @@
 import { r as redirect } from "./index.js";
 import { e as validateSessionWithOrg } from "./auth.js";
 import { d as building } from "./internal.js";
+import { i as initEnvFromEvent } from "./prisma.js";
 const publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password", "/", "/favicon.ico", "/favicon.png"];
 const orgRoutes = ["/dashboard", "/work-orders", "/sites", "/assets", "/users", "/audit-log"];
 const lobbyRoutes = ["/onboarding", "/join-organization"];
 const handle = async ({ event, resolve }) => {
+  initEnvFromEvent(event);
   if (building) {
     return resolve(event);
   }

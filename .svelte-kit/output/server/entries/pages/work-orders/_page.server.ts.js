@@ -41,51 +41,44 @@ const load = async (event) => {
   const workOrders = await prisma.workOrder.findMany({
     where,
     include: {
-      asset: {
+      Asset: {
         select: {
           id: true,
           name: true
         }
       },
-      building: {
+      Building: {
         select: {
           id: true,
           name: true,
-          site: {
+          Site: {
             select: {
               name: true
             }
           }
         }
       },
-      unit: {
+      Unit: {
         select: {
           id: true,
           roomNumber: true,
           name: true,
-          building: {
+          Building: {
             select: {
               name: true
             }
           },
-          site: {
+          Site: {
             select: {
               name: true
             }
           }
         }
       },
-      site: {
+      Site: {
         select: {
           id: true,
           name: true
-        }
-      },
-      assignedTo: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true
         }
       }
     },
@@ -95,7 +88,7 @@ const load = async (event) => {
     where: {
       Unit: {
         Site: {
-          organizationId
+          organizationId: organizationId ?? void 0
         }
       }
     },
@@ -112,7 +105,7 @@ const load = async (event) => {
   const units = await prisma.unit.findMany({
     where: {
       Site: {
-        organizationId
+        organizationId: organizationId ?? void 0
       }
     },
     include: {
@@ -128,7 +121,7 @@ const load = async (event) => {
   const buildings = await prisma.building.findMany({
     where: {
       Site: {
-        organizationId
+        organizationId: organizationId ?? void 0
       }
     },
     include: {
@@ -141,12 +134,12 @@ const load = async (event) => {
   });
   const sites = await prisma.site.findMany({
     where: {
-      organizationId
+      organizationId: organizationId ?? void 0
     },
     orderBy: { name: "asc" }
   });
   const users = await prisma.user.findMany({
-    where: { organizationId },
+    where: { organizationId: organizationId ?? void 0 },
     select: {
       id: true,
       firstName: true,
@@ -155,7 +148,50 @@ const load = async (event) => {
     },
     orderBy: { firstName: "asc" }
   });
-  return { workOrders, assets, units, buildings, sites, users, myOnly, status, priority, siteId, sort };
+  const transformedWorkOrders = workOrders.map((wo) => ({
+    ...wo,
+    asset: wo.Asset,
+    building: wo.Building,
+    unit: wo.Unit,
+    site: wo.Site,
+    // Remove PascalCase versions
+    Asset: void 0,
+    Building: void 0,
+    Unit: void 0,
+    Site: void 0
+  }));
+  const transformedAssets = assets.map((asset) => ({
+    ...asset,
+    room: asset.Unit ? {
+      ...asset.Unit,
+      name: asset.Unit.name || asset.Unit.roomNumber,
+      site: asset.Unit.Site,
+      building: asset.Unit.Building
+    } : null,
+    Unit: void 0
+  }));
+  const transformedUnits = units.map((unit) => ({
+    ...unit,
+    Site: void 0,
+    Building: void 0
+  }));
+  const transformedBuildings = buildings.map((building) => ({
+    ...building,
+    Site: void 0
+  }));
+  return {
+    workOrders: transformedWorkOrders,
+    assets: transformedAssets,
+    units: transformedUnits,
+    buildings: transformedBuildings,
+    sites,
+    users,
+    myOnly,
+    status,
+    priority,
+    siteId,
+    sort
+  };
 };
 const actions = {
   /**
@@ -194,6 +230,7 @@ const actions = {
           createdById,
           assignedToId: assignedToId || null,
           status: "PENDING",
+          updatedAt: /* @__PURE__ */ new Date(),
           // Only set the relevant ID based on selection mode
           ...selectionMode === "asset" && { assetId },
           ...(selectionMode === "unit" || selectionMode === "room") && { unitId },
@@ -292,10 +329,7 @@ const actions = {
           title: true,
           status: true,
           assignedToId: true,
-          organizationId: true,
-          assignedTo: {
-            select: { firstName: true, lastName: true }
-          }
+          organizationId: true
         }
       });
       broadcastToOrg(updatedWo.organizationId, {
@@ -305,8 +339,7 @@ const actions = {
       await logAudit(event.locals.user.id, "WORK_ORDER_ASSIGNED", {
         workOrderId: updatedWo.id,
         title: updatedWo.title,
-        assignedToId: assignedToId || null,
-        assignedToName: updatedWo.assignedTo ? `${updatedWo.assignedTo.firstName || ""} ${updatedWo.assignedTo.lastName || ""}`.trim() : null
+        assignedToId: assignedToId || null
       });
       return { success: true };
     } catch (e) {

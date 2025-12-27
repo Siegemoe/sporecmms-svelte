@@ -5,7 +5,7 @@ const load = async (event) => {
     requireAuth(event);
     console.log("[DASHBOARD] Loading dashboard for user:", event.locals.user?.id);
     const prisma = await createRequestPrisma(event);
-    const organizationId = event.locals.user.organizationId;
+    const organizationId = event.locals.user.organizationId ?? void 0;
     const [total, pending, inProgress, completed] = await Promise.all([
       prisma.workOrder.count({ where: { organizationId } }),
       prisma.workOrder.count({ where: { status: "PENDING", organizationId } }),
@@ -18,7 +18,7 @@ const load = async (event) => {
       take: 5,
       orderBy: { updatedAt: "desc" },
       include: {
-        asset: {
+        Asset: {
           include: {
             Unit: {
               select: {
@@ -47,11 +47,11 @@ const load = async (event) => {
     console.log("[DASHBOARD] Sites loaded:", sites.length);
     const mappedRecentWorkOrders = recentWorkOrders.map((wo) => ({
       ...wo,
-      asset: wo.asset ? {
-        ...wo.asset,
-        room: wo.asset.Unit ? {
-          ...wo.asset.Unit,
-          name: wo.asset.Unit.name || wo.asset.Unit.roomNumber
+      asset: wo.Asset ? {
+        ...wo.Asset,
+        room: wo.Asset.Unit ? {
+          ...wo.Asset.Unit,
+          name: wo.Asset.Unit.name || wo.Asset.Unit.roomNumber
         } : null
       } : null
     }));

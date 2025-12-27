@@ -106,7 +106,8 @@
     "imports": [
       "_index.js",
       "_auth.js",
-      "_internal.js"
+      "_internal.js",
+      "_prisma.js"
     ],
     "isDynamicEntry": true,
     "src": "src/hooks.server.ts"

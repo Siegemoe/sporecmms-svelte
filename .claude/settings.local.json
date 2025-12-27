@@ -58,7 +58,9 @@
       "Bash(npx @modelcontextprotocol/server-list:*)",
       "Bash(npx prisma db pull:*)",
       "Bash(npx tsx:*)",
-      "Bash(npx svelte-check:*)"
+      "Bash(npx svelte-check:*)",
+      "Bash(npx wrangler pages deploy:*)",
+      "Bash(npx wrangler pages project list:*)"
     ],
     "deny": [],
     "ask": []

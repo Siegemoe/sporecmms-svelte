@@ -16,12 +16,12 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	const workOrder = await prisma.workOrder.findUnique({
 		where: { id },
 		include: {
-			asset: {
+			Asset: {
 				include: {
-					unit: {
+					Unit: {
 						include: {
-							site: { select: { id: true, name: true } },
-							building: { select: { id: true, name: true } }
+							Site: { select: { id: true, name: true } },
+							Building: { select: { id: true, name: true } }
 						}
 					}
 				}
@@ -36,16 +36,16 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	// Get all assets for edit dropdown
 	const assets = await prisma.asset.findMany({
 		where: {
-			unit: {
-				site: {
-					organizationId: event.locals.user!.organizationId
+			Unit: {
+				Site: {
+					organizationId: event.locals.user!.organizationId ?? undefined
 				}
 			}
 		},
 		include: {
-			unit: {
+			Unit: {
 				include: {
-					site: { select: { name: true } }
+					Site: { select: { name: true } }
 				}
 			}
 		},
@@ -56,21 +56,24 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	// Since we throw a 404 if workOrder is not found, workOrderWithRoom will never be null
 	const workOrderWithRoom = {
 		...workOrder,
-		asset: workOrder.asset ? {
-			...workOrder.asset,
-			room: workOrder.asset.unit ? {
-				...workOrder.asset.unit,
-				name: workOrder.asset.unit.name || workOrder.asset.unit.roomNumber,
-				building: workOrder.asset.unit.building
+		asset: workOrder.Asset ? {
+			...workOrder.Asset,
+			room: workOrder.Asset.Unit ? {
+				...workOrder.Asset.Unit,
+				name: workOrder.Asset.Unit.name || workOrder.Asset.Unit.roomNumber,
+				building: workOrder.Asset.Unit.Building,
+				site: workOrder.Asset.Unit.Site
 			} : null
 		} : null
 	};
 
 	const assetsWithRoom = assets.map(asset => ({
 		...asset,
-		room: asset.unit ? {
-			...asset.unit,
-			name: asset.unit.name || asset.unit.roomNumber
+		room: asset.Unit ? {
+			...asset.Unit,
+			name: asset.Unit.name || asset.Unit.roomNumber,
+			site: asset.Unit.Site,
+			building: asset.Unit.Building
 		} : null
 	}));
 

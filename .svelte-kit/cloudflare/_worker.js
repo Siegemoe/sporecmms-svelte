@@ -12885,10 +12885,21 @@ var require_default2 = __commonJS({
 // .svelte-kit/output/server/chunks/prisma.js
 function isCloudflareWorker() {
   const g = globalThis;
+  if (g.process?.env?.CF_PAGES || g.CF_PAGES) {
+    return true;
+  }
   return !g.process?.versions?.node && typeof g.fetch === "function" && !g.Buffer;
+}
+function initEnvFromEvent(event) {
+  if (event.platform?.env) {
+    cachedEnvVars = event.platform.env;
+  }
 }
 function getEnvVar(key2) {
   const g = globalThis;
+  if (cachedEnvVars && cachedEnvVars[key2]) {
+    return cachedEnvVars[key2];
+  }
   if (g[key2]) {
     return g[key2];
   }
@@ -12915,14 +12926,19 @@ async function createBasePrismaClient() {
   if (isCloudflareWorker()) {
     const { PrismaClient: EdgePrismaClient } = await Promise.resolve().then(() => __toESM(require_edge2(), 1));
     const client = new EdgePrismaClient({
-      accelerateUrl: effectiveUrl,
-      log: logLevel
+      log: logLevel,
+      accelerateUrl: effectiveUrl
     });
     return client.$extends(withAccelerate2());
   } else {
     const { PrismaClient: NodePrismaClient } = await Promise.resolve().then(() => __toESM(require_default2(), 1));
     const client = new NodePrismaClient({
-      accelerateUrl: effectiveUrl,
+      // @ts-ignore - types might conflict but datasources is supported for Node client
+      datasources: {
+        db: {
+          url: effectiveUrl
+        }
+      },
       log: logLevel
     });
     return client.$extends(withAccelerate2());
@@ -13003,7 +13019,7 @@ async function createRequestPrisma(event) {
 async function getPrisma() {
   return getPrismaSingleton();
 }
-var globalForPrisma, orgModels;
+var cachedEnvVars, globalForPrisma, orgModels;
 var init_prisma = __esm({
   ".svelte-kit/output/server/chunks/prisma.js"() {
     globalForPrisma = globalThis;
@@ -13174,10 +13190,12 @@ var init_hooks_server = __esm({
     init_chunks();
     init_auth();
     init_internal();
+    init_prisma();
     publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password", "/", "/favicon.ico", "/favicon.png"];
     orgRoutes = ["/dashboard", "/work-orders", "/sites", "/assets", "/users", "/audit-log"];
     lobbyRoutes = ["/onboarding", "/join-organization"];
     handle = async ({ event, resolve: resolve2 }) => {
+      initEnvFromEvent(event);
       if (building) {
         return resolve2(event);
       }
@@ -13446,7 +13464,7 @@ var init_internal = __esm({
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
       },
-      version_hash: "1xh158b"
+      version_hash: "1e30qc7"
     };
   }
 });
@@ -14602,7 +14620,7 @@ var init__ = __esm({
     index = 0;
     component = async () => component_cache ??= (await Promise.resolve().then(() => (init_layout_svelte(), layout_svelte_exports))).default;
     server_id = "src/routes/+layout.server.ts";
-    imports = ["_app/immutable/chunks/0.99bc6a52.js", "_app/immutable/chunks/_layout.d9e23a78.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/stores.3ec27569.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/constants.d02042fd.js"];
+    imports = ["_app/immutable/chunks/0.1cac433a.js", "_app/immutable/chunks/_layout.5cfc9ec1.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/stores.309c6d0a.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/constants.d02042fd.js"];
     stylesheets = ["_app/immutable/assets/_layout.96de48d4.css"];
     fonts = [];
   }
@@ -14642,7 +14660,7 @@ var init__2 = __esm({
   ".svelte-kit/output/server/nodes/1.js"() {
     index2 = 1;
     component2 = async () => component_cache2 ??= (await Promise.resolve().then(() => (init_error_svelte(), error_svelte_exports))).default;
-    imports2 = ["_app/immutable/nodes/1.17e51530.js", "_app/immutable/chunks/error.36ae5e66.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/stores.3ec27569.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports2 = ["_app/immutable/nodes/1.5d8f4534.js", "_app/immutable/chunks/error.e7f01a57.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/stores.309c6d0a.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets2 = [];
     fonts2 = [];
   }
@@ -14733,7 +14751,7 @@ var init__3 = __esm({
     index3 = 2;
     component3 = async () => component_cache3 ??= (await Promise.resolve().then(() => (init_page_svelte(), page_svelte_exports))).default;
     server_id2 = "src/routes/+page.server.ts";
-    imports3 = ["_app/immutable/chunks/2.157f902e.js", "_app/immutable/chunks/_page.52406523.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports3 = ["_app/immutable/nodes/2.7d9c2fd6.js", "_app/immutable/chunks/_page.235ceec2.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets3 = [];
     fonts3 = [];
   }
@@ -14834,25 +14852,31 @@ var init_security = __esm({
         if (severity === "TEMPORARY") {
           expiresAt = new Date(now.getTime() + 15 * 60 * 1e3);
         }
+        const updateData = {
+          reason,
+          severity,
+          blockedAt: now,
+          expiresAt,
+          violationCount: { increment: 1 }
+        };
+        if (blockedBy !== void 0) {
+          updateData.blockedBy = blockedBy;
+        }
+        const createData = {
+          ipAddress: ip,
+          reason,
+          severity,
+          blockedAt: now,
+          expiresAt,
+          violationCount: 1
+        };
+        if (blockedBy !== void 0) {
+          createData.blockedBy = blockedBy;
+        }
         await prisma.iPBlock.upsert({
           where: { ipAddress: ip },
-          update: {
-            reason,
-            severity,
-            blockedAt: now,
-            expiresAt,
-            violationCount: { increment: 1 },
-            blockedBy
-          },
-          create: {
-            ipAddress: ip,
-            reason,
-            severity,
-            blockedAt: now,
-            expiresAt,
-            violationCount: 1,
-            blockedBy
-          }
+          update: updateData,
+          create: createData
         });
         this.ipBlockCache.set(ip, {
           blocked: true,
@@ -15176,46 +15200,46 @@ var init_page_server_ts2 = __esm({
       const organizationId = event.locals.user.organizationId;
       const assets2 = await prisma.asset.findMany({
         where: {
-          unit: {
-            site: {
-              organizationId
+          Unit: {
+            Site: {
+              organizationId: organizationId ?? void 0
             }
           },
           ...unitFilter && { unitId: unitFilter }
         },
         orderBy: { createdAt: "desc" },
         include: {
-          unit: {
+          Unit: {
             include: {
-              site: {
+              Site: {
                 select: { name: true }
               },
-              building: {
+              Building: {
                 select: { name: true }
               }
             }
           },
           _count: {
-            select: { workOrders: true }
+            select: { WorkOrder: true }
           }
         }
       });
       const units = await prisma.unit.findMany({
         where: {
-          site: {
-            organizationId
+          Site: {
+            organizationId: organizationId ?? void 0
           }
         },
         orderBy: [
-          { site: { name: "asc" } },
-          { building: { name: "asc" } },
+          { Site: { name: "asc" } },
+          { Building: { name: "asc" } },
           { roomNumber: "asc" }
         ],
         include: {
-          site: {
+          Site: {
             select: { name: true }
           },
-          building: {
+          Building: {
             select: { name: true }
           }
         }
@@ -15243,8 +15267,8 @@ var init_page_server_ts2 = __esm({
         const unit = await prisma.unit.findFirst({
           where: {
             id: unitId,
-            site: {
-              organizationId
+            Site: {
+              organizationId: organizationId ?? void 0
             }
           }
         });
@@ -15261,7 +15285,8 @@ var init_page_server_ts2 = __esm({
             purchaseDate: purchaseDate ? new Date(purchaseDate) : null,
             warrantyExpiry: warrantyExpiry ? new Date(warrantyExpiry) : null,
             unitId,
-            siteId
+            siteId,
+            updatedAt: /* @__PURE__ */ new Date()
           }
         });
         await logAudit(event.locals.user.id, "ASSET_CREATED", {
@@ -15285,9 +15310,9 @@ var init_page_server_ts2 = __esm({
         const asset = await prisma.asset.findFirst({
           where: {
             id: assetId,
-            unit: {
-              site: {
-                organizationId
+            Unit: {
+              Site: {
+                organizationId: organizationId ?? void 0
               }
             }
           },
@@ -15329,9 +15354,9 @@ var init_page_server_ts2 = __esm({
         const existingAsset = await prisma.asset.findFirst({
           where: {
             id: assetId,
-            unit: {
-              site: {
-                organizationId
+            Unit: {
+              Site: {
+                organizationId: organizationId ?? void 0
               }
             }
           }
@@ -15342,8 +15367,8 @@ var init_page_server_ts2 = __esm({
         const unit = await prisma.unit.findFirst({
           where: {
             id: unitId,
-            site: {
-              organizationId
+            Site: {
+              organizationId: organizationId ?? void 0
             }
           }
         });
@@ -15432,7 +15457,7 @@ var init__4 = __esm({
     index4 = 3;
     component4 = async () => component_cache4 ??= (await Promise.resolve().then(() => (init_page_svelte2(), page_svelte_exports2))).default;
     server_id3 = "src/routes/assets/+page.server.ts";
-    imports4 = ["_app/immutable/chunks/3.8598caed.js", "_app/immutable/chunks/_page.5267959e.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports4 = ["_app/immutable/chunks/3.ddb9b34e.js", "_app/immutable/chunks/_page.679740d0.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets4 = [];
     fonts4 = [];
   }
@@ -15458,20 +15483,20 @@ var init_page_server_ts3 = __esm({
       const asset = await prisma.asset.findFirst({
         where: {
           id,
-          unit: {
-            site: {
-              organizationId
+          Unit: {
+            Site: {
+              organizationId: organizationId ?? void 0
             }
           }
         },
         include: {
-          unit: {
+          Unit: {
             include: {
-              site: { select: { id: true, name: true } },
-              building: { select: { id: true, name: true } }
+              Site: { select: { id: true, name: true } },
+              Building: { select: { id: true, name: true } }
             }
           },
-          workOrders: {
+          WorkOrder: {
             orderBy: { createdAt: "desc" },
             take: 20,
             select: {
@@ -15484,7 +15509,7 @@ var init_page_server_ts3 = __esm({
             }
           },
           _count: {
-            select: { workOrders: true }
+            select: { WorkOrder: true }
           }
         }
       });
@@ -15493,28 +15518,28 @@ var init_page_server_ts3 = __esm({
       }
       const units = await prisma.unit.findMany({
         where: {
-          site: {
-            organizationId
+          Site: {
+            organizationId: organizationId ?? void 0
           }
         },
         orderBy: [
-          { site: { name: "asc" } },
-          { building: { name: "asc" } },
+          { Site: { name: "asc" } },
+          { Building: { name: "asc" } },
           { roomNumber: "asc" }
         ],
         take: 50,
         include: {
-          site: { select: { name: true } },
-          building: { select: { name: true } }
+          Site: { select: { name: true } },
+          Building: { select: { name: true } }
         }
       });
       const assetWithRoom = {
         ...asset,
-        room: asset.unit ? {
-          ...asset.unit,
-          name: asset.unit.name || asset.unit.roomNumber
+        room: asset.Unit ? {
+          ...asset.Unit,
+          name: asset.Unit.name || asset.Unit.roomNumber
         } : null,
-        unit: void 0
+        Unit: void 0
         // Optional: remove unit if we want to be strict, but keeping it is fine
       };
       const rooms = units.map((unit) => ({
@@ -15550,9 +15575,9 @@ var init_page_server_ts3 = __esm({
         const existingAsset = await prisma.asset.findFirst({
           where: {
             id,
-            unit: {
-              site: {
-                organizationId
+            Unit: {
+              Site: {
+                organizationId: organizationId ?? void 0
               }
             }
           }
@@ -15563,8 +15588,8 @@ var init_page_server_ts3 = __esm({
         const unit = await prisma.unit.findFirst({
           where: {
             id: roomId,
-            site: {
-              organizationId
+            Site: {
+              organizationId: organizationId ?? void 0
             }
           }
         });
@@ -15590,9 +15615,9 @@ var init_page_server_ts3 = __esm({
         const asset = await prisma.asset.findFirst({
           where: {
             id,
-            unit: {
-              site: {
-                organizationId
+            Unit: {
+              Site: {
+                organizationId: organizationId ?? void 0
               }
             }
           }
@@ -15669,7 +15694,7 @@ var init__5 = __esm({
     index5 = 4;
     component5 = async () => component_cache5 ??= (await Promise.resolve().then(() => (init_page_svelte3(), page_svelte_exports3))).default;
     server_id4 = "src/routes/assets/[id]/+page.server.ts";
-    imports5 = ["_app/immutable/chunks/4.80761259.js", "_app/immutable/chunks/_page.6ef9c9b3.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports5 = ["_app/immutable/chunks/4.f84cc8d0.js", "_app/immutable/chunks/_page.5d35d855.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets5 = [];
     fonts5 = [];
   }
@@ -15697,13 +15722,13 @@ var init_page_server_ts4 = __esm({
       const client = await getPrisma();
       const auditLogs = await client.auditLog.findMany({
         where: {
-          user: { organizationId }
+          User: { organizationId: organizationId ?? void 0 }
         },
         orderBy: { createdAt: "desc" },
         skip: skip2,
         take: limit,
         include: {
-          user: {
+          User: {
             select: {
               firstName: true,
               lastName: true,
@@ -15714,7 +15739,7 @@ var init_page_server_ts4 = __esm({
       });
       const totalCount = await client.auditLog.count({
         where: {
-          user: { organizationId }
+          User: { organizationId: organizationId ?? void 0 }
         }
       });
       const totalPages = Math.ceil(totalCount / limit);
@@ -15798,7 +15823,7 @@ var init__6 = __esm({
     index6 = 5;
     component6 = async () => component_cache6 ??= (await Promise.resolve().then(() => (init_page_svelte4(), page_svelte_exports4))).default;
     server_id5 = "src/routes/audit-log/+page.server.ts";
-    imports6 = ["_app/immutable/chunks/5.e3de550f.js", "_app/immutable/chunks/_page.423ea7ef.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js"];
+    imports6 = ["_app/immutable/nodes/5.758fea83.js", "_app/immutable/chunks/_page.423ea7ef.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js"];
     stylesheets6 = [];
     fonts6 = [];
   }
@@ -29000,9 +29025,9 @@ var init_page_server_ts5 = __esm({
           });
           if (!validationResult.success) {
             return fail(400, {
-              errors: validationResult.error.errors.reduce((acc, error47) => {
-                const key2 = error47.path[0];
-                acc[key2] = error47.message;
+              errors: validationResult.error.issues.reduce((acc, issue2) => {
+                const key2 = issue2.path[0];
+                acc[key2] = issue2.message;
                 return acc;
               }, {})
             });
@@ -29092,7 +29117,7 @@ var init__7 = __esm({
     index7 = 6;
     component7 = async () => component_cache7 ??= (await Promise.resolve().then(() => (init_page_svelte5(), page_svelte_exports5))).default;
     server_id6 = "src/routes/auth/emergency-reset/+page.server.ts";
-    imports7 = ["_app/immutable/chunks/6.dce3a82b.js", "_app/immutable/chunks/_page.b85c010d.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports7 = ["_app/immutable/nodes/6.27dfe41b.js", "_app/immutable/chunks/_page.25d63070.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets7 = [];
     fonts7 = [];
   }
@@ -29212,8 +29237,10 @@ var init_page_server_ts6 = __esm({
       return {};
     };
     actions5 = {
-      default: async ({ request, cookies, getClientAddress }) => {
+      default: async (event) => {
+        const { request, cookies, getClientAddress } = event;
         let formData;
+        initEnvFromEvent(event);
         const security = SecurityManager.getInstance();
         const ip = getClientAddress() || "unknown";
         try {
@@ -29292,8 +29319,18 @@ var init_page_server_ts6 = __esm({
           if (error210 && typeof error210 === "object" && "location" in error210) {
             throw error210;
           }
-          console.error("Login error:", error210);
+          const errorType = error210?.constructor?.name || "Unknown";
+          const errorMessage = error210?.message || "No message";
+          console.error("[LOGIN ERROR] Type:", errorType);
+          console.error("[LOGIN ERROR] Message:", errorMessage);
+          console.error("[LOGIN ERROR] Full:", error210);
           const emailValue = formData?.get("email");
+          if (errorMessage.includes("DATABASE_URL") || errorMessage.includes("ACCELERATE_URL") || errorMessage.includes("DIRECT_URL") || errorMessage.includes("environment variable")) {
+            return fail(500, {
+              error: "Database configuration error. Please contact support.",
+              email: emailValue
+            });
+          }
           return fail(500, {
             error: "An unexpected error occurred. Please try again.",
             email: emailValue
@@ -29342,7 +29379,7 @@ var init__8 = __esm({
     index8 = 7;
     component8 = async () => component_cache8 ??= (await Promise.resolve().then(() => (init_page_svelte6(), page_svelte_exports6))).default;
     server_id7 = "src/routes/auth/login/+page.server.ts";
-    imports8 = ["_app/immutable/nodes/7.463a69dc.js", "_app/immutable/chunks/_page.45842566.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports8 = ["_app/immutable/nodes/7.2d851e89.js", "_app/immutable/chunks/_page.1fe98b4d.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets8 = [];
     fonts8 = [];
   }
@@ -29486,8 +29523,9 @@ var init_page_server_ts8 = __esm({
               lastName: validation.data.lastName,
               role: "TECHNICIAN",
               // Default role, can be changed when joining org
-              organizationId: null
+              organizationId: null,
               // Explicitly set to null for lobby state
+              updatedAt: /* @__PURE__ */ new Date()
             }
           });
           const sessionId = await createSession(user.id);
@@ -29495,10 +29533,11 @@ var init_page_server_ts8 = __esm({
           throw redirect(303, "/onboarding");
         } catch (error210) {
           console.error("[REGISTER] Error:", error210);
-          console.error("[REGISTER] Stack:", error210.stack);
+          const err = error210 instanceof Error ? error210 : new Error(String(error210));
+          console.error("[REGISTER] Stack:", err.stack);
           return fail(500, {
             error: "Internal server error during registration. Please try again.",
-            details: error210.message
+            details: err.message
           });
         }
       }
@@ -29544,7 +29583,7 @@ var init__10 = __esm({
     index10 = 9;
     component9 = async () => component_cache9 ??= (await Promise.resolve().then(() => (init_page_svelte7(), page_svelte_exports7))).default;
     server_id9 = "src/routes/auth/register/+page.server.ts";
-    imports10 = ["_app/immutable/nodes/9.7293636f.js", "_app/immutable/chunks/_page.04b16855.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports10 = ["_app/immutable/chunks/9.091c689e.js", "_app/immutable/chunks/_page.cd503870.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets10 = [];
     fonts10 = [];
   }
@@ -29603,9 +29642,14 @@ var init_page_server_ts9 = __esm({
             });
           }
           const user = await resetPassword(token, password);
-          await security.logEvent("PASSWORD_RESET_COMPLETED", clientIP, {
-            userId: user.id,
-            email: user.email
+          await security.logSecurityEvent({
+            ipAddress: clientIP,
+            action: "PASSWORD_RESET_COMPLETED",
+            details: {
+              userId: user.id,
+              email: user.email
+            },
+            severity: "INFO"
           });
           return {
             success: true,
@@ -29613,8 +29657,13 @@ var init_page_server_ts9 = __esm({
           };
         } catch (error47) {
           console.error("Password reset error:", error47);
-          await security.logEvent("PASSWORD_RESET_ERROR", clientIP, {
-            error: error47 instanceof Error ? error47.message : "Unknown error"
+          await security.logSecurityEvent({
+            ipAddress: clientIP,
+            action: "PASSWORD_RESET_ERROR",
+            details: {
+              error: error47 instanceof Error ? error47.message : "Unknown error"
+            },
+            severity: "CRITICAL"
           });
           return fail(500, {
             errors: {
@@ -29668,7 +29717,7 @@ var init__11 = __esm({
     index11 = 10;
     component10 = async () => component_cache10 ??= (await Promise.resolve().then(() => (init_page_svelte8(), page_svelte_exports8))).default;
     server_id10 = "src/routes/auth/reset-password/[token]/+page.server.ts";
-    imports11 = ["_app/immutable/nodes/10.bda84070.js", "_app/immutable/chunks/_page.4169417e.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports11 = ["_app/immutable/chunks/10.9e575d62.js", "_app/immutable/chunks/_page.b0bbf808.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets11 = [];
     fonts11 = [];
   }
@@ -29689,7 +29738,7 @@ var init_page_server_ts10 = __esm({
         requireAuth(event);
         console.log("[DASHBOARD] Loading dashboard for user:", event.locals.user?.id);
         const prisma = await createRequestPrisma(event);
-        const organizationId = event.locals.user.organizationId;
+        const organizationId = event.locals.user.organizationId ?? void 0;
         const [total, pending, inProgress, completed] = await Promise.all([
           prisma.workOrder.count({ where: { organizationId } }),
           prisma.workOrder.count({ where: { status: "PENDING", organizationId } }),
@@ -29702,7 +29751,7 @@ var init_page_server_ts10 = __esm({
           take: 5,
           orderBy: { updatedAt: "desc" },
           include: {
-            asset: {
+            Asset: {
               include: {
                 Unit: {
                   select: {
@@ -29731,11 +29780,11 @@ var init_page_server_ts10 = __esm({
         console.log("[DASHBOARD] Sites loaded:", sites.length);
         const mappedRecentWorkOrders = recentWorkOrders.map((wo) => ({
           ...wo,
-          asset: wo.asset ? {
-            ...wo.asset,
-            room: wo.asset.Unit ? {
-              ...wo.asset.Unit,
-              name: wo.asset.Unit.name || wo.asset.Unit.roomNumber
+          asset: wo.Asset ? {
+            ...wo.Asset,
+            room: wo.Asset.Unit ? {
+              ...wo.Asset.Unit,
+              name: wo.Asset.Unit.name || wo.Asset.Unit.roomNumber
             } : null
           } : null
         }));
@@ -29938,7 +29987,7 @@ var init_page_server_ts11 = __esm({
           const invite = await client.organizationInvite.findUnique({
             where: { token: validation.data.inviteToken },
             include: {
-              organization: {
+              Organization: {
                 select: {
                   id: true,
                   name: true
@@ -29984,8 +30033,8 @@ var init_page_server_ts11 = __esm({
             });
           });
           return {
-            success: `Successfully joined ${invite.organization.name}! Redirecting to dashboard...`,
-            organization: invite.organization.name,
+            success: `Successfully joined ${invite.Organization.name}! Redirecting to dashboard...`,
+            organization: invite.Organization.name,
             redirect: true
           };
         } catch (error47) {
@@ -30049,7 +30098,7 @@ var init__13 = __esm({
     index13 = 12;
     component12 = async () => component_cache12 ??= (await Promise.resolve().then(() => (init_page_svelte10(), page_svelte_exports10))).default;
     server_id12 = "src/routes/join-organization/+page.server.ts";
-    imports13 = ["_app/immutable/nodes/12.4f57825d.js", "_app/immutable/chunks/_page.c96307c7.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports13 = ["_app/immutable/chunks/12.c7015225.js", "_app/immutable/chunks/_page.c921543a.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets13 = [];
     fonts13 = [];
   }
@@ -30110,7 +30159,7 @@ var init_page_server_ts12 = __esm({
           try {
             await client.$transaction(async (tx) => {
               const org = await tx.organization.create({
-                data: { name: validation.data.orgName }
+                data: { name: validation.data.orgName, updatedAt: /* @__PURE__ */ new Date() }
               });
               await tx.user.update({
                 where: { id: locals.user.id },
@@ -30177,7 +30226,7 @@ var init__14 = __esm({
     index14 = 13;
     component13 = async () => component_cache13 ??= (await Promise.resolve().then(() => (init_page_svelte11(), page_svelte_exports11))).default;
     server_id13 = "src/routes/onboarding/+page.server.ts";
-    imports14 = ["_app/immutable/chunks/13.43507f06.js", "_app/immutable/chunks/_page.aaf3b336.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports14 = ["_app/immutable/chunks/13.ccb489f0.js", "_app/immutable/chunks/_page.6b1e17c1.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets14 = [];
     fonts14 = [];
   }
@@ -30318,7 +30367,7 @@ var init__15 = __esm({
     index15 = 14;
     component14 = async () => component_cache14 ??= (await Promise.resolve().then(() => (init_page_svelte12(), page_svelte_exports12))).default;
     server_id14 = "src/routes/profile/+page.server.ts";
-    imports15 = ["_app/immutable/chunks/14.036a134c.js", "_app/immutable/chunks/_page.bec5873f.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports15 = ["_app/immutable/chunks/14.8527fc23.js", "_app/immutable/chunks/_page.18295e64.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets15 = [];
     fonts15 = [];
   }
@@ -30379,7 +30428,7 @@ var init_page_server_ts14 = __esm({
           const membership = await client.organization.findFirst({
             where: {
               id: organizationId,
-              users: {
+              User: {
                 some: {
                   id: locals.user.id
                 }
@@ -30448,7 +30497,7 @@ var init__16 = __esm({
     index16 = 15;
     component15 = async () => component_cache15 ??= (await Promise.resolve().then(() => (init_page_svelte13(), page_svelte_exports13))).default;
     server_id15 = "src/routes/select-organization/+page.server.ts";
-    imports16 = ["_app/immutable/nodes/15.bf5cc72e.js", "_app/immutable/chunks/_page.fbd91520.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports16 = ["_app/immutable/chunks/15.6e16ccc6.js", "_app/immutable/chunks/_page.a24cae1b.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets16 = [];
     fonts16 = [];
   }
@@ -30475,22 +30524,22 @@ var init_page_server_ts15 = __esm({
         include: {
           _count: {
             select: {
-              units: true,
-              buildings: true,
-              assets: true
+              Unit: true,
+              Building: true,
+              Asset: true
             }
           },
-          units: {
+          Unit: {
             include: {
               _count: {
-                select: { assets: true }
+                select: { Asset: true }
               }
             }
           },
-          buildings: {
+          Building: {
             include: {
               _count: {
-                select: { units: true }
+                select: { Unit: true }
               }
             }
           }
@@ -30509,7 +30558,8 @@ var init_page_server_ts15 = __esm({
         const site = await prisma.site.create({
           data: {
             name: name.trim(),
-            organizationId: event.locals.user.organizationId
+            organizationId: event.locals.user.organizationId,
+            updatedAt: /* @__PURE__ */ new Date()
           }
         });
         await logAudit(event.locals.user.id, "SITE_CREATED", {
@@ -30606,7 +30656,7 @@ var init__17 = __esm({
     index17 = 16;
     component16 = async () => component_cache16 ??= (await Promise.resolve().then(() => (init_page_svelte14(), page_svelte_exports14))).default;
     server_id16 = "src/routes/sites/+page.server.ts";
-    imports17 = ["_app/immutable/chunks/16.57d50a84.js", "_app/immutable/chunks/_page.5316f0f2.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports17 = ["_app/immutable/chunks/16.dd00ab60.js", "_app/immutable/chunks/_page.42342e66.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets17 = [];
     fonts17 = [];
   }
@@ -30631,10 +30681,10 @@ var init_page_server_ts16 = __esm({
       const site = await prisma.site.findUnique({
         where: { id },
         include: {
-          buildings: {
+          Building: {
             orderBy: { name: "asc" }
           },
-          units: {
+          Unit: {
             orderBy: [
               { building: { name: "asc" } },
               { floor: "asc" },
@@ -30661,14 +30711,14 @@ var init_page_server_ts16 = __esm({
       if (!site) {
         throw error(404, "Site not found");
       }
-      const unitsByBuilding = site.units.reduce((acc, unit) => {
+      const unitsByBuilding = {};
+      for (const unit of site.Unit) {
         const building2 = unit.building?.name || "Unassigned";
-        if (!acc[building2]) {
-          acc[building2] = [];
+        if (!unitsByBuilding[building2]) {
+          unitsByBuilding[building2] = [];
         }
-        acc[building2].push(unit);
-        return acc;
-      }, {});
+        unitsByBuilding[building2].push(unit);
+      }
       return { site, unitsByBuilding };
     };
     actions14 = {
@@ -30697,7 +30747,8 @@ var init_page_server_ts16 = __esm({
             name: name?.trim() || null,
             floor: floor ? parseInt(floor) : null,
             siteId,
-            buildingId: buildingId || null
+            buildingId: buildingId || null,
+            updatedAt: /* @__PURE__ */ new Date()
           }
         });
         return { success: true, unit };
@@ -30741,7 +30792,8 @@ var init_page_server_ts16 = __esm({
           data: {
             name: name.trim(),
             description: description?.trim() || null,
-            siteId
+            siteId,
+            updatedAt: /* @__PURE__ */ new Date()
           }
         });
         return { success: true, building: building2 };
@@ -30842,7 +30894,7 @@ var init__18 = __esm({
     index18 = 17;
     component17 = async () => component_cache17 ??= (await Promise.resolve().then(() => (init_page_svelte15(), page_svelte_exports15))).default;
     server_id17 = "src/routes/sites/[id]/+page.server.ts";
-    imports18 = ["_app/immutable/chunks/17.08504022.js", "_app/immutable/chunks/_page.55f634d1.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports18 = ["_app/immutable/nodes/17.feefb757.js", "_app/immutable/chunks/_page.f4b40918.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets18 = [];
     fonts18 = [];
   }
@@ -30917,7 +30969,8 @@ var init_page_server_ts17 = __esm({
             firstName: firstName?.trim() || null,
             lastName: lastName?.trim() || null,
             role,
-            organizationId: locals.user.organizationId
+            organizationId: locals.user.organizationId,
+            updatedAt: /* @__PURE__ */ new Date()
           }
         });
         await logAudit(locals.user.id, "USER_CREATED", {
@@ -31041,7 +31094,7 @@ var init__19 = __esm({
     index19 = 18;
     component18 = async () => component_cache18 ??= (await Promise.resolve().then(() => (init_page_svelte16(), page_svelte_exports16))).default;
     server_id18 = "src/routes/users/+page.server.ts";
-    imports19 = ["_app/immutable/chunks/18.f665848e.js", "_app/immutable/chunks/_page.ce36c802.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports19 = ["_app/immutable/nodes/18.1e032205.js", "_app/immutable/chunks/_page.57145ca4.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets19 = [];
     fonts19 = [];
   }
@@ -31128,7 +31181,7 @@ var init__20 = __esm({
   ".svelte-kit/output/server/nodes/19.js"() {
     index20 = 19;
     component19 = async () => component_cache19 ??= (await Promise.resolve().then(() => (init_page_svelte17(), page_svelte_exports17))).default;
-    imports20 = ["_app/immutable/nodes/19.bf67d1ef.js", "_app/immutable/chunks/_page.6d829719.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js"];
+    imports20 = ["_app/immutable/chunks/19.82161d5f.js", "_app/immutable/chunks/_page.6d829719.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js"];
     stylesheets20 = [];
     fonts20 = [];
   }
@@ -31214,51 +31267,44 @@ var init_page_server_ts18 = __esm({
       const workOrders = await prisma.workOrder.findMany({
         where,
         include: {
-          asset: {
+          Asset: {
             select: {
               id: true,
               name: true
             }
           },
-          building: {
+          Building: {
             select: {
               id: true,
               name: true,
-              site: {
+              Site: {
                 select: {
                   name: true
                 }
               }
             }
           },
-          unit: {
+          Unit: {
             select: {
               id: true,
               roomNumber: true,
               name: true,
-              building: {
+              Building: {
                 select: {
                   name: true
                 }
               },
-              site: {
+              Site: {
                 select: {
                   name: true
                 }
               }
             }
           },
-          site: {
+          Site: {
             select: {
               id: true,
               name: true
-            }
-          },
-          assignedTo: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true
             }
           }
         },
@@ -31268,7 +31314,7 @@ var init_page_server_ts18 = __esm({
         where: {
           Unit: {
             Site: {
-              organizationId
+              organizationId: organizationId ?? void 0
             }
           }
         },
@@ -31285,7 +31331,7 @@ var init_page_server_ts18 = __esm({
       const units = await prisma.unit.findMany({
         where: {
           Site: {
-            organizationId
+            organizationId: organizationId ?? void 0
           }
         },
         include: {
@@ -31301,7 +31347,7 @@ var init_page_server_ts18 = __esm({
       const buildings = await prisma.building.findMany({
         where: {
           Site: {
-            organizationId
+            organizationId: organizationId ?? void 0
           }
         },
         include: {
@@ -31314,12 +31360,12 @@ var init_page_server_ts18 = __esm({
       });
       const sites = await prisma.site.findMany({
         where: {
-          organizationId
+          organizationId: organizationId ?? void 0
         },
         orderBy: { name: "asc" }
       });
       const users = await prisma.user.findMany({
-        where: { organizationId },
+        where: { organizationId: organizationId ?? void 0 },
         select: {
           id: true,
           firstName: true,
@@ -31328,7 +31374,50 @@ var init_page_server_ts18 = __esm({
         },
         orderBy: { firstName: "asc" }
       });
-      return { workOrders, assets: assets2, units, buildings, sites, users, myOnly, status, priority, siteId, sort };
+      const transformedWorkOrders = workOrders.map((wo) => ({
+        ...wo,
+        asset: wo.Asset,
+        building: wo.Building,
+        unit: wo.Unit,
+        site: wo.Site,
+        // Remove PascalCase versions
+        Asset: void 0,
+        Building: void 0,
+        Unit: void 0,
+        Site: void 0
+      }));
+      const transformedAssets = assets2.map((asset) => ({
+        ...asset,
+        room: asset.Unit ? {
+          ...asset.Unit,
+          name: asset.Unit.name || asset.Unit.roomNumber,
+          site: asset.Unit.Site,
+          building: asset.Unit.Building
+        } : null,
+        Unit: void 0
+      }));
+      const transformedUnits = units.map((unit) => ({
+        ...unit,
+        Site: void 0,
+        Building: void 0
+      }));
+      const transformedBuildings = buildings.map((building2) => ({
+        ...building2,
+        Site: void 0
+      }));
+      return {
+        workOrders: transformedWorkOrders,
+        assets: transformedAssets,
+        units: transformedUnits,
+        buildings: transformedBuildings,
+        sites,
+        users,
+        myOnly,
+        status,
+        priority,
+        siteId,
+        sort
+      };
     };
     actions16 = {
       /**
@@ -31367,6 +31456,7 @@ var init_page_server_ts18 = __esm({
               createdById,
               assignedToId: assignedToId || null,
               status: "PENDING",
+              updatedAt: /* @__PURE__ */ new Date(),
               // Only set the relevant ID based on selection mode
               ...selectionMode === "asset" && { assetId },
               ...(selectionMode === "unit" || selectionMode === "room") && { unitId },
@@ -31465,10 +31555,7 @@ var init_page_server_ts18 = __esm({
               title: true,
               status: true,
               assignedToId: true,
-              organizationId: true,
-              assignedTo: {
-                select: { firstName: true, lastName: true }
-              }
+              organizationId: true
             }
           });
           broadcastToOrg(updatedWo.organizationId, {
@@ -31478,8 +31565,7 @@ var init_page_server_ts18 = __esm({
           await logAudit(event.locals.user.id, "WORK_ORDER_ASSIGNED", {
             workOrderId: updatedWo.id,
             title: updatedWo.title,
-            assignedToId: assignedToId || null,
-            assignedToName: updatedWo.assignedTo ? `${updatedWo.assignedTo.firstName || ""} ${updatedWo.assignedTo.lastName || ""}`.trim() : null
+            assignedToId: assignedToId || null
           });
           return { success: true };
         } catch (e3) {
@@ -31666,7 +31752,7 @@ var init__21 = __esm({
     index21 = 20;
     component20 = async () => component_cache20 ??= (await Promise.resolve().then(() => (init_page_svelte18(), page_svelte_exports18))).default;
     server_id19 = "src/routes/work-orders/+page.server.ts";
-    imports21 = ["_app/immutable/nodes/20.db749698.js", "_app/immutable/chunks/_page.585cd6e3.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/websocket.29f0dfae.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/stores.3ec27569.js", "_app/immutable/chunks/constants.d02042fd.js"];
+    imports21 = ["_app/immutable/nodes/20.1d67dced.js", "_app/immutable/chunks/_page.f134921b.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/websocket.29f0dfae.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/stores.309c6d0a.js", "_app/immutable/chunks/constants.d02042fd.js"];
     stylesheets21 = [];
     fonts21 = [];
   }
@@ -31693,12 +31779,12 @@ var init_page_server_ts19 = __esm({
       const workOrder = await prisma.workOrder.findUnique({
         where: { id },
         include: {
-          asset: {
+          Asset: {
             include: {
-              unit: {
+              Unit: {
                 include: {
-                  site: { select: { id: true, name: true } },
-                  building: { select: { id: true, name: true } }
+                  Site: { select: { id: true, name: true } },
+                  Building: { select: { id: true, name: true } }
                 }
               }
             }
@@ -31710,16 +31796,16 @@ var init_page_server_ts19 = __esm({
       }
       const assets2 = await prisma.asset.findMany({
         where: {
-          unit: {
-            site: {
-              organizationId: event.locals.user.organizationId
+          Unit: {
+            Site: {
+              organizationId: event.locals.user.organizationId ?? void 0
             }
           }
         },
         include: {
-          unit: {
+          Unit: {
             include: {
-              site: { select: { name: true } }
+              Site: { select: { name: true } }
             }
           }
         },
@@ -31727,20 +31813,23 @@ var init_page_server_ts19 = __esm({
       });
       const workOrderWithRoom = {
         ...workOrder,
-        asset: workOrder.asset ? {
-          ...workOrder.asset,
-          room: workOrder.asset.unit ? {
-            ...workOrder.asset.unit,
-            name: workOrder.asset.unit.name || workOrder.asset.unit.roomNumber,
-            building: workOrder.asset.unit.building
+        asset: workOrder.Asset ? {
+          ...workOrder.Asset,
+          room: workOrder.Asset.Unit ? {
+            ...workOrder.Asset.Unit,
+            name: workOrder.Asset.Unit.name || workOrder.Asset.Unit.roomNumber,
+            building: workOrder.Asset.Unit.Building,
+            site: workOrder.Asset.Unit.Site
           } : null
         } : null
       };
       const assetsWithRoom = assets2.map((asset) => ({
         ...asset,
-        room: asset.unit ? {
-          ...asset.unit,
-          name: asset.unit.name || asset.unit.roomNumber
+        room: asset.Unit ? {
+          ...asset.Unit,
+          name: asset.Unit.name || asset.Unit.roomNumber,
+          site: asset.Unit.Site,
+          building: asset.Unit.Building
         } : null
       }));
       return { workOrder: workOrderWithRoom, assets: assetsWithRoom };
@@ -31879,7 +31968,7 @@ var init__22 = __esm({
     index22 = 21;
     component21 = async () => component_cache21 ??= (await Promise.resolve().then(() => (init_page_svelte19(), page_svelte_exports19))).default;
     server_id20 = "src/routes/work-orders/[id]/+page.server.ts";
-    imports22 = ["_app/immutable/chunks/21.07319c35.js", "_app/immutable/chunks/_page.8aabe040.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.fa47a065.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/constants.d02042fd.js"];
+    imports22 = ["_app/immutable/chunks/21.fad9ed8e.js", "_app/immutable/chunks/_page.b69212f9.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c7c7ce1b.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/constants.d02042fd.js"];
     stylesheets22 = [];
     fonts22 = [];
   }
@@ -31922,7 +32011,7 @@ var init_server_ts = __esm({
             }
           },
           include: {
-            asset: true,
+            Asset: true,
             User_WorkOrder_assignedToIdToUser: {
               select: {
                 id: true,
@@ -31942,7 +32031,7 @@ var init_server_ts = __esm({
             id: wo.id,
             title: wo.title,
             status: wo.status,
-            assetName: wo.asset?.name || "Unknown Asset",
+            assetName: wo.Asset?.name || "Unknown Asset",
             assignedTo: wo.User_WorkOrder_assignedToIdToUser?.firstName || wo.User_WorkOrder_assignedToIdToUser?.email || "Unassigned"
           },
           timestamp: wo.updatedAt.getTime()
@@ -35134,7 +35223,7 @@ var manifest = (() => {
     assets: /* @__PURE__ */ new Set(["favicon.png", "favicon.svg", "_headers"]),
     mimeTypes: { ".png": "image/png", ".svg": "image/svg+xml" },
     _: {
-      client: { "start": "_app/immutable/entry/start.c5483fb5.js", "app": "_app/immutable/entry/app.b8f0147c.js", "imports": ["_app/immutable/entry/start.c5483fb5.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/singletons.bf10ca4b.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.b8f0147c.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js"], "stylesheets": [], "fonts": [] },
+      client: { "start": "_app/immutable/entry/start.e697aef5.js", "app": "_app/immutable/entry/app.3a83567a.js", "imports": ["_app/immutable/entry/start.e697aef5.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/singletons.fe651185.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.3a83567a.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js"], "stylesheets": [], "fonts": [] },
       nodes: [
         __memo(() => Promise.resolve().then(() => (init__(), __exports))),
         __memo(() => Promise.resolve().then(() => (init__2(), __exports2))),

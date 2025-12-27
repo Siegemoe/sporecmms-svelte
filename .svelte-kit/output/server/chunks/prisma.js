@@ -1,9 +1,21 @@
 function isCloudflareWorker() {
   const g = globalThis;
+  if (g.process?.env?.CF_PAGES || g.CF_PAGES) {
+    return true;
+  }
   return !g.process?.versions?.node && typeof g.fetch === "function" && !g.Buffer;
+}
+let cachedEnvVars;
+function initEnvFromEvent(event) {
+  if (event.platform?.env) {
+    cachedEnvVars = event.platform.env;
+  }
 }
 function getEnvVar(key) {
   const g = globalThis;
+  if (cachedEnvVars && cachedEnvVars[key]) {
+    return cachedEnvVars[key];
+  }
   if (g[key]) {
     return g[key];
   }
@@ -30,14 +42,19 @@ async function createBasePrismaClient() {
   if (isCloudflareWorker()) {
     const { PrismaClient: EdgePrismaClient } = await import("@prisma/client/edge");
     const client = new EdgePrismaClient({
-      accelerateUrl: effectiveUrl,
-      log: logLevel
+      log: logLevel,
+      accelerateUrl: effectiveUrl
     });
     return client.$extends(withAccelerate());
   } else {
     const { PrismaClient: NodePrismaClient } = await import("@prisma/client");
     const client = new NodePrismaClient({
-      accelerateUrl: effectiveUrl,
+      // @ts-ignore - types might conflict but datasources is supported for Node client
+      datasources: {
+        db: {
+          url: effectiveUrl
+        }
+      },
       log: logLevel
     });
     return client.$extends(withAccelerate());
@@ -122,5 +139,6 @@ async function getPrisma() {
 }
 export {
   createRequestPrisma as c,
-  getPrisma as g
+  getPrisma as g,
+  initEnvFromEvent as i
 };

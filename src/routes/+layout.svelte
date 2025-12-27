@@ -3,7 +3,6 @@
 	// import { initializeWebSocket } from '$lib/stores/websocket';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { enhance } from '$app/forms';
 	import QuickFAB from '$lib/components/QuickFAB.svelte';
 	import type { LayoutData } from './$types';
 
@@ -161,7 +160,7 @@
 						<p class="text-xs text-spore-steel capitalize">{user.role.toLowerCase()}</p>
 					</a>
 				{/if}
-				<form method="POST" action="/auth/logout" use:enhance>
+				<form method="POST" action="/auth/logout">
 					<button
 						type="submit"
 						class="text-sm font-semibold text-spore-cream/50 hover:text-spore-cream transition-colors"

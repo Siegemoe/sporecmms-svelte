@@ -15,22 +15,22 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		include: {
 			_count: {
 				select: {
-					units: true,
-					buildings: true,
-					assets: true
+					Unit: true,
+					Building: true,
+					Asset: true
 				}
 			},
-			units: {
+			Unit: {
 				include: {
 					_count: {
-						select: { assets: true }
+						select: { Asset: true }
 					}
 				}
 			},
-			buildings: {
+			Building: {
 				include: {
 					_count: {
-						select: { units: true }
+						select: { Unit: true }
 					}
 				}
 			}
@@ -54,7 +54,8 @@ export const actions = {
 		const site = await prisma.site.create({
 			data: {
 				name: name.trim(),
-				organizationId: event.locals.user!.organizationId
+				organizationId: event.locals.user!.organizationId!,
+				updatedAt: new Date()
 			}
 		});
 

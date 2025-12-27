@@ -2,7 +2,7 @@
 import type { PageServerLoad, Actions } from './$types';
 import { fail, redirect, error } from '@sveltejs/kit';
 import { verifyPassword, createSession, setSessionCookie } from '$lib/server/auth';
-import { getPrisma } from '$lib/server/prisma';
+import { getPrisma, initEnvFromEvent } from '$lib/server/prisma';
 import { validateInput, loginSchema } from '$lib/validation';
 import { SecurityManager, SECURITY_RATE_LIMITS } from '$lib/server/security';
 
@@ -15,8 +15,14 @@ export const load = async ({ locals }: Parameters<PageServerLoad>[0]) => {
 };
 
 export const actions = {
-	default: async ({ request, cookies, getClientAddress }: import('./$types').RequestEvent) => {
+	default: async (event: import('./$types').RequestEvent) => {
+		const { request, cookies, getClientAddress } = event;
 		let formData: FormData | undefined;
+
+		// Initialize environment variables from event for Cloudflare Workers
+		// This must be called before any Prisma operations
+		initEnvFromEvent(event);
+
 		const security = SecurityManager.getInstance();
 		const ip = getClientAddress() || 'unknown';
 
@@ -122,11 +128,27 @@ export const actions = {
 				throw error;
 			}
 
-			// Log error for debugging
-			console.error('Login error:', error);
+			// Log detailed error for debugging
+			const errorType = error?.constructor?.name || 'Unknown';
+			const errorMessage = error?.message || 'No message';
+			console.error('[LOGIN ERROR] Type:', errorType);
+			console.error('[LOGIN ERROR] Message:', errorMessage);
+			console.error('[LOGIN ERROR] Full:', error);
 
 			// Handle other errors
 			const emailValue = formData?.get('email') as string;
+
+			// Check for specific error types to provide better error messages
+			if (errorMessage.includes('DATABASE_URL') ||
+				errorMessage.includes('ACCELERATE_URL') ||
+				errorMessage.includes('DIRECT_URL') ||
+				errorMessage.includes('environment variable')) {
+				return fail(500, {
+					error: 'Database configuration error. Please contact support.',
+					email: emailValue
+				});
+			}
+
 			return fail(500, {
 				error: 'An unexpected error occurred. Please try again.',
 				email: emailValue

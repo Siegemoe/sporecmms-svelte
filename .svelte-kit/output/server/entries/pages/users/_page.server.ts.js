@@ -58,7 +58,8 @@ const actions = {
         firstName: firstName?.trim() || null,
         lastName: lastName?.trim() || null,
         role,
-        organizationId: locals.user.organizationId
+        organizationId: locals.user.organizationId,
+        updatedAt: /* @__PURE__ */ new Date()
       }
     });
     await logAudit(locals.user.id, "USER_CREATED", {
