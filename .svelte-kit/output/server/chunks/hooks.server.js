@@ -1,5 +1,5 @@
 import { r as redirect } from "./index.js";
-import { e as validateSessionWithOrg } from "./auth.js";
+import { d as validateSessionWithOrg } from "./auth.js";
 import { d as building } from "./internal.js";
 import { i as initEnvFromEvent } from "./prisma.js";
 const publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password", "/", "/favicon.ico", "/favicon.png"];

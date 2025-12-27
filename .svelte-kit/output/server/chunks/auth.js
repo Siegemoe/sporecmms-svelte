@@ -86,22 +86,6 @@ async function validateSessionWithOrg(cookies) {
     currentOrganization: user.Organization
   };
 }
-async function destroySession(cookies) {
-  const sessionId = cookies.get(SESSION_COOKIE);
-  if (sessionId) {
-    const client = await getPrisma();
-    await client.session.delete({ where: { id: sessionId } }).catch(() => {
-    });
-    cookies.set(SESSION_COOKIE, "", {
-      path: "/",
-      httpOnly: true,
-      sameSite: "strict",
-      secure: true,
-      maxAge: 0
-      // Immediately expires the cookie
-    });
-  }
-}
 function setSessionCookie(cookies, sessionId) {
   cookies.set(SESSION_COOKIE, sessionId, {
     path: "/",
@@ -153,8 +137,7 @@ export {
   validateResetToken as a,
   canManageUsers as b,
   createSession as c,
-  destroySession as d,
-  validateSessionWithOrg as e,
+  validateSessionWithOrg as d,
   hashPassword as h,
   resetPassword as r,
   setSessionCookie as s,

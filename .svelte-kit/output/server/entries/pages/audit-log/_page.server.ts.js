@@ -1,7 +1,8 @@
-import { g as getPrisma } from "../../../chunks/prisma.js";
+import { i as initEnvFromEvent, g as getPrisma } from "../../../chunks/prisma.js";
 import { e as error } from "../../../chunks/index.js";
 import { a as isAdmin } from "../../../chunks/guards.js";
 const load = async (event) => {
+  initEnvFromEvent(event);
   if (!isAdmin(event)) {
     throw error(403, "Access denied. Admin privileges required.");
   }

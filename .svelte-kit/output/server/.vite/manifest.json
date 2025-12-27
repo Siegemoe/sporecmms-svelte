@@ -276,11 +276,18 @@
   "src/routes/auth/logout/+page.server.ts": {
     "file": "entries/pages/auth/logout/_page.server.ts.js",
     "imports": [
-      "_index.js",
-      "_auth.js"
+      "_prisma.js"
     ],
     "isEntry": true,
     "src": "src/routes/auth/logout/+page.server.ts"
+  },
+  "src/routes/auth/logout/+server.ts": {
+    "file": "entries/endpoints/auth/logout/_server.ts.js",
+    "imports": [
+      "_prisma.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/auth/logout/+server.ts"
   },
   "src/routes/auth/register/+page.server.ts": {
     "file": "entries/pages/auth/register/_page.server.ts.js",

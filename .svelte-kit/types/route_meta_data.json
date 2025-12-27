@@ -35,7 +35,8 @@
 	],
 	"/auth/logout": [
 		"src/routes/auth/logout/+page.server.ts",
-		"src/routes/+layout.server.ts"
+		"src/routes/+layout.server.ts",
+		"src/routes/auth/logout/+server.ts"
 	],
 	"/auth/register": [
 		"src/routes/auth/register/+page.server.ts",

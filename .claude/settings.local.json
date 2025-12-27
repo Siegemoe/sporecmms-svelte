@@ -60,7 +60,9 @@
       "Bash(npx tsx:*)",
       "Bash(npx svelte-check:*)",
       "Bash(npx wrangler pages deploy:*)",
-      "Bash(npx wrangler pages project list:*)"
+      "Bash(npx wrangler pages project list:*)",
+      "Bash(npx wrangler pages deployment list:*)",
+      "Bash(git restore:*)"
     ],
     "deny": [],
     "ask": []
