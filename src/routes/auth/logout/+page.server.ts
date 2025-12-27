@@ -1,5 +1,6 @@
 import type { Actions } from './$types';
 import { getPrisma, initEnvFromEvent } from '$lib/server/prisma';
+import { redirect } from '@sveltejs/kit';
 
 export const actions: Actions = {
 	default: async (event) => {
@@ -17,11 +18,7 @@ export const actions: Actions = {
 		// Original: path=/, httpOnly=true, sameSite=strict, secure=!dev, NO domain
 		event.cookies.delete('spore_session', { path: '/' });
 
-		// Return redirect instead of throw redirect
-		// CRITICAL: throw redirect() causes cookies to be lost (GitHub #6792)
-		return new Response(null, {
-			status: 303,
-			headers: { Location: '/auth/login' }
-		});
+		// Throw redirect - with form enhancement disabled, browser handles this natively
+		throw redirect(303, '/auth/login');
 	}
 };

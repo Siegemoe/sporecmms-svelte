@@ -1,4 +1,5 @@
 import { i as initEnvFromEvent, g as getPrisma } from "../../../../chunks/prisma.js";
+import { r as redirect } from "../../../../chunks/index.js";
 const actions = {
   default: async (event) => {
     initEnvFromEvent(event);
@@ -9,10 +10,7 @@ const actions = {
       });
     }
     event.cookies.delete("spore_session", { path: "/" });
-    return new Response(null, {
-      status: 303,
-      headers: { Location: "/auth/login" }
-    });
+    throw redirect(303, "/auth/login");
   }
 };
 export {

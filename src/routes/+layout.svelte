@@ -160,7 +160,7 @@
 						<p class="text-xs text-spore-steel capitalize">{user?.role?.toLowerCase() || 'member'}</p>
 					</a>
 				{/if}
-				<form method="POST" action="/auth/logout">
+				<form method="POST" action="/auth/logout" use:enhance={false}>
 					<button
 						type="submit"
 						class="text-sm font-semibold text-spore-cream/50 hover:text-spore-cream transition-colors"
