@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import { g as getPrisma } from "./prisma.js";
-import { D as DEV } from "./true.js";
-const dev = DEV;
+import { d as dev } from "./environment.js";
 const SESSION_COOKIE = "spore_session";
 const SESSION_EXPIRY_DAYS = 30;
 async function hashPassword(password) {
