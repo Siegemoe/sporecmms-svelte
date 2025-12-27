@@ -10,11 +10,37 @@ function isCloudflareWorker(): boolean {
          !g.Buffer;
 }
 
+// Cache for environment variables from RequestEvent
+let cachedEnvVars: Record<string, string> | undefined;
+
+/**
+ * Initialize environment variables from RequestEvent
+ * This should be called early in the request lifecycle to ensure
+ * getPrisma() can access Cloudflare environment bindings
+ */
+export function initEnvFromEvent(event: RequestEvent): void {
+  if ((event.platform as any)?.env) {
+    cachedEnvVars = (event.platform as any).env;
+  }
+}
+
+/**
+ * Clear cached environment variables (useful for testing)
+ */
+export function clearCachedEnvVars(): void {
+  cachedEnvVars = undefined;
+}
+
 // Helper to get environment variables reliably
 function getEnvVar(key: string): string | undefined {
   const g = globalThis as any;
 
-  // Try Cloudflare Workers secrets/bindings first
+  // First check cached env vars from RequestEvent (for Cloudflare Workers)
+  if (cachedEnvVars && cachedEnvVars[key]) {
+    return cachedEnvVars[key];
+  }
+
+  // Try Cloudflare Workers secrets/bindings on globalThis
   if (g[key]) {
     return g[key];
   }

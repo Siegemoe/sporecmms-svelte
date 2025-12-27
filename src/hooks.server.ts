@@ -2,6 +2,7 @@ import type { Handle } from '@sveltejs/kit';
 import { redirect, error } from '@sveltejs/kit';
 import { validateSessionWithOrg } from '$lib/server/auth';
 import { building } from '$app/environment';
+import { initEnvFromEvent } from '$lib/server/prisma';
 
 // Routes that don't require authentication
 const publicRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password', '/', '/favicon.ico', '/favicon.png'];
@@ -11,6 +12,10 @@ const orgRoutes = ['/dashboard', '/work-orders', '/sites', '/assets', '/users', 
 const lobbyRoutes = ['/onboarding', '/join-organization'];
 
 export const handle: Handle = async ({ event, resolve }) => {
+	// Initialize environment variables from event for Cloudflare Workers
+	// This must be called before any Prisma operations
+	initEnvFromEvent(event);
+
 	// Skip auth checks during build/prerender (for Cloudflare fallback generation)
 	if (building) {
 		return resolve(event);
