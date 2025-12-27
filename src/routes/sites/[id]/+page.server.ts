@@ -22,7 +22,7 @@ export const load: PageServerLoad = async (event) => {
 					{ roomNumber: 'asc' }
 				],
 				include: {
-					building: {
+					Building: {
 						select: { name: true }
 					},
 					_count: {
@@ -47,7 +47,7 @@ export const load: PageServerLoad = async (event) => {
 	// Group units by building
 	const unitsByBuilding: Record<string, typeof site.Unit[]> = {};
 	for (const unit of site.Unit) {
-		const building = unit.building?.name || 'Unassigned';
+		const building = unit.Building?.name || 'Unassigned';
 		if (!unitsByBuilding[building]) {
 			unitsByBuilding[building] = [];
 		}
