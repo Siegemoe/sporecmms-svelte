@@ -1,36 +1,27 @@
 import type { Actions } from './$types';
 import { getPrisma, initEnvFromEvent } from '$lib/server/prisma';
-import { dev } from '$app/environment';
 
 export const actions: Actions = {
 	default: async (event) => {
 		// Initialize environment variables for Cloudflare Workers
 		initEnvFromEvent(event);
 
-		// Get session ID and delete from database ONLY
-		// We do NOT use destroySession() because it calls cookies.set()
-		// which conflicts with our manual Response Set-Cookie header
+		// Delete session from database
 		const sessionId = event.cookies.get('spore_session');
 		if (sessionId) {
 			const client = await getPrisma();
 			await client.session.delete({ where: { id: sessionId } }).catch(() => {});
 		}
 
-		// Use Headers API for better Cloudflare Workers compatibility
-		// This avoids the conflict between SvelteKit's cookie queue and manual Response
-		const headers = new Headers();
-		headers.set('Location', '/auth/login');
+		// Delete cookie - match EXACT attributes from setSessionCookie
+		// Original: path=/, httpOnly=true, sameSite=strict, secure=!dev, NO domain
+		event.cookies.delete('spore_session', { path: '/' });
 
-		// Build Set-Cookie string with ALL attributes matching the original cookie
-		// Original: path=/, httpOnly=true, sameSite=strict, secure=!dev
-		const secure = !dev ? ' Secure;' : '';
-		headers.append('Set-Cookie',
-			`spore_session=; Path=/; HttpOnly; SameSite=Strict;${secure} Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`
-		);
-
+		// Return redirect instead of throw redirect
+		// CRITICAL: throw redirect() causes cookies to be lost (GitHub #6792)
 		return new Response(null, {
 			status: 303,
-			headers
+			headers: { Location: '/auth/login' }
 		});
 	}
 };

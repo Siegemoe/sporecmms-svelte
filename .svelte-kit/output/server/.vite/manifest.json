@@ -18,17 +18,11 @@
     "file": "chunks/auth.js",
     "imports": [
       "_prisma.js",
-      "_environment.js"
+      "_true.js"
     ]
   },
   "_constants.js": {
     "file": "chunks/constants.js"
-  },
-  "_environment.js": {
-    "file": "chunks/environment.js",
-    "imports": [
-      "_true.js"
-    ]
   },
   "_guards.js": {
     "file": "chunks/guards.js",
@@ -290,8 +284,7 @@
   "src/routes/auth/logout/+server.ts": {
     "file": "entries/endpoints/auth/logout/_server.ts.js",
     "imports": [
-      "_prisma.js",
-      "_environment.js"
+      "_prisma.js"
     ],
     "isEntry": true,
     "src": "src/routes/auth/logout/+server.ts"

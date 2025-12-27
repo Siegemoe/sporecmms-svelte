@@ -8,16 +8,10 @@ const actions = {
       await client.session.delete({ where: { id: sessionId } }).catch(() => {
       });
     }
-    const headers = new Headers();
-    headers.set("Location", "/auth/login");
-    const secure = "";
-    headers.append(
-      "Set-Cookie",
-      `spore_session=; Path=/; HttpOnly; SameSite=Strict;${secure} Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`
-    );
+    event.cookies.delete("spore_session", { path: "/" });
     return new Response(null, {
       status: 303,
-      headers
+      headers: { Location: "/auth/login" }
     });
   }
 };
