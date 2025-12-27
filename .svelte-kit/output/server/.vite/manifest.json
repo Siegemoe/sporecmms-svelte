@@ -239,8 +239,8 @@
     "file": "entries/pages/auth/emergency-reset/_page.server.ts.js",
     "imports": [
       "_index.js",
-      "_auth.js",
-      "_prisma.js"
+      "_prisma.js",
+      "_auth.js"
     ],
     "isEntry": true,
     "src": "src/routes/auth/emergency-reset/+page.server.ts"
@@ -284,7 +284,8 @@
   "src/routes/auth/logout/+server.ts": {
     "file": "entries/endpoints/auth/logout/_server.ts.js",
     "imports": [
-      "_prisma.js"
+      "_prisma.js",
+      "_index.js"
     ],
     "isEntry": true,
     "src": "src/routes/auth/logout/+server.ts"
