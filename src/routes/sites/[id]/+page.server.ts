@@ -17,7 +17,7 @@ export const load: PageServerLoad = async (event) => {
 			},
 			Unit: {
 				orderBy: [
-					{ building: { name: 'asc' } },
+					{ Building: { name: 'asc' } },
 					{ floor: 'asc' },
 					{ roomNumber: 'asc' }
 				],

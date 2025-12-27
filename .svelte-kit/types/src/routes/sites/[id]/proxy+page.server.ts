@@ -18,7 +18,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 			},
 			Unit: {
 				orderBy: [
-					{ building: { name: 'asc' } },
+					{ Building: { name: 'asc' } },
 					{ floor: 'asc' },
 					{ roomNumber: 'asc' }
 				],
