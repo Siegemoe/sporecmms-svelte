@@ -68,7 +68,7 @@
 									</time>
 								</td>
 								<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-spore-dark">
-									{getUserName(log.user)}
+									{getUserName(log.User)}
 								</td>
 								<td class="px-6 py-4 whitespace-nowrap">
 									<span class="text-sm font-bold {getActionColor(log.action)}">
