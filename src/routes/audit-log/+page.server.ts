@@ -18,10 +18,21 @@ export const load: PageServerLoad = async (event) => {
 	const skip = (page - 1) * limit;
 
 	// Get audit logs for users in this org
+	// Use a subquery approach to filter by organizationId through the User relation
 	const client = await getPrisma();
+
+	// First, get all user IDs in this organization
+	const userIdsInOrg = await client.user
+		.findMany({
+			where: { organizationId: organizationId ?? undefined },
+			select: { id: true }
+		})
+		.then((users) => users.map((u) => u.id));
+
+	// Then get audit logs for those users
 	const auditLogs = await client.auditLog.findMany({
 		where: {
-			User: { organizationId: organizationId ?? undefined }
+			userId: { in: userIdsInOrg }
 		},
 		orderBy: { createdAt: 'desc' },
 		skip,
@@ -39,7 +50,7 @@ export const load: PageServerLoad = async (event) => {
 
 	const totalCount = await client.auditLog.count({
 		where: {
-			User: { organizationId: organizationId ?? undefined }
+			userId: { in: userIdsInOrg }
 		}
 	});
 
