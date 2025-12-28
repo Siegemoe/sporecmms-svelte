@@ -5,10 +5,11 @@
 
 	export let data: PageData;
 
+	const LIVE_FEED_MAX_ITEMS = 10;
+
 	let wsConnected = false;
 	let wsPolling = false;
 	let liveFeed: Array<{ type: string; message: string; time: Date; id: number }> = [];
-	let lastSeenTimestamp = 0;
 
 	const unsubscribe = wsStore.subscribe((state) => {
 		wsConnected = state.isConnected;
@@ -17,24 +18,20 @@
 		if (state.messages.length > 0) {
 			const latest = state.messages[0];
 
-			if (latest.timestamp && latest.timestamp > lastSeenTimestamp) {
-				lastSeenTimestamp = latest.timestamp;
+			if (latest.type === 'WO_UPDATE') {
+				const wo = latest.payload as { title: string; status: string };
+				liveFeed = [
+					{ type: 'update', message: `${wo.title} → ${wo.status}`, time: new Date(), id: latest.timestamp },
+					...liveFeed
+				].slice(0, LIVE_FEED_MAX_ITEMS);
+			}
 
-				if (latest.type === 'WO_UPDATE') {
-					const wo = latest.payload as { title: string; status: string };
-					liveFeed = [
-						{ type: 'update', message: `${wo.title} → ${wo.status}`, time: new Date(), id: latest.timestamp },
-						...liveFeed
-					].slice(0, 10);
-				}
-
-				if (latest.type === 'WO_NEW') {
-					const wo = latest.payload as { title: string };
-					liveFeed = [
-						{ type: 'new', message: `New: ${wo.title}`, time: new Date(), id: latest.timestamp },
-						...liveFeed
-					].slice(0, 10);
-				}
+			if (latest.type === 'WO_NEW') {
+				const wo = latest.payload as { title: string };
+				liveFeed = [
+					{ type: 'new', message: `New: ${wo.title}`, time: new Date(), id: latest.timestamp },
+					...liveFeed
+				].slice(0, LIVE_FEED_MAX_ITEMS);
 			}
 		}
 	});
@@ -43,6 +40,34 @@
 
 	$: stats = data.stats;
 	$: recentWorkOrders = data.recentWorkOrders || [];
+
+	// Stats configuration for DRY rendering
+	const statsConfig = [
+		{ label: 'Total WOs', value: stats?.total || 0, color: 'text-spore-dark' },
+		{ label: 'Pending', value: stats?.pending || 0, color: 'text-spore-orange' },
+		{ label: 'In Progress', value: stats?.inProgress || 0, color: 'text-spore-steel' },
+		{ label: 'Completed', value: stats?.completed || 0, color: 'text-spore-forest' }
+	];
+
+	// Quick actions configuration for DRY rendering
+	const quickActions = [
+		{ icon: '📋', label: 'All Work Orders', href: '/work-orders' },
+		{ icon: '🏢', label: 'Sites', href: '/sites' },
+		{ icon: '⚙️', label: 'Assets', href: '/assets' },
+		{ icon: '➕', label: 'New WO', href: '/work-orders?create=true', primary: true }
+	];
+
+	// Status badge utility function
+	function getStatusBadgeClasses(status: string): string {
+		const base = 'px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-full';
+		const styles: Record<string, string> = {
+			COMPLETED: 'bg-spore-forest text-white',
+			IN_PROGRESS: 'bg-spore-orange text-white',
+			PENDING: 'bg-spore-steel text-white',
+			ON_HOLD: 'bg-spore-cream text-spore-steel'
+		};
+		return `${base} ${styles[status] || 'bg-spore-cream text-spore-steel'}`;
+	}
 </script>
 
 <svelte:head>
@@ -76,44 +101,29 @@
 		<div class="lg:col-span-2 space-y-8">
 			<!-- Stats Cards -->
 			<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-				<div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50">
-					<p class="text-xs font-semibold text-spore-steel uppercase tracking-wide">Total WOs</p>
-					<p class="text-3xl font-extrabold text-spore-dark mt-1">{stats?.total || 0}</p>
-				</div>
-				<div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50">
-					<p class="text-xs font-semibold text-spore-steel uppercase tracking-wide">Pending</p>
-					<p class="text-3xl font-extrabold text-spore-orange mt-1">{stats?.pending || 0}</p>
-				</div>
-				<div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50">
-					<p class="text-xs font-semibold text-spore-steel uppercase tracking-wide">In Progress</p>
-					<p class="text-3xl font-extrabold text-spore-steel mt-1">{stats?.inProgress || 0}</p>
-				</div>
-				<div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50">
-					<p class="text-xs font-semibold text-spore-steel uppercase tracking-wide">Completed</p>
-					<p class="text-3xl font-extrabold text-spore-forest mt-1">{stats?.completed || 0}</p>
-				</div>
+				{#each statsConfig as stat}
+					<div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50">
+						<p class="text-xs font-semibold text-spore-steel uppercase tracking-wide">{stat.label}</p>
+						<p class="text-3xl font-extrabold {stat.color} mt-1">{stat.value}</p>
+					</div>
+				{/each}
 			</div>
 
 			<!-- Quick Actions -->
 			<div class="bg-spore-white rounded-xl p-6 shadow-sm border border-spore-cream/50">
 				<h2 class="text-lg font-bold text-spore-dark mb-5">Quick Actions</h2>
 				<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-					<a href="/work-orders" class="flex flex-col items-center p-5 bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors border border-spore-cream/30">
-						<span class="text-2xl mb-2">📋</span>
-						<span class="text-sm font-semibold text-spore-steel">All Work Orders</span>
-					</a>
-					<a href="/sites" class="flex flex-col items-center p-5 bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors border border-spore-cream/30">
-						<span class="text-2xl mb-2">🏢</span>
-						<span class="text-sm font-semibold text-spore-steel">Sites</span>
-					</a>
-					<a href="/assets" class="flex flex-col items-center p-5 bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors border border-spore-cream/30">
-						<span class="text-2xl mb-2">⚙️</span>
-						<span class="text-sm font-semibold text-spore-steel">Assets</span>
-					</a>
-					<a href="/work-orders?create=true" class="flex flex-col items-center p-5 bg-spore-orange rounded-xl hover:bg-spore-orange/90 transition-colors shadow-sm hover:shadow-md">
-						<span class="text-2xl mb-2">➕</span>
-						<span class="text-sm font-bold text-white">New WO</span>
-					</a>
+					{#each quickActions as action}
+						<a
+							href={action.href}
+							class="flex flex-col items-center p-5 {action.primary
+								? 'bg-spore-orange rounded-xl hover:bg-spore-orange/90 transition-colors shadow-sm hover:shadow-md'
+								: 'bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors border border-spore-cream/30'}"
+						>
+							<span class="text-2xl mb-2">{action.icon}</span>
+							<span class="text-sm font-semibold {action.primary ? 'text-white font-bold' : 'text-spore-steel'}">{action.label}</span>
+						</a>
+					{/each}
 				</div>
 			</div>
 
@@ -136,12 +146,7 @@
 										{wo.asset?.room?.floor ? ` • Floor ${wo.asset.room.floor}` : ''}
 									</p>
 								</div>
-								<span class="ml-3 px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-full
-									{wo.status === 'COMPLETED' ? 'bg-spore-forest text-white' : ''}
-									{wo.status === 'IN_PROGRESS' ? 'bg-spore-orange text-white' : ''}
-									{wo.status === 'PENDING' ? 'bg-spore-steel text-white' : ''}
-									{wo.status === 'ON_HOLD' ? 'bg-spore-cream text-spore-steel' : ''}
-								">
+								<span class={getStatusBadgeClasses(wo.status)}>
 									{wo.status.replace('_', ' ')}
 								</span>
 							</div>

@@ -2,11 +2,11 @@ import type { PageServerLoad } from './$types';
 import { createRequestPrisma } from '$lib/server/prisma';
 import { requireAuth } from '$lib/server/guards';
 
+const RECENT_WORK_ORDERS_LIMIT = 5;
+
 export const load: PageServerLoad = async (event) => {
 	try {
 		requireAuth(event);
-
-		console.log('[DASHBOARD] Loading dashboard for user:', event.locals.user?.id);
 
 		const prisma = await createRequestPrisma(event);
 		const organizationId = event.locals.user!.organizationId ?? undefined;
@@ -19,12 +19,10 @@ export const load: PageServerLoad = async (event) => {
 			prisma.workOrder.count({ where: { status: 'COMPLETED', organizationId } })
 		]);
 
-		console.log('[DASHBOARD] Stats loaded:', { total, pending, inProgress, completed });
-
 		// Get recent work orders with location data
 		const recentWorkOrders = await prisma.workOrder.findMany({
 			where: { organizationId },
-			take: 5,
+			take: RECENT_WORK_ORDERS_LIMIT,
 			orderBy: { updatedAt: 'desc' },
 			include: {
 				Asset: {
@@ -45,8 +43,6 @@ export const load: PageServerLoad = async (event) => {
 			}
 		});
 
-		console.log('[DASHBOARD] Recent work orders loaded:', recentWorkOrders.length);
-
 		// Get sites with room (unit) counts
 		const sites = await prisma.site.findMany({
 			where: { organizationId },
@@ -56,8 +52,6 @@ export const load: PageServerLoad = async (event) => {
 				}
 			}
 		});
-
-		console.log('[DASHBOARD] Sites loaded:', sites.length);
 
 		// Map data for frontend compatibility
 		const mappedRecentWorkOrders = recentWorkOrders.map(wo => ({
