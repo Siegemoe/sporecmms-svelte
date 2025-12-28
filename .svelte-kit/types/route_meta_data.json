@@ -34,8 +34,6 @@
 		"src/routes/+layout.server.ts"
 	],
 	"/auth/logout": [
-		"src/routes/auth/logout/+page.server.ts",
-		"src/routes/+layout.server.ts",
 		"src/routes/auth/logout/+server.ts"
 	],
 	"/auth/register": [

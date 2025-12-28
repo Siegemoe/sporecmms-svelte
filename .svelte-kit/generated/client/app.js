@@ -21,8 +21,7 @@ export const nodes = [
 	() => import('./nodes/17'),
 	() => import('./nodes/18'),
 	() => import('./nodes/19'),
-	() => import('./nodes/20'),
-	() => import('./nodes/21')
+	() => import('./nodes/20')
 ];
 
 export const server_loads = [0];
@@ -34,20 +33,19 @@ export const dictionary = {
 		"/audit-log": [~5],
 		"/auth/emergency-reset": [~6],
 		"/auth/login": [~7],
-		"/auth/logout": [~8],
-		"/auth/register": [~9],
-		"/auth/reset-password/[token]": [~10],
-		"/dashboard": [~11],
-		"/join-organization": [~12],
-		"/onboarding": [~13],
-		"/profile": [~14],
-		"/select-organization": [~15],
-		"/sites": [~16],
-		"/sites/[id]": [~17],
-		"/users": [~18],
-		"/users/security": [19],
-		"/work-orders": [~20],
-		"/work-orders/[id]": [~21]
+		"/auth/register": [~8],
+		"/auth/reset-password/[token]": [~9],
+		"/dashboard": [~10],
+		"/join-organization": [~11],
+		"/onboarding": [~12],
+		"/profile": [~13],
+		"/select-organization": [~14],
+		"/sites": [~15],
+		"/sites/[id]": [~16],
+		"/users": [~17],
+		"/users/security": [18],
+		"/work-orders": [~19],
+		"/work-orders/[id]": [~20]
 	};
 
 export const hooks = {

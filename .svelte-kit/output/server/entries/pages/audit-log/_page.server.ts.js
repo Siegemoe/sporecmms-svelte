@@ -11,9 +11,13 @@ const load = async (event) => {
   const limit = 50;
   const skip = (page - 1) * limit;
   const client = await getPrisma();
+  const userIdsInOrg = await client.user.findMany({
+    where: { organizationId: organizationId ?? void 0 },
+    select: { id: true }
+  }).then((users) => users.map((u) => u.id));
   const auditLogs = await client.auditLog.findMany({
     where: {
-      User: { organizationId: organizationId ?? void 0 }
+      userId: { in: userIdsInOrg }
     },
     orderBy: { createdAt: "desc" },
     skip,
@@ -30,7 +34,7 @@ const load = async (event) => {
   });
   const totalCount = await client.auditLog.count({
     where: {
-      User: { organizationId: organizationId ?? void 0 }
+      userId: { in: userIdsInOrg }
     }
   });
   const totalPages = Math.ceil(totalCount / limit);

@@ -5,7 +5,9 @@ import { l as logAudit } from "../../../chunks/audit.js";
 const load = async (event) => {
   requireAuth(event);
   const prisma = await createRequestPrisma(event);
+  const organizationId = event.locals.user.organizationId ?? void 0;
   const sites = await prisma.site.findMany({
+    where: { organizationId },
     orderBy: { createdAt: "desc" },
     include: {
       _count: {

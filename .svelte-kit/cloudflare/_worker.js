@@ -13383,7 +13383,7 @@ var init_internal = __esm({
       root: Root,
       service_worker: false,
       templates: {
-        app: ({ head, body, assets: assets2, nonce, env }) => '<!DOCTYPE html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="' + assets2 + '/favicon.png" />\n		<meta name="viewport" content="width=device-width" />\n		<!-- CSP will be handled by Cloudflare Pages headers -->\n		' + head + '\n	</head>\n	<body data-sveltekit-preload-data="hover">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>",
+        app: ({ head, body, assets: assets2, nonce, env }) => '<!DOCTYPE html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="' + assets2 + '/favicon.png" />\n		<meta name="viewport" content="width=device-width, initial-scale=1.0" />\n		<!-- CSP will be handled by Cloudflare Pages headers -->\n		' + head + '\n	</head>\n	<body data-sveltekit-preload-data="hover">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>",
         error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -13455,7 +13455,7 @@ var init_internal = __esm({
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
       },
-      version_hash: "tn4o50"
+      version_hash: "1wojeu5"
     };
   }
 });
@@ -14611,8 +14611,8 @@ var init__ = __esm({
     index = 0;
     component = async () => component_cache ??= (await Promise.resolve().then(() => (init_layout_svelte(), layout_svelte_exports))).default;
     server_id = "src/routes/+layout.server.ts";
-    imports = ["_app/immutable/nodes/0.2ce0bdb3.js", "_app/immutable/chunks/_layout.8d5dfc8b.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/stores.390d9bc5.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/constants.d02042fd.js"];
-    stylesheets = ["_app/immutable/assets/_layout.96de48d4.css"];
+    imports = ["_app/immutable/nodes/0.852e6aac.js", "_app/immutable/chunks/_layout.f8e4106c.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/stores.992542e7.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/constants.d5ea747b.js"];
+    stylesheets = ["_app/immutable/assets/_layout.1b658403.css"];
     fonts = [];
   }
 });
@@ -14651,7 +14651,7 @@ var init__2 = __esm({
   ".svelte-kit/output/server/nodes/1.js"() {
     index2 = 1;
     component2 = async () => component_cache2 ??= (await Promise.resolve().then(() => (init_error_svelte(), error_svelte_exports))).default;
-    imports2 = ["_app/immutable/nodes/1.9f7cb576.js", "_app/immutable/chunks/error.2ef89066.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/stores.390d9bc5.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports2 = ["_app/immutable/chunks/1.8b4dd032.js", "_app/immutable/chunks/error.f0cbd7f8.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/stores.992542e7.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets2 = [];
     fonts2 = [];
   }
@@ -14742,7 +14742,7 @@ var init__3 = __esm({
     index3 = 2;
     component3 = async () => component_cache3 ??= (await Promise.resolve().then(() => (init_page_svelte(), page_svelte_exports))).default;
     server_id2 = "src/routes/+page.server.ts";
-    imports3 = ["_app/immutable/chunks/2.970704b2.js", "_app/immutable/chunks/_page.4cb62189.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports3 = ["_app/immutable/chunks/2.055bd3ef.js", "_app/immutable/chunks/_page.5d422754.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets3 = [];
     fonts3 = [];
   }
@@ -15448,7 +15448,7 @@ var init__4 = __esm({
     index4 = 3;
     component4 = async () => component_cache4 ??= (await Promise.resolve().then(() => (init_page_svelte2(), page_svelte_exports2))).default;
     server_id3 = "src/routes/assets/+page.server.ts";
-    imports4 = ["_app/immutable/chunks/3.9f272f46.js", "_app/immutable/chunks/_page.9797ed4e.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports4 = ["_app/immutable/chunks/3.b25f707a.js", "_app/immutable/chunks/_page.4ae1fe1b.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets4 = [];
     fonts4 = [];
   }
@@ -15685,7 +15685,7 @@ var init__5 = __esm({
     index5 = 4;
     component5 = async () => component_cache5 ??= (await Promise.resolve().then(() => (init_page_svelte3(), page_svelte_exports3))).default;
     server_id4 = "src/routes/assets/[id]/+page.server.ts";
-    imports5 = ["_app/immutable/chunks/4.d6aa19dc.js", "_app/immutable/chunks/_page.81b4b6a0.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports5 = ["_app/immutable/nodes/4.996240e3.js", "_app/immutable/chunks/_page.dbec0129.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets5 = [];
     fonts5 = [];
   }
@@ -15712,9 +15712,13 @@ var init_page_server_ts4 = __esm({
       const limit = 50;
       const skip2 = (page2 - 1) * limit;
       const client = await getPrisma();
+      const userIdsInOrg = await client.user.findMany({
+        where: { organizationId: organizationId ?? void 0 },
+        select: { id: true }
+      }).then((users) => users.map((u) => u.id));
       const auditLogs = await client.auditLog.findMany({
         where: {
-          User: { organizationId: organizationId ?? void 0 }
+          userId: { in: userIdsInOrg }
         },
         orderBy: { createdAt: "desc" },
         skip: skip2,
@@ -15731,7 +15735,7 @@ var init_page_server_ts4 = __esm({
       });
       const totalCount = await client.auditLog.count({
         where: {
-          User: { organizationId: organizationId ?? void 0 }
+          userId: { in: userIdsInOrg }
         }
       });
       const totalPages = Math.ceil(totalCount / limit);
@@ -15791,7 +15795,7 @@ var init_page_svelte4 = __esm({
       page2 = data.page;
       totalPages = data.totalPages;
       return `${$$result.head += `<!-- HEAD_svelte-111n33w_START -->${$$result.title = `<title>Audit Log \u2014 Spore CMMS</title>`, ""}<!-- HEAD_svelte-111n33w_END -->`, ""} <div class="max-w-7xl mx-auto px-4 py-10"><div class="mb-8"><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight" data-svelte-h="svelte-1fam30h">Audit Log</h1> <p class="text-spore-cream/60 mt-2" data-svelte-h="svelte-16iiojr">Track all changes made in your organization</p></div> ${auditLogs.length > 0 ? `<div class="bg-spore-white rounded-xl overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full"><thead class="bg-spore-dark"><tr><th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1m6unqy">When</th> <th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-10vh90y">Who</th> <th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1tih4uw">Action</th> <th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1enb6fs">Details</th></tr></thead> <tbody class="divide-y divide-spore-cream/50">${each(auditLogs, (log) => {
-        return `<tr class="hover:bg-spore-cream/20 transition-colors"><td class="px-6 py-4 whitespace-nowrap text-sm text-spore-steel"><time${add_attribute("datetime", log.createdAt.toString(), 0)}>${escape(new Date(log.createdAt).toLocaleString())} </time></td> <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-spore-dark">${escape(getUserName(log.user))}</td> <td class="px-6 py-4 whitespace-nowrap"><span class="${"text-sm font-bold " + escape(getActionColor(log.action), true)}">${escape(formatAction(log.action))} </span></td> <td class="px-6 py-4 text-sm text-spore-steel max-w-md truncate"${add_attribute("title", formatDetails(log.details), 0)}>${escape(formatDetails(log.details))}</td> </tr>`;
+        return `<tr class="hover:bg-spore-cream/20 transition-colors"><td class="px-6 py-4 whitespace-nowrap text-sm text-spore-steel"><time${add_attribute("datetime", log.createdAt.toString(), 0)}>${escape(new Date(log.createdAt).toLocaleString())} </time></td> <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-spore-dark">${escape(getUserName(log.User))}</td> <td class="px-6 py-4 whitespace-nowrap"><span class="${"text-sm font-bold " + escape(getActionColor(log.action), true)}">${escape(formatAction(log.action))} </span></td> <td class="px-6 py-4 text-sm text-spore-steel max-w-md truncate"${add_attribute("title", formatDetails(log.details), 0)}>${escape(formatDetails(log.details))}</td> </tr>`;
       })}</tbody></table></div></div>  ${totalPages > 1 ? `<div class="flex justify-center gap-2 mt-6">${page2 > 1 ? `<a href="${"/audit-log?page=" + escape(page2 - 1, true)}" class="px-4 py-2 bg-spore-white text-spore-steel rounded-lg hover:bg-spore-cream transition-colors text-sm font-bold">\u2190 Previous</a>` : ``} <span class="px-4 py-2 text-spore-cream/60 text-sm">Page ${escape(page2)} of ${escape(totalPages)}</span> ${page2 < totalPages ? `<a href="${"/audit-log?page=" + escape(page2 + 1, true)}" class="px-4 py-2 bg-spore-white text-spore-steel rounded-lg hover:bg-spore-cream transition-colors text-sm font-bold">Next \u2192</a>` : ``}</div>` : ``}` : `<div class="text-center py-16 bg-spore-white rounded-xl"><div class="text-5xl mb-4" data-svelte-h="svelte-7jlewd">\u{1F4DC}</div> <h3 class="text-xl font-bold text-spore-dark mb-2" data-svelte-h="svelte-z8atj6">No activity yet</h3> <p class="text-spore-steel" data-svelte-h="svelte-wb5xqh">Actions will be recorded here as users make changes</p></div>`}</div>`;
     });
   }
@@ -15815,7 +15819,7 @@ var init__6 = __esm({
     index6 = 5;
     component6 = async () => component_cache6 ??= (await Promise.resolve().then(() => (init_page_svelte4(), page_svelte_exports4))).default;
     server_id5 = "src/routes/audit-log/+page.server.ts";
-    imports6 = ["_app/immutable/chunks/5.e3de550f.js", "_app/immutable/chunks/_page.423ea7ef.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js"];
+    imports6 = ["_app/immutable/nodes/5.5286893b.js", "_app/immutable/chunks/_page.5e0f68a0.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js"];
     stylesheets6 = [];
     fonts6 = [];
   }
@@ -29109,7 +29113,7 @@ var init__7 = __esm({
     index7 = 6;
     component7 = async () => component_cache7 ??= (await Promise.resolve().then(() => (init_page_svelte5(), page_svelte_exports5))).default;
     server_id6 = "src/routes/auth/emergency-reset/+page.server.ts";
-    imports7 = ["_app/immutable/chunks/6.54c4bf8c.js", "_app/immutable/chunks/_page.e7389e9d.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports7 = ["_app/immutable/nodes/6.2a928cbe.js", "_app/immutable/chunks/_page.14c7f420.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets7 = [];
     fonts7 = [];
   }
@@ -29371,7 +29375,7 @@ var init__8 = __esm({
     index8 = 7;
     component8 = async () => component_cache8 ??= (await Promise.resolve().then(() => (init_page_svelte6(), page_svelte_exports6))).default;
     server_id7 = "src/routes/auth/login/+page.server.ts";
-    imports8 = ["_app/immutable/chunks/7.d4c759f5.js", "_app/immutable/chunks/_page.8eddad0f.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports8 = ["_app/immutable/nodes/7.51979e45.js", "_app/immutable/chunks/_page.bbb96433.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets8 = [];
     fonts8 = [];
   }
@@ -29582,7 +29586,7 @@ var init__10 = __esm({
     index10 = 9;
     component9 = async () => component_cache9 ??= (await Promise.resolve().then(() => (init_page_svelte7(), page_svelte_exports7))).default;
     server_id9 = "src/routes/auth/register/+page.server.ts";
-    imports10 = ["_app/immutable/nodes/9.102f7cf8.js", "_app/immutable/chunks/_page.01886bc5.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports10 = ["_app/immutable/chunks/9.db3bfb08.js", "_app/immutable/chunks/_page.85bdf6c2.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets10 = [];
     fonts10 = [];
   }
@@ -29716,7 +29720,7 @@ var init__11 = __esm({
     index11 = 10;
     component10 = async () => component_cache10 ??= (await Promise.resolve().then(() => (init_page_svelte8(), page_svelte_exports8))).default;
     server_id10 = "src/routes/auth/reset-password/[token]/+page.server.ts";
-    imports11 = ["_app/immutable/chunks/10.1e3e5943.js", "_app/immutable/chunks/_page.42b53201.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports11 = ["_app/immutable/nodes/10.d7a6e62e.js", "_app/immutable/chunks/_page.e4a7f7db.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets11 = [];
     fonts11 = [];
   }
@@ -29727,15 +29731,15 @@ var page_server_ts_exports10 = {};
 __export(page_server_ts_exports10, {
   load: () => load9
 });
-var load9;
+var RECENT_WORK_ORDERS_LIMIT, load9;
 var init_page_server_ts10 = __esm({
   ".svelte-kit/output/server/entries/pages/dashboard/_page.server.ts.js"() {
     init_prisma();
     init_guards();
+    RECENT_WORK_ORDERS_LIMIT = 5;
     load9 = async (event) => {
       try {
         requireAuth(event);
-        console.log("[DASHBOARD] Loading dashboard for user:", event.locals.user?.id);
         const prisma = await createRequestPrisma(event);
         const organizationId = event.locals.user.organizationId ?? void 0;
         const [total, pending, inProgress, completed] = await Promise.all([
@@ -29744,10 +29748,9 @@ var init_page_server_ts10 = __esm({
           prisma.workOrder.count({ where: { status: "IN_PROGRESS", organizationId } }),
           prisma.workOrder.count({ where: { status: "COMPLETED", organizationId } })
         ]);
-        console.log("[DASHBOARD] Stats loaded:", { total, pending, inProgress, completed });
         const recentWorkOrders = await prisma.workOrder.findMany({
           where: { organizationId },
-          take: 5,
+          take: RECENT_WORK_ORDERS_LIMIT,
           orderBy: { updatedAt: "desc" },
           include: {
             Asset: {
@@ -29767,7 +29770,6 @@ var init_page_server_ts10 = __esm({
             }
           }
         });
-        console.log("[DASHBOARD] Recent work orders loaded:", recentWorkOrders.length);
         const sites = await prisma.site.findMany({
           where: { organizationId },
           include: {
@@ -29776,7 +29778,6 @@ var init_page_server_ts10 = __esm({
             }
           }
         });
-        console.log("[DASHBOARD] Sites loaded:", sites.length);
         const mappedRecentWorkOrders = recentWorkOrders.map((wo) => ({
           ...wo,
           asset: wo.Asset ? {
@@ -29827,78 +29828,129 @@ var page_svelte_exports9 = {};
 __export(page_svelte_exports9, {
   default: () => Page9
 });
-var Page9;
+function getStatusBadgeClasses(status) {
+  const base2 = "px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-full";
+  const styles = {
+    COMPLETED: "bg-spore-forest text-white",
+    IN_PROGRESS: "bg-spore-orange text-white",
+    PENDING: "bg-spore-steel text-white",
+    ON_HOLD: "bg-spore-cream text-spore-steel"
+  };
+  return `${base2} ${styles[status] || "bg-spore-cream text-spore-steel"}`;
+}
+var LIVE_FEED_MAX_ITEMS, Page9;
 var init_page_svelte9 = __esm({
   ".svelte-kit/output/server/entries/pages/dashboard/_page.svelte.js"() {
     init_ssr();
     init_websocket();
+    LIVE_FEED_MAX_ITEMS = 10;
     Page9 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let stats;
       let recentWorkOrders;
+      let statsConfig;
       let { data } = $$props;
       let wsConnected = false;
       let wsPolling = false;
       let liveFeed = [];
-      let lastSeenTimestamp = 0;
       const unsubscribe = wsStore.subscribe((state) => {
         wsConnected = state.isConnected;
         wsPolling = state.isPolling;
         if (state.messages.length > 0) {
           const latest = state.messages[0];
-          if (latest.timestamp && latest.timestamp > lastSeenTimestamp) {
-            lastSeenTimestamp = latest.timestamp;
-            if (latest.type === "WO_UPDATE") {
-              const wo = latest.payload;
-              liveFeed = [
-                {
-                  type: "update",
-                  message: `${wo.title} \u2192 ${wo.status}`,
-                  time: /* @__PURE__ */ new Date(),
-                  id: latest.timestamp
-                },
-                ...liveFeed
-              ].slice(0, 10);
-            }
-            if (latest.type === "WO_NEW") {
-              const wo = latest.payload;
-              liveFeed = [
-                {
-                  type: "new",
-                  message: `New: ${wo.title}`,
-                  time: /* @__PURE__ */ new Date(),
-                  id: latest.timestamp
-                },
-                ...liveFeed
-              ].slice(0, 10);
-            }
+          if (latest.type === "WO_UPDATE") {
+            const wo = latest.payload;
+            liveFeed = [
+              {
+                type: "update",
+                message: `${wo.title} \u2192 ${wo.status}`,
+                time: /* @__PURE__ */ new Date(),
+                id: latest.timestamp
+              },
+              ...liveFeed
+            ].slice(0, LIVE_FEED_MAX_ITEMS);
+          }
+          if (latest.type === "WO_NEW") {
+            const wo = latest.payload;
+            liveFeed = [
+              {
+                type: "new",
+                message: `New: ${wo.title}`,
+                time: /* @__PURE__ */ new Date(),
+                id: latest.timestamp
+              },
+              ...liveFeed
+            ].slice(0, LIVE_FEED_MAX_ITEMS);
           }
         }
       });
       onDestroy(() => unsubscribe());
+      const quickActions = [
+        {
+          icon: "\u{1F4CB}",
+          label: "All Work Orders",
+          href: "/work-orders"
+        },
+        {
+          icon: "\u{1F3E2}",
+          label: "Sites",
+          href: "/sites"
+        },
+        {
+          icon: "\u2699\uFE0F",
+          label: "Assets",
+          href: "/assets"
+        },
+        {
+          icon: "\u2795",
+          label: "New WO",
+          href: "/work-orders?create=true",
+          primary: true
+        }
+      ];
       if ($$props.data === void 0 && $$bindings.data && data !== void 0)
         $$bindings.data(data);
       stats = data.stats;
       recentWorkOrders = data.recentWorkOrders || [];
+      statsConfig = [
+        {
+          label: "Total WOs",
+          value: stats?.total || 0,
+          color: "text-spore-dark"
+        },
+        {
+          label: "Pending",
+          value: stats?.pending || 0,
+          color: "text-spore-orange"
+        },
+        {
+          label: "In Progress",
+          value: stats?.inProgress || 0,
+          color: "text-spore-steel"
+        },
+        {
+          label: "Completed",
+          value: stats?.completed || 0,
+          color: "text-spore-forest"
+        }
+      ];
       return `${$$result.head += `<!-- HEAD_svelte-6500cf_START -->${$$result.title = `<title>Dashboard \u2014 Spore CMMS</title>`, ""}<!-- HEAD_svelte-6500cf_END -->`, ""} <div class="max-w-7xl mx-auto px-4 py-10"> <div class="mb-10"><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight" data-svelte-h="svelte-1nvtx26">Dashboard</h1> <div class="flex items-center gap-3 mt-2"><span class="${"flex items-center gap-2 text-sm font-medium " + escape(
         wsConnected ? "text-spore-orange" : wsPolling ? "text-spore-forest" : "text-spore-cream/50",
         true
       )}" role="status" aria-live="polite"><span class="${"w-2 h-2 rounded-full " + escape(
         wsConnected ? "bg-spore-orange animate-pulse" : wsPolling ? "bg-spore-forest animate-pulse" : "bg-spore-cream/30",
         true
-      )}" aria-hidden="true"></span> ${wsConnected ? `Live updates enabled` : `${wsPolling ? `Polling updates` : `Connecting...`}`}</span></div></div> <div class="grid grid-cols-1 lg:grid-cols-3 gap-8"> <div class="lg:col-span-2 space-y-8"> <div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50"><p class="text-xs font-semibold text-spore-steel uppercase tracking-wide" data-svelte-h="svelte-cby6zq">Total WOs</p> <p class="text-3xl font-extrabold text-spore-dark mt-1">${escape(stats?.total || 0)}</p></div> <div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50"><p class="text-xs font-semibold text-spore-steel uppercase tracking-wide" data-svelte-h="svelte-1i4hqk4">Pending</p> <p class="text-3xl font-extrabold text-spore-orange mt-1">${escape(stats?.pending || 0)}</p></div> <div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50"><p class="text-xs font-semibold text-spore-steel uppercase tracking-wide" data-svelte-h="svelte-m6iuib">In Progress</p> <p class="text-3xl font-extrabold text-spore-steel mt-1">${escape(stats?.inProgress || 0)}</p></div> <div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50"><p class="text-xs font-semibold text-spore-steel uppercase tracking-wide" data-svelte-h="svelte-vsahe6">Completed</p> <p class="text-3xl font-extrabold text-spore-forest mt-1">${escape(stats?.completed || 0)}</p></div></div>  <div class="bg-spore-white rounded-xl p-6 shadow-sm border border-spore-cream/50"><h2 class="text-lg font-bold text-spore-dark mb-5" data-svelte-h="svelte-10azdkw">Quick Actions</h2> <div class="grid grid-cols-2 md:grid-cols-4 gap-4"><a href="/work-orders" class="flex flex-col items-center p-5 bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors border border-spore-cream/30"><span class="text-2xl mb-2" data-svelte-h="svelte-12ncqgl">\u{1F4CB}</span> <span class="text-sm font-semibold text-spore-steel" data-svelte-h="svelte-5clwys">All Work Orders</span></a> <a href="/sites" class="flex flex-col items-center p-5 bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors border border-spore-cream/30"><span class="text-2xl mb-2" data-svelte-h="svelte-5v5cv7">\u{1F3E2}</span> <span class="text-sm font-semibold text-spore-steel" data-svelte-h="svelte-11nhmkp">Sites</span></a> <a href="/assets" class="flex flex-col items-center p-5 bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors border border-spore-cream/30"><span class="text-2xl mb-2" data-svelte-h="svelte-1m2jx05">\u2699\uFE0F</span> <span class="text-sm font-semibold text-spore-steel" data-svelte-h="svelte-1di72oi">Assets</span></a> <a href="/work-orders?create=true" class="flex flex-col items-center p-5 bg-spore-orange rounded-xl hover:bg-spore-orange/90 transition-colors shadow-sm hover:shadow-md"><span class="text-2xl mb-2" data-svelte-h="svelte-122o1go">\u2795</span> <span class="text-sm font-bold text-white" data-svelte-h="svelte-4naslt">New WO</span></a></div></div>  <div class="bg-spore-white rounded-xl p-6 shadow-sm border border-spore-cream/50"><div class="flex justify-between items-center mb-5"><h2 class="text-lg font-bold text-spore-dark" data-svelte-h="svelte-1umgn2y">Recent Work Orders</h2> <a href="/work-orders" class="text-sm font-semibold text-spore-orange hover:text-spore-orange/80" data-svelte-h="svelte-1ohthn9">View all \u2192</a></div> ${recentWorkOrders.length > 0 ? `<div class="space-y-3">${each(recentWorkOrders, (wo) => {
-        return `<div class="flex items-center justify-between p-4 bg-spore-cream/20 rounded-lg border border-spore-cream/50"><div class="flex-1 min-w-0"><p class="text-sm font-bold text-spore-dark truncate">${escape(wo.title)}</p> <p class="text-xs text-spore-steel mt-1">${escape(wo.asset?.room?.name ? `Room ${wo.asset.room.name}` : "")} ${escape(wo.asset?.room?.building ? ` \u2022 Bldg ${wo.asset.room.building}` : "")} ${escape(wo.asset?.room?.floor ? ` \u2022 Floor ${wo.asset.room.floor}` : "")} </p></div> <span class="${"ml-3 px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-full " + escape(
-          wo.status === "COMPLETED" ? "bg-spore-forest text-white" : "",
+      )}" aria-hidden="true"></span> ${wsConnected ? `Live updates enabled` : `${wsPolling ? `Polling updates` : `Connecting...`}`}</span></div></div> <div class="grid grid-cols-1 lg:grid-cols-3 gap-8"> <div class="lg:col-span-2 space-y-8"> <div class="grid grid-cols-2 md:grid-cols-4 gap-4">${each(statsConfig, (stat) => {
+        return `<div class="bg-spore-white rounded-xl p-5 shadow-sm border border-spore-cream/50"><p class="text-xs font-semibold text-spore-steel uppercase tracking-wide">${escape(stat.label)}</p> <p class="${"text-3xl font-extrabold " + escape(stat.color, true) + " mt-1"}">${escape(stat.value)}</p> </div>`;
+      })}</div>  <div class="bg-spore-white rounded-xl p-6 shadow-sm border border-spore-cream/50"><h2 class="text-lg font-bold text-spore-dark mb-5" data-svelte-h="svelte-10azdkw">Quick Actions</h2> <div class="grid grid-cols-2 md:grid-cols-4 gap-4">${each(quickActions, (action) => {
+        return `<a${add_attribute("href", action.href, 0)} class="${"flex flex-col items-center p-5 " + escape(
+          action.primary ? "bg-spore-orange rounded-xl hover:bg-spore-orange/90 transition-colors shadow-sm hover:shadow-md" : "bg-spore-cream/30 rounded-xl hover:bg-spore-cream/50 transition-colors border border-spore-cream/30",
           true
-        ) + " " + escape(
-          wo.status === "IN_PROGRESS" ? "bg-spore-orange text-white" : "",
+        )}"><span class="text-2xl mb-2">${escape(action.icon)}</span> <span class="${"text-sm font-semibold " + escape(
+          action.primary ? "text-white font-bold" : "text-spore-steel",
           true
-        ) + " " + escape(
-          wo.status === "PENDING" ? "bg-spore-steel text-white" : "",
-          true
-        ) + " " + escape(
-          wo.status === "ON_HOLD" ? "bg-spore-cream text-spore-steel" : "",
-          true
-        )}">${escape(wo.status.replace("_", " "))}</span> </div>`;
+        )}">${escape(action.label)}</span> </a>`;
+      })}</div></div>  <div class="bg-spore-white rounded-xl p-6 shadow-sm border border-spore-cream/50"><div class="flex justify-between items-center mb-5"><h2 class="text-lg font-bold text-spore-dark" data-svelte-h="svelte-1umgn2y">Recent Work Orders</h2> <a href="/work-orders" class="text-sm font-semibold text-spore-orange hover:text-spore-orange/80" data-svelte-h="svelte-1ohthn9">View all \u2192</a></div> ${recentWorkOrders.length > 0 ? `<div class="space-y-3">${each(recentWorkOrders, (wo) => {
+        return `<div class="flex items-center justify-between p-4 bg-spore-cream/20 rounded-lg border border-spore-cream/50"><div class="flex-1 min-w-0"><p class="text-sm font-bold text-spore-dark truncate">${escape(wo.title)}</p> <p class="text-xs text-spore-steel mt-1">${escape(wo.asset?.room?.name ? `Room ${wo.asset.room.name}` : "")} ${escape(wo.asset?.room?.building ? ` \u2022 Bldg ${wo.asset.room.building}` : "")} ${escape(wo.asset?.room?.floor ? ` \u2022 Floor ${wo.asset.room.floor}` : "")} </p></div> <span${add_attribute("class", getStatusBadgeClasses(wo.status), 0)}>${escape(wo.status.replace("_", " "))}</span> </div>`;
       })}</div>` : `<p class="text-spore-steel text-sm" data-svelte-h="svelte-bae9j6">No recent work orders</p>`}</div></div>  <div class="space-y-8"><div class="bg-spore-dark rounded-xl p-6 border border-spore-steel/30"><div class="flex items-center justify-between mb-5"><h2 class="text-lg font-bold text-spore-cream" data-svelte-h="svelte-846tpj">Live Feed</h2> <span class="${"flex items-center gap-2 text-xs font-semibold " + escape(
         wsConnected ? "text-spore-orange" : wsPolling ? "text-spore-forest" : "text-spore-cream/50",
         true
@@ -29935,7 +29987,7 @@ var init__12 = __esm({
     index12 = 11;
     component11 = async () => component_cache11 ??= (await Promise.resolve().then(() => (init_page_svelte9(), page_svelte_exports9))).default;
     server_id11 = "src/routes/dashboard/+page.server.ts";
-    imports12 = ["_app/immutable/chunks/11.69133c90.js", "_app/immutable/chunks/_page.c04ef9fe.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/websocket.29f0dfae.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports12 = ["_app/immutable/chunks/11.ae21b596.js", "_app/immutable/chunks/_page.a41777bd.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/websocket.29f0dfae.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets12 = [];
     fonts12 = [];
   }
@@ -30097,7 +30149,7 @@ var init__13 = __esm({
     index13 = 12;
     component12 = async () => component_cache12 ??= (await Promise.resolve().then(() => (init_page_svelte10(), page_svelte_exports10))).default;
     server_id12 = "src/routes/join-organization/+page.server.ts";
-    imports13 = ["_app/immutable/chunks/12.bb13cad2.js", "_app/immutable/chunks/_page.0b510586.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports13 = ["_app/immutable/nodes/12.83d41a0d.js", "_app/immutable/chunks/_page.cab03615.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets13 = [];
     fonts13 = [];
   }
@@ -30225,7 +30277,7 @@ var init__14 = __esm({
     index14 = 13;
     component13 = async () => component_cache13 ??= (await Promise.resolve().then(() => (init_page_svelte11(), page_svelte_exports11))).default;
     server_id13 = "src/routes/onboarding/+page.server.ts";
-    imports14 = ["_app/immutable/nodes/13.9b81405e.js", "_app/immutable/chunks/_page.226fe081.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports14 = ["_app/immutable/nodes/13.f53393f3.js", "_app/immutable/chunks/_page.6be293c8.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets14 = [];
     fonts14 = [];
   }
@@ -30366,7 +30418,7 @@ var init__15 = __esm({
     index15 = 14;
     component14 = async () => component_cache14 ??= (await Promise.resolve().then(() => (init_page_svelte12(), page_svelte_exports12))).default;
     server_id14 = "src/routes/profile/+page.server.ts";
-    imports15 = ["_app/immutable/nodes/14.da5cacc0.js", "_app/immutable/chunks/_page.b82a64cd.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports15 = ["_app/immutable/chunks/14.22d55db4.js", "_app/immutable/chunks/_page.b7c14f7a.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets15 = [];
     fonts15 = [];
   }
@@ -30496,7 +30548,7 @@ var init__16 = __esm({
     index16 = 15;
     component15 = async () => component_cache15 ??= (await Promise.resolve().then(() => (init_page_svelte13(), page_svelte_exports13))).default;
     server_id15 = "src/routes/select-organization/+page.server.ts";
-    imports16 = ["_app/immutable/chunks/15.e3251e26.js", "_app/immutable/chunks/_page.24250826.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports16 = ["_app/immutable/chunks/15.bd39971f.js", "_app/immutable/chunks/_page.f9d66c8f.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets16 = [];
     fonts16 = [];
   }
@@ -30518,7 +30570,9 @@ var init_page_server_ts15 = __esm({
     load14 = async (event) => {
       requireAuth(event);
       const prisma = await createRequestPrisma(event);
+      const organizationId = event.locals.user.organizationId ?? void 0;
       const sites = await prisma.site.findMany({
+        where: { organizationId },
         orderBy: { createdAt: "desc" },
         include: {
           _count: {
@@ -30655,7 +30709,7 @@ var init__17 = __esm({
     index17 = 16;
     component16 = async () => component_cache16 ??= (await Promise.resolve().then(() => (init_page_svelte14(), page_svelte_exports14))).default;
     server_id16 = "src/routes/sites/+page.server.ts";
-    imports17 = ["_app/immutable/nodes/16.6e8cc3ab.js", "_app/immutable/chunks/_page.b135deeb.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports17 = ["_app/immutable/nodes/16.06243f93.js", "_app/immutable/chunks/_page.e94b58f4.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets17 = [];
     fonts17 = [];
   }
@@ -30690,19 +30744,19 @@ var init_page_server_ts16 = __esm({
               { roomNumber: "asc" }
             ],
             include: {
-              building: {
+              Building: {
                 select: { name: true }
               },
               _count: {
-                select: { assets: true }
+                select: { Asset: true }
               }
             }
           },
           _count: {
             select: {
-              buildings: true,
-              units: true,
-              assets: true
+              Building: true,
+              Unit: true,
+              Asset: true
             }
           }
         }
@@ -30712,7 +30766,7 @@ var init_page_server_ts16 = __esm({
       }
       const unitsByBuilding = {};
       for (const unit of site.Unit) {
-        const building2 = unit.building?.name || "Unassigned";
+        const building2 = unit.Building?.name || "Unassigned";
         if (!unitsByBuilding[building2]) {
           unitsByBuilding[building2] = [];
         }
@@ -30893,7 +30947,7 @@ var init__18 = __esm({
     index18 = 17;
     component17 = async () => component_cache17 ??= (await Promise.resolve().then(() => (init_page_svelte15(), page_svelte_exports15))).default;
     server_id17 = "src/routes/sites/[id]/+page.server.ts";
-    imports18 = ["_app/immutable/chunks/17.585d0e26.js", "_app/immutable/chunks/_page.70ae09f0.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports18 = ["_app/immutable/chunks/17.1da2f5ba.js", "_app/immutable/chunks/_page.032cb1d6.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets18 = [];
     fonts18 = [];
   }
@@ -31093,7 +31147,7 @@ var init__19 = __esm({
     index19 = 18;
     component18 = async () => component_cache18 ??= (await Promise.resolve().then(() => (init_page_svelte16(), page_svelte_exports16))).default;
     server_id18 = "src/routes/users/+page.server.ts";
-    imports19 = ["_app/immutable/chunks/18.35256185.js", "_app/immutable/chunks/_page.feb9c75c.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports19 = ["_app/immutable/nodes/18.f5da480f.js", "_app/immutable/chunks/_page.3c40b649.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
     stylesheets19 = [];
     fonts19 = [];
   }
@@ -31214,6 +31268,47 @@ var init_websocket_handler = __esm({
   }
 });
 
+// .svelte-kit/output/server/chunks/constants.js
+var WORK_ORDER_STATUSES, PRIORITIES, DEFAULT_SORT_OPTION, DEFAULT_PRIORITY, PRIORITY_ORDER, WORK_ORDER_STATUS_COLORS, WORK_ORDER_PRIORITY_COLORS;
+var init_constants2 = __esm({
+  ".svelte-kit/output/server/chunks/constants.js"() {
+    WORK_ORDER_STATUSES = [
+      "PENDING",
+      "IN_PROGRESS",
+      "ON_HOLD",
+      "COMPLETED",
+      "CANCELLED"
+    ];
+    PRIORITIES = [
+      "LOW",
+      "MEDIUM",
+      "HIGH",
+      "EMERGENCY"
+    ];
+    DEFAULT_SORT_OPTION = "dueDate";
+    DEFAULT_PRIORITY = "MEDIUM";
+    PRIORITY_ORDER = {
+      EMERGENCY: 0,
+      HIGH: 1,
+      MEDIUM: 2,
+      LOW: 3
+    };
+    WORK_ORDER_STATUS_COLORS = {
+      PENDING: "bg-yellow-100 text-yellow-800",
+      IN_PROGRESS: "bg-blue-100 text-blue-800",
+      COMPLETED: "bg-green-100 text-green-800",
+      ON_HOLD: "bg-gray-100 text-gray-800",
+      CANCELLED: "bg-red-100 text-red-800"
+    };
+    WORK_ORDER_PRIORITY_COLORS = {
+      LOW: "bg-gray-100 text-gray-600",
+      MEDIUM: "bg-blue-100 text-blue-600",
+      HIGH: "bg-orange-100 text-orange-600",
+      EMERGENCY: "bg-red-100 text-red-600"
+    };
+  }
+});
+
 // .svelte-kit/output/server/entries/pages/work-orders/_page.server.ts.js
 var page_server_ts_exports18 = {};
 __export(page_server_ts_exports18, {
@@ -31228,6 +31323,7 @@ var init_page_server_ts18 = __esm({
     init_guards();
     init_chunks();
     init_audit();
+    init_constants2();
     load17 = async (event) => {
       requireAuth(event);
       const prisma = await createRequestPrisma(event);
@@ -31252,7 +31348,7 @@ var init_page_server_ts18 = __esm({
         where.siteId = siteId;
       let orderBy = [];
       if (sort === "priority") {
-        orderBy = { priority: "desc" };
+        orderBy = { createdAt: "desc" };
       } else if (sort === "created") {
         orderBy = { createdAt: "desc" };
       } else if (sort === "updated") {
@@ -31260,7 +31356,7 @@ var init_page_server_ts18 = __esm({
       } else {
         orderBy = [
           { dueDate: "asc" },
-          { priority: "desc" }
+          { createdAt: "desc" }
         ];
       }
       const workOrders = await prisma.workOrder.findMany({
@@ -31385,6 +31481,15 @@ var init_page_server_ts18 = __esm({
         Unit: void 0,
         Site: void 0
       }));
+      if (sort === "priority") {
+        transformedWorkOrders.sort((a, b) => {
+          const aOrder = PRIORITY_ORDER[a.priority] ?? 999;
+          const bOrder = PRIORITY_ORDER[b.priority] ?? 999;
+          if (aOrder !== bOrder)
+            return aOrder - bOrder;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+      }
       const transformedAssets = assets2.map((asset) => ({
         ...asset,
         room: asset.Unit ? {
@@ -31427,7 +31532,7 @@ var init_page_server_ts18 = __esm({
         const data = await event.request.formData();
         const title = data.get("title");
         const description = data.get("description");
-        const priority = data.get("priority") || "MEDIUM";
+        const priority = data.get("priority") || DEFAULT_PRIORITY;
         const dueDate = data.get("dueDate");
         const assignedToId = data.get("assignedToId");
         const selectionMode = data.get("selectionMode") || "asset";
@@ -31435,11 +31540,33 @@ var init_page_server_ts18 = __esm({
         const unitId = data.get("unitId") || data.get("roomId");
         const buildingId = data.get("buildingId");
         const siteId = data.get("siteId");
-        if (!title) {
-          return { success: false, error: "Title is required." };
+        if (!title?.trim()) {
+          return fail(400, { error: "Title is required." });
+        }
+        if (!PRIORITIES.includes(priority)) {
+          return fail(400, { error: "Invalid priority value." });
+        }
+        const trimmedDescription = description?.trim() || "";
+        if (trimmedDescription.length > 5e3) {
+          return fail(400, { error: "Description is too long (max 5000 characters)." });
+        }
+        if (dueDate) {
+          const parsedDate = new Date(dueDate);
+          if (isNaN(parsedDate.getTime())) {
+            return fail(400, { error: "Invalid due date format." });
+          }
         }
         if (!assetId && !unitId && !buildingId && !siteId) {
-          return { success: false, error: "Please select an asset, unit, building, or site." };
+          return fail(400, { error: "Please select an asset, unit, building, or site." });
+        }
+        if (assignedToId) {
+          const assignedUser = await prisma.user.findUnique({
+            where: { id: assignedToId },
+            select: { organizationId: true }
+          });
+          if (!assignedUser || assignedUser.organizationId !== event.locals.user.organizationId) {
+            return fail(400, { error: "Invalid user assignment." });
+          }
         }
         try {
           const organizationId = event.locals.user.organizationId;
@@ -31447,7 +31574,7 @@ var init_page_server_ts18 = __esm({
           const newWo = await prisma.workOrder.create({
             data: {
               title: title.trim(),
-              description: description?.trim() || "",
+              description: trimmedDescription,
               priority,
               dueDate: dueDate ? new Date(dueDate) : null,
               organizationId,
@@ -31576,26 +31703,6 @@ var init_page_server_ts18 = __esm({
   }
 });
 
-// .svelte-kit/output/server/chunks/constants.js
-var WORK_ORDER_STATUSES, PRIORITIES;
-var init_constants2 = __esm({
-  ".svelte-kit/output/server/chunks/constants.js"() {
-    WORK_ORDER_STATUSES = [
-      "PENDING",
-      "IN_PROGRESS",
-      "ON_HOLD",
-      "COMPLETED",
-      "CANCELLED"
-    ];
-    PRIORITIES = [
-      "LOW",
-      "MEDIUM",
-      "HIGH",
-      "EMERGENCY"
-    ];
-  }
-});
-
 // .svelte-kit/output/server/entries/pages/work-orders/_page.svelte.js
 var page_svelte_exports18 = {};
 __export(page_svelte_exports18, {
@@ -31608,6 +31715,18 @@ function getUserName2(user) {
     return [user.firstName, user.lastName].filter(Boolean).join(" ");
   }
   return user.email || "Unknown";
+}
+function isOverdue(dueDate, status) {
+  if (status === "COMPLETED")
+    return false;
+  const today = /* @__PURE__ */ new Date();
+  today.setHours(0, 0, 0, 0);
+  const due = new Date(dueDate);
+  due.setHours(0, 0, 0, 0);
+  return due < today;
+}
+function getOverdueClass(dueDate, status) {
+  return isOverdue(dueDate, status) ? "text-red-500 font-semibold" : "text-spore-dark";
 }
 var Page18;
 var init_page_svelte18 = __esm({
@@ -31631,7 +31750,7 @@ var init_page_svelte18 = __esm({
       let filterStatus = data.status || "";
       let filterPriority = data.priority || "";
       let filterSite = data.siteId || "";
-      let sortOption = data.sort || "dueDate";
+      let sortOption = data.sort || DEFAULT_SORT_OPTION;
       let myOnly = data.myOnly || false;
       let wsConnected = false;
       let lastUpdate = null;
@@ -31660,19 +31779,6 @@ var init_page_svelte18 = __esm({
         }
       });
       onDestroy(() => unsubscribe());
-      const statusColors = {
-        PENDING: "bg-yellow-100 text-yellow-800",
-        IN_PROGRESS: "bg-blue-100 text-blue-800",
-        COMPLETED: "bg-green-100 text-green-800",
-        ON_HOLD: "bg-gray-100 text-gray-800",
-        CANCELLED: "bg-red-100 text-red-800"
-      };
-      const priorityColors = {
-        LOW: "bg-gray-100 text-gray-600",
-        MEDIUM: "bg-blue-100 text-blue-600",
-        HIGH: "bg-orange-100 text-orange-600",
-        EMERGENCY: "bg-red-100 text-red-600"
-      };
       if ($$props.data === void 0 && $$bindings.data && data !== void 0)
         $$bindings.data(data);
       {
@@ -31706,25 +31812,22 @@ var init_page_svelte18 = __esm({
       )}" role="status" aria-live="polite"><span class="${"w-2 h-2 rounded-full " + escape(
         wsConnected ? "bg-spore-orange animate-pulse" : "bg-spore-cream/30",
         true
-      )}" aria-hidden="true"></span> ${escape(wsConnected ? "Live updates enabled" : "Connecting...")}</span> ${lastUpdate ? `<span class="text-sm font-medium text-spore-orange animate-pulse" role="status" aria-live="polite">${escape(lastUpdate)}</span>` : ``}</div></div> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:ring-offset-2 focus:ring-offset-spore-steel transition-colors text-sm font-bold tracking-wide shadow-lg"${add_attribute("aria-expanded", showCreateForm, 0)} aria-controls="create-form">${escape("+ NEW WORK ORDER")}</button></div>  <div class="bg-spore-white rounded-xl mb-6 shadow-sm border border-spore-cream/50 overflow-hidden"> <div class="md:hidden p-4 border-b border-spore-cream/30 flex justify-between items-center bg-spore-cream/10"><span class="text-sm font-bold text-spore-dark uppercase tracking-wide" data-svelte-h="svelte-1t2qdoi">Filters &amp; Sort</span> <button class="text-spore-orange font-bold text-sm">${escape("Show")}</button></div>  <div class="${escape("hidden", true) + " md:block p-4 space-y-4 md:space-y-0"}"><div class="flex flex-col md:flex-row md:items-center gap-4"> <button class="${"flex items-center gap-2 px-3 py-2 rounded-lg transition-colors " + escape(
+      )}" aria-hidden="true"></span> ${escape(wsConnected ? "Live updates enabled" : "Connecting...")}</span> ${lastUpdate ? `<span class="text-sm font-medium text-spore-orange animate-pulse" role="status" aria-live="polite">${escape(lastUpdate)}</span>` : ``}</div></div> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:ring-offset-2 focus:ring-offset-spore-steel transition-colors text-sm font-bold tracking-wide shadow-lg"${add_attribute("aria-expanded", showCreateForm, 0)} aria-controls="create-form">${escape("+ NEW WORK ORDER")}</button></div>  <div class="bg-spore-white rounded-xl mb-6 shadow-sm border border-spore-cream/50"> <div class="md:hidden p-4 border-b border-spore-cream/30 flex justify-between items-center bg-spore-cream/10"><span class="text-sm font-bold text-spore-dark uppercase tracking-wide" data-svelte-h="svelte-1t2qdoi">Filters &amp; Sort</span> <button class="text-spore-orange font-bold text-sm">${escape("Show")}</button></div>  <div class="${escape("hidden", true) + " md:block p-4 space-y-4 md:space-y-0"}"><div class="flex flex-col md:flex-row md:items-center gap-4"> <button class="${"flex items-center gap-2 px-3 py-2 rounded-lg transition-colors " + escape(
         myOnly ? "bg-spore-orange/10 text-spore-orange ring-1 ring-spore-orange" : "bg-spore-cream/20 text-spore-steel hover:bg-spore-cream/30",
         true
-      )}"><span class="w-4 h-4 rounded-full border border-current flex items-center justify-center">${myOnly ? `<span class="w-2 h-2 rounded-full bg-current"></span>` : ``}</span> <span class="text-sm font-bold" data-svelte-h="svelte-eyf1ik">My Work Orders</span></button> <div class="h-6 w-px bg-spore-cream/50 hidden md:block"></div>  <div class="grid grid-cols-2 md:flex md:items-center gap-2 md:gap-4 flex-1"><select class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-1n598p3">All Statuses</option>${each(WORK_ORDER_STATUSES, (s3) => {
+      )}"><span class="w-4 h-4 rounded-full border border-current flex items-center justify-center">${myOnly ? `<span class="w-2 h-2 rounded-full bg-current"></span>` : ``}</span> <span class="text-sm font-bold" data-svelte-h="svelte-eyf1ik">My Work Orders</span></button> <div class="h-6 w-px bg-spore-cream/50 hidden md:block"></div>  ${filterStatus || filterPriority || filterSite || sortOption !== "dueDate" || myOnly ? `<button class="text-xs font-bold text-red-500 hover:text-red-600 px-2" data-svelte-h="svelte-3ex7ri">Reset</button> <div class="h-6 w-px bg-spore-cream/50 hidden md:block"></div>` : ``}  <div class="grid grid-cols-2 md:flex md:items-center gap-2 md:gap-4 flex-1"><select class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-1n598p3">All Statuses</option>${each(WORK_ORDER_STATUSES, (s3) => {
         return `<option${add_attribute("value", s3, 0)}>${escape(s3.replace("_", " "))}</option>`;
       })}</select> <select class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-1sepmzx">All Priorities</option>${each(PRIORITIES, (p) => {
         return `<option${add_attribute("value", p, 0)}>${escape(p)}</option>`;
       })}</select> ${sites.length > 0 ? `<select class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-128kygr">All Sites</option>${each(sites, (s3) => {
         return `<option${add_attribute("value", s3.id, 0)}>${escape(s3.name)}</option>`;
-      })}</select>` : ``}</div>  <div class="flex items-center gap-2 md:ml-auto"><span class="text-xs font-bold text-spore-steel uppercase hidden md:inline" data-svelte-h="svelte-qc4q7w">Sort:</span> <select class="w-full md:w-auto bg-transparent font-bold text-sm text-spore-dark border-none focus:ring-0 cursor-pointer text-right"><option value="dueDate" data-svelte-h="svelte-uuj5mk">Due Date</option><option value="priority" data-svelte-h="svelte-11hy9v2">Priority</option><option value="created" data-svelte-h="svelte-1ksm85e">Newest</option><option value="updated" data-svelte-h="svelte-162axp8">Updated</option></select></div>  ${filterStatus || filterPriority || filterSite || sortOption !== "dueDate" || myOnly ? `<button class="text-xs font-bold text-red-500 hover:text-red-600 underline md:no-underline px-2" data-svelte-h="svelte-1jcwlaf">Reset</button>` : ``}</div></div></div>  ${``}  ${workOrders && workOrders.length > 0 ? `<div class="bg-spore-white rounded-xl shadow-sm border border-spore-cream/50 overflow-hidden"> <div class="hidden md:block overflow-x-auto"><table class="min-w-full" role="table" aria-label="Work orders list"><thead class="bg-spore-dark"><tr><th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-3znkiu">Title</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-19faq7s">Priority</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-11id8rq">Status</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1eniqmk">Assigned</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden lg:table-cell" data-svelte-h="svelte-1n0iefz">Location</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden lg:table-cell" data-svelte-h="svelte-12ixr6g">Due Date</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-4s34th">Actions</th></tr></thead> <tbody class="divide-y divide-spore-cream/50">${each(workOrders, (workOrder) => {
-        return `<tr class="hover:bg-spore-cream/20 transition-colors"><td class="px-4 py-3"><a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-sm font-bold text-spore-dark hover:text-spore-orange transition-colors focus:outline-none focus:underline block">${escape(workOrder.title)} </a></td> <td class="px-4 py-3 whitespace-nowrap"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(priorityColors[workOrder.priority] || priorityColors.MEDIUM, true)}">${escape(workOrder.priority)} </span></td> <td class="px-4 py-3 whitespace-nowrap"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(statusColors[workOrder.status] || "", true)}">${escape(workOrder.status.replace("_", " "))} </span></td> <td class="px-4 py-3 whitespace-nowrap"><form method="POST" action="?/assign" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="text-xs bg-transparent border-0 text-spore-steel cursor-pointer hover:text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange rounded min-w-[120px]"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
+      })}</select>` : ``}  <select class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="dueDate" data-svelte-h="svelte-uuj5mk">Due Date</option><option value="priority" data-svelte-h="svelte-11hy9v2">Priority</option><option value="created" data-svelte-h="svelte-1ksm85e">Newest</option><option value="updated" data-svelte-h="svelte-162axp8">Updated</option></select></div></div></div></div>  ${``}  ${workOrders && workOrders.length > 0 ? `<div class="bg-spore-white rounded-xl shadow-sm border border-spore-cream/50 overflow-hidden"> <div class="hidden md:block overflow-x-auto"><table class="min-w-full" role="table" aria-label="Work orders list"><thead class="bg-spore-dark"><tr><th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-3znkiu">Title</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-19faq7s">Priority</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-11id8rq">Status</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1eniqmk">Assigned</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden lg:table-cell" data-svelte-h="svelte-1n0iefz">Location</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden lg:table-cell" data-svelte-h="svelte-12ixr6g">Due Date</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-4s34th">Actions</th></tr></thead> <tbody class="divide-y divide-spore-cream/50">${each(workOrders, (workOrder) => {
+        return `<tr class="hover:bg-spore-cream/20 transition-colors"><td class="px-4 py-3"><a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-sm font-bold text-spore-dark hover:text-spore-orange transition-colors focus:outline-none focus:underline block">${escape(workOrder.title)} </a></td> <td class="px-4 py-3 whitespace-nowrap"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_PRIORITY_COLORS[workOrder.priority] || WORK_ORDER_PRIORITY_COLORS.MEDIUM, true)}">${escape(workOrder.priority)} </span></td> <td class="px-4 py-3 whitespace-nowrap"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_STATUS_COLORS[workOrder.status] || "", true)}">${escape(workOrder.status.replace("_", " "))} </span></td> <td class="px-4 py-3 whitespace-nowrap"><form method="POST" action="?/assign" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="text-xs bg-transparent border-0 text-spore-steel cursor-pointer hover:text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange rounded min-w-[120px]"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
           return `<option${add_attribute("value", user.id, 0)}>${escape(getUserName2(user))}</option>`;
-        })}</select> </form></td> <td class="px-4 py-3 text-sm text-spore-steel font-medium hidden lg:table-cell">${workOrder.asset ? `${escape(workOrder.asset.name)}` : `${workOrder.building ? `${escape(workOrder.building.name)} ${escape(workOrder.building.site?.name ? `- ${workOrder.building.site.name}` : "")}` : `${workOrder.unit ? `Unit ${escape(workOrder.unit.roomNumber)} ${escape(workOrder.unit.name ? `- ${workOrder.unit.name}` : "")} ${escape(workOrder.unit.building ? ` \u2022 ${workOrder.unit.building.name}` : "")} ${escape(workOrder.unit.site?.name ? ` \u2022 ${workOrder.unit.site.name}` : "")}` : `${workOrder.site ? `${escape(workOrder.site.name)}` : `N/A`}`}`}`}</td> <td class="px-4 py-3 text-sm text-spore-steel hidden lg:table-cell">${workOrder.dueDate ? `${escape(new Date(workOrder.dueDate).toLocaleDateString())} ${new Date(workOrder.dueDate) < /* @__PURE__ */ new Date() && workOrder.status !== "COMPLETED" ? `<span class="text-red-500 font-semibold" data-svelte-h="svelte-w65mx2">(Overdue)</span>` : ``}` : `-`}</td> <td class="px-4 py-3 whitespace-nowrap text-xs font-medium space-x-2">${workOrder.status === "PENDING" ? `<form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="text-spore-orange hover:text-spore-orange/70 focus:outline-none focus:underline" title="${"Start working on " + escape(workOrder.title, true)}">Start</button> </form>` : ``} ${workOrder.status === "IN_PROGRESS" ? `<form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="COMPLETED"> <button type="submit" class="text-spore-forest hover:text-spore-forest/70 focus:outline-none focus:underline" title="${"Mark " + escape(workOrder.title, true) + " as completed"}">Complete</button> </form>` : ``} <a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-spore-steel hover:text-spore-dark focus:outline-none focus:underline" title="${"View details for " + escape(workOrder.title, true)}">View
+        })}</select> </form></td> <td class="px-4 py-3 text-sm text-spore-steel font-medium hidden lg:table-cell">${workOrder.asset ? `${escape(workOrder.asset.name)}` : `${workOrder.building ? `${escape(workOrder.building.name)} ${escape(workOrder.building.site?.name ? `- ${workOrder.building.site.name}` : "")}` : `${workOrder.unit ? `Unit ${escape(workOrder.unit.roomNumber)} ${escape(workOrder.unit.name ? `- ${workOrder.unit.name}` : "")} ${escape(workOrder.unit.building ? ` \u2022 ${workOrder.unit.building.name}` : "")} ${escape(workOrder.unit.site?.name ? ` \u2022 ${workOrder.unit.site.name}` : "")}` : `${workOrder.site ? `${escape(workOrder.site.name)}` : `N/A`}`}`}`}</td> <td class="px-4 py-3 text-sm text-spore-steel hidden lg:table-cell">${workOrder.dueDate ? `${escape(new Date(workOrder.dueDate).toLocaleDateString())} ${isOverdue(workOrder.dueDate, workOrder.status) ? `<span class="text-red-500 font-semibold" data-svelte-h="svelte-w65mx2">(Overdue)</span>` : ``}` : `-`}</td> <td class="px-4 py-3 whitespace-nowrap text-xs font-medium space-x-2">${workOrder.status === "PENDING" ? `<form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="text-spore-orange hover:text-spore-orange/70 focus:outline-none focus:underline" title="${"Start working on " + escape(workOrder.title, true)}">Start</button> </form>` : ``} ${workOrder.status === "IN_PROGRESS" ? `<form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="COMPLETED"> <button type="submit" class="text-spore-forest hover:text-spore-forest/70 focus:outline-none focus:underline" title="${"Mark " + escape(workOrder.title, true) + " as completed"}">Complete</button> </form>` : ``} <a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-spore-steel hover:text-spore-dark focus:outline-none focus:underline" title="${"View details for " + escape(workOrder.title, true)}">View
 									</a></td> </tr>`;
       })}</tbody></table></div>  <div class="md:hidden divide-y divide-spore-cream/50">${each(workOrders, (workOrder) => {
-        return `<div class="p-4 hover:bg-spore-cream/10 transition-colors"><div class="flex items-start justify-between mb-2"><h3 class="text-base font-bold text-spore-dark flex-1 mr-2"><a href="${"/work-orders/" + escape(workOrder.id, true)}" class="hover:text-spore-orange transition-colors focus:outline-none focus:underline">${escape(workOrder.title)} </a></h3> <div class="flex flex-col gap-1"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(priorityColors[workOrder.priority] || priorityColors.MEDIUM, true)}">${escape(workOrder.priority)}</span> <span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(statusColors[workOrder.status] || "", true)}">${escape(workOrder.status.replace("_", " "))}</span> </div></div> <div class="space-y-2 mb-4"><div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-8jdlm4">Location:</span> <span class="text-sm text-spore-dark text-right">${workOrder.asset ? `${escape(workOrder.asset.name)}` : `${workOrder.building ? `${escape(workOrder.building.name)}` : `${workOrder.unit ? `Unit ${escape(workOrder.unit.roomNumber)}` : `${workOrder.site ? `${escape(workOrder.site.name)}` : `N/A`}`}`}`} </span></div> ${workOrder.dueDate ? `<div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1t4sczn">Due:</span> <span class="${"text-sm " + escape(
-          new Date(workOrder.dueDate) < /* @__PURE__ */ new Date() && workOrder.status !== "COMPLETED" ? "text-red-500 font-semibold" : "text-spore-dark",
-          true
-        )}">${escape(new Date(workOrder.dueDate).toLocaleDateString())} ${new Date(workOrder.dueDate) < /* @__PURE__ */ new Date() && workOrder.status !== "COMPLETED" ? `(Overdue)` : ``}</span> </div>` : ``} <div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1es34l">Assigned:</span> <form method="POST" action="?/assign" class="flex-1 max-w-[150px]"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="w-full text-sm bg-spore-cream/30 border border-spore-cream/50 rounded-lg px-2 py-1 text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
+        return `<div class="p-4 hover:bg-spore-cream/10 transition-colors"><div class="flex items-start justify-between mb-2"><h3 class="text-base font-bold text-spore-dark flex-1 mr-2"><a href="${"/work-orders/" + escape(workOrder.id, true)}" class="hover:text-spore-orange transition-colors focus:outline-none focus:underline">${escape(workOrder.title)} </a></h3> <div class="flex flex-col gap-1"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_PRIORITY_COLORS[workOrder.priority] || WORK_ORDER_PRIORITY_COLORS.MEDIUM, true)}">${escape(workOrder.priority)}</span> <span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_STATUS_COLORS[workOrder.status] || "", true)}">${escape(workOrder.status.replace("_", " "))}</span> </div></div> <div class="space-y-2 mb-4"><div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-8jdlm4">Location:</span> <span class="text-sm text-spore-dark text-right">${workOrder.asset ? `${escape(workOrder.asset.name)}` : `${workOrder.building ? `${escape(workOrder.building.name)}` : `${workOrder.unit ? `Unit ${escape(workOrder.unit.roomNumber)}` : `${workOrder.site ? `${escape(workOrder.site.name)}` : `N/A`}`}`}`} </span></div> ${workOrder.dueDate ? `<div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1t4sczn">Due:</span> <span class="${"text-sm " + escape(getOverdueClass(workOrder.dueDate, workOrder.status), true)}">${escape(new Date(workOrder.dueDate).toLocaleDateString())} ${isOverdue(workOrder.dueDate, workOrder.status) ? `(Overdue)` : ``}</span> </div>` : ``} <div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1es34l">Assigned:</span> <form method="POST" action="?/assign" class="flex-1 max-w-[150px]"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="w-full text-sm bg-spore-cream/30 border border-spore-cream/50 rounded-lg px-2 py-1 text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
           return `<option${add_attribute("value", user.id, 0)}>${escape(getUserName2(user))}</option>`;
         })}</select></form> </div></div> <div class="flex gap-2 text-sm font-bold">${workOrder.status === "PENDING" ? `<form method="POST" action="?/updateStatus" class="flex-1"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="w-full bg-spore-orange text-white py-2 px-3 rounded-lg font-medium hover:bg-spore-orange/90 focus:outline-none focus:ring-1 focus:ring-spore-orange transition-colors" aria-label="${"Start work order: " + escape(workOrder.title, true)}">Start</button> </form>` : ``} ${workOrder.status === "IN_PROGRESS" ? `<form method="POST" action="?/updateStatus" class="flex-1"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="COMPLETED"> <button type="submit" class="w-full bg-spore-forest text-white py-2 px-3 rounded-lg font-medium hover:bg-spore-forest/90 focus:outline-none focus:ring-1 focus:ring-spore-forest transition-colors" aria-label="${"Complete work order: " + escape(workOrder.title, true)}">Complete</button> </form>` : ``} <a href="${"/work-orders/" + escape(workOrder.id, true)}" class="flex-1 bg-spore-cream text-spore-dark py-2 px-3 rounded-lg font-medium text-center hover:bg-spore-cream/70 focus:outline-none focus:ring-1 focus:ring-spore-cream transition-colors">View
 							</a></div> </div>`;
@@ -31751,7 +31854,7 @@ var init__21 = __esm({
     index21 = 20;
     component20 = async () => component_cache20 ??= (await Promise.resolve().then(() => (init_page_svelte18(), page_svelte_exports18))).default;
     server_id19 = "src/routes/work-orders/+page.server.ts";
-    imports21 = ["_app/immutable/chunks/20.076b34dd.js", "_app/immutable/chunks/_page.78a9843a.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/websocket.29f0dfae.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/stores.390d9bc5.js", "_app/immutable/chunks/constants.d02042fd.js"];
+    imports21 = ["_app/immutable/chunks/20.0024ab4a.js", "_app/immutable/chunks/_page.7c1102d1.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/websocket.29f0dfae.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/stores.992542e7.js", "_app/immutable/chunks/constants.d5ea747b.js"];
     stylesheets21 = [];
     fonts21 = [];
   }
@@ -31967,7 +32070,7 @@ var init__22 = __esm({
     index22 = 21;
     component21 = async () => component_cache21 ??= (await Promise.resolve().then(() => (init_page_svelte19(), page_svelte_exports19))).default;
     server_id20 = "src/routes/work-orders/[id]/+page.server.ts";
-    imports22 = ["_app/immutable/nodes/21.a1eedd4f.js", "_app/immutable/chunks/_page.c8a6d657.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.76aea569.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/constants.d02042fd.js"];
+    imports22 = ["_app/immutable/nodes/21.d8b94471.js", "_app/immutable/chunks/_page.9e90a8c9.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/constants.d5ea747b.js"];
     stylesheets22 = [];
     fonts22 = [];
   }
@@ -35260,7 +35363,7 @@ var manifest = (() => {
     assets: /* @__PURE__ */ new Set(["favicon.png", "favicon.svg", "_headers"]),
     mimeTypes: { ".png": "image/png", ".svg": "image/svg+xml" },
     _: {
-      client: { "start": "_app/immutable/entry/start.10e504db.js", "app": "_app/immutable/entry/app.b8c2a5cd.js", "imports": ["_app/immutable/entry/start.10e504db.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/singletons.7108c41a.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.b8c2a5cd.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js"], "stylesheets": [], "fonts": [] },
+      client: { "start": "_app/immutable/entry/start.40aded89.js", "app": "_app/immutable/entry/app.9f1f169f.js", "imports": ["_app/immutable/entry/start.40aded89.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.9f1f169f.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js"], "stylesheets": [], "fonts": [] },
       nodes: [
         __memo(() => Promise.resolve().then(() => (init__(), __exports))),
         __memo(() => Promise.resolve().then(() => (init__2(), __exports2))),

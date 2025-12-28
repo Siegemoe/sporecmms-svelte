@@ -18,24 +18,20 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 			},
 			Unit: {
 				orderBy: [
-					{ Building: { name: 'asc' } },
 					{ floor: 'asc' },
 					{ roomNumber: 'asc' }
 				],
 				include: {
-					building: {
-						select: { name: true }
-					},
 					_count: {
-						select: { assets: true }
+						select: { Asset: true }
 					}
 				}
 			},
 			_count: {
 				select: {
-					buildings: true,
-					units: true,
-					assets: true
+					Building: true,
+					Unit: true,
+					Asset: true
 				}
 			}
 		}
@@ -45,17 +41,18 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		throw error(404, 'Site not found');
 	}
 
-	// Group units by building
-	const unitsByBuilding: Record<string, typeof site.Unit[]> = {};
-	for (const unit of site.Unit) {
-		const building = unit.building?.name || 'Unassigned';
-		if (!unitsByBuilding[building]) {
-			unitsByBuilding[building] = [];
-		}
-		unitsByBuilding[building].push(unit);
-	}
+	// Group units by building - returns array of buildings with their units
+	const buildingsWithUnits = site.Building.map((building) => ({
+		id: building.id,
+		name: building.name,
+		description: building.description,
+		units: site.Unit.filter((u) => u.buildingId === building.id)
+	}));
 
-	return { site, unitsByBuilding };
+	// Also include unassigned units (no building)
+	const unassignedUnits = site.Unit.filter((u) => !u.buildingId);
+
+	return { site, buildingsWithUnits, unassignedUnits };
 };
 
 export const actions = {
@@ -155,6 +152,77 @@ export const actions = {
 		});
 
 		return { success: true, building };
+	},
+
+	updateBuilding: async (event: import('./$types').RequestEvent) => {
+		const prisma = await createRequestPrisma(event);
+		const formData = await event.request.formData();
+		const { id: siteId } = event.params;
+
+		const buildingId = formData.get('buildingId') as string;
+		const name = formData.get('name') as string;
+		const description = formData.get('description') as string;
+
+		if (!buildingId) {
+			return fail(400, { error: 'Building ID is required' });
+		}
+
+		if (!name || name.trim() === '') {
+			return fail(400, { error: 'Building name is required' });
+		}
+
+		// Verify building belongs to this site
+		const existingBuilding = await prisma.building.findFirst({
+			where: { id: buildingId, siteId }
+		});
+
+		if (!existingBuilding) {
+			return fail(404, { error: 'Building not found' });
+		}
+
+		const building = await prisma.building.update({
+			where: { id: buildingId },
+			data: {
+				name: name.trim(),
+				description: description?.trim() || null
+			}
+		});
+
+		return { success: true, building };
+	},
+
+	deleteBuilding: async (event: import('./$types').RequestEvent) => {
+		const prisma = await createRequestPrisma(event);
+		const formData = await event.request.formData();
+		const { id: siteId } = event.params;
+
+		const buildingId = formData.get('buildingId') as string;
+
+		if (!buildingId) {
+			return fail(400, { error: 'Building ID is required' });
+		}
+
+		// Verify building belongs to this site
+		const existingBuilding = await prisma.building.findFirst({
+			where: { id: buildingId, siteId }
+		});
+
+		if (!existingBuilding) {
+			return fail(404, { error: 'Building not found' });
+		}
+
+		// Reassign all units in this building to Unassigned
+		await prisma.unit.updateMany({
+			where: { buildingId },
+			data: { buildingId: null }
+		});
+
+		// Delete the building
+		await prisma.building.delete({
+			where: { id: buildingId }
+		});
+
+		return { success: true };
 	},
 
 	updateUnit: async (event: import('./$types').RequestEvent) => {

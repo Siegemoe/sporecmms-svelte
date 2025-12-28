@@ -6,10 +6,11 @@ import { WorkOrderStatus, Priority } from '@prisma/client';
 import { requireAuth, isManagerOrAbove } from '$lib/server/guards';
 import { fail } from '@sveltejs/kit';
 import { logAudit } from '$lib/server/audit';
+import { PRIORITY_ORDER, PRIORITIES, DEFAULT_PRIORITY } from '$lib/constants';
 
 export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	requireAuth(event);
-	
+
 	const prisma = await createRequestPrisma(event);
 	const userId = event.locals.user!.id;
 	const organizationId = event.locals.user!.organizationId;
@@ -31,28 +32,23 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	if (priority) where.priority = priority as Priority;
 	if (siteId) where.siteId = siteId;
 
-	// Build OrderBy
+	// Build OrderBy - note: priority sort is handled in-memory after fetch
 	let orderBy: any = [];
 	if (sort === 'priority') {
-		// High priority first (EMERGENCY -> HIGH -> MEDIUM -> LOW)
-		// Prisma doesn't sort enums by definition index automatically easily without raw SQL
-		// So we might rely on alphabetical or simple desc for now, or just name
-		// Actually, standard practice is simple field sort. Enum sort requires specialized query or mapping.
-		// For MVP, we'll sort by priority field desc (if Z-A works) or handle in client.
-		// Let's stick to created/due/updated.
-		orderBy = { priority: 'desc' };
+		// Priority sort handled in-memory after fetch for proper ordering
+		orderBy = { createdAt: 'desc' }; // Fallback sort for database
 	} else if (sort === 'created') {
 		orderBy = { createdAt: 'desc' };
 	} else if (sort === 'updated') {
 		orderBy = { updatedAt: 'desc' };
 	} else {
-		// Default: Due Date asc, then Priority desc
+		// Default: Due Date asc, then by createdAt
 		orderBy = [
 			{ dueDate: 'asc' },
-			{ priority: 'desc' }
+			{ createdAt: 'desc' }
 		];
 	}
-	
+
 	const workOrders = await prisma.workOrder.findMany({
 		where,
 		include: {
@@ -188,6 +184,17 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		Site: undefined
 	}));
 
+	// Apply in-memory sorting for priority (since Prisma sorts enums alphabetically)
+	if (sort === 'priority') {
+		transformedWorkOrders.sort((a, b) => {
+			const aOrder = PRIORITY_ORDER[a.priority] ?? 999;
+			const bOrder = PRIORITY_ORDER[b.priority] ?? 999;
+			if (aOrder !== bOrder) return aOrder - bOrder;
+			// Secondary sort by creation date (newest first)
+			return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+		});
+	}
+
 	const transformedAssets = assets.map(asset => ({
 		...asset,
 		room: asset.Unit ? {
@@ -231,7 +238,7 @@ export const actions = {
 
 		const title = data.get('title') as string;
 		const description = data.get('description') as string;
-		const priority = data.get('priority') as string || 'MEDIUM';
+		const priority = data.get('priority') as string || DEFAULT_PRIORITY;
 		const dueDate = data.get('dueDate') as string;
 		const assignedToId = data.get('assignedToId') as string;
 		const selectionMode = data.get('selectionMode') as string || 'asset';
@@ -242,13 +249,44 @@ export const actions = {
 		const buildingId = data.get('buildingId') as string;
 		const siteId = data.get('siteId') as string;
 
-		if (!title) {
-			return { success: false, error: 'Title is required.' };
+		// Validate title
+		if (!title?.trim()) {
+			return fail(400, { error: 'Title is required.' });
+		}
+
+		// Validate priority enum
+		if (!PRIORITIES.includes(priority as Priority)) {
+			return fail(400, { error: 'Invalid priority value.' });
+		}
+
+		// Validate and sanitize description
+		const trimmedDescription = description?.trim() || '';
+		if (trimmedDescription.length > 5000) {
+			return fail(400, { error: 'Description is too long (max 5000 characters).' });
+		}
+
+		// Validate dueDate format if provided
+		if (dueDate) {
+			const parsedDate = new Date(dueDate);
+			if (isNaN(parsedDate.getTime())) {
+				return fail(400, { error: 'Invalid due date format.' });
+			}
 		}
 
 		// Validate at least one selection is made
 		if (!assetId && !unitId && !buildingId && !siteId) {
-			return { success: false, error: 'Please select an asset, unit, building, or site.' };
+			return fail(400, { error: 'Please select an asset, unit, building, or site.' });
+		}
+
+		// Validate assigned user belongs to same organization
+		if (assignedToId) {
+			const assignedUser = await prisma.user.findUnique({
+				where: { id: assignedToId },
+				select: { organizationId: true }
+			});
+			if (!assignedUser || assignedUser.organizationId !== event.locals.user!.organizationId) {
+				return fail(400, { error: 'Invalid user assignment.' });
+			}
 		}
 
 		try {
@@ -259,7 +297,7 @@ export const actions = {
 			const newWo = await prisma.workOrder.create({
 				data: {
 					title: title.trim(),
-					description: description?.trim() || '',
+					description: trimmedDescription,
 					priority: priority as any,
 					dueDate: dueDate ? new Date(dueDate) : null,
 					organizationId: organizationId!, // Ensure non-null

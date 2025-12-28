@@ -18,19 +18,19 @@ const load = async (event) => {
           { roomNumber: "asc" }
         ],
         include: {
-          building: {
+          Building: {
             select: { name: true }
           },
           _count: {
-            select: { assets: true }
+            select: { Asset: true }
           }
         }
       },
       _count: {
         select: {
-          buildings: true,
-          units: true,
-          assets: true
+          Building: true,
+          Unit: true,
+          Asset: true
         }
       }
     }
@@ -40,7 +40,7 @@ const load = async (event) => {
   }
   const unitsByBuilding = {};
   for (const unit of site.Unit) {
-    const building = unit.building?.name || "Unassigned";
+    const building = unit.Building?.name || "Unassigned";
     if (!unitsByBuilding[building]) {
       unitsByBuilding[building] = [];
     }

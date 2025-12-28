@@ -1,9 +1,9 @@
 import { c as createRequestPrisma } from "../../../chunks/prisma.js";
 import { r as requireAuth } from "../../../chunks/guards.js";
+const RECENT_WORK_ORDERS_LIMIT = 5;
 const load = async (event) => {
   try {
     requireAuth(event);
-    console.log("[DASHBOARD] Loading dashboard for user:", event.locals.user?.id);
     const prisma = await createRequestPrisma(event);
     const organizationId = event.locals.user.organizationId ?? void 0;
     const [total, pending, inProgress, completed] = await Promise.all([
@@ -12,10 +12,9 @@ const load = async (event) => {
       prisma.workOrder.count({ where: { status: "IN_PROGRESS", organizationId } }),
       prisma.workOrder.count({ where: { status: "COMPLETED", organizationId } })
     ]);
-    console.log("[DASHBOARD] Stats loaded:", { total, pending, inProgress, completed });
     const recentWorkOrders = await prisma.workOrder.findMany({
       where: { organizationId },
-      take: 5,
+      take: RECENT_WORK_ORDERS_LIMIT,
       orderBy: { updatedAt: "desc" },
       include: {
         Asset: {
@@ -35,7 +34,6 @@ const load = async (event) => {
         }
       }
     });
-    console.log("[DASHBOARD] Recent work orders loaded:", recentWorkOrders.length);
     const sites = await prisma.site.findMany({
       where: { organizationId },
       include: {
@@ -44,7 +42,6 @@ const load = async (event) => {
         }
       }
     });
-    console.log("[DASHBOARD] Sites loaded:", sites.length);
     const mappedRecentWorkOrders = recentWorkOrders.map((wo) => ({
       ...wo,
       asset: wo.Asset ? {

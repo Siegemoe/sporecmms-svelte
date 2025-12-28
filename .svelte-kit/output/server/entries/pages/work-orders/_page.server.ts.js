@@ -3,6 +3,7 @@ import { b as broadcastToOrg } from "../../../chunks/websocket-handler.js";
 import { r as requireAuth } from "../../../chunks/guards.js";
 import { f as fail } from "../../../chunks/index.js";
 import { l as logAudit } from "../../../chunks/audit.js";
+import { c as PRIORITY_ORDER, d as DEFAULT_PRIORITY, P as PRIORITIES } from "../../../chunks/constants.js";
 const load = async (event) => {
   requireAuth(event);
   const prisma = await createRequestPrisma(event);
@@ -27,7 +28,7 @@ const load = async (event) => {
     where.siteId = siteId;
   let orderBy = [];
   if (sort === "priority") {
-    orderBy = { priority: "desc" };
+    orderBy = { createdAt: "desc" };
   } else if (sort === "created") {
     orderBy = { createdAt: "desc" };
   } else if (sort === "updated") {
@@ -35,7 +36,7 @@ const load = async (event) => {
   } else {
     orderBy = [
       { dueDate: "asc" },
-      { priority: "desc" }
+      { createdAt: "desc" }
     ];
   }
   const workOrders = await prisma.workOrder.findMany({
@@ -160,6 +161,15 @@ const load = async (event) => {
     Unit: void 0,
     Site: void 0
   }));
+  if (sort === "priority") {
+    transformedWorkOrders.sort((a, b) => {
+      const aOrder = PRIORITY_ORDER[a.priority] ?? 999;
+      const bOrder = PRIORITY_ORDER[b.priority] ?? 999;
+      if (aOrder !== bOrder)
+        return aOrder - bOrder;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }
   const transformedAssets = assets.map((asset) => ({
     ...asset,
     room: asset.Unit ? {
@@ -202,7 +212,7 @@ const actions = {
     const data = await event.request.formData();
     const title = data.get("title");
     const description = data.get("description");
-    const priority = data.get("priority") || "MEDIUM";
+    const priority = data.get("priority") || DEFAULT_PRIORITY;
     const dueDate = data.get("dueDate");
     const assignedToId = data.get("assignedToId");
     const selectionMode = data.get("selectionMode") || "asset";
@@ -210,11 +220,33 @@ const actions = {
     const unitId = data.get("unitId") || data.get("roomId");
     const buildingId = data.get("buildingId");
     const siteId = data.get("siteId");
-    if (!title) {
-      return { success: false, error: "Title is required." };
+    if (!title?.trim()) {
+      return fail(400, { error: "Title is required." });
+    }
+    if (!PRIORITIES.includes(priority)) {
+      return fail(400, { error: "Invalid priority value." });
+    }
+    const trimmedDescription = description?.trim() || "";
+    if (trimmedDescription.length > 5e3) {
+      return fail(400, { error: "Description is too long (max 5000 characters)." });
+    }
+    if (dueDate) {
+      const parsedDate = new Date(dueDate);
+      if (isNaN(parsedDate.getTime())) {
+        return fail(400, { error: "Invalid due date format." });
+      }
     }
     if (!assetId && !unitId && !buildingId && !siteId) {
-      return { success: false, error: "Please select an asset, unit, building, or site." };
+      return fail(400, { error: "Please select an asset, unit, building, or site." });
+    }
+    if (assignedToId) {
+      const assignedUser = await prisma.user.findUnique({
+        where: { id: assignedToId },
+        select: { organizationId: true }
+      });
+      if (!assignedUser || assignedUser.organizationId !== event.locals.user.organizationId) {
+        return fail(400, { error: "Invalid user assignment." });
+      }
     }
     try {
       const organizationId = event.locals.user.organizationId;
@@ -222,7 +254,7 @@ const actions = {
       const newWo = await prisma.workOrder.create({
         data: {
           title: title.trim(),
-          description: description?.trim() || "",
+          description: trimmedDescription,
           priority,
           dueDate: dueDate ? new Date(dueDate) : null,
           organizationId,
