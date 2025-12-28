@@ -194,7 +194,7 @@
 								{site.name}
 							</h3>
 							<p class="text-sm text-spore-steel mt-1">
-								{site._count?.buildings || 0} building{site._count?.buildings !== 1 ? 's' : ''} • {site._count?.units || 0} unit{site._count?.units !== 1 ? 's' : ''}
+								{site._count?.Building || 0} building{site._count?.Building !== 1 ? 's' : ''} • {site._count?.Unit || 0} unit{site._count?.Unit !== 1 ? 's' : ''}
 							</p>
 							<div class="mt-4 pt-4 border-t border-spore-cream/50">
 								<span class="text-xs text-spore-steel">
