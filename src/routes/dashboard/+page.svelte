@@ -41,8 +41,8 @@
 	$: stats = data.stats;
 	$: recentWorkOrders = data.recentWorkOrders || [];
 
-	// Stats configuration for DRY rendering
-	const statsConfig = [
+	// Stats configuration for DRY rendering (reactive to stats updates)
+	$: statsConfig = [
 		{ label: 'Total WOs', value: stats?.total || 0, color: 'text-spore-dark' },
 		{ label: 'Pending', value: stats?.pending || 0, color: 'text-spore-orange' },
 		{ label: 'In Progress', value: stats?.inProgress || 0, color: 'text-spore-steel' },
