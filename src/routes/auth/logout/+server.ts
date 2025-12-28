@@ -22,21 +22,24 @@ export const POST: RequestHandler = async (event) => {
 		console.log('[LOGOUT] No session ID found, nothing to delete');
 	}
 
-	// Manually construct Set-Cookie header to delete the session cookie
-	// Must match the attributes used when setting the cookie
-	// setSessionCookie uses: path=/, httpOnly, sameSite=strict, secure=!dev, NO domain
-	const secure = !dev ? ' Secure;' : '';
-	const cookieValue = `spore_session=; Path=/; HttpOnly; SameSite=Strict;${secure} Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+	// Use SvelteKit's cookie API to delete the session cookie
+	// This properly formats the Set-Cookie header for Cloudflare Workers
+	event.cookies.set('spore_session', '', {
+		path: '/',
+		httpOnly: true,
+		sameSite: 'strict',
+		secure: !dev,
+		expires: new Date(0),
+		maxAge: 0
+	});
 
-	console.log('[LOGOUT] Set-Cookie header:', cookieValue);
+	console.log('[LOGOUT] Cookie deleted via cookies.set()');
 
-	// Return a redirect response with Set-Cookie header
-	// Using 303 See Other which causes the browser to GET the redirect location
+	// Return a redirect response
 	return new Response(null, {
 		status: 303,
 		headers: {
-			'Location': '/auth/login',
-			'Set-Cookie': cookieValue
+			'Location': '/auth/login'
 		}
 	});
 };
