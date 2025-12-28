@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -9,6 +10,7 @@
 	let isSubmitting = false;
 	let editingSiteId: string | null = null;
 	let editingSiteName = '';
+	let searchTerm = data.search || '';
 
 	$: sites = data.sites || [];
 
@@ -21,6 +23,14 @@
 		editingSiteId = null;
 		editingSiteName = '';
 	}
+
+	function applySearch() {
+		const params = new URLSearchParams();
+		if (searchTerm.trim()) {
+			params.set('search', searchTerm.trim());
+		}
+		goto(`/sites?${params.toString()}`, { keepFocus: true });
+	}
 </script>
 
 <svelte:head>
@@ -29,17 +39,35 @@
 
 <div class="max-w-7xl mx-auto px-4 py-10">
 	<!-- Header -->
-	<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-10">
-		<div>
-			<h1 class="text-4xl font-extrabold text-spore-cream tracking-tight">Sites</h1>
-			<p class="text-spore-cream/60 mt-2 text-sm font-medium">Manage your facility locations</p>
+	<div class="mb-10">
+		<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+			<div>
+				<h1 class="text-4xl font-extrabold text-spore-cream tracking-tight">Sites</h1>
+			</div>
+			<button
+				on:click={() => showCreateForm = !showCreateForm}
+				class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide"
+			>
+				{showCreateForm ? 'CANCEL' : '+ NEW SITE'}
+			</button>
 		</div>
-		<button 
-			on:click={() => showCreateForm = !showCreateForm}
-			class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide"
-		>
-			{showCreateForm ? 'CANCEL' : '+ NEW SITE'}
-		</button>
+		<div class="flex flex-col sm:flex-row gap-4">
+			<input
+				type="text"
+				bind:value={searchTerm}
+				on:keydown={(e) => e.key === 'Enter' && applySearch()}
+				placeholder="Search sites..."
+				class="flex-1 max-w-md px-4 py-2 rounded-lg border border-spore-cream/30 bg-white text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange"
+			/>
+			{#if searchTerm}
+				<button
+					on:click={() => { searchTerm = ''; applySearch(); }}
+					class="text-sm font-semibold text-spore-cream/70 hover:text-spore-cream px-2"
+				>
+					Clear
+				</button>
+			{/if}
+		</div>
 	</div>
 
 	<!-- Create Form -->

@@ -6,12 +6,22 @@ import { logAudit } from '$lib/server/audit';
 
 export const load: PageServerLoad = async (event) => {
 	requireAuth(event);
-	
+
 	const prisma = await createRequestPrisma(event);
 	const organizationId = event.locals.user!.organizationId ?? undefined;
+	const search = event.url.searchParams.get('search') || '';
+
+	// Build where clause with optional search filter
+	const where: any = { organizationId };
+	if (search) {
+		where.name = {
+			contains: search,
+			mode: 'insensitive'
+		};
+	}
 
 	const sites = await prisma.site.findMany({
-		where: { organizationId },
+		where,
 		orderBy: { createdAt: 'desc' },
 		include: {
 			_count: {
@@ -38,7 +48,7 @@ export const load: PageServerLoad = async (event) => {
 		}
 	});
 
-	return { sites };
+	return { sites, search };
 };
 
 export const actions: Actions = {
