@@ -192,10 +192,21 @@
 
 				<div class="h-6 w-px bg-spore-cream/50 hidden md:block"></div>
 
+				<!-- Clear Button -->
+				{#if filterStatus || filterPriority || filterSite || sortOption !== 'dueDate' || myOnly}
+					<button
+						on:click={clearFilters}
+						class="text-xs font-bold text-red-500 hover:text-red-600 px-2"
+					>
+						Reset
+					</button>
+					<div class="h-6 w-px bg-spore-cream/50 hidden md:block"></div>
+				{/if}
+
 				<!-- Dropdowns -->
 				<div class="grid grid-cols-2 md:flex md:items-center gap-2 md:gap-4 flex-1">
-					<select 
-						bind:value={filterStatus} 
+					<select
+						bind:value={filterStatus}
 						on:change={applyFilters}
 						class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
 					>
@@ -205,8 +216,8 @@
 						{/each}
 					</select>
 
-					<select 
-						bind:value={filterPriority} 
+					<select
+						bind:value={filterPriority}
 						on:change={applyFilters}
 						class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
 					>
@@ -217,8 +228,8 @@
 					</select>
 
 					{#if sites.length > 0}
-						<select 
-							bind:value={filterSite} 
+						<select
+							bind:value={filterSite}
 							on:change={applyFilters}
 							class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
 						>
@@ -228,32 +239,22 @@
 							{/each}
 						</select>
 					{/if}
-				</div>
 
-				<!-- Sort -->
-				<div class="flex items-center gap-2 md:ml-auto">
-					<span class="text-xs font-bold text-spore-steel uppercase hidden md:inline">Sort:</span>
-					<select 
-						bind:value={sortOption} 
-						on:change={applyFilters}
-						class="w-full md:w-auto bg-transparent font-bold text-sm text-spore-dark border-none focus:ring-0 cursor-pointer text-right"
-					>
-						<option value="dueDate">Due Date</option>
-						<option value="priority">Priority</option>
-						<option value="created">Newest</option>
-						<option value="updated">Updated</option>
-					</select>
+					<!-- Sort -->
+					<div class="flex items-center gap-2">
+						<span class="text-xs font-bold text-spore-steel uppercase hidden md:inline">Sort:</span>
+						<select
+							bind:value={sortOption}
+							on:change={applyFilters}
+							class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+						>
+							<option value="dueDate">Due Date</option>
+							<option value="priority">Priority</option>
+							<option value="created">Newest</option>
+							<option value="updated">Updated</option>
+						</select>
+					</div>
 				</div>
-
-				<!-- Clear Button -->
-				{#if filterStatus || filterPriority || filterSite || sortOption !== 'dueDate' || myOnly}
-					<button 
-						on:click={clearFilters}
-						class="text-xs font-bold text-red-500 hover:text-red-600 underline md:no-underline px-2"
-					>
-						Reset
-					</button>
-				{/if}
 			</div>
 		</div>
 	</div>
