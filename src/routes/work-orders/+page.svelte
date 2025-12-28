@@ -4,7 +4,15 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { WORK_ORDER_STATUSES, PRIORITIES } from '$lib/constants';
+	import {
+		WORK_ORDER_STATUSES,
+		PRIORITIES,
+		DEFAULT_SORT_OPTION,
+		DEFAULT_PRIORITY,
+		DEFAULT_SELECTION_MODE,
+		WORK_ORDER_STATUS_COLORS,
+		WORK_ORDER_PRIORITY_COLORS
+	} from '$lib/constants';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -20,7 +28,7 @@
 	let filterStatus = data.status || '';
 	let filterPriority = data.priority || '';
 	let filterSite = data.siteId || '';
-	let sortOption = data.sort || 'dueDate';
+	let sortOption = data.sort || DEFAULT_SORT_OPTION;
 	let showFilters = false;
 	let myOnly = data.myOnly || false;
 
@@ -38,8 +46,8 @@
 		if (filterStatus) params.set('status', filterStatus);
 		if (filterPriority) params.set('priority', filterPriority);
 		if (filterSite) params.set('siteId', filterSite);
-		if (sortOption && sortOption !== 'dueDate') params.set('sort', sortOption);
-		
+		if (sortOption && sortOption !== DEFAULT_SORT_OPTION) params.set('sort', sortOption);
+
 		goto(`?${params.toString()}`, { keepFocus: true });
 	}
 
@@ -47,7 +55,7 @@
 		filterStatus = '';
 		filterPriority = '';
 		filterSite = '';
-		sortOption = 'dueDate';
+		sortOption = DEFAULT_SORT_OPTION;
 		applyFilters();
 	}
 
@@ -63,10 +71,10 @@
 	let newWO = {
 		title: '',
 		description: '',
-		priority: 'MEDIUM',
+		priority: DEFAULT_PRIORITY,
 		dueDate: '',
 		assignedToId: '',
-		selectionMode: 'asset',
+		selectionMode: DEFAULT_SELECTION_MODE,
 		assetId: '',
 		unitId: '',
 		buildingId: '',
@@ -79,6 +87,21 @@
 			return [user.firstName, user.lastName].filter(Boolean).join(' ');
 		}
 		return user.email || 'Unknown';
+	}
+
+	// Check if a work order is overdue (compares dates at midnight to avoid timezone issues)
+	function isOverdue(dueDate: string, status: string): boolean {
+		if (status === 'COMPLETED') return false;
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		const due = new Date(dueDate);
+		due.setHours(0, 0, 0, 0);
+		return due < today;
+	}
+
+	// Get overdue styling class
+	function getOverdueClass(dueDate: string, status: string): string {
+		return isOverdue(dueDate, status) ? 'text-red-500 font-semibold' : 'text-spore-dark';
 	}
 
 	onMount(() => {
@@ -112,20 +135,6 @@
 	});
 
 	onDestroy(() => unsubscribe());
-
-	const statusColors: Record<string, string> = {
-		PENDING: 'bg-yellow-100 text-yellow-800',
-		IN_PROGRESS: 'bg-blue-100 text-blue-800',
-		COMPLETED: 'bg-green-100 text-green-800',
-		ON_HOLD: 'bg-gray-100 text-gray-800',
-		CANCELLED: 'bg-red-100 text-red-800'
-	};
-	const priorityColors: Record<string, string> = {
-		LOW: 'bg-gray-100 text-gray-600',
-		MEDIUM: 'bg-blue-100 text-blue-600',
-		HIGH: 'bg-orange-100 text-orange-600',
-		EMERGENCY: 'bg-red-100 text-red-600'
-	};
 </script>
 
 <svelte:head>
@@ -241,19 +250,16 @@
 					{/if}
 
 					<!-- Sort -->
-					<div class="flex items-center gap-2">
-						<span class="text-xs font-bold text-spore-steel uppercase hidden md:inline">Sort:</span>
-						<select
-							bind:value={sortOption}
-							on:change={applyFilters}
-							class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-						>
-							<option value="dueDate">Due Date</option>
-							<option value="priority">Priority</option>
-							<option value="created">Newest</option>
-							<option value="updated">Updated</option>
-						</select>
-					</div>
+					<select
+						bind:value={sortOption}
+						on:change={applyFilters}
+						class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+					>
+						<option value="dueDate">Due Date</option>
+						<option value="priority">Priority</option>
+						<option value="created">Newest</option>
+						<option value="updated">Updated</option>
+					</select>
 				</div>
 			</div>
 		</div>
@@ -268,22 +274,24 @@
 				action="?/create"
 				use:enhance={() => {
 					isSubmitting = true;
-					return async ({ update }) => {
-						await update();
+					return async ({ result }) => {
 						isSubmitting = false;
-						showCreateForm = false;
-						newWO = {
-							title: '',
-							description: '',
-							priority: 'MEDIUM',
-							dueDate: '',
-							assignedToId: '',
-							selectionMode: 'asset',
-							assetId: '',
-							unitId: '',
-							buildingId: '',
-							siteId: ''
-						};
+						// Only hide form and reset on success
+						if (result.type === 'success') {
+							showCreateForm = false;
+							newWO = {
+								title: '',
+								description: '',
+								priority: DEFAULT_PRIORITY,
+								dueDate: '',
+								assignedToId: '',
+								selectionMode: DEFAULT_SELECTION_MODE,
+								assetId: '',
+								unitId: '',
+								buildingId: '',
+								siteId: ''
+							};
+						}
 					};
 				}}
 				class="space-y-4"
@@ -487,12 +495,12 @@
 									</a>
 								</td>
 								<td class="px-4 py-3 whitespace-nowrap">
-									<span class="px-2 py-1 text-xs font-semibold rounded-full {priorityColors[workOrder.priority] || priorityColors.MEDIUM}">
+									<span class="px-2 py-1 text-xs font-semibold rounded-full {WORK_ORDER_PRIORITY_COLORS[workOrder.priority] || WORK_ORDER_PRIORITY_COLORS.MEDIUM}">
 										{workOrder.priority}
 									</span>
 								</td>
 								<td class="px-4 py-3 whitespace-nowrap">
-									<span class="px-2 py-1 text-xs font-semibold rounded-full {statusColors[workOrder.status] || ''}">
+									<span class="px-2 py-1 text-xs font-semibold rounded-full {WORK_ORDER_STATUS_COLORS[workOrder.status] || ''}">
 										{workOrder.status.replace('_', ' ')}
 									</span>
 								</td>
@@ -530,7 +538,7 @@
 								<td class="px-4 py-3 text-sm text-spore-steel hidden lg:table-cell">
 									{#if workOrder.dueDate}
 										{new Date(workOrder.dueDate).toLocaleDateString()}
-										{#if new Date(workOrder.dueDate) < new Date() && workOrder.status !== 'COMPLETED'}
+										{#if isOverdue(workOrder.dueDate, workOrder.status)}
 											<span class="text-red-500 font-semibold"> (Overdue)</span>
 										{/if}
 									{:else}
@@ -592,10 +600,10 @@
 								</a>
 							</h3>
 							<div class="flex flex-col gap-1">
-								<span class="px-2 py-1 text-xs font-semibold rounded-full {priorityColors[workOrder.priority] || priorityColors.MEDIUM}">
+								<span class="px-2 py-1 text-xs font-semibold rounded-full {WORK_ORDER_PRIORITY_COLORS[workOrder.priority] || WORK_ORDER_PRIORITY_COLORS.MEDIUM}">
 									{workOrder.priority}
 								</span>
-								<span class="px-2 py-1 text-xs font-semibold rounded-full {statusColors[workOrder.status] || ''}">
+								<span class="px-2 py-1 text-xs font-semibold rounded-full {WORK_ORDER_STATUS_COLORS[workOrder.status] || ''}">
 									{workOrder.status.replace('_', ' ')}
 								</span>
 							</div>
@@ -622,9 +630,9 @@
 							{#if workOrder.dueDate}
 								<div class="flex items-center justify-between">
 									<span class="text-sm font-medium text-spore-steel">Due:</span>
-									<span class="text-sm {new Date(workOrder.dueDate) < new Date() && workOrder.status !== 'COMPLETED' ? 'text-red-500 font-semibold' : 'text-spore-dark'}">
+									<span class="text-sm {getOverdueClass(workOrder.dueDate, workOrder.status)}">
 										{new Date(workOrder.dueDate).toLocaleDateString()}
-										{#if new Date(workOrder.dueDate) < new Date() && workOrder.status !== 'COMPLETED'}
+										{#if isOverdue(workOrder.dueDate, workOrder.status)}
 											 (Overdue)
 										{/if}
 									</span>

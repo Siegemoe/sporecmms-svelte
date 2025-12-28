@@ -17,7 +17,7 @@ export function requireAuth(event: RequestEvent): void {
  */
 export function requireRole(event: RequestEvent, allowedRoles: UserRole[]): void {
 	requireAuth(event);
-	
+
 	const userRole = event.locals.user!.role;
 	if (!allowedRoles.includes(userRole)) {
 		throw redirect(303, '/dashboard?error=unauthorized');
@@ -49,4 +49,40 @@ export function canManageRole(managerRole: UserRole, targetRole: UserRole): bool
 		'TECHNICIAN': 1
 	};
 	return hierarchy[managerRole] > hierarchy[targetRole];
+}
+
+/**
+ * Work Order authorization helpers
+ */
+
+/**
+ * Check if user can update a work order status
+ * User can update if they created it, are assigned to it, or are admin/manager
+ */
+export function canUpdateWorkOrder(
+	userId: string,
+	userRole: UserRole,
+	workOrderCreatedById: string,
+	workOrderAssignedToId: string | null
+): boolean {
+	return userRole === 'ADMIN' ||
+		userRole === 'MANAGER' ||
+		userId === workOrderCreatedById ||
+		userId === workOrderAssignedToId;
+}
+
+/**
+ * Check if user can assign work orders
+ * Only admins and managers can assign work orders
+ */
+export function canAssignWorkOrder(userRole: UserRole): boolean {
+	return userRole === 'ADMIN' || userRole === 'MANAGER';
+}
+
+/**
+ * Check if user can delete a work order
+ * Only admins and managers can delete work orders
+ */
+export function canDeleteWorkOrder(userRole: UserRole): boolean {
+	return userRole === 'ADMIN' || userRole === 'MANAGER';
 }
