@@ -164,7 +164,7 @@
 	</div>
 
 	<!-- Filter Bar -->
-	<div class="bg-spore-white rounded-xl mb-6 shadow-sm border border-spore-cream/50 overflow-hidden">
+	<div class="bg-spore-white rounded-xl mb-6 shadow-sm border border-spore-cream/50">
 		<!-- Mobile Filter Toggle -->
 		<div class="md:hidden p-4 border-b border-spore-cream/30 flex justify-between items-center bg-spore-cream/10">
 			<span class="text-sm font-bold text-spore-dark uppercase tracking-wide">Filters & Sort</span>
