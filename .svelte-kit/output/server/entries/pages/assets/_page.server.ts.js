@@ -2,21 +2,47 @@ import { c as createRequestPrisma } from "../../../chunks/prisma.js";
 import { f as fail } from "../../../chunks/index.js";
 import { r as requireAuth, i as isManagerOrAbove } from "../../../chunks/guards.js";
 import { l as logAudit } from "../../../chunks/audit.js";
+import { a as assetSchema } from "../../../chunks/validation.js";
 const load = async (event) => {
   requireAuth(event);
   const prisma = await createRequestPrisma(event);
-  const unitFilter = event.url.searchParams.get("unit");
   const organizationId = event.locals.user.organizationId;
+  const typeFilter = event.url.searchParams.get("type");
+  const statusFilter = event.url.searchParams.get("status");
+  const siteFilter = event.url.searchParams.get("siteId");
+  const sortFilter = event.url.searchParams.get("sort") || "created";
+  const where = {
+    Unit: {
+      Site: {
+        organizationId: organizationId ?? void 0
+      }
+    }
+  };
+  if (typeFilter)
+    where.type = typeFilter;
+  if (statusFilter)
+    where.status = statusFilter;
+  if (siteFilter)
+    where.siteId = siteFilter;
+  let orderBy = { createdAt: "desc" };
+  switch (sortFilter) {
+    case "name":
+      orderBy = { name: "asc" };
+      break;
+    case "type":
+      orderBy = [{ type: "asc" }, { createdAt: "desc" }];
+      break;
+    case "status":
+      orderBy = [{ status: "asc" }, { createdAt: "desc" }];
+      break;
+    case "created":
+    default:
+      orderBy = { createdAt: "desc" };
+      break;
+  }
   const assets = await prisma.asset.findMany({
-    where: {
-      Unit: {
-        Site: {
-          organizationId: organizationId ?? void 0
-        }
-      },
-      ...unitFilter && { unitId: unitFilter }
-    },
-    orderBy: { createdAt: "desc" },
+    where,
+    orderBy,
     include: {
       Unit: {
         include: {
@@ -53,29 +79,49 @@ const load = async (event) => {
       }
     }
   });
-  return { assets, units, unitFilter };
+  const sites = await prisma.site.findMany({
+    where: {
+      organizationId: organizationId ?? void 0
+    },
+    orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true
+    }
+  });
+  return {
+    assets,
+    units,
+    sites,
+    type: typeFilter,
+    status: statusFilter,
+    siteId: siteFilter,
+    sort: sortFilter
+  };
 };
 const actions = {
   create: async (event) => {
     const prisma = await createRequestPrisma(event);
     const formData = await event.request.formData();
-    const name = formData.get("name");
-    const unitId = formData.get("unitId");
-    const type = formData.get("type");
-    const status = formData.get("status") || "OPERATIONAL";
-    const description = formData.get("description");
-    const purchaseDate = formData.get("purchaseDate");
-    const warrantyExpiry = formData.get("warrantyExpiry");
     const organizationId = event.locals.user.organizationId;
-    if (!name || name.trim() === "") {
-      return fail(400, { error: "Asset name is required" });
+    const rawData = {
+      name: formData.get("name"),
+      unitId: formData.get("unitId"),
+      type: formData.get("type"),
+      status: formData.get("status") || "OPERATIONAL",
+      description: formData.get("description"),
+      purchaseDate: formData.get("purchaseDate"),
+      warrantyExpiry: formData.get("warrantyExpiry")
+    };
+    const validationResult = assetSchema.safeParse(rawData);
+    if (!validationResult.success) {
+      const firstError = validationResult.error.issues[0];
+      return fail(400, { error: firstError.message });
     }
-    if (!unitId) {
-      return fail(400, { error: "Unit is required" });
-    }
+    const data = validationResult.data;
     const unit = await prisma.unit.findFirst({
       where: {
-        id: unitId,
+        id: data.unitId,
         Site: {
           organizationId: organizationId ?? void 0
         }
@@ -84,24 +130,23 @@ const actions = {
     if (!unit) {
       return fail(404, { error: "Unit not found" });
     }
-    const siteId = unit.siteId;
     const asset = await prisma.asset.create({
       data: {
-        name: name.trim(),
-        type,
-        status,
-        description: description?.trim() || null,
-        purchaseDate: purchaseDate ? new Date(purchaseDate) : null,
-        warrantyExpiry: warrantyExpiry ? new Date(warrantyExpiry) : null,
-        unitId,
-        siteId,
+        name: data.name.trim(),
+        type: data.type || "OTHER",
+        status: data.status || "OPERATIONAL",
+        description: data.description?.trim() || null,
+        purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
+        warrantyExpiry: data.warrantyExpiry ? new Date(data.warrantyExpiry) : null,
+        unitId: data.unitId,
+        siteId: unit.siteId,
         updatedAt: /* @__PURE__ */ new Date()
       }
     });
     await logAudit(event.locals.user.id, "ASSET_CREATED", {
       assetId: asset.id,
       name: asset.name,
-      unitId
+      unitId: data.unitId
     });
     return { success: true, asset };
   },
@@ -144,21 +189,23 @@ const actions = {
     const formData = await event.request.formData();
     const organizationId = event.locals.user.organizationId;
     const assetId = formData.get("assetId");
-    const name = formData.get("name");
-    const unitId = formData.get("unitId");
-    const type = formData.get("type");
-    const status = formData.get("status");
-    const description = formData.get("description");
-    const purchaseDate = formData.get("purchaseDate");
-    const warrantyExpiry = formData.get("warrantyExpiry");
+    const rawData = {
+      name: formData.get("name"),
+      unitId: formData.get("unitId"),
+      type: formData.get("type"),
+      status: formData.get("status"),
+      description: formData.get("description"),
+      purchaseDate: formData.get("purchaseDate"),
+      warrantyExpiry: formData.get("warrantyExpiry")
+    };
+    const validationResult = assetSchema.safeParse(rawData);
+    if (!validationResult.success) {
+      const firstError = validationResult.error.issues[0];
+      return fail(400, { error: firstError.message });
+    }
+    const data = validationResult.data;
     if (!assetId) {
       return fail(400, { error: "Asset ID is required" });
-    }
-    if (!name || name.trim() === "") {
-      return fail(400, { error: "Asset name is required" });
-    }
-    if (!unitId) {
-      return fail(400, { error: "Unit is required" });
     }
     const existingAsset = await prisma.asset.findFirst({
       where: {
@@ -175,7 +222,7 @@ const actions = {
     }
     const unit = await prisma.unit.findFirst({
       where: {
-        id: unitId,
+        id: data.unitId,
         Site: {
           organizationId: organizationId ?? void 0
         }
@@ -184,18 +231,17 @@ const actions = {
     if (!unit) {
       return fail(404, { error: "Unit not found" });
     }
-    const siteId = unit.siteId;
     const asset = await prisma.asset.update({
       where: { id: assetId },
       data: {
-        name: name.trim(),
-        type: type ? type : void 0,
-        status: status ? status : void 0,
-        description: description ? description.trim() : void 0,
-        purchaseDate: purchaseDate ? new Date(purchaseDate) : null,
-        warrantyExpiry: warrantyExpiry ? new Date(warrantyExpiry) : null,
-        unitId,
-        siteId
+        name: data.name.trim(),
+        type: data.type ? data.type : void 0,
+        status: data.status ? data.status : void 0,
+        description: data.description ? data.description.trim() : void 0,
+        purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
+        warrantyExpiry: data.warrantyExpiry ? new Date(data.warrantyExpiry) : null,
+        unitId: data.unitId,
+        siteId: unit.siteId
       }
     });
     return { success: true, asset };

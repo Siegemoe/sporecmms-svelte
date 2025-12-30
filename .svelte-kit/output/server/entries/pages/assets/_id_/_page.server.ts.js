@@ -1,6 +1,7 @@
 import { c as createRequestPrisma } from "../../../../chunks/prisma.js";
 import { e as error, f as fail, r as redirect } from "../../../../chunks/index.js";
 import { r as requireAuth, i as isManagerOrAbove } from "../../../../chunks/guards.js";
+import { a as assetSchema } from "../../../../chunks/validation.js";
 const load = async (event) => {
   requireAuth(event);
   const prisma = await createRequestPrisma(event);
@@ -29,7 +30,6 @@ const load = async (event) => {
           id: true,
           title: true,
           status: true,
-          // failureMode: true, // Removed: Field does not exist in WorkOrder schema
           createdAt: true,
           updatedAt: true
         }
@@ -53,35 +53,29 @@ const load = async (event) => {
       { Building: { name: "asc" } },
       { roomNumber: "asc" }
     ],
-    take: 50,
     include: {
       Site: { select: { name: true } },
       Building: { select: { name: true } }
     }
   });
-  const assetWithRoom = {
-    ...asset,
-    room: asset.Unit ? {
-      ...asset.Unit,
-      name: asset.Unit.name || asset.Unit.roomNumber
-    } : null,
-    Unit: void 0
-    // Optional: remove unit if we want to be strict, but keeping it is fine
+  const woStatsByStatus = await prisma.workOrder.groupBy({
+    by: ["status"],
+    where: { assetId: id },
+    _count: { status: true }
+  });
+  const statsMap = Object.fromEntries(
+    woStatsByStatus.map((s) => [s.status, s._count.status])
+  );
+  const woStats = {
+    total: asset._count.WorkOrder,
+    pending: statsMap["PENDING"] || 0,
+    inProgress: statsMap["IN_PROGRESS"] || 0,
+    completed: statsMap["COMPLETED"] || 0
   };
-  const rooms = units.map((unit) => ({
-    ...unit,
-    name: unit.name || unit.roomNumber
-  }));
-  const [totalWO, pendingWO, inProgressWO, completedWO] = await Promise.all([
-    prisma.workOrder.count({ where: { assetId: id } }),
-    prisma.workOrder.count({ where: { assetId: id, status: "PENDING" } }),
-    prisma.workOrder.count({ where: { assetId: id, status: "IN_PROGRESS" } }),
-    prisma.workOrder.count({ where: { assetId: id, status: "COMPLETED" } })
-  ]);
   return {
-    asset: assetWithRoom,
-    rooms,
-    woStats: { total: totalWO, pending: pendingWO, inProgress: inProgressWO, completed: completedWO }
+    asset,
+    units,
+    woStats
   };
 };
 const actions = {
@@ -90,14 +84,21 @@ const actions = {
     const formData = await event.request.formData();
     const { id } = event.params;
     const organizationId = event.locals.user.organizationId;
-    const name = formData.get("name");
-    const roomId = formData.get("roomId");
-    if (!name || name.trim() === "") {
-      return fail(400, { error: "Asset name is required" });
+    const rawData = {
+      name: formData.get("name"),
+      unitId: formData.get("unitId"),
+      type: formData.get("type"),
+      status: formData.get("status"),
+      description: formData.get("description"),
+      purchaseDate: formData.get("purchaseDate"),
+      warrantyExpiry: formData.get("warrantyExpiry")
+    };
+    const validationResult = assetSchema.safeParse(rawData);
+    if (!validationResult.success) {
+      const firstError = validationResult.error.issues[0];
+      return fail(400, { error: firstError.message });
     }
-    if (!roomId) {
-      return fail(400, { error: "Room is required" });
-    }
+    const data = validationResult.data;
     const existingAsset = await prisma.asset.findFirst({
       where: {
         id,
@@ -113,20 +114,26 @@ const actions = {
     }
     const unit = await prisma.unit.findFirst({
       where: {
-        id: roomId,
+        id: data.unitId,
         Site: {
           organizationId: organizationId ?? void 0
         }
       }
     });
     if (!unit) {
-      return fail(404, { error: "Room not found" });
+      return fail(404, { error: "Unit not found" });
     }
     const asset = await prisma.asset.update({
       where: { id },
       data: {
-        name: name.trim(),
-        unitId: roomId
+        name: data.name.trim(),
+        type: data.type ? data.type : void 0,
+        status: data.status ? data.status : void 0,
+        description: data.description ? data.description.trim() : void 0,
+        purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
+        warrantyExpiry: data.warrantyExpiry ? new Date(data.warrantyExpiry) : null,
+        unitId: data.unitId,
+        siteId: unit.siteId
       }
     });
     return { success: true, asset };

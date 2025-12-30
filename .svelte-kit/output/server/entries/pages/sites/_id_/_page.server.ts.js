@@ -13,14 +13,10 @@ const load = async (event) => {
       },
       Unit: {
         orderBy: [
-          { Building: { name: "asc" } },
           { floor: "asc" },
           { roomNumber: "asc" }
         ],
         include: {
-          Building: {
-            select: { name: true }
-          },
           _count: {
             select: { Asset: true }
           }
@@ -38,15 +34,14 @@ const load = async (event) => {
   if (!site) {
     throw error(404, "Site not found");
   }
-  const unitsByBuilding = {};
-  for (const unit of site.Unit) {
-    const building = unit.Building?.name || "Unassigned";
-    if (!unitsByBuilding[building]) {
-      unitsByBuilding[building] = [];
-    }
-    unitsByBuilding[building].push(unit);
-  }
-  return { site, unitsByBuilding };
+  const buildingsWithUnits = site.Building.map((building) => ({
+    id: building.id,
+    name: building.name,
+    description: building.description,
+    units: site.Unit.filter((u) => u.buildingId === building.id)
+  }));
+  const unassignedUnits = site.Unit.filter((u) => !u.buildingId);
+  return { site, buildingsWithUnits, unassignedUnits };
 };
 const actions = {
   createUnit: async (event) => {
@@ -124,6 +119,57 @@ const actions = {
       }
     });
     return { success: true, building };
+  },
+  updateBuilding: async (event) => {
+    const prisma = await createRequestPrisma(event);
+    const formData = await event.request.formData();
+    const { id: siteId } = event.params;
+    const buildingId = formData.get("buildingId");
+    const name = formData.get("name");
+    const description = formData.get("description");
+    if (!buildingId) {
+      return fail(400, { error: "Building ID is required" });
+    }
+    if (!name || name.trim() === "") {
+      return fail(400, { error: "Building name is required" });
+    }
+    const existingBuilding = await prisma.building.findFirst({
+      where: { id: buildingId, siteId }
+    });
+    if (!existingBuilding) {
+      return fail(404, { error: "Building not found" });
+    }
+    const building = await prisma.building.update({
+      where: { id: buildingId },
+      data: {
+        name: name.trim(),
+        description: description?.trim() || null
+      }
+    });
+    return { success: true, building };
+  },
+  deleteBuilding: async (event) => {
+    const prisma = await createRequestPrisma(event);
+    const formData = await event.request.formData();
+    const { id: siteId } = event.params;
+    const buildingId = formData.get("buildingId");
+    if (!buildingId) {
+      return fail(400, { error: "Building ID is required" });
+    }
+    const existingBuilding = await prisma.building.findFirst({
+      where: { id: buildingId, siteId }
+    });
+    if (!existingBuilding) {
+      return fail(404, { error: "Building not found" });
+    }
+    await prisma.unit.updateMany({
+      where: { buildingId },
+      data: { buildingId: null }
+    });
+    await prisma.building.delete({
+      where: { id: buildingId }
+    });
+    return { success: true };
   },
   updateUnit: async (event) => {
     const prisma = await createRequestPrisma(event);

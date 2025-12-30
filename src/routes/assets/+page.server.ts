@@ -10,19 +10,48 @@ export const load: PageServerLoad = async (event) => {
 	requireAuth(event);
 
 	const prisma = await createRequestPrisma(event);
-	const unitFilter = event.url.searchParams.get('unit');
 	const organizationId = event.locals.user!.organizationId;
 
+	// Get filter params
+	const typeFilter = event.url.searchParams.get('type');
+	const statusFilter = event.url.searchParams.get('status');
+	const siteFilter = event.url.searchParams.get('siteId');
+	const sortFilter = event.url.searchParams.get('sort') || 'created';
+
+	// Build where clause for filters
+	const where: any = {
+		Unit: {
+			Site: {
+				organizationId: organizationId ?? undefined
+			}
+		}
+	};
+
+	if (typeFilter) where.type = typeFilter;
+	if (statusFilter) where.status = statusFilter;
+	if (siteFilter) where.siteId = siteFilter;
+
+	// Determine sort order
+	let orderBy: any = { createdAt: 'desc' };
+	switch (sortFilter) {
+		case 'name':
+			orderBy = { name: 'asc' };
+			break;
+		case 'type':
+			orderBy = [{ type: 'asc' }, { createdAt: 'desc' }];
+			break;
+		case 'status':
+			orderBy = [{ status: 'asc' }, { createdAt: 'desc' }];
+			break;
+		case 'created':
+		default:
+			orderBy = { createdAt: 'desc' };
+			break;
+	}
+
 	const assets = await prisma.asset.findMany({
-		where: {
-			Unit: {
-				Site: {
-					organizationId: organizationId ?? undefined
-				}
-			},
-			...(unitFilter && { unitId: unitFilter })
-		},
-		orderBy: { createdAt: 'desc' },
+		where,
+		orderBy,
 		include: {
 			Unit: {
 				include: {
@@ -62,7 +91,27 @@ export const load: PageServerLoad = async (event) => {
 		}
 	});
 
-	return { assets, units, unitFilter };
+	// Get all sites for filter dropdown
+	const sites = await prisma.site.findMany({
+		where: {
+			organizationId: organizationId ?? undefined
+		},
+		orderBy: { name: 'asc' },
+		select: {
+			id: true,
+			name: true
+		}
+	});
+
+	return {
+		assets,
+		units,
+		sites,
+		type: typeFilter,
+		status: statusFilter,
+		siteId: siteFilter,
+		sort: sortFilter
+	};
 };
 
 export const actions: Actions = {

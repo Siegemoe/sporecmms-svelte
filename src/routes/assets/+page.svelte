@@ -2,14 +2,16 @@
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { ASSET_TYPES, formatAssetStatus, type AssetType, type AssetStatus } from '$lib/constants';
+	import { ASSET_TYPES, ASSET_STATUSES, formatAssetStatus, type AssetType, type AssetStatus } from '$lib/constants';
 	import AssetStatusBadge from '$lib/components/AssetStatusBadge.svelte';
 	import AssetForm from '$lib/components/AssetForm.svelte';
+	import FilterBar from '$lib/components/FilterBar.svelte';
 
 	export let data: PageData;
 
 	let showCreateForm = false;
 	let isSubmitting = false;
+	let showFilters = false;
 	let newAsset = {
 		name: '',
 		unitId: '',
@@ -30,12 +32,32 @@
 		warrantyExpiry: ''
 	};
 
+	// Filter state - initialize from URL params
+	let filterType = data.type || '';
+	let filterStatus = data.status || '';
+	let filterSite = data.siteId || '';
+	let sortOption = data.sort || 'created';
+
 	$: assets = data.assets || [];
 	$: units = data.units || [];
-	$: unitFilter = data.unitFilter;
+	$: sites = data.sites || [];
 
-	function clearFilter() {
-		goto('/assets');
+	function applyFilters() {
+		const params = new URLSearchParams();
+		if (filterType) params.set('type', filterType);
+		if (filterStatus) params.set('status', filterStatus);
+		if (filterSite) params.set('siteId', filterSite);
+		if (sortOption && sortOption !== 'created') params.set('sort', sortOption);
+
+		goto(`?${params.toString()}`, { keepFocus: true });
+	}
+
+	function clearFilters() {
+		filterType = '';
+		filterStatus = '';
+		filterSite = '';
+		sortOption = 'created';
+		applyFilters();
 	}
 
 	function startEdit(asset: any) {
@@ -75,12 +97,7 @@
 		<div>
 			<h1 class="text-4xl font-extrabold text-spore-cream tracking-tight">Assets</h1>
 			<p class="text-spore-cream/60 mt-2 text-sm font-medium">
-				{#if unitFilter}
-					Showing assets for selected unit
-					<button on:click={clearFilter} class="ml-2 text-spore-orange hover:underline" title="Remove unit filter">Clear filter</button>
-				{:else}
-					{assets.length} total asset{assets.length !== 1 ? 's' : ''}
-				{/if}
+				{assets.length} total asset{assets.length !== 1 ? 's' : ''}
 			</p>
 		</div>
 		<button
@@ -91,6 +108,46 @@
 			{showCreateForm ? 'CANCEL' : '+ NEW ASSET'}
 		</button>
 	</div>
+
+	<!-- Filter Bar -->
+	<FilterBar
+		bind:showFilters
+		toggleButtons={[]}
+		filters={[
+			{
+				value: filterType,
+				placeholder: 'All Types',
+				title: 'Filter by asset type',
+				onChange: (v) => { filterType = v; applyFilters(); },
+				options: ASSET_TYPES.map(t => ({ value: t, label: t.replace('_', ' ') }))
+			},
+			{
+				value: filterStatus,
+				placeholder: 'All Statuses',
+				title: 'Filter by status',
+				onChange: (v) => { filterStatus = v; applyFilters(); },
+				options: ASSET_STATUSES.map(s => ({ value: s, label: s.replace('_', ' ') }))
+			},
+			{
+				value: filterSite,
+				placeholder: 'All Sites',
+				title: 'Filter by site',
+				onChange: (v) => { filterSite = v; applyFilters(); },
+				show: sites.length > 0,
+				options: sites.map(s => ({ value: s.id, label: s.name }))
+			}
+		]}
+		sortOptions={[
+			{ value: 'created', label: 'Newest' },
+			{ value: 'name', label: 'Name' },
+			{ value: 'type', label: 'Type' },
+			{ value: 'status', label: 'Status' }
+		]}
+		bind:sortValue={sortOption}
+		onSortChange={(v) => { sortOption = v; applyFilters(); }}
+		onClear={clearFilters}
+		clearLabel="Reset"
+	/>
 
 	<!-- Create Form -->
 	{#if showCreateForm}
@@ -276,13 +333,9 @@
 	{:else}
 		<div class="text-center py-16 bg-spore-white rounded-xl">
 			<div class="text-5xl mb-4">⚙️</div>
-			<h3 class="text-xl font-bold text-spore-dark mb-2">No assets yet</h3>
+			<h3 class="text-xl font-bold text-spore-dark mb-2">No assets found</h3>
 			<p class="text-spore-steel mb-6">
-				{#if unitFilter}
-					No assets in this unit
-				{:else}
-					Create your first asset to start tracking equipment
-				{/if}
+				Try adjusting your filters or create your first asset to start tracking equipment
 			</p>
 			<button
 				on:click={() => showCreateForm = true}

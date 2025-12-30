@@ -13,6 +13,7 @@
 		WORK_ORDER_STATUS_COLORS,
 		WORK_ORDER_PRIORITY_COLORS
 	} from '$lib/constants';
+	import FilterBar from '$lib/components/FilterBar.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -56,6 +57,7 @@
 		filterPriority = '';
 		filterSite = '';
 		sortOption = DEFAULT_SORT_OPTION;
+		myOnly = false;
 		applyFilters();
 	}
 
@@ -173,97 +175,51 @@
 	</div>
 
 	<!-- Filter Bar -->
-	<div class="bg-spore-white rounded-xl mb-6 shadow-sm border border-spore-cream/50">
-		<!-- Mobile Filter Toggle -->
-		<div class="md:hidden p-4 border-b border-spore-cream/30 flex justify-between items-center bg-spore-cream/10">
-			<span class="text-sm font-bold text-spore-dark uppercase tracking-wide">Filters & Sort</span>
-			<button 
-				on:click={() => showFilters = !showFilters}
-				class="text-spore-orange font-bold text-sm"
-			>
-				{showFilters ? 'Hide' : 'Show'}
-			</button>
-		</div>
-
-		<!-- Filter Controls -->
-		<div class="{showFilters ? 'block' : 'hidden'} md:block p-4 space-y-4 md:space-y-0">
-			<div class="flex flex-col md:flex-row md:items-center gap-4">
-				<!-- My Orders Toggle -->
-				<button 
-					on:click={toggleMyOrders}
-					class="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors {myOnly ? 'bg-spore-orange/10 text-spore-orange ring-1 ring-spore-orange' : 'bg-spore-cream/20 text-spore-steel hover:bg-spore-cream/30'}"
-				>
-					<span class="w-4 h-4 rounded-full border border-current flex items-center justify-center">
-						{#if myOnly}<span class="w-2 h-2 rounded-full bg-current"></span>{/if}
-					</span>
-					<span class="text-sm font-bold">My Work Orders</span>
-				</button>
-
-				<div class="h-6 w-px bg-spore-cream/50 hidden md:block"></div>
-
-				<!-- Clear Button -->
-				{#if filterStatus || filterPriority || filterSite || sortOption !== 'dueDate' || myOnly}
-					<button
-						on:click={clearFilters}
-						class="text-xs font-bold text-red-500 hover:text-red-600 px-2"
-					>
-						Reset
-					</button>
-					<div class="h-6 w-px bg-spore-cream/50 hidden md:block"></div>
-				{/if}
-
-				<!-- Dropdowns -->
-				<div class="grid grid-cols-2 md:flex md:items-center gap-2 md:gap-4 flex-1">
-					<select
-						bind:value={filterStatus}
-						on:change={applyFilters}
-						class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-					>
-						<option value="">All Statuses</option>
-						{#each WORK_ORDER_STATUSES as s}
-							<option value={s}>{s.replace('_', ' ')}</option>
-						{/each}
-					</select>
-
-					<select
-						bind:value={filterPriority}
-						on:change={applyFilters}
-						class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-					>
-						<option value="">All Priorities</option>
-						{#each PRIORITIES as p}
-							<option value={p}>{p}</option>
-						{/each}
-					</select>
-
-					{#if sites.length > 0}
-						<select
-							bind:value={filterSite}
-							on:change={applyFilters}
-							class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-						>
-							<option value="">All Sites</option>
-							{#each sites as s}
-								<option value={s.id}>{s.name}</option>
-							{/each}
-						</select>
-					{/if}
-
-					<!-- Sort -->
-					<select
-						bind:value={sortOption}
-						on:change={applyFilters}
-						class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-					>
-						<option value="dueDate">Due Date</option>
-						<option value="priority">Priority</option>
-						<option value="created">Newest</option>
-						<option value="updated">Updated</option>
-					</select>
-				</div>
-			</div>
-		</div>
-	</div>
+	<FilterBar
+		bind:showFilters
+		toggleButtons={[
+			{
+				label: 'My Work Orders',
+				active: myOnly,
+				onToggle: toggleMyOrders,
+				title: 'Show only my assigned work orders'
+			}
+		]}
+		filters={[
+			{
+				value: filterStatus,
+				placeholder: 'All Statuses',
+				title: 'Filter by status',
+				onChange: (v) => { filterStatus = v; applyFilters(); },
+				options: WORK_ORDER_STATUSES.map(s => ({ value: s, label: s.replace('_', ' ') }))
+			},
+			{
+				value: filterPriority,
+				placeholder: 'All Priorities',
+				title: 'Filter by priority',
+				onChange: (v) => { filterPriority = v; applyFilters(); },
+				options: PRIORITIES.map(p => ({ value: p, label: p }))
+			},
+			{
+				value: filterSite,
+				placeholder: 'All Sites',
+				title: 'Filter by site',
+				onChange: (v) => { filterSite = v; applyFilters(); },
+				show: sites.length > 0,
+				options: sites.map(s => ({ value: s.id, label: s.name }))
+			}
+		]}
+		sortOptions={[
+			{ value: 'dueDate', label: 'Due Date' },
+			{ value: 'priority', label: 'Priority' },
+			{ value: 'created', label: 'Newest' },
+			{ value: 'updated', label: 'Updated' }
+		]}
+		bind:sortValue={sortOption}
+		onSortChange={(v) => { sortOption = v; applyFilters(); }}
+		onClear={clearFilters}
+		clearLabel="Reset"
+	/>
 
 	<!-- Create Form -->
 	{#if showCreateForm}

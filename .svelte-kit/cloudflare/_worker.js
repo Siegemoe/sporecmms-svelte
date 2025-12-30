@@ -13027,6 +13027,15 @@ var init_prisma = __esm({
   }
 });
 
+// .svelte-kit/output/server/chunks/environment.js
+var dev;
+var init_environment = __esm({
+  ".svelte-kit/output/server/chunks/environment.js"() {
+    init_true();
+    dev = DEV;
+  }
+});
+
 // .svelte-kit/output/server/chunks/auth.js
 async function hashPassword(password) {
   return bcryptjs_default.hash(password, 12);
@@ -13157,13 +13166,12 @@ async function resetPassword(token, newPassword) {
   });
   return user;
 }
-var dev, SESSION_COOKIE, SESSION_EXPIRY_DAYS;
+var SESSION_COOKIE, SESSION_EXPIRY_DAYS;
 var init_auth = __esm({
   ".svelte-kit/output/server/chunks/auth.js"() {
     init_bcryptjs();
     init_prisma();
-    init_true();
-    dev = DEV;
+    init_environment();
     SESSION_COOKIE = "spore_session";
     SESSION_EXPIRY_DAYS = 30;
   }
@@ -13455,7 +13463,7 @@ var init_internal = __esm({
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
       },
-      version_hash: "1wojeu5"
+      version_hash: "1cxun1a"
     };
   }
 });
@@ -13817,13 +13825,13 @@ function stringify(value, reducers) {
       return NEGATIVE_INFINITY;
     if (thing === 0 && 1 / thing < 0)
       return NEGATIVE_ZERO;
-    const index24 = p++;
-    indexes.set(thing, index24);
+    const index23 = p++;
+    indexes.set(thing, index23);
     for (const { key: key2, fn } of custom2) {
       const value2 = fn(thing);
       if (value2) {
-        stringified[index24] = `["${key2}",${flatten(value2)}]`;
-        return index24;
+        stringified[index23] = `["${key2}",${flatten(value2)}]`;
+        return index23;
       }
     }
     let str = "";
@@ -13917,12 +13925,12 @@ function stringify(value, reducers) {
           }
       }
     }
-    stringified[index24] = str;
-    return index24;
+    stringified[index23] = str;
+    return index23;
   }
-  const index23 = flatten(value);
-  if (index23 < 0)
-    return `${index23}`;
+  const index22 = flatten(value);
+  if (index22 < 0)
+    return `${index22}`;
   return `[${stringified.join(",")}]`;
 }
 function stringify_primitive2(thing) {
@@ -14034,18 +14042,18 @@ var require_dist2 = __commonJS({
       if (len < 2)
         return obj;
       const dec = options2?.decode || decode3;
-      let index23 = 0;
+      let index22 = 0;
       do {
-        const eqIdx = str.indexOf("=", index23);
+        const eqIdx = str.indexOf("=", index22);
         if (eqIdx === -1)
           break;
-        const colonIdx = str.indexOf(";", index23);
+        const colonIdx = str.indexOf(";", index22);
         const endIdx = colonIdx === -1 ? len : colonIdx;
         if (eqIdx > endIdx) {
-          index23 = str.lastIndexOf(";", eqIdx - 1) + 1;
+          index22 = str.lastIndexOf(";", eqIdx - 1) + 1;
           continue;
         }
-        const keyStartIdx = startIndex(str, index23, eqIdx);
+        const keyStartIdx = startIndex(str, index22, eqIdx);
         const keyEndIdx = endIndex(str, eqIdx, keyStartIdx);
         const key2 = str.slice(keyStartIdx, keyEndIdx);
         if (obj[key2] === void 0) {
@@ -14054,23 +14062,23 @@ var require_dist2 = __commonJS({
           const value = dec(str.slice(valStartIdx, valEndIdx));
           obj[key2] = value;
         }
-        index23 = endIdx + 1;
-      } while (index23 < len);
+        index22 = endIdx + 1;
+      } while (index22 < len);
       return obj;
     }
-    function startIndex(str, index23, max) {
+    function startIndex(str, index22, max) {
       do {
-        const code = str.charCodeAt(index23);
+        const code = str.charCodeAt(index22);
         if (code !== 32 && code !== 9)
-          return index23;
-      } while (++index23 < max);
+          return index22;
+      } while (++index22 < max);
       return max;
     }
-    function endIndex(str, index23, min) {
-      while (index23 > min) {
-        const code = str.charCodeAt(--index23);
+    function endIndex(str, index22, min) {
+      while (index22 > min) {
+        const code = str.charCodeAt(--index22);
         if (code !== 32 && code !== 9)
-          return index23 + 1;
+          return index22 + 1;
       }
       return min;
     }
@@ -14611,8 +14619,8 @@ var init__ = __esm({
     index = 0;
     component = async () => component_cache ??= (await Promise.resolve().then(() => (init_layout_svelte(), layout_svelte_exports))).default;
     server_id = "src/routes/+layout.server.ts";
-    imports = ["_app/immutable/nodes/0.852e6aac.js", "_app/immutable/chunks/_layout.f8e4106c.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/stores.992542e7.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/constants.d5ea747b.js"];
-    stylesheets = ["_app/immutable/assets/_layout.1b658403.css"];
+    imports = ["_app/immutable/nodes/0.2bd40391.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/stores.a8273ce7.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/constants.30bce2a0.js"];
+    stylesheets = ["_app/immutable/assets/0.6dda0482.css"];
     fonts = [];
   }
 });
@@ -14651,7 +14659,7 @@ var init__2 = __esm({
   ".svelte-kit/output/server/nodes/1.js"() {
     index2 = 1;
     component2 = async () => component_cache2 ??= (await Promise.resolve().then(() => (init_error_svelte(), error_svelte_exports))).default;
-    imports2 = ["_app/immutable/chunks/1.8b4dd032.js", "_app/immutable/chunks/error.f0cbd7f8.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/stores.992542e7.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports2 = ["_app/immutable/nodes/1.a0d1f7d7.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/stores.a8273ce7.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
     stylesheets2 = [];
     fonts2 = [];
   }
@@ -14742,7 +14750,7 @@ var init__3 = __esm({
     index3 = 2;
     component3 = async () => component_cache3 ??= (await Promise.resolve().then(() => (init_page_svelte(), page_svelte_exports))).default;
     server_id2 = "src/routes/+page.server.ts";
-    imports3 = ["_app/immutable/chunks/2.055bd3ef.js", "_app/immutable/chunks/_page.5d422754.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports3 = ["_app/immutable/nodes/2.a228d4cf.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
     stylesheets3 = [];
     fonts3 = [];
   }
@@ -14773,12 +14781,11 @@ var init_security = __esm({
   ".svelte-kit/output/server/chunks/security.js"() {
     init_prisma();
     SecurityManager = class _SecurityManager {
-      constructor() {
-        this.ipBlockCache = /* @__PURE__ */ new Map();
-        this.lastCacheCleanup = 0;
-        this.CACHE_CLEANUP_INTERVAL = 6e4;
-        this.rateLimitMap = /* @__PURE__ */ new Map();
-      }
+      static instance;
+      // In-memory cache for blocked IPs (faster than DB queries)
+      ipBlockCache = /* @__PURE__ */ new Map();
+      lastCacheCleanup = 0;
+      CACHE_CLEANUP_INTERVAL = 6e4;
       // 1 minute
       static getInstance() {
         if (!_SecurityManager.instance) {
@@ -14926,6 +14933,8 @@ var init_security = __esm({
         }
         return rateLimitResult;
       }
+      // Simple in-memory rate limiter (keeping existing logic)
+      rateLimitMap = /* @__PURE__ */ new Map();
       checkInMemoryRateLimit(key2, config2) {
         const now = Date.now();
         const entry = this.rateLimitMap.get(key2);
@@ -15168,660 +15177,6 @@ var init_audit = __esm({
   ".svelte-kit/output/server/chunks/audit.js"() {
     init_prisma();
     init_security();
-  }
-});
-
-// .svelte-kit/output/server/entries/pages/assets/_page.server.ts.js
-var page_server_ts_exports2 = {};
-__export(page_server_ts_exports2, {
-  actions: () => actions2,
-  load: () => load2
-});
-var load2, actions2;
-var init_page_server_ts2 = __esm({
-  ".svelte-kit/output/server/entries/pages/assets/_page.server.ts.js"() {
-    init_prisma();
-    init_chunks();
-    init_guards();
-    init_audit();
-    load2 = async (event) => {
-      requireAuth(event);
-      const prisma = await createRequestPrisma(event);
-      const unitFilter = event.url.searchParams.get("unit");
-      const organizationId = event.locals.user.organizationId;
-      const assets2 = await prisma.asset.findMany({
-        where: {
-          Unit: {
-            Site: {
-              organizationId: organizationId ?? void 0
-            }
-          },
-          ...unitFilter && { unitId: unitFilter }
-        },
-        orderBy: { createdAt: "desc" },
-        include: {
-          Unit: {
-            include: {
-              Site: {
-                select: { name: true }
-              },
-              Building: {
-                select: { name: true }
-              }
-            }
-          },
-          _count: {
-            select: { WorkOrder: true }
-          }
-        }
-      });
-      const units = await prisma.unit.findMany({
-        where: {
-          Site: {
-            organizationId: organizationId ?? void 0
-          }
-        },
-        orderBy: [
-          { Site: { name: "asc" } },
-          { Building: { name: "asc" } },
-          { roomNumber: "asc" }
-        ],
-        include: {
-          Site: {
-            select: { name: true }
-          },
-          Building: {
-            select: { name: true }
-          }
-        }
-      });
-      return { assets: assets2, units, unitFilter };
-    };
-    actions2 = {
-      create: async (event) => {
-        const prisma = await createRequestPrisma(event);
-        const formData = await event.request.formData();
-        const name = formData.get("name");
-        const unitId = formData.get("unitId");
-        const type = formData.get("type");
-        const status = formData.get("status") || "OPERATIONAL";
-        const description = formData.get("description");
-        const purchaseDate = formData.get("purchaseDate");
-        const warrantyExpiry = formData.get("warrantyExpiry");
-        const organizationId = event.locals.user.organizationId;
-        if (!name || name.trim() === "") {
-          return fail(400, { error: "Asset name is required" });
-        }
-        if (!unitId) {
-          return fail(400, { error: "Unit is required" });
-        }
-        const unit = await prisma.unit.findFirst({
-          where: {
-            id: unitId,
-            Site: {
-              organizationId: organizationId ?? void 0
-            }
-          }
-        });
-        if (!unit) {
-          return fail(404, { error: "Unit not found" });
-        }
-        const siteId = unit.siteId;
-        const asset = await prisma.asset.create({
-          data: {
-            name: name.trim(),
-            type,
-            status,
-            description: description?.trim() || null,
-            purchaseDate: purchaseDate ? new Date(purchaseDate) : null,
-            warrantyExpiry: warrantyExpiry ? new Date(warrantyExpiry) : null,
-            unitId,
-            siteId,
-            updatedAt: /* @__PURE__ */ new Date()
-          }
-        });
-        await logAudit(event.locals.user.id, "ASSET_CREATED", {
-          assetId: asset.id,
-          name: asset.name,
-          unitId
-        });
-        return { success: true, asset };
-      },
-      delete: async (event) => {
-        if (!isManagerOrAbove(event)) {
-          return fail(403, { error: "Permission denied. Only managers can delete assets." });
-        }
-        const prisma = await createRequestPrisma(event);
-        const formData = await event.request.formData();
-        const organizationId = event.locals.user.organizationId;
-        const assetId = formData.get("assetId");
-        if (!assetId) {
-          return fail(400, { error: "Asset ID is required" });
-        }
-        const asset = await prisma.asset.findFirst({
-          where: {
-            id: assetId,
-            Unit: {
-              Site: {
-                organizationId: organizationId ?? void 0
-              }
-            }
-          },
-          select: { name: true }
-        });
-        if (!asset) {
-          return fail(404, { error: "Asset not found" });
-        }
-        await prisma.asset.delete({
-          where: { id: assetId }
-        });
-        await logAudit(event.locals.user.id, "ASSET_DELETED", {
-          assetId,
-          name: asset?.name
-        });
-        return { success: true };
-      },
-      update: async (event) => {
-        const prisma = await createRequestPrisma(event);
-        const formData = await event.request.formData();
-        const organizationId = event.locals.user.organizationId;
-        const assetId = formData.get("assetId");
-        const name = formData.get("name");
-        const unitId = formData.get("unitId");
-        const type = formData.get("type");
-        const status = formData.get("status");
-        const description = formData.get("description");
-        const purchaseDate = formData.get("purchaseDate");
-        const warrantyExpiry = formData.get("warrantyExpiry");
-        if (!assetId) {
-          return fail(400, { error: "Asset ID is required" });
-        }
-        if (!name || name.trim() === "") {
-          return fail(400, { error: "Asset name is required" });
-        }
-        if (!unitId) {
-          return fail(400, { error: "Unit is required" });
-        }
-        const existingAsset = await prisma.asset.findFirst({
-          where: {
-            id: assetId,
-            Unit: {
-              Site: {
-                organizationId: organizationId ?? void 0
-              }
-            }
-          }
-        });
-        if (!existingAsset) {
-          return fail(404, { error: "Asset not found" });
-        }
-        const unit = await prisma.unit.findFirst({
-          where: {
-            id: unitId,
-            Site: {
-              organizationId: organizationId ?? void 0
-            }
-          }
-        });
-        if (!unit) {
-          return fail(404, { error: "Unit not found" });
-        }
-        const siteId = unit.siteId;
-        const asset = await prisma.asset.update({
-          where: { id: assetId },
-          data: {
-            name: name.trim(),
-            type: type ? type : void 0,
-            status: status ? status : void 0,
-            description: description ? description.trim() : void 0,
-            purchaseDate: purchaseDate ? new Date(purchaseDate) : null,
-            warrantyExpiry: warrantyExpiry ? new Date(warrantyExpiry) : null,
-            unitId,
-            siteId
-          }
-        });
-        return { success: true, asset };
-      }
-    };
-  }
-});
-
-// .svelte-kit/output/server/entries/pages/assets/_page.svelte.js
-var page_svelte_exports2 = {};
-__export(page_svelte_exports2, {
-  default: () => Page2
-});
-var Page2;
-var init_page_svelte2 = __esm({
-  ".svelte-kit/output/server/entries/pages/assets/_page.svelte.js"() {
-    init_ssr();
-    init_devalue();
-    Page2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-      let assets2;
-      let units;
-      let unitFilter;
-      let { data } = $$props;
-      let editingAssetId = null;
-      let editingAsset = {
-        name: "",
-        unitId: "",
-        type: "OTHER",
-        status: "OPERATIONAL",
-        description: "",
-        purchaseDate: "",
-        warrantyExpiry: ""
-      };
-      if ($$props.data === void 0 && $$bindings.data && data !== void 0)
-        $$bindings.data(data);
-      assets2 = data.assets || [];
-      units = data.units || [];
-      unitFilter = data.unitFilter;
-      return `${$$result.head += `<!-- HEAD_svelte-5egb08_START -->${$$result.title = `<title>Assets \u2014 Spore CMMS</title>`, ""}<!-- HEAD_svelte-5egb08_END -->`, ""} <div class="max-w-7xl mx-auto px-4 py-10"> <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-10"><div><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight" data-svelte-h="svelte-b9dnm5">Assets</h1> <p class="text-spore-cream/60 mt-2 text-sm font-medium">${unitFilter ? `Showing assets for selected unit
-					<button class="ml-2 text-spore-orange hover:underline" data-svelte-h="svelte-1pi4qp5">Clear filter</button>` : `${escape(assets2.length)} total asset${escape(assets2.length !== 1 ? "s" : "")}`}</p></div> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide">${escape("+ NEW ASSET")}</button></div>  ${``}  ${assets2.length > 0 ? `<div class="bg-spore-white rounded-xl overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full"><thead class="bg-spore-dark"><tr><th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-eph96p">Asset</th> <th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1skifmx">Type</th> <th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1wy5e1r">Status</th> <th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden md:table-cell" data-svelte-h="svelte-2ejboa">Location</th> <th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider text-center" data-svelte-h="svelte-1creitc">WO</th> <th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden lg:table-cell" data-svelte-h="svelte-4skpp3">Created</th> <th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-vmrd6s">Actions</th></tr></thead> <tbody class="divide-y divide-spore-cream/50">${each(assets2, (asset) => {
-        return `${editingAssetId === asset.id ? ` <tr class="bg-spore-orange/10"><td class="p-2" colspan="7"><form method="POST" action="?/update" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"><input type="hidden" name="assetId"${add_attribute("value", asset.id, 0)}> <input type="text" name="name" placeholder="Asset name" class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange" required${add_attribute("value", editingAsset.name, 0)}> <select name="unitId" class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange" required><option value="" data-svelte-h="svelte-zyg5ia">Select unit...</option>${each(units, (unit) => {
-          return `<option${add_attribute("value", unit.id, 0)}>${escape(unit.site?.name)} - Unit ${escape(unit.roomNumber)} ${escape(unit.building ? ` (${unit.building.name})` : "")} ${escape(unit.name ? ` - ${unit.name}` : "")} </option>`;
-        })}</select> <select name="type" class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="HVAC" data-svelte-h="svelte-79tluq">HVAC</option><option value="ELECTRICAL" data-svelte-h="svelte-zbiy3a">Electrical</option><option value="PLUMBING" data-svelte-h="svelte-1uvq8ry">Plumbing</option><option value="FIRE_SAFETY" data-svelte-h="svelte-1d9q4n">Fire Safety</option><option value="ELEVATOR" data-svelte-h="svelte-ge3mfi">Elevator</option><option value="SECURITY_SYSTEM" data-svelte-h="svelte-1tetcid">Security System</option><option value="OTHER" data-svelte-h="svelte-56dpqm">Other</option></select> <select name="status" class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="OPERATIONAL" data-svelte-h="svelte-o6ubge">Operational</option><option value="NEEDS_MAINTENANCE" data-svelte-h="svelte-1a7qnw9">Needs Maintenance</option><option value="OUT_OF_SERVICE" data-svelte-h="svelte-1cq3vg0">Out of Service</option></select> <input type="date" name="purchaseDate" class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"${add_attribute("value", editingAsset.purchaseDate, 0)}> <input type="date" name="warrantyExpiry" class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"${add_attribute("value", editingAsset.warrantyExpiry, 0)}> <textarea name="description" placeholder="Description" rows="2" class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange md:col-span-2">${escape("")}</textarea> <div class="flex gap-2 md:col-span-3 justify-end"><button type="submit" ${!editingAsset.name.trim() ? "disabled" : ""} class="bg-spore-forest text-white px-4 py-2 rounded font-bold text-xs hover:bg-spore-forest/90 disabled:opacity-50 transition-colors">${escape("SAVE")}</button> <button type="button" class="px-4 py-2 rounded font-bold text-xs text-spore-steel hover:bg-spore-cream transition-colors" data-svelte-h="svelte-1mwpnj">CANCEL
-												</button></div> </form></td> </tr>` : ` <tr class="hover:bg-spore-cream/20 transition-colors group"><td class="px-4 py-3"><a href="${"/assets/" + escape(asset.id, true)}" class="text-sm font-bold text-spore-dark hover:text-spore-orange transition-colors block">${escape(asset.name)} ${asset.description ? `<span class="text-xs text-spore-steel/70 font-normal block">${escape(asset.description.slice(0, 50))}${escape(asset.description.length > 50 ? "..." : "")}</span>` : ``} </a></td> <td class="px-4 py-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-spore-cream/20 text-spore-steel">${escape(asset.type?.replace("_", " ") || "Other")} </span></td> <td class="px-4 py-3"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(
-          asset.status === "OPERATIONAL" ? "bg-green-100 text-green-800" : asset.status === "NEEDS_MAINTENANCE" ? "bg-yellow-100 text-yellow-800" : "bg-red-100 text-red-800",
-          true
-        )}">${escape(asset.status?.replace("_", " ") || "Unknown")} </span></td> <td class="px-4 py-3 hidden md:table-cell"><div class="text-sm text-spore-steel"><span class="font-medium">${escape(asset.unit?.site?.name || "Unknown")}</span> <br> <span class="text-xs">Unit ${escape(asset.unit?.roomNumber || "N/A")} ${escape(asset.unit?.name ? ` - ${asset.unit.name}` : "")} ${escape(asset.unit?.building ? ` \u2022 Bldg ${asset.unit.building.name}` : "")} ${escape(asset.unit?.floor ? ` \u2022 Floor ${asset.unit.floor}` : "")}</span> </div></td> <td class="px-4 py-3 text-center">${asset._count?.workOrders > 0 ? `<span class="px-2 py-1 text-xs font-bold rounded-full bg-spore-orange/10 text-spore-orange">${escape(asset._count.workOrders)} </span>` : `<span class="text-xs text-spore-steel/50" data-svelte-h="svelte-1qa84zt">0</span>`}</td> <td class="px-4 py-3 text-sm text-spore-steel hidden lg:table-cell">${escape(new Date(asset.createdAt).toLocaleDateString())}</td> <td class="px-4 py-3 whitespace-nowrap text-xs font-medium space-x-2"><a href="${"/assets/" + escape(asset.id, true)}" class="text-spore-forest hover:text-spore-forest/70 transition-colors">View</a> <button class="text-spore-orange hover:text-spore-orange/70 transition-colors" data-svelte-h="svelte-1u2ikol">Edit</button> <form method="POST" action="?/delete" class="inline"><input type="hidden" name="assetId"${add_attribute("value", asset.id, 0)}> <button type="submit" class="text-red-500 hover:text-red-400 transition-colors" data-svelte-h="svelte-1aobehf">Delete</button> </form></td> </tr>`}`;
-      })}</tbody></table></div></div>` : `<div class="text-center py-16 bg-spore-white rounded-xl"><div class="text-5xl mb-4" data-svelte-h="svelte-1mat6ie">\u2699\uFE0F</div> <h3 class="text-xl font-bold text-spore-dark mb-2" data-svelte-h="svelte-xz11x2">No assets yet</h3> <p class="text-spore-steel mb-6">${unitFilter ? `No assets in this unit` : `Create your first asset to start tracking equipment`}</p> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold" data-svelte-h="svelte-ulaxo0">+ CREATE ASSET</button></div>`}</div>`;
-    });
-  }
-});
-
-// .svelte-kit/output/server/nodes/3.js
-var __exports4 = {};
-__export(__exports4, {
-  component: () => component4,
-  fonts: () => fonts4,
-  imports: () => imports4,
-  index: () => index4,
-  server: () => page_server_ts_exports2,
-  server_id: () => server_id3,
-  stylesheets: () => stylesheets4
-});
-var index4, component_cache4, component4, server_id3, imports4, stylesheets4, fonts4;
-var init__4 = __esm({
-  ".svelte-kit/output/server/nodes/3.js"() {
-    init_page_server_ts2();
-    index4 = 3;
-    component4 = async () => component_cache4 ??= (await Promise.resolve().then(() => (init_page_svelte2(), page_svelte_exports2))).default;
-    server_id3 = "src/routes/assets/+page.server.ts";
-    imports4 = ["_app/immutable/chunks/3.b25f707a.js", "_app/immutable/chunks/_page.4ae1fe1b.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets4 = [];
-    fonts4 = [];
-  }
-});
-
-// .svelte-kit/output/server/entries/pages/assets/_id_/_page.server.ts.js
-var page_server_ts_exports3 = {};
-__export(page_server_ts_exports3, {
-  actions: () => actions3,
-  load: () => load3
-});
-var load3, actions3;
-var init_page_server_ts3 = __esm({
-  ".svelte-kit/output/server/entries/pages/assets/_id_/_page.server.ts.js"() {
-    init_prisma();
-    init_chunks();
-    init_guards();
-    load3 = async (event) => {
-      requireAuth(event);
-      const prisma = await createRequestPrisma(event);
-      const { id } = event.params;
-      const organizationId = event.locals.user.organizationId;
-      const asset = await prisma.asset.findFirst({
-        where: {
-          id,
-          Unit: {
-            Site: {
-              organizationId: organizationId ?? void 0
-            }
-          }
-        },
-        include: {
-          Unit: {
-            include: {
-              Site: { select: { id: true, name: true } },
-              Building: { select: { id: true, name: true } }
-            }
-          },
-          WorkOrder: {
-            orderBy: { createdAt: "desc" },
-            take: 20,
-            select: {
-              id: true,
-              title: true,
-              status: true,
-              // failureMode: true, // Removed: Field does not exist in WorkOrder schema
-              createdAt: true,
-              updatedAt: true
-            }
-          },
-          _count: {
-            select: { WorkOrder: true }
-          }
-        }
-      });
-      if (!asset) {
-        throw error(404, "Asset not found");
-      }
-      const units = await prisma.unit.findMany({
-        where: {
-          Site: {
-            organizationId: organizationId ?? void 0
-          }
-        },
-        orderBy: [
-          { Site: { name: "asc" } },
-          { Building: { name: "asc" } },
-          { roomNumber: "asc" }
-        ],
-        take: 50,
-        include: {
-          Site: { select: { name: true } },
-          Building: { select: { name: true } }
-        }
-      });
-      const assetWithRoom = {
-        ...asset,
-        room: asset.Unit ? {
-          ...asset.Unit,
-          name: asset.Unit.name || asset.Unit.roomNumber
-        } : null,
-        Unit: void 0
-        // Optional: remove unit if we want to be strict, but keeping it is fine
-      };
-      const rooms = units.map((unit) => ({
-        ...unit,
-        name: unit.name || unit.roomNumber
-      }));
-      const [totalWO, pendingWO, inProgressWO, completedWO] = await Promise.all([
-        prisma.workOrder.count({ where: { assetId: id } }),
-        prisma.workOrder.count({ where: { assetId: id, status: "PENDING" } }),
-        prisma.workOrder.count({ where: { assetId: id, status: "IN_PROGRESS" } }),
-        prisma.workOrder.count({ where: { assetId: id, status: "COMPLETED" } })
-      ]);
-      return {
-        asset: assetWithRoom,
-        rooms,
-        woStats: { total: totalWO, pending: pendingWO, inProgress: inProgressWO, completed: completedWO }
-      };
-    };
-    actions3 = {
-      update: async (event) => {
-        const prisma = await createRequestPrisma(event);
-        const formData = await event.request.formData();
-        const { id } = event.params;
-        const organizationId = event.locals.user.organizationId;
-        const name = formData.get("name");
-        const roomId = formData.get("roomId");
-        if (!name || name.trim() === "") {
-          return fail(400, { error: "Asset name is required" });
-        }
-        if (!roomId) {
-          return fail(400, { error: "Room is required" });
-        }
-        const existingAsset = await prisma.asset.findFirst({
-          where: {
-            id,
-            Unit: {
-              Site: {
-                organizationId: organizationId ?? void 0
-              }
-            }
-          }
-        });
-        if (!existingAsset) {
-          return fail(404, { error: "Asset not found" });
-        }
-        const unit = await prisma.unit.findFirst({
-          where: {
-            id: roomId,
-            Site: {
-              organizationId: organizationId ?? void 0
-            }
-          }
-        });
-        if (!unit) {
-          return fail(404, { error: "Room not found" });
-        }
-        const asset = await prisma.asset.update({
-          where: { id },
-          data: {
-            name: name.trim(),
-            unitId: roomId
-          }
-        });
-        return { success: true, asset };
-      },
-      delete: async (event) => {
-        if (!isManagerOrAbove(event)) {
-          return fail(403, { error: "Permission denied. Only managers can delete assets." });
-        }
-        const prisma = await createRequestPrisma(event);
-        const { id } = event.params;
-        const organizationId = event.locals.user.organizationId;
-        const asset = await prisma.asset.findFirst({
-          where: {
-            id,
-            Unit: {
-              Site: {
-                organizationId: organizationId ?? void 0
-              }
-            }
-          }
-        });
-        if (!asset) {
-          return fail(404, { error: "Asset not found" });
-        }
-        await prisma.asset.delete({
-          where: { id }
-        });
-        throw redirect(303, "/assets");
-      }
-    };
-  }
-});
-
-// .svelte-kit/output/server/entries/pages/assets/_id_/_page.svelte.js
-var page_svelte_exports3 = {};
-__export(page_svelte_exports3, {
-  default: () => Page3
-});
-function getStatusColor(status) {
-  switch (status) {
-    case "COMPLETED":
-      return "bg-spore-forest text-white";
-    case "IN_PROGRESS":
-      return "bg-spore-orange text-white";
-    case "PENDING":
-      return "bg-spore-steel text-white";
-    case "ON_HOLD":
-      return "bg-spore-cream text-spore-steel";
-    case "CANCELLED":
-      return "bg-red-600 text-white";
-    default:
-      return "bg-spore-steel text-white";
-  }
-}
-var Page3;
-var init_page_svelte3 = __esm({
-  ".svelte-kit/output/server/entries/pages/assets/_id_/_page.svelte.js"() {
-    init_ssr();
-    init_devalue();
-    Page3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-      let asset;
-      let woStats;
-      let { data } = $$props;
-      if ($$props.data === void 0 && $$bindings.data && data !== void 0)
-        $$bindings.data(data);
-      asset = data.asset;
-      data.rooms || [];
-      woStats = data.woStats;
-      return `<div class="max-w-4xl mx-auto px-4 py-10"> <div class="mb-6"><a href="/assets" class="text-spore-cream/60 hover:text-spore-cream text-sm font-medium" data-svelte-h="svelte-of0ezv">\u2190 Back to Assets</a></div> ${` <div class="bg-spore-white rounded-xl overflow-hidden"> <div class="bg-spore-dark p-6"><div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4"><div><h1 class="text-2xl font-extrabold text-spore-cream">${escape(asset.name)}</h1> <p class="text-spore-cream/60 mt-1 text-sm">${escape(asset.room?.site?.name)} \u2022 Room ${escape(asset.room?.name)} ${asset.room?.building ? `\u2022 Bldg ${escape(asset.room.building)}` : ``} ${asset.room?.floor ? `\u2022 Floor ${escape(asset.room.floor)}` : ``}</p></div> <div class="flex gap-2"><button class="bg-spore-forest text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-spore-forest/90 transition-colors" data-svelte-h="svelte-9ofjog">EDIT</button> <form method="POST" action="?/delete"><button type="submit" class="px-4 py-2 rounded-lg font-bold text-sm text-red-400 border border-red-400/30 hover:bg-red-400/10 transition-colors" data-svelte-h="svelte-hv97bx">DELETE</button></form></div></div></div>  <div class="grid grid-cols-2 sm:grid-cols-4 border-b border-spore-cream"><div class="p-4 text-center border-r border-spore-cream"><p class="text-2xl font-extrabold text-spore-dark">${escape(woStats.total)}</p> <p class="text-xs font-bold text-spore-steel uppercase" data-svelte-h="svelte-14h9nd3">Total WOs</p></div> <div class="p-4 text-center border-r border-spore-cream"><p class="text-2xl font-extrabold text-spore-steel">${escape(woStats.pending)}</p> <p class="text-xs font-bold text-spore-steel uppercase" data-svelte-h="svelte-vg7ifd">Pending</p></div> <div class="p-4 text-center border-r border-spore-cream"><p class="text-2xl font-extrabold text-spore-orange">${escape(woStats.inProgress)}</p> <p class="text-xs font-bold text-spore-steel uppercase" data-svelte-h="svelte-bf56gq">In Progress</p></div> <div class="p-4 text-center"><p class="text-2xl font-extrabold text-spore-forest">${escape(woStats.completed)}</p> <p class="text-xs font-bold text-spore-steel uppercase" data-svelte-h="svelte-300hz3">Completed</p></div></div>  <div class="p-6"><div class="flex justify-between items-center mb-4"><h2 class="text-lg font-bold text-spore-dark" data-svelte-h="svelte-1ez9epy">Work Order History</h2> <a href="${"/work-orders?asset=" + escape(asset.id, true)}" class="text-sm font-bold text-spore-orange hover:text-spore-orange/80">View All \u2192</a></div> ${asset.workOrders && asset.workOrders.length > 0 ? `<div class="space-y-3">${each(asset.workOrders, (wo) => {
-        return `<a href="${"/work-orders/" + escape(wo.id, true)}" class="flex items-center justify-between p-4 bg-spore-cream/20 rounded-lg hover:bg-spore-cream/40 transition-colors border border-spore-cream/50"><div class="flex-1 min-w-0"><p class="font-bold text-spore-dark truncate">${escape(wo.title)}</p> <p class="text-xs text-spore-steel mt-1">${escape(wo.failureMode || "General")} \u2022 ${escape(new Date(wo.createdAt).toLocaleDateString())} </p></div> <span class="${"ml-4 px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-full " + escape(getStatusColor(wo.status), true)}">${escape(wo.status.replace("_", " "))}</span> </a>`;
-      })}</div>` : `<div class="text-center py-8 bg-spore-cream/20 rounded-lg"><p class="text-spore-steel" data-svelte-h="svelte-17d3vfe">No work orders for this asset</p> <a href="/work-orders" class="inline-block mt-4 bg-spore-orange text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-spore-orange/90 transition-colors" data-svelte-h="svelte-1jqrttq">Create Work Order</a></div>`}</div></div>`}</div>`;
-    });
-  }
-});
-
-// .svelte-kit/output/server/nodes/4.js
-var __exports5 = {};
-__export(__exports5, {
-  component: () => component5,
-  fonts: () => fonts5,
-  imports: () => imports5,
-  index: () => index5,
-  server: () => page_server_ts_exports3,
-  server_id: () => server_id4,
-  stylesheets: () => stylesheets5
-});
-var index5, component_cache5, component5, server_id4, imports5, stylesheets5, fonts5;
-var init__5 = __esm({
-  ".svelte-kit/output/server/nodes/4.js"() {
-    init_page_server_ts3();
-    index5 = 4;
-    component5 = async () => component_cache5 ??= (await Promise.resolve().then(() => (init_page_svelte3(), page_svelte_exports3))).default;
-    server_id4 = "src/routes/assets/[id]/+page.server.ts";
-    imports5 = ["_app/immutable/nodes/4.996240e3.js", "_app/immutable/chunks/_page.dbec0129.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets5 = [];
-    fonts5 = [];
-  }
-});
-
-// .svelte-kit/output/server/entries/pages/audit-log/_page.server.ts.js
-var page_server_ts_exports4 = {};
-__export(page_server_ts_exports4, {
-  load: () => load4
-});
-var load4;
-var init_page_server_ts4 = __esm({
-  ".svelte-kit/output/server/entries/pages/audit-log/_page.server.ts.js"() {
-    init_prisma();
-    init_chunks();
-    init_guards();
-    load4 = async (event) => {
-      initEnvFromEvent(event);
-      if (!isAdmin(event)) {
-        throw error(403, "Access denied. Admin privileges required.");
-      }
-      const organizationId = event.locals.user.organizationId;
-      const page2 = parseInt(event.url.searchParams.get("page") || "1");
-      const limit = 50;
-      const skip2 = (page2 - 1) * limit;
-      const client = await getPrisma();
-      const userIdsInOrg = await client.user.findMany({
-        where: { organizationId: organizationId ?? void 0 },
-        select: { id: true }
-      }).then((users) => users.map((u) => u.id));
-      const auditLogs = await client.auditLog.findMany({
-        where: {
-          userId: { in: userIdsInOrg }
-        },
-        orderBy: { createdAt: "desc" },
-        skip: skip2,
-        take: limit,
-        include: {
-          User: {
-            select: {
-              firstName: true,
-              lastName: true,
-              email: true
-            }
-          }
-        }
-      });
-      const totalCount = await client.auditLog.count({
-        where: {
-          userId: { in: userIdsInOrg }
-        }
-      });
-      const totalPages = Math.ceil(totalCount / limit);
-      return {
-        auditLogs,
-        page: page2,
-        totalPages,
-        totalCount
-      };
-    };
-  }
-});
-
-// .svelte-kit/output/server/entries/pages/audit-log/_page.svelte.js
-var page_svelte_exports4 = {};
-__export(page_svelte_exports4, {
-  default: () => Page4
-});
-function getUserName(user) {
-  if (user.firstName || user.lastName) {
-    return [user.firstName, user.lastName].filter(Boolean).join(" ");
-  }
-  return user.email;
-}
-function formatAction(action) {
-  return action.replace(/_/g, " ").toLowerCase().replace(/^\w/, (c2) => c2.toUpperCase());
-}
-function getActionColor(action) {
-  if (action.includes("DELETED"))
-    return "text-red-500";
-  if (action.includes("CREATED"))
-    return "text-spore-forest";
-  if (action.includes("CHANGED") || action.includes("ASSIGNED"))
-    return "text-spore-orange";
-  return "text-spore-steel";
-}
-function formatDetails(details) {
-  if (!details)
-    return "";
-  if (typeof details === "object") {
-    return Object.entries(details).filter(([_, v]) => v != null).map(([k, v]) => `${k}: ${v}`).join(", ");
-  }
-  return String(details);
-}
-var Page4;
-var init_page_svelte4 = __esm({
-  ".svelte-kit/output/server/entries/pages/audit-log/_page.svelte.js"() {
-    init_ssr();
-    Page4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-      let auditLogs;
-      let page2;
-      let totalPages;
-      let { data } = $$props;
-      if ($$props.data === void 0 && $$bindings.data && data !== void 0)
-        $$bindings.data(data);
-      auditLogs = data.auditLogs || [];
-      page2 = data.page;
-      totalPages = data.totalPages;
-      return `${$$result.head += `<!-- HEAD_svelte-111n33w_START -->${$$result.title = `<title>Audit Log \u2014 Spore CMMS</title>`, ""}<!-- HEAD_svelte-111n33w_END -->`, ""} <div class="max-w-7xl mx-auto px-4 py-10"><div class="mb-8"><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight" data-svelte-h="svelte-1fam30h">Audit Log</h1> <p class="text-spore-cream/60 mt-2" data-svelte-h="svelte-16iiojr">Track all changes made in your organization</p></div> ${auditLogs.length > 0 ? `<div class="bg-spore-white rounded-xl overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full"><thead class="bg-spore-dark"><tr><th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1m6unqy">When</th> <th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-10vh90y">Who</th> <th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1tih4uw">Action</th> <th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1enb6fs">Details</th></tr></thead> <tbody class="divide-y divide-spore-cream/50">${each(auditLogs, (log) => {
-        return `<tr class="hover:bg-spore-cream/20 transition-colors"><td class="px-6 py-4 whitespace-nowrap text-sm text-spore-steel"><time${add_attribute("datetime", log.createdAt.toString(), 0)}>${escape(new Date(log.createdAt).toLocaleString())} </time></td> <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-spore-dark">${escape(getUserName(log.User))}</td> <td class="px-6 py-4 whitespace-nowrap"><span class="${"text-sm font-bold " + escape(getActionColor(log.action), true)}">${escape(formatAction(log.action))} </span></td> <td class="px-6 py-4 text-sm text-spore-steel max-w-md truncate"${add_attribute("title", formatDetails(log.details), 0)}>${escape(formatDetails(log.details))}</td> </tr>`;
-      })}</tbody></table></div></div>  ${totalPages > 1 ? `<div class="flex justify-center gap-2 mt-6">${page2 > 1 ? `<a href="${"/audit-log?page=" + escape(page2 - 1, true)}" class="px-4 py-2 bg-spore-white text-spore-steel rounded-lg hover:bg-spore-cream transition-colors text-sm font-bold">\u2190 Previous</a>` : ``} <span class="px-4 py-2 text-spore-cream/60 text-sm">Page ${escape(page2)} of ${escape(totalPages)}</span> ${page2 < totalPages ? `<a href="${"/audit-log?page=" + escape(page2 + 1, true)}" class="px-4 py-2 bg-spore-white text-spore-steel rounded-lg hover:bg-spore-cream transition-colors text-sm font-bold">Next \u2192</a>` : ``}</div>` : ``}` : `<div class="text-center py-16 bg-spore-white rounded-xl"><div class="text-5xl mb-4" data-svelte-h="svelte-7jlewd">\u{1F4DC}</div> <h3 class="text-xl font-bold text-spore-dark mb-2" data-svelte-h="svelte-z8atj6">No activity yet</h3> <p class="text-spore-steel" data-svelte-h="svelte-wb5xqh">Actions will be recorded here as users make changes</p></div>`}</div>`;
-    });
-  }
-});
-
-// .svelte-kit/output/server/nodes/5.js
-var __exports6 = {};
-__export(__exports6, {
-  component: () => component6,
-  fonts: () => fonts6,
-  imports: () => imports6,
-  index: () => index6,
-  server: () => page_server_ts_exports4,
-  server_id: () => server_id5,
-  stylesheets: () => stylesheets6
-});
-var index6, component_cache6, component6, server_id5, imports6, stylesheets6, fonts6;
-var init__6 = __esm({
-  ".svelte-kit/output/server/nodes/5.js"() {
-    init_page_server_ts4();
-    index6 = 5;
-    component6 = async () => component_cache6 ??= (await Promise.resolve().then(() => (init_page_svelte4(), page_svelte_exports4))).default;
-    server_id5 = "src/routes/audit-log/+page.server.ts";
-    imports6 = ["_app/immutable/nodes/5.5286893b.js", "_app/immutable/chunks/_page.5e0f68a0.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js"];
-    stylesheets6 = [];
-    fonts6 = [];
   }
 });
 
@@ -17595,11 +16950,11 @@ function isValidJWT(token, algorithm = null) {
     return false;
   }
 }
-function handleArrayResult(result, final, index23) {
+function handleArrayResult(result, final, index22) {
   if (result.issues.length) {
-    final.issues.push(...prefixIssues(index23, result.issues));
+    final.issues.push(...prefixIssues(index22, result.issues));
   }
-  final.value[index23] = result.value;
+  final.value[index22] = result.value;
 }
 function handlePropertyResult(result, final, key2, input) {
   if (result.issues.length) {
@@ -17710,14 +17065,14 @@ function mergeValues(a, b) {
       return { valid: false, mergeErrorPath: [] };
     }
     const newArray = [];
-    for (let index23 = 0; index23 < a.length; index23++) {
-      const itemA = a[index23];
-      const itemB = b[index23];
+    for (let index22 = 0; index22 < a.length; index22++) {
+      const itemA = a[index22];
+      const itemB = b[index22];
       const sharedValue = mergeValues(itemA, itemB);
       if (!sharedValue.valid) {
         return {
           valid: false,
-          mergeErrorPath: [index23, ...sharedValue.mergeErrorPath]
+          mergeErrorPath: [index22, ...sharedValue.mergeErrorPath]
         };
       }
       newArray.push(sharedValue.data);
@@ -17742,11 +17097,11 @@ function handleIntersectionResults(result, left, right) {
   result.value = merged.data;
   return result;
 }
-function handleTupleResult(result, final, index23) {
+function handleTupleResult(result, final, index22) {
   if (result.issues.length) {
-    final.issues.push(...prefixIssues(index23, result.issues));
+    final.issues.push(...prefixIssues(index22, result.issues));
   }
-  final.value[index23] = result.value;
+  final.value[index22] = result.value;
 }
 function handleMapResult(keyResult, valueResult, final, key2, input, inst, ctx) {
   if (keyResult.issues.length) {
@@ -28988,6 +28343,1188 @@ var init_zod = __esm({
   }
 });
 
+// .svelte-kit/output/server/chunks/validation.js
+function validateInput(schema, data) {
+  const result = schema.safeParse(data);
+  if (!result.success) {
+    const errors = {};
+    result.error.issues.forEach((issue2) => {
+      const key2 = issue2.path[0];
+      if (typeof key2 === "string") {
+        errors[key2] = issue2.message;
+      }
+    });
+    return { success: false, errors };
+  }
+  return { success: true, data: result.data };
+}
+var passwordPatterns, errorMessages, registerSchema, createOrganizationSchema, joinOrganizationSchema, loginSchema, assetSchema, passwordResetSchema;
+var init_validation = __esm({
+  ".svelte-kit/output/server/chunks/validation.js"() {
+    init_zod();
+    passwordPatterns = {
+      uppercase: /[A-Z]/,
+      lowercase: /[a-z]/,
+      number: /[0-9]/,
+      special: /[^A-Za-z0-9]/
+    };
+    errorMessages = {
+      email: "Please enter a valid email address",
+      password: {
+        minLength: "Password must be at least 8 characters long",
+        uppercase: "Password must contain at least one uppercase letter",
+        lowercase: "Password must contain at least one lowercase letter",
+        number: "Password must contain at least one number",
+        special: "Password must contain at least one special character"
+      },
+      orgName: "Organization name must be between 2 and 100 characters",
+      name: "Name must be between 1 and 50 characters"
+    };
+    registerSchema = external_exports.object({
+      firstName: external_exports.string().min(1, errorMessages.name).max(50, errorMessages.name).trim(),
+      lastName: external_exports.string().max(50, errorMessages.name).trim().optional(),
+      email: external_exports.string().email(errorMessages.email).trim().toLowerCase(),
+      password: external_exports.string().min(8, errorMessages.password.minLength).regex(passwordPatterns.uppercase, errorMessages.password.uppercase).regex(passwordPatterns.lowercase, errorMessages.password.lowercase).regex(passwordPatterns.number, errorMessages.password.number).regex(passwordPatterns.special, errorMessages.password.special)
+    });
+    createOrganizationSchema = external_exports.object({
+      orgName: external_exports.string().min(2, errorMessages.orgName).max(100, errorMessages.orgName).trim()
+    });
+    joinOrganizationSchema = external_exports.object({
+      inviteToken: external_exports.string().min(1, "Invite token is required").trim()
+    });
+    loginSchema = external_exports.object({
+      email: external_exports.string().email(errorMessages.email).trim().toLowerCase(),
+      password: external_exports.string().min(1, "Password is required")
+    });
+    external_exports.object({
+      name: external_exports.string().min(1, "Site name is required").max(100, "Site name must be less than 100 characters").trim()
+    });
+    external_exports.object({
+      name: external_exports.string().min(1, "Room name is required").max(100, "Room name must be less than 100 characters").trim(),
+      building: external_exports.string().max(10, "Building identifier must be less than 10 characters").trim().optional(),
+      floor: external_exports.number().int().min(0, "Floor must be 0 or higher").max(100, "Floor must be less than 100").optional()
+    });
+    assetSchema = external_exports.object({
+      name: external_exports.string().min(1, "Asset name is required").max(100, "Asset name must be less than 100 characters").trim(),
+      unitId: external_exports.string().min(1, "Please select a unit").cuid("Invalid unit selection"),
+      type: external_exports.enum(["HVAC", "ELECTRICAL", "PLUMBING", "FIRE_SAFETY", "ELEVATOR", "SECURITY_SYSTEM", "OTHER"]).optional(),
+      status: external_exports.enum(["OPERATIONAL", "NEEDS_MAINTENANCE", "OUT_OF_SERVICE"]).optional(),
+      description: external_exports.string().max(1e3, "Description must be less than 1000 characters").trim().optional(),
+      purchaseDate: external_exports.string().datetime("Invalid date format").optional(),
+      warrantyExpiry: external_exports.string().datetime("Invalid date format").optional()
+    });
+    external_exports.object({
+      title: external_exports.string().min(1, "Title is required").max(200, "Title must be less than 200 characters").trim(),
+      description: external_exports.string().min(1, "Description is required").max(2e3, "Description must be less than 2000 characters").trim(),
+      assetId: external_exports.string().min(1, "Please select an asset").cuid("Invalid asset selection").optional(),
+      assignedToId: external_exports.string().cuid("Invalid user selection").optional(),
+      revisitSchedule: external_exports.string().datetime("Invalid date format").optional()
+    });
+    external_exports.object({
+      email: external_exports.string().email(errorMessages.email).trim().toLowerCase(),
+      passphrase: external_exports.string().min(1, "Passphrase is required").trim()
+    });
+    passwordResetSchema = external_exports.object({
+      token: external_exports.string().min(1, "Reset token is required").trim(),
+      password: external_exports.string().min(8, errorMessages.password.minLength).regex(passwordPatterns.uppercase, errorMessages.password.uppercase).regex(passwordPatterns.lowercase, errorMessages.password.lowercase).regex(passwordPatterns.number, errorMessages.password.number).regex(passwordPatterns.special, errorMessages.password.special),
+      confirmPassword: external_exports.string().min(1, "Please confirm your password")
+    }).refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords don't match",
+      path: ["confirmPassword"]
+    });
+    external_exports.object({
+      firstName: external_exports.string().min(1, errorMessages.name).max(50, errorMessages.name).trim().optional(),
+      lastName: external_exports.string().max(50, errorMessages.name).trim().optional(),
+      email: external_exports.string().email(errorMessages.email).trim().toLowerCase().optional(),
+      phoneNumber: external_exports.string().regex(/^[+]?[\d\s\-\(\)]+$/, "Please enter a valid phone number").optional()
+    });
+  }
+});
+
+// .svelte-kit/output/server/entries/pages/assets/_page.server.ts.js
+var page_server_ts_exports2 = {};
+__export(page_server_ts_exports2, {
+  actions: () => actions2,
+  load: () => load2
+});
+var load2, actions2;
+var init_page_server_ts2 = __esm({
+  ".svelte-kit/output/server/entries/pages/assets/_page.server.ts.js"() {
+    init_prisma();
+    init_chunks();
+    init_guards();
+    init_audit();
+    init_validation();
+    load2 = async (event) => {
+      requireAuth(event);
+      const prisma = await createRequestPrisma(event);
+      const organizationId = event.locals.user.organizationId;
+      const typeFilter = event.url.searchParams.get("type");
+      const statusFilter = event.url.searchParams.get("status");
+      const siteFilter = event.url.searchParams.get("siteId");
+      const sortFilter = event.url.searchParams.get("sort") || "created";
+      const where = {
+        Unit: {
+          Site: {
+            organizationId: organizationId ?? void 0
+          }
+        }
+      };
+      if (typeFilter)
+        where.type = typeFilter;
+      if (statusFilter)
+        where.status = statusFilter;
+      if (siteFilter)
+        where.siteId = siteFilter;
+      let orderBy = { createdAt: "desc" };
+      switch (sortFilter) {
+        case "name":
+          orderBy = { name: "asc" };
+          break;
+        case "type":
+          orderBy = [{ type: "asc" }, { createdAt: "desc" }];
+          break;
+        case "status":
+          orderBy = [{ status: "asc" }, { createdAt: "desc" }];
+          break;
+        case "created":
+        default:
+          orderBy = { createdAt: "desc" };
+          break;
+      }
+      const assets2 = await prisma.asset.findMany({
+        where,
+        orderBy,
+        include: {
+          Unit: {
+            include: {
+              Site: {
+                select: { name: true }
+              },
+              Building: {
+                select: { name: true }
+              }
+            }
+          },
+          _count: {
+            select: { WorkOrder: true }
+          }
+        }
+      });
+      const units = await prisma.unit.findMany({
+        where: {
+          Site: {
+            organizationId: organizationId ?? void 0
+          }
+        },
+        orderBy: [
+          { Site: { name: "asc" } },
+          { Building: { name: "asc" } },
+          { roomNumber: "asc" }
+        ],
+        include: {
+          Site: {
+            select: { name: true }
+          },
+          Building: {
+            select: { name: true }
+          }
+        }
+      });
+      const sites = await prisma.site.findMany({
+        where: {
+          organizationId: organizationId ?? void 0
+        },
+        orderBy: { name: "asc" },
+        select: {
+          id: true,
+          name: true
+        }
+      });
+      return {
+        assets: assets2,
+        units,
+        sites,
+        type: typeFilter,
+        status: statusFilter,
+        siteId: siteFilter,
+        sort: sortFilter
+      };
+    };
+    actions2 = {
+      create: async (event) => {
+        const prisma = await createRequestPrisma(event);
+        const formData = await event.request.formData();
+        const organizationId = event.locals.user.organizationId;
+        const rawData = {
+          name: formData.get("name"),
+          unitId: formData.get("unitId"),
+          type: formData.get("type"),
+          status: formData.get("status") || "OPERATIONAL",
+          description: formData.get("description"),
+          purchaseDate: formData.get("purchaseDate"),
+          warrantyExpiry: formData.get("warrantyExpiry")
+        };
+        const validationResult = assetSchema.safeParse(rawData);
+        if (!validationResult.success) {
+          const firstError = validationResult.error.issues[0];
+          return fail(400, { error: firstError.message });
+        }
+        const data = validationResult.data;
+        const unit = await prisma.unit.findFirst({
+          where: {
+            id: data.unitId,
+            Site: {
+              organizationId: organizationId ?? void 0
+            }
+          }
+        });
+        if (!unit) {
+          return fail(404, { error: "Unit not found" });
+        }
+        const asset = await prisma.asset.create({
+          data: {
+            name: data.name.trim(),
+            type: data.type || "OTHER",
+            status: data.status || "OPERATIONAL",
+            description: data.description?.trim() || null,
+            purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
+            warrantyExpiry: data.warrantyExpiry ? new Date(data.warrantyExpiry) : null,
+            unitId: data.unitId,
+            siteId: unit.siteId,
+            updatedAt: /* @__PURE__ */ new Date()
+          }
+        });
+        await logAudit(event.locals.user.id, "ASSET_CREATED", {
+          assetId: asset.id,
+          name: asset.name,
+          unitId: data.unitId
+        });
+        return { success: true, asset };
+      },
+      delete: async (event) => {
+        if (!isManagerOrAbove(event)) {
+          return fail(403, { error: "Permission denied. Only managers can delete assets." });
+        }
+        const prisma = await createRequestPrisma(event);
+        const formData = await event.request.formData();
+        const organizationId = event.locals.user.organizationId;
+        const assetId = formData.get("assetId");
+        if (!assetId) {
+          return fail(400, { error: "Asset ID is required" });
+        }
+        const asset = await prisma.asset.findFirst({
+          where: {
+            id: assetId,
+            Unit: {
+              Site: {
+                organizationId: organizationId ?? void 0
+              }
+            }
+          },
+          select: { name: true }
+        });
+        if (!asset) {
+          return fail(404, { error: "Asset not found" });
+        }
+        await prisma.asset.delete({
+          where: { id: assetId }
+        });
+        await logAudit(event.locals.user.id, "ASSET_DELETED", {
+          assetId,
+          name: asset?.name
+        });
+        return { success: true };
+      },
+      update: async (event) => {
+        const prisma = await createRequestPrisma(event);
+        const formData = await event.request.formData();
+        const organizationId = event.locals.user.organizationId;
+        const assetId = formData.get("assetId");
+        const rawData = {
+          name: formData.get("name"),
+          unitId: formData.get("unitId"),
+          type: formData.get("type"),
+          status: formData.get("status"),
+          description: formData.get("description"),
+          purchaseDate: formData.get("purchaseDate"),
+          warrantyExpiry: formData.get("warrantyExpiry")
+        };
+        const validationResult = assetSchema.safeParse(rawData);
+        if (!validationResult.success) {
+          const firstError = validationResult.error.issues[0];
+          return fail(400, { error: firstError.message });
+        }
+        const data = validationResult.data;
+        if (!assetId) {
+          return fail(400, { error: "Asset ID is required" });
+        }
+        const existingAsset = await prisma.asset.findFirst({
+          where: {
+            id: assetId,
+            Unit: {
+              Site: {
+                organizationId: organizationId ?? void 0
+              }
+            }
+          }
+        });
+        if (!existingAsset) {
+          return fail(404, { error: "Asset not found" });
+        }
+        const unit = await prisma.unit.findFirst({
+          where: {
+            id: data.unitId,
+            Site: {
+              organizationId: organizationId ?? void 0
+            }
+          }
+        });
+        if (!unit) {
+          return fail(404, { error: "Unit not found" });
+        }
+        const asset = await prisma.asset.update({
+          where: { id: assetId },
+          data: {
+            name: data.name.trim(),
+            type: data.type ? data.type : void 0,
+            status: data.status ? data.status : void 0,
+            description: data.description ? data.description.trim() : void 0,
+            purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
+            warrantyExpiry: data.warrantyExpiry ? new Date(data.warrantyExpiry) : null,
+            unitId: data.unitId,
+            siteId: unit.siteId
+          }
+        });
+        return { success: true, asset };
+      }
+    };
+  }
+});
+
+// .svelte-kit/output/server/chunks/FilterBar.js
+function client_method(key2) {
+  {
+    if (key2 === "before_navigate" || key2 === "after_navigate" || key2 === "on_navigate") {
+      return () => {
+      };
+    } else {
+      const name_lookup = {
+        disable_scroll_handling: "disableScrollHandling",
+        preload_data: "preloadData",
+        preload_code: "preloadCode",
+        invalidate_all: "invalidateAll"
+      };
+      return () => {
+        throw new Error(`Cannot call ${name_lookup[key2] ?? key2}(...) on the server`);
+      };
+    }
+  }
+}
+var goto, FilterBar;
+var init_FilterBar = __esm({
+  ".svelte-kit/output/server/chunks/FilterBar.js"() {
+    init_ssr();
+    goto = /* @__PURE__ */ client_method("goto");
+    FilterBar = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+      let { showFilters = false } = $$props;
+      let { onClear = void 0 } = $$props;
+      let { clearLabel = "Reset" } = $$props;
+      let { mobileTitle = "Filters & Sort" } = $$props;
+      let { toggleButtons = [] } = $$props;
+      let { filters = [] } = $$props;
+      let { sortOptions } = $$props;
+      let { sortValue } = $$props;
+      let { onSortChange } = $$props;
+      let { sortPlaceholder = "Sort..." } = $$props;
+      createEventDispatcher();
+      function hasActiveFilters() {
+        return toggleButtons.some((b) => b.active) || filters.some((f) => f.value && f.value !== "" && f.value !== false);
+      }
+      if ($$props.showFilters === void 0 && $$bindings.showFilters && showFilters !== void 0)
+        $$bindings.showFilters(showFilters);
+      if ($$props.onClear === void 0 && $$bindings.onClear && onClear !== void 0)
+        $$bindings.onClear(onClear);
+      if ($$props.clearLabel === void 0 && $$bindings.clearLabel && clearLabel !== void 0)
+        $$bindings.clearLabel(clearLabel);
+      if ($$props.mobileTitle === void 0 && $$bindings.mobileTitle && mobileTitle !== void 0)
+        $$bindings.mobileTitle(mobileTitle);
+      if ($$props.toggleButtons === void 0 && $$bindings.toggleButtons && toggleButtons !== void 0)
+        $$bindings.toggleButtons(toggleButtons);
+      if ($$props.filters === void 0 && $$bindings.filters && filters !== void 0)
+        $$bindings.filters(filters);
+      if ($$props.sortOptions === void 0 && $$bindings.sortOptions && sortOptions !== void 0)
+        $$bindings.sortOptions(sortOptions);
+      if ($$props.sortValue === void 0 && $$bindings.sortValue && sortValue !== void 0)
+        $$bindings.sortValue(sortValue);
+      if ($$props.onSortChange === void 0 && $$bindings.onSortChange && onSortChange !== void 0)
+        $$bindings.onSortChange(onSortChange);
+      if ($$props.sortPlaceholder === void 0 && $$bindings.sortPlaceholder && sortPlaceholder !== void 0)
+        $$bindings.sortPlaceholder(sortPlaceholder);
+      return `<div class="bg-spore-white rounded-xl mb-6 shadow-sm border border-spore-cream/50"> <div class="md:hidden p-4 border-b border-spore-cream/30 flex justify-between items-center bg-spore-cream/10"><span class="text-sm font-bold text-spore-dark uppercase tracking-wide">${escape(mobileTitle)}</span> <button class="text-spore-orange font-bold text-sm" type="button" title="Toggle filters">${escape(showFilters ? "Hide" : "Show")}</button></div>  <div class="${escape(showFilters ? "block" : "hidden", true) + " md:block p-4 space-y-4 md:space-y-0"}"><div class="flex flex-col md:flex-row md:items-center gap-4"> ${each(toggleButtons, (btn) => {
+        return `<button type="button" class="${"flex items-center gap-2 px-3 py-2 rounded-lg transition-colors " + escape(
+          btn.active ? "bg-spore-orange/10 text-spore-orange ring-1 ring-spore-orange" : "bg-spore-cream/20 text-spore-steel hover:bg-spore-cream/30",
+          true
+        )}"${add_attribute("title", btn.title, 0)}><span class="w-4 h-4 rounded-full border border-current flex items-center justify-center">${btn.active ? `<span class="w-2 h-2 rounded-full bg-current"></span>` : ``}</span> <span class="text-sm font-bold">${escape(btn.label)}</span> </button>`;
+      })} ${toggleButtons.length > 0 ? `<div class="h-6 w-px bg-spore-cream/50 hidden md:block"></div>` : ``}  ${hasActiveFilters() ? `<button type="button" class="text-xs font-bold text-red-500 hover:text-red-600 px-2" title="Clear all filters">${escape(clearLabel)}</button> <div class="h-6 w-px bg-spore-cream/50 hidden md:block"></div>` : ``}  <div class="grid grid-cols-2 md:flex md:items-center gap-2 md:gap-4 flex-1">${each(filters, (filter) => {
+        return `${filter.show !== false ? `<select class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"${add_attribute("title", filter.title, 0)}><option value="">${escape(filter.placeholder)}</option>${each(filter.options, (opt) => {
+          return `<option${add_attribute("value", opt.value, 0)}>${escape(opt.label)}</option>`;
+        })}</select>` : ``}`;
+      })}  <select class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange" title="Sort results">${each(sortOptions, (opt) => {
+        return `<option${add_attribute("value", opt.value, 0)}>${escape(opt.label)}</option>`;
+      })}</select></div></div></div></div>`;
+    });
+  }
+});
+
+// .svelte-kit/output/server/chunks/constants.js
+function formatAssetStatus(status) {
+  return status?.replace("_", " ") || "Unknown";
+}
+var WORK_ORDER_STATUSES, PRIORITIES, DEFAULT_SORT_OPTION, DEFAULT_PRIORITY, PRIORITY_ORDER, WORK_ORDER_STATUS_COLORS, WORK_ORDER_PRIORITY_COLORS, ASSET_TYPES, ASSET_STATUSES, ASSET_STATUS_COLORS;
+var init_constants2 = __esm({
+  ".svelte-kit/output/server/chunks/constants.js"() {
+    WORK_ORDER_STATUSES = [
+      "PENDING",
+      "IN_PROGRESS",
+      "ON_HOLD",
+      "COMPLETED",
+      "CANCELLED"
+    ];
+    PRIORITIES = [
+      "LOW",
+      "MEDIUM",
+      "HIGH",
+      "EMERGENCY"
+    ];
+    DEFAULT_SORT_OPTION = "dueDate";
+    DEFAULT_PRIORITY = "MEDIUM";
+    PRIORITY_ORDER = {
+      EMERGENCY: 0,
+      HIGH: 1,
+      MEDIUM: 2,
+      LOW: 3
+    };
+    WORK_ORDER_STATUS_COLORS = {
+      PENDING: "bg-yellow-100 text-yellow-800",
+      IN_PROGRESS: "bg-blue-100 text-blue-800",
+      COMPLETED: "bg-green-100 text-green-800",
+      ON_HOLD: "bg-gray-100 text-gray-800",
+      CANCELLED: "bg-red-100 text-red-800"
+    };
+    WORK_ORDER_PRIORITY_COLORS = {
+      LOW: "bg-gray-100 text-gray-600",
+      MEDIUM: "bg-blue-100 text-blue-600",
+      HIGH: "bg-orange-100 text-orange-600",
+      EMERGENCY: "bg-red-100 text-red-600"
+    };
+    ASSET_TYPES = [
+      "HVAC",
+      "ELECTRICAL",
+      "PLUMBING",
+      "FIRE_SAFETY",
+      "ELEVATOR",
+      "SECURITY_SYSTEM",
+      "OTHER"
+    ];
+    ASSET_STATUSES = [
+      "OPERATIONAL",
+      "NEEDS_MAINTENANCE",
+      "OUT_OF_SERVICE"
+    ];
+    ASSET_STATUS_COLORS = {
+      OPERATIONAL: "bg-green-100 text-green-800",
+      NEEDS_MAINTENANCE: "bg-yellow-100 text-yellow-800",
+      OUT_OF_SERVICE: "bg-red-100 text-red-800"
+    };
+  }
+});
+
+// .svelte-kit/output/server/chunks/AssetStatusBadge.js
+var AssetStatusBadge;
+var init_AssetStatusBadge = __esm({
+  ".svelte-kit/output/server/chunks/AssetStatusBadge.js"() {
+    init_ssr();
+    init_constants2();
+    AssetStatusBadge = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+      let { status } = $$props;
+      let { size = "md" } = $$props;
+      const sizeClasses = size === "sm" ? "px-2 py-1 text-xs" : "px-3 py-1 text-sm";
+      const colorClass = ASSET_STATUS_COLORS[status] || "bg-gray-100 text-gray-800";
+      const statusLabel = formatAssetStatus(status);
+      if ($$props.status === void 0 && $$bindings.status && status !== void 0)
+        $$bindings.status(status);
+      if ($$props.size === void 0 && $$bindings.size && size !== void 0)
+        $$bindings.size(size);
+      return `<span class="${escape(sizeClasses, true) + " font-semibold rounded-full " + escape(colorClass, true)}"${add_attribute("title", statusLabel, 0)}>${escape(statusLabel)}</span>`;
+    });
+  }
+});
+
+// .svelte-kit/output/server/entries/pages/assets/_page.svelte.js
+var page_svelte_exports2 = {};
+__export(page_svelte_exports2, {
+  default: () => Page2
+});
+function getUnitLabel(unit) {
+  const parts = [unit.site?.name, `Unit ${unit.roomNumber}`];
+  if (unit.building)
+    parts.push(`(${unit.building.name})`);
+  if (unit.name)
+    parts.push(`- ${unit.name}`);
+  return parts.filter(Boolean).join(" ");
+}
+var AssetForm, Page2;
+var init_page_svelte2 = __esm({
+  ".svelte-kit/output/server/entries/pages/assets/_page.svelte.js"() {
+    init_ssr();
+    init_devalue();
+    init_FilterBar();
+    init_constants2();
+    init_AssetStatusBadge();
+    AssetForm = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+      let { units = [] } = $$props;
+      let { name = "" } = $$props;
+      let { unitId = "" } = $$props;
+      let { type = "OTHER" } = $$props;
+      let { status = "OPERATIONAL" } = $$props;
+      let { description = "" } = $$props;
+      let { purchaseDate = "" } = $$props;
+      let { warrantyExpiry = "" } = $$props;
+      let { submitLabel = "SAVE" } = $$props;
+      let { isSubmitting = false } = $$props;
+      let { showCancel = false } = $$props;
+      let { onCancel = void 0 } = $$props;
+      if ($$props.units === void 0 && $$bindings.units && units !== void 0)
+        $$bindings.units(units);
+      if ($$props.name === void 0 && $$bindings.name && name !== void 0)
+        $$bindings.name(name);
+      if ($$props.unitId === void 0 && $$bindings.unitId && unitId !== void 0)
+        $$bindings.unitId(unitId);
+      if ($$props.type === void 0 && $$bindings.type && type !== void 0)
+        $$bindings.type(type);
+      if ($$props.status === void 0 && $$bindings.status && status !== void 0)
+        $$bindings.status(status);
+      if ($$props.description === void 0 && $$bindings.description && description !== void 0)
+        $$bindings.description(description);
+      if ($$props.purchaseDate === void 0 && $$bindings.purchaseDate && purchaseDate !== void 0)
+        $$bindings.purchaseDate(purchaseDate);
+      if ($$props.warrantyExpiry === void 0 && $$bindings.warrantyExpiry && warrantyExpiry !== void 0)
+        $$bindings.warrantyExpiry(warrantyExpiry);
+      if ($$props.submitLabel === void 0 && $$bindings.submitLabel && submitLabel !== void 0)
+        $$bindings.submitLabel(submitLabel);
+      if ($$props.isSubmitting === void 0 && $$bindings.isSubmitting && isSubmitting !== void 0)
+        $$bindings.isSubmitting(isSubmitting);
+      if ($$props.showCancel === void 0 && $$bindings.showCancel && showCancel !== void 0)
+        $$bindings.showCancel(showCancel);
+      if ($$props.onCancel === void 0 && $$bindings.onCancel && onCancel !== void 0)
+        $$bindings.onCancel(onCancel);
+      return `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"><input type="text" name="name" placeholder="Asset name (e.g., HVAC Unit #1)" title="Enter a descriptive name for this asset" class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange" required${add_attribute("value", name, 0)}> <select name="unitId" title="Select the unit where this asset is located" class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange" required><option value="" data-svelte-h="svelte-1v0ye9v">Select a unit...</option>${each(units, (unit) => {
+        return `<option${add_attribute("value", unit.id, 0)}>${escape(getUnitLabel(unit))}</option>`;
+      })}</select> <select name="type" title="Choose the asset type/category" class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange">${each(ASSET_TYPES, (typeOption) => {
+        return `<option${add_attribute("value", typeOption, 0)}>${escape(typeOption.replace("_", " "))}</option>`;
+      })}</select> <select name="status" title="Set the current operational status of this asset" class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange">${each(ASSET_STATUSES, (statusOption) => {
+        return `<option${add_attribute("value", statusOption, 0)}>${escape(statusOption.replace("_", " "))}</option>`;
+      })}</select> <input type="date" name="purchaseDate" title="Enter the date this asset was purchased" class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"${add_attribute("value", purchaseDate, 0)}> <input type="date" name="warrantyExpiry" title="Enter the warranty expiration date" class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"${add_attribute("value", warrantyExpiry, 0)}> <textarea name="description" placeholder="Description (optional)" title="Add additional details about this asset" rows="3" class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange md:col-span-2">${escape(description || "")}</textarea> <div class="flex gap-2 md:col-span-3"><button type="submit" ${isSubmitting || !name.trim() || !unitId ? "disabled" : ""} title="Save this asset" class="bg-spore-forest text-white px-6 py-3 rounded-lg font-bold text-sm tracking-wide hover:bg-spore-forest/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">${escape(isSubmitting ? "SAVING..." : submitLabel)}</button> ${showCancel && onCancel ? `<button type="button" title="Cancel and return to view mode" class="px-6 py-3 rounded-lg font-bold text-sm text-spore-steel hover:bg-spore-cream transition-colors" data-svelte-h="svelte-ez49ph">CANCEL</button>` : ``}</div></div>`;
+    });
+    Page2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+      let assets2;
+      let units;
+      let sites;
+      let { data } = $$props;
+      let isSubmitting = false;
+      let showFilters = false;
+      let editingAssetId = null;
+      let editingAsset = {
+        name: "",
+        unitId: "",
+        type: "OTHER",
+        status: "OPERATIONAL",
+        description: "",
+        purchaseDate: "",
+        warrantyExpiry: ""
+      };
+      let filterType = data.type || "";
+      let filterStatus = data.status || "";
+      let filterSite = data.siteId || "";
+      let sortOption = data.sort || "created";
+      function applyFilters() {
+        const params = new URLSearchParams();
+        if (filterType)
+          params.set("type", filterType);
+        if (filterStatus)
+          params.set("status", filterStatus);
+        if (filterSite)
+          params.set("siteId", filterSite);
+        if (sortOption && sortOption !== "created")
+          params.set("sort", sortOption);
+        goto(`?${params.toString()}`, { keepFocus: true });
+      }
+      function clearFilters() {
+        filterType = "";
+        filterStatus = "";
+        filterSite = "";
+        sortOption = "created";
+        applyFilters();
+      }
+      function cancelEdit() {
+        editingAssetId = null;
+        editingAsset = {
+          name: "",
+          unitId: "",
+          type: "OTHER",
+          status: "OPERATIONAL",
+          description: "",
+          purchaseDate: "",
+          warrantyExpiry: ""
+        };
+      }
+      if ($$props.data === void 0 && $$bindings.data && data !== void 0)
+        $$bindings.data(data);
+      let $$settled;
+      let $$rendered;
+      let previous_head = $$result.head;
+      do {
+        $$settled = true;
+        $$result.head = previous_head;
+        assets2 = data.assets || [];
+        units = data.units || [];
+        sites = data.sites || [];
+        $$rendered = `${$$result.head += `<!-- HEAD_svelte-5egb08_START -->${$$result.title = `<title>Assets \u2014 Spore CMMS</title>`, ""}<!-- HEAD_svelte-5egb08_END -->`, ""} <div class="max-w-7xl mx-auto px-4 py-10"> <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-10"><div><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight" data-svelte-h="svelte-b9dnm5">Assets</h1> <p class="text-spore-cream/60 mt-2 text-sm font-medium">${escape(assets2.length)} total asset${escape(assets2.length !== 1 ? "s" : "")}</p></div> <button${add_attribute(
+          "title",
+          "Create a new asset",
+          0
+        )} class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide">${escape("+ NEW ASSET")}</button></div>  ${validate_component(FilterBar, "FilterBar").$$render(
+          $$result,
+          {
+            toggleButtons: [],
+            filters: [
+              {
+                value: filterType,
+                placeholder: "All Types",
+                title: "Filter by asset type",
+                onChange: (v) => {
+                  filterType = v;
+                  applyFilters();
+                },
+                options: ASSET_TYPES.map((t2) => ({ value: t2, label: t2.replace("_", " ") }))
+              },
+              {
+                value: filterStatus,
+                placeholder: "All Statuses",
+                title: "Filter by status",
+                onChange: (v) => {
+                  filterStatus = v;
+                  applyFilters();
+                },
+                options: ASSET_STATUSES.map((s3) => ({ value: s3, label: s3.replace("_", " ") }))
+              },
+              {
+                value: filterSite,
+                placeholder: "All Sites",
+                title: "Filter by site",
+                onChange: (v) => {
+                  filterSite = v;
+                  applyFilters();
+                },
+                show: sites.length > 0,
+                options: sites.map((s3) => ({ value: s3.id, label: s3.name }))
+              }
+            ],
+            sortOptions: [
+              { value: "created", label: "Newest" },
+              { value: "name", label: "Name" },
+              { value: "type", label: "Type" },
+              { value: "status", label: "Status" }
+            ],
+            onSortChange: (v) => {
+              sortOption = v;
+              applyFilters();
+            },
+            onClear: clearFilters,
+            clearLabel: "Reset",
+            showFilters,
+            sortValue: sortOption
+          },
+          {
+            showFilters: ($$value) => {
+              showFilters = $$value;
+              $$settled = false;
+            },
+            sortValue: ($$value) => {
+              sortOption = $$value;
+              $$settled = false;
+            }
+          },
+          {}
+        )}  ${``}  ${assets2.length > 0 ? `<div class="bg-spore-white rounded-xl overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full"><thead class="bg-spore-dark"><tr><th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-eph96p">Asset</th> <th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1skifmx">Type</th> <th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1wy5e1r">Status</th> <th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden md:table-cell" data-svelte-h="svelte-2ejboa">Location</th> <th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider text-center" data-svelte-h="svelte-1creitc">WO</th> <th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden lg:table-cell" data-svelte-h="svelte-4skpp3">Created</th> <th class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-vmrd6s">Actions</th></tr></thead> <tbody class="divide-y divide-spore-cream/50">${each(assets2, (asset) => {
+          return `${editingAssetId === asset.id ? ` <tr class="bg-spore-orange/10"><td class="p-2" colspan="7"><form method="POST" action="?/update"><input type="hidden" name="assetId"${add_attribute("value", asset.id, 0)}> ${validate_component(AssetForm, "AssetForm").$$render(
+            $$result,
+            {
+              units,
+              submitLabel: "SAVE",
+              isSubmitting,
+              showCancel: true,
+              onCancel: cancelEdit,
+              name: editingAsset.name,
+              unitId: editingAsset.unitId,
+              type: editingAsset.type,
+              status: editingAsset.status,
+              description: editingAsset.description,
+              purchaseDate: editingAsset.purchaseDate,
+              warrantyExpiry: editingAsset.warrantyExpiry
+            },
+            {
+              name: ($$value) => {
+                editingAsset.name = $$value;
+                $$settled = false;
+              },
+              unitId: ($$value) => {
+                editingAsset.unitId = $$value;
+                $$settled = false;
+              },
+              type: ($$value) => {
+                editingAsset.type = $$value;
+                $$settled = false;
+              },
+              status: ($$value) => {
+                editingAsset.status = $$value;
+                $$settled = false;
+              },
+              description: ($$value) => {
+                editingAsset.description = $$value;
+                $$settled = false;
+              },
+              purchaseDate: ($$value) => {
+                editingAsset.purchaseDate = $$value;
+                $$settled = false;
+              },
+              warrantyExpiry: ($$value) => {
+                editingAsset.warrantyExpiry = $$value;
+                $$settled = false;
+              }
+            },
+            {}
+          )} </form></td> </tr>` : ` <tr class="hover:bg-spore-cream/20 transition-colors group"><td class="px-4 py-3"><a href="${"/assets/" + escape(asset.id, true)}" class="text-sm font-bold text-spore-dark hover:text-spore-orange transition-colors block" title="View asset details">${escape(asset.name)} ${asset.description ? `<span class="text-xs text-spore-steel/70 font-normal block">${escape(asset.description.slice(0, 50))}${escape(asset.description.length > 50 ? "..." : "")}</span>` : ``} </a></td> <td class="px-4 py-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-spore-cream/20 text-spore-steel" title="${"Asset type: " + escape(formatAssetStatus(asset.type || "OTHER"), true)}">${escape(formatAssetStatus(asset.type || "OTHER"))} </span></td> <td class="px-4 py-3">${validate_component(AssetStatusBadge, "AssetStatusBadge").$$render($$result, { status: asset.status, size: "sm" }, {}, {})}</td> <td class="px-4 py-3 hidden md:table-cell"><div class="text-sm text-spore-steel" title="${"Location: " + escape(asset.Unit?.Site?.name || "Unknown", true) + " - Unit " + escape(asset.Unit?.roomNumber || "N/A", true)}"><span class="font-medium">${escape(asset.Unit?.Site?.name || "Unknown")}</span> <br> <span class="text-xs">Unit ${escape(asset.Unit?.roomNumber || "N/A")} ${escape(asset.Unit?.name ? ` - ${asset.Unit.name}` : "")} ${escape(asset.Unit?.Building ? ` \u2022 Bldg ${asset.Unit.Building.name}` : "")} ${escape(asset.Unit?.floor ? ` \u2022 Floor ${asset.Unit.floor}` : "")}</span> </div></td> <td class="px-4 py-3 text-center">${asset._count?.WorkOrder > 0 ? `<span class="px-2 py-1 text-xs font-bold rounded-full bg-spore-orange/10 text-spore-orange" title="${escape(asset._count.WorkOrder, true) + " work order" + escape(asset._count.WorkOrder > 1 ? "s" : "", true) + " associated"}">${escape(asset._count.WorkOrder)} </span>` : `<span class="text-xs text-spore-steel/50" title="No work orders" data-svelte-h="svelte-taiusr">0</span>`}</td> <td class="px-4 py-3 text-sm text-spore-steel hidden lg:table-cell"><span title="${"Created on " + escape(new Date(asset.createdAt).toLocaleDateString(), true)}">${escape(new Date(asset.createdAt).toLocaleDateString())}</span></td> <td class="px-4 py-3 whitespace-nowrap text-xs font-medium space-x-2"><a href="${"/assets/" + escape(asset.id, true)}" class="text-spore-forest hover:text-spore-forest/70 transition-colors" title="View full details">View</a> <button class="text-spore-orange hover:text-spore-orange/70 transition-colors" title="Edit this asset" data-svelte-h="svelte-1utif9h">Edit</button> <form method="POST" action="?/delete" class="inline"><input type="hidden" name="assetId"${add_attribute("value", asset.id, 0)}> <button type="submit" class="text-red-500 hover:text-red-400 transition-colors" title="Delete this asset" data-svelte-h="svelte-70kg7d">Delete</button> </form></td> </tr>`}`;
+        })}</tbody></table></div></div>` : `<div class="text-center py-16 bg-spore-white rounded-xl"><div class="text-5xl mb-4" data-svelte-h="svelte-1mat6ie">\u2699\uFE0F</div> <h3 class="text-xl font-bold text-spore-dark mb-2" data-svelte-h="svelte-vaoz6w">No assets found</h3> <p class="text-spore-steel mb-6" data-svelte-h="svelte-ba34d9">Try adjusting your filters or create your first asset to start tracking equipment</p> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold" title="Create your first asset" data-svelte-h="svelte-muj3ii">+ CREATE ASSET</button></div>`}</div>`;
+      } while (!$$settled);
+      return $$rendered;
+    });
+  }
+});
+
+// .svelte-kit/output/server/nodes/3.js
+var __exports4 = {};
+__export(__exports4, {
+  component: () => component4,
+  fonts: () => fonts4,
+  imports: () => imports4,
+  index: () => index4,
+  server: () => page_server_ts_exports2,
+  server_id: () => server_id3,
+  stylesheets: () => stylesheets4
+});
+var index4, component_cache4, component4, server_id3, imports4, stylesheets4, fonts4;
+var init__4 = __esm({
+  ".svelte-kit/output/server/nodes/3.js"() {
+    init_page_server_ts2();
+    index4 = 3;
+    component4 = async () => component_cache4 ??= (await Promise.resolve().then(() => (init_page_svelte2(), page_svelte_exports2))).default;
+    server_id3 = "src/routes/assets/+page.server.ts";
+    imports4 = ["_app/immutable/nodes/3.d1fba2d0.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js", "_app/immutable/chunks/constants.30bce2a0.js", "_app/immutable/chunks/AssetForm.4a6b558f.js", "_app/immutable/chunks/FilterBar.54e33d9e.js", "_app/immutable/chunks/stores.a8273ce7.js"];
+    stylesheets4 = [];
+    fonts4 = [];
+  }
+});
+
+// .svelte-kit/output/server/entries/pages/assets/_id_/_page.server.ts.js
+var page_server_ts_exports3 = {};
+__export(page_server_ts_exports3, {
+  actions: () => actions3,
+  load: () => load3
+});
+var load3, actions3;
+var init_page_server_ts3 = __esm({
+  ".svelte-kit/output/server/entries/pages/assets/_id_/_page.server.ts.js"() {
+    init_prisma();
+    init_chunks();
+    init_guards();
+    init_validation();
+    load3 = async (event) => {
+      requireAuth(event);
+      const prisma = await createRequestPrisma(event);
+      const { id } = event.params;
+      const organizationId = event.locals.user.organizationId;
+      const asset = await prisma.asset.findFirst({
+        where: {
+          id,
+          Unit: {
+            Site: {
+              organizationId: organizationId ?? void 0
+            }
+          }
+        },
+        include: {
+          Unit: {
+            include: {
+              Site: { select: { id: true, name: true } },
+              Building: { select: { id: true, name: true } }
+            }
+          },
+          WorkOrder: {
+            orderBy: { createdAt: "desc" },
+            take: 20,
+            select: {
+              id: true,
+              title: true,
+              status: true,
+              createdAt: true,
+              updatedAt: true
+            }
+          },
+          _count: {
+            select: { WorkOrder: true }
+          }
+        }
+      });
+      if (!asset) {
+        throw error(404, "Asset not found");
+      }
+      const units = await prisma.unit.findMany({
+        where: {
+          Site: {
+            organizationId: organizationId ?? void 0
+          }
+        },
+        orderBy: [
+          { Site: { name: "asc" } },
+          { Building: { name: "asc" } },
+          { roomNumber: "asc" }
+        ],
+        include: {
+          Site: { select: { name: true } },
+          Building: { select: { name: true } }
+        }
+      });
+      const woStatsByStatus = await prisma.workOrder.groupBy({
+        by: ["status"],
+        where: { assetId: id },
+        _count: { status: true }
+      });
+      const statsMap = Object.fromEntries(
+        woStatsByStatus.map((s3) => [s3.status, s3._count.status])
+      );
+      const woStats = {
+        total: asset._count.WorkOrder,
+        pending: statsMap["PENDING"] || 0,
+        inProgress: statsMap["IN_PROGRESS"] || 0,
+        completed: statsMap["COMPLETED"] || 0
+      };
+      return {
+        asset,
+        units,
+        woStats
+      };
+    };
+    actions3 = {
+      update: async (event) => {
+        const prisma = await createRequestPrisma(event);
+        const formData = await event.request.formData();
+        const { id } = event.params;
+        const organizationId = event.locals.user.organizationId;
+        const rawData = {
+          name: formData.get("name"),
+          unitId: formData.get("unitId"),
+          type: formData.get("type"),
+          status: formData.get("status"),
+          description: formData.get("description"),
+          purchaseDate: formData.get("purchaseDate"),
+          warrantyExpiry: formData.get("warrantyExpiry")
+        };
+        const validationResult = assetSchema.safeParse(rawData);
+        if (!validationResult.success) {
+          const firstError = validationResult.error.issues[0];
+          return fail(400, { error: firstError.message });
+        }
+        const data = validationResult.data;
+        const existingAsset = await prisma.asset.findFirst({
+          where: {
+            id,
+            Unit: {
+              Site: {
+                organizationId: organizationId ?? void 0
+              }
+            }
+          }
+        });
+        if (!existingAsset) {
+          return fail(404, { error: "Asset not found" });
+        }
+        const unit = await prisma.unit.findFirst({
+          where: {
+            id: data.unitId,
+            Site: {
+              organizationId: organizationId ?? void 0
+            }
+          }
+        });
+        if (!unit) {
+          return fail(404, { error: "Unit not found" });
+        }
+        const asset = await prisma.asset.update({
+          where: { id },
+          data: {
+            name: data.name.trim(),
+            type: data.type ? data.type : void 0,
+            status: data.status ? data.status : void 0,
+            description: data.description ? data.description.trim() : void 0,
+            purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
+            warrantyExpiry: data.warrantyExpiry ? new Date(data.warrantyExpiry) : null,
+            unitId: data.unitId,
+            siteId: unit.siteId
+          }
+        });
+        return { success: true, asset };
+      },
+      delete: async (event) => {
+        if (!isManagerOrAbove(event)) {
+          return fail(403, { error: "Permission denied. Only managers can delete assets." });
+        }
+        const prisma = await createRequestPrisma(event);
+        const { id } = event.params;
+        const organizationId = event.locals.user.organizationId;
+        const asset = await prisma.asset.findFirst({
+          where: {
+            id,
+            Unit: {
+              Site: {
+                organizationId: organizationId ?? void 0
+              }
+            }
+          }
+        });
+        if (!asset) {
+          return fail(404, { error: "Asset not found" });
+        }
+        await prisma.asset.delete({
+          where: { id }
+        });
+        throw redirect(303, "/assets");
+      }
+    };
+  }
+});
+
+// .svelte-kit/output/server/entries/pages/assets/_id_/_page.svelte.js
+var page_svelte_exports3 = {};
+__export(page_svelte_exports3, {
+  default: () => Page3
+});
+function getStatusColor(status) {
+  switch (status) {
+    case "COMPLETED":
+      return "bg-spore-forest text-white";
+    case "IN_PROGRESS":
+      return "bg-spore-orange text-white";
+    case "PENDING":
+      return "bg-spore-steel text-white";
+    case "ON_HOLD":
+      return "bg-spore-cream text-spore-steel";
+    case "CANCELLED":
+      return "bg-red-600 text-white";
+    default:
+      return "bg-spore-steel text-white";
+  }
+}
+var Page3;
+var init_page_svelte3 = __esm({
+  ".svelte-kit/output/server/entries/pages/assets/_id_/_page.svelte.js"() {
+    init_ssr();
+    init_devalue();
+    init_constants2();
+    init_AssetStatusBadge();
+    Page3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+      let asset;
+      let woStats;
+      let { data } = $$props;
+      if ($$props.data === void 0 && $$bindings.data && data !== void 0)
+        $$bindings.data(data);
+      let $$settled;
+      let $$rendered;
+      let previous_head = $$result.head;
+      do {
+        $$settled = true;
+        $$result.head = previous_head;
+        asset = data.asset;
+        data.units || [];
+        woStats = data.woStats;
+        $$rendered = `<div class="max-w-4xl mx-auto px-4 py-10"> <div class="mb-6"><a href="/assets" class="text-spore-cream/60 hover:text-spore-cream text-sm font-medium" title="Return to assets list" data-svelte-h="svelte-mi54uc">\u2190 Back to Assets</a></div> ${` <div class="bg-spore-white rounded-xl overflow-hidden"> <div class="bg-spore-dark p-6"><div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4"><div><h1 class="text-2xl font-extrabold text-spore-cream">${escape(asset.name)}</h1> <p class="text-spore-cream/60 mt-1 text-sm">${escape(asset.Unit?.Site?.name)} \u2022 Unit ${escape(asset.Unit?.roomNumber || asset.Unit?.name || "N/A")} ${asset.Unit?.Building ? `\u2022 Bldg ${escape(asset.Unit.Building.name)}` : ``} ${asset.Unit?.floor ? `\u2022 Floor ${escape(asset.Unit.floor)}` : ``}</p></div> <div class="flex gap-2"><button class="bg-spore-forest text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-spore-forest/90 transition-colors" title="Edit asset details" data-svelte-h="svelte-5dr1pk">EDIT</button> <form method="POST" action="?/delete"><button type="submit" class="px-4 py-2 rounded-lg font-bold text-sm text-red-400 border border-red-400/30 hover:bg-red-400/10 transition-colors" title="Delete this asset" data-svelte-h="svelte-4gr9cf">DELETE</button></form></div></div></div>  <div class="grid grid-cols-2 sm:grid-cols-4 border-b border-spore-cream"><div class="p-4 border-r border-spore-cream"><p class="text-xs font-bold text-spore-steel uppercase mb-1" data-svelte-h="svelte-1eht0mz">Type</p> <p class="text-sm font-medium text-spore-dark">${escape(formatAssetStatus(asset.type || "OTHER"))}</p></div> <div class="p-4 border-r border-spore-cream"><p class="text-xs font-bold text-spore-steel uppercase mb-1" data-svelte-h="svelte-5ns9e1">Status</p> ${validate_component(AssetStatusBadge, "AssetStatusBadge").$$render($$result, { status: asset.status, size: "sm" }, {}, {})}</div> <div class="p-4 border-r border-spore-cream"><p class="text-xs font-bold text-spore-steel uppercase mb-1" data-svelte-h="svelte-sdqaom">Purchase Date</p> <p class="text-sm font-medium text-spore-dark">${escape(asset.purchaseDate ? new Date(asset.purchaseDate).toLocaleDateString() : "N/A")}</p></div> <div class="p-4"><p class="text-xs font-bold text-spore-steel uppercase mb-1" data-svelte-h="svelte-1d90ozn">Warranty</p> <p class="text-sm font-medium text-spore-dark">${escape(asset.warrantyExpiry ? new Date(asset.warrantyExpiry).toLocaleDateString() : "N/A")}</p></div></div> ${asset.description ? `<div class="p-4 border-b border-spore-cream bg-spore-cream/10"><p class="text-xs font-bold text-spore-steel uppercase mb-1" data-svelte-h="svelte-16yaad1">Description</p> <p class="text-sm text-spore-dark">${escape(asset.description)}</p></div>` : ``}  <div class="grid grid-cols-2 sm:grid-cols-4 border-b border-spore-cream"><div class="p-4 text-center border-r border-spore-cream"><p class="text-2xl font-extrabold text-spore-dark">${escape(woStats.total)}</p> <p class="text-xs font-bold text-spore-steel uppercase" data-svelte-h="svelte-14h9nd3">Total WOs</p></div> <div class="p-4 text-center border-r border-spore-cream"><p class="text-2xl font-extrabold text-spore-steel">${escape(woStats.pending)}</p> <p class="text-xs font-bold text-spore-steel uppercase" data-svelte-h="svelte-vg7ifd">Pending</p></div> <div class="p-4 text-center border-r border-spore-cream"><p class="text-2xl font-extrabold text-spore-orange">${escape(woStats.inProgress)}</p> <p class="text-xs font-bold text-spore-steel uppercase" data-svelte-h="svelte-bf56gq">In Progress</p></div> <div class="p-4 text-center"><p class="text-2xl font-extrabold text-spore-forest">${escape(woStats.completed)}</p> <p class="text-xs font-bold text-spore-steel uppercase" data-svelte-h="svelte-300hz3">Completed</p></div></div>  <div class="p-6"><div class="flex justify-between items-center mb-4"><h2 class="text-lg font-bold text-spore-dark" data-svelte-h="svelte-1ez9epy">Work Order History</h2> <a href="${"/work-orders?asset=" + escape(asset.id, true)}" class="text-sm font-bold text-spore-orange hover:text-spore-orange/80" title="View all work orders for this asset">View All \u2192</a></div> ${asset.WorkOrder && asset.WorkOrder.length > 0 ? `<div class="space-y-3">${each(asset.WorkOrder, (wo) => {
+          return `<a href="${"/work-orders/" + escape(wo.id, true)}" class="flex items-center justify-between p-4 bg-spore-cream/20 rounded-lg hover:bg-spore-cream/40 transition-colors border border-spore-cream/50" title="${"View work order: " + escape(wo.title, true)}"><div class="flex-1 min-w-0"><p class="font-bold text-spore-dark truncate">${escape(wo.title)}</p> <p class="text-xs text-spore-steel mt-1">Created ${escape(new Date(wo.createdAt).toLocaleDateString())} </p></div> <span class="${"ml-4 px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-full " + escape(getStatusColor(wo.status), true)}" title="${"Status: " + escape(wo.status.replace("_", " "), true)}">${escape(wo.status.replace("_", " "))}</span> </a>`;
+        })}</div>` : `<div class="text-center py-8 bg-spore-cream/20 rounded-lg"><p class="text-spore-steel" data-svelte-h="svelte-17d3vfe">No work orders for this asset</p> <a href="/work-orders" class="inline-block mt-4 bg-spore-orange text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-spore-orange/90 transition-colors" title="Create a new work order" data-svelte-h="svelte-1fwtl72">Create Work Order</a></div>`}</div></div>`}</div>`;
+      } while (!$$settled);
+      return $$rendered;
+    });
+  }
+});
+
+// .svelte-kit/output/server/nodes/4.js
+var __exports5 = {};
+__export(__exports5, {
+  component: () => component5,
+  fonts: () => fonts5,
+  imports: () => imports5,
+  index: () => index5,
+  server: () => page_server_ts_exports3,
+  server_id: () => server_id4,
+  stylesheets: () => stylesheets5
+});
+var index5, component_cache5, component5, server_id4, imports5, stylesheets5, fonts5;
+var init__5 = __esm({
+  ".svelte-kit/output/server/nodes/4.js"() {
+    init_page_server_ts3();
+    index5 = 4;
+    component5 = async () => component_cache5 ??= (await Promise.resolve().then(() => (init_page_svelte3(), page_svelte_exports3))).default;
+    server_id4 = "src/routes/assets/[id]/+page.server.ts";
+    imports5 = ["_app/immutable/nodes/4.2555026d.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js", "_app/immutable/chunks/constants.30bce2a0.js", "_app/immutable/chunks/AssetForm.4a6b558f.js"];
+    stylesheets5 = [];
+    fonts5 = [];
+  }
+});
+
+// .svelte-kit/output/server/entries/pages/audit-log/_page.server.ts.js
+var page_server_ts_exports4 = {};
+__export(page_server_ts_exports4, {
+  load: () => load4
+});
+var load4;
+var init_page_server_ts4 = __esm({
+  ".svelte-kit/output/server/entries/pages/audit-log/_page.server.ts.js"() {
+    init_prisma();
+    init_chunks();
+    init_guards();
+    load4 = async (event) => {
+      initEnvFromEvent(event);
+      if (!isAdmin(event)) {
+        throw error(403, "Access denied. Admin privileges required.");
+      }
+      const organizationId = event.locals.user.organizationId;
+      const page2 = parseInt(event.url.searchParams.get("page") || "1");
+      const limit = 50;
+      const skip2 = (page2 - 1) * limit;
+      const client = await getPrisma();
+      const userIdsInOrg = await client.user.findMany({
+        where: { organizationId: organizationId ?? void 0 },
+        select: { id: true }
+      }).then((users) => users.map((u) => u.id));
+      const auditLogs = await client.auditLog.findMany({
+        where: {
+          userId: { in: userIdsInOrg }
+        },
+        orderBy: { createdAt: "desc" },
+        skip: skip2,
+        take: limit,
+        include: {
+          User: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true
+            }
+          }
+        }
+      });
+      const totalCount = await client.auditLog.count({
+        where: {
+          userId: { in: userIdsInOrg }
+        }
+      });
+      const totalPages = Math.ceil(totalCount / limit);
+      return {
+        auditLogs,
+        page: page2,
+        totalPages,
+        totalCount
+      };
+    };
+  }
+});
+
+// .svelte-kit/output/server/entries/pages/audit-log/_page.svelte.js
+var page_svelte_exports4 = {};
+__export(page_svelte_exports4, {
+  default: () => Page4
+});
+function getUserName(user) {
+  if (user.firstName || user.lastName) {
+    return [user.firstName, user.lastName].filter(Boolean).join(" ");
+  }
+  return user.email;
+}
+function formatAction(action) {
+  return action.replace(/_/g, " ").toLowerCase().replace(/^\w/, (c2) => c2.toUpperCase());
+}
+function getActionColor(action) {
+  if (action.includes("DELETED"))
+    return "text-red-500";
+  if (action.includes("CREATED"))
+    return "text-spore-forest";
+  if (action.includes("CHANGED") || action.includes("ASSIGNED"))
+    return "text-spore-orange";
+  return "text-spore-steel";
+}
+function formatDetails(details) {
+  if (!details)
+    return "";
+  if (typeof details === "object") {
+    return Object.entries(details).filter(([_, v]) => v != null).map(([k, v]) => `${k}: ${v}`).join(", ");
+  }
+  return String(details);
+}
+var Page4;
+var init_page_svelte4 = __esm({
+  ".svelte-kit/output/server/entries/pages/audit-log/_page.svelte.js"() {
+    init_ssr();
+    Page4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+      let auditLogs;
+      let page2;
+      let totalPages;
+      let { data } = $$props;
+      if ($$props.data === void 0 && $$bindings.data && data !== void 0)
+        $$bindings.data(data);
+      auditLogs = data.auditLogs || [];
+      page2 = data.page;
+      totalPages = data.totalPages;
+      return `${$$result.head += `<!-- HEAD_svelte-111n33w_START -->${$$result.title = `<title>Audit Log \u2014 Spore CMMS</title>`, ""}<!-- HEAD_svelte-111n33w_END -->`, ""} <div class="max-w-7xl mx-auto px-4 py-10"><div class="mb-8"><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight" data-svelte-h="svelte-1fam30h">Audit Log</h1> <p class="text-spore-cream/60 mt-2" data-svelte-h="svelte-16iiojr">Track all changes made in your organization</p></div> ${auditLogs.length > 0 ? `<div class="bg-spore-white rounded-xl overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full"><thead class="bg-spore-dark"><tr><th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1m6unqy">When</th> <th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-10vh90y">Who</th> <th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1tih4uw">Action</th> <th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1enb6fs">Details</th></tr></thead> <tbody class="divide-y divide-spore-cream/50">${each(auditLogs, (log) => {
+        return `<tr class="hover:bg-spore-cream/20 transition-colors"><td class="px-6 py-4 whitespace-nowrap text-sm text-spore-steel"><time${add_attribute("datetime", log.createdAt.toString(), 0)}>${escape(new Date(log.createdAt).toLocaleString())} </time></td> <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-spore-dark">${escape(getUserName(log.User))}</td> <td class="px-6 py-4 whitespace-nowrap"><span class="${"text-sm font-bold " + escape(getActionColor(log.action), true)}">${escape(formatAction(log.action))} </span></td> <td class="px-6 py-4 text-sm text-spore-steel max-w-md truncate"${add_attribute("title", formatDetails(log.details), 0)}>${escape(formatDetails(log.details))}</td> </tr>`;
+      })}</tbody></table></div></div>  ${totalPages > 1 ? `<div class="flex justify-center gap-2 mt-6">${page2 > 1 ? `<a href="${"/audit-log?page=" + escape(page2 - 1, true)}" class="px-4 py-2 bg-spore-white text-spore-steel rounded-lg hover:bg-spore-cream transition-colors text-sm font-bold">\u2190 Previous</a>` : ``} <span class="px-4 py-2 text-spore-cream/60 text-sm">Page ${escape(page2)} of ${escape(totalPages)}</span> ${page2 < totalPages ? `<a href="${"/audit-log?page=" + escape(page2 + 1, true)}" class="px-4 py-2 bg-spore-white text-spore-steel rounded-lg hover:bg-spore-cream transition-colors text-sm font-bold">Next \u2192</a>` : ``}</div>` : ``}` : `<div class="text-center py-16 bg-spore-white rounded-xl"><div class="text-5xl mb-4" data-svelte-h="svelte-7jlewd">\u{1F4DC}</div> <h3 class="text-xl font-bold text-spore-dark mb-2" data-svelte-h="svelte-z8atj6">No activity yet</h3> <p class="text-spore-steel" data-svelte-h="svelte-wb5xqh">Actions will be recorded here as users make changes</p></div>`}</div>`;
+    });
+  }
+});
+
+// .svelte-kit/output/server/nodes/5.js
+var __exports6 = {};
+__export(__exports6, {
+  component: () => component6,
+  fonts: () => fonts6,
+  imports: () => imports6,
+  index: () => index6,
+  server: () => page_server_ts_exports4,
+  server_id: () => server_id5,
+  stylesheets: () => stylesheets6
+});
+var index6, component_cache6, component6, server_id5, imports6, stylesheets6, fonts6;
+var init__6 = __esm({
+  ".svelte-kit/output/server/nodes/5.js"() {
+    init_page_server_ts4();
+    index6 = 5;
+    component6 = async () => component_cache6 ??= (await Promise.resolve().then(() => (init_page_svelte4(), page_svelte_exports4))).default;
+    server_id5 = "src/routes/audit-log/+page.server.ts";
+    imports6 = ["_app/immutable/nodes/5.1addbd23.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.189c3083.js"];
+    stylesheets6 = [];
+    fonts6 = [];
+  }
+});
+
 // .svelte-kit/output/server/entries/pages/auth/emergency-reset/_page.server.ts.js
 var page_server_ts_exports5 = {};
 __export(page_server_ts_exports5, {
@@ -28998,8 +29535,8 @@ var load5, actions4;
 var init_page_server_ts5 = __esm({
   ".svelte-kit/output/server/entries/pages/auth/emergency-reset/_page.server.ts.js"() {
     init_chunks();
-    init_auth();
     init_prisma();
+    init_auth();
     init_zod();
     load5 = async () => {
       return {};
@@ -29113,102 +29650,9 @@ var init__7 = __esm({
     index7 = 6;
     component7 = async () => component_cache7 ??= (await Promise.resolve().then(() => (init_page_svelte5(), page_svelte_exports5))).default;
     server_id6 = "src/routes/auth/emergency-reset/+page.server.ts";
-    imports7 = ["_app/immutable/nodes/6.2a928cbe.js", "_app/immutable/chunks/_page.14c7f420.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports7 = ["_app/immutable/nodes/6.3a6e310b.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
     stylesheets7 = [];
     fonts7 = [];
-  }
-});
-
-// .svelte-kit/output/server/chunks/validation.js
-function validateInput(schema, data) {
-  const result = schema.safeParse(data);
-  if (!result.success) {
-    const errors = {};
-    result.error.issues.forEach((issue2) => {
-      const key2 = issue2.path[0];
-      if (typeof key2 === "string") {
-        errors[key2] = issue2.message;
-      }
-    });
-    return { success: false, errors };
-  }
-  return { success: true, data: result.data };
-}
-var passwordPatterns, errorMessages, registerSchema, createOrganizationSchema, joinOrganizationSchema, loginSchema, passwordResetSchema;
-var init_validation = __esm({
-  ".svelte-kit/output/server/chunks/validation.js"() {
-    init_zod();
-    passwordPatterns = {
-      uppercase: /[A-Z]/,
-      lowercase: /[a-z]/,
-      number: /[0-9]/,
-      special: /[^A-Za-z0-9]/
-    };
-    errorMessages = {
-      email: "Please enter a valid email address",
-      password: {
-        minLength: "Password must be at least 8 characters long",
-        uppercase: "Password must contain at least one uppercase letter",
-        lowercase: "Password must contain at least one lowercase letter",
-        number: "Password must contain at least one number",
-        special: "Password must contain at least one special character"
-      },
-      orgName: "Organization name must be between 2 and 100 characters",
-      name: "Name must be between 1 and 50 characters"
-    };
-    registerSchema = external_exports.object({
-      firstName: external_exports.string().min(1, errorMessages.name).max(50, errorMessages.name).trim(),
-      lastName: external_exports.string().max(50, errorMessages.name).trim().optional(),
-      email: external_exports.string().email(errorMessages.email).trim().toLowerCase(),
-      password: external_exports.string().min(8, errorMessages.password.minLength).regex(passwordPatterns.uppercase, errorMessages.password.uppercase).regex(passwordPatterns.lowercase, errorMessages.password.lowercase).regex(passwordPatterns.number, errorMessages.password.number).regex(passwordPatterns.special, errorMessages.password.special)
-    });
-    createOrganizationSchema = external_exports.object({
-      orgName: external_exports.string().min(2, errorMessages.orgName).max(100, errorMessages.orgName).trim()
-    });
-    joinOrganizationSchema = external_exports.object({
-      inviteToken: external_exports.string().min(1, "Invite token is required").trim()
-    });
-    loginSchema = external_exports.object({
-      email: external_exports.string().email(errorMessages.email).trim().toLowerCase(),
-      password: external_exports.string().min(1, "Password is required")
-    });
-    external_exports.object({
-      name: external_exports.string().min(1, "Site name is required").max(100, "Site name must be less than 100 characters").trim()
-    });
-    external_exports.object({
-      name: external_exports.string().min(1, "Room name is required").max(100, "Room name must be less than 100 characters").trim(),
-      building: external_exports.string().max(10, "Building identifier must be less than 10 characters").trim().optional(),
-      floor: external_exports.number().int().min(0, "Floor must be 0 or higher").max(100, "Floor must be less than 100").optional()
-    });
-    external_exports.object({
-      name: external_exports.string().min(1, "Asset name is required").max(100, "Asset name must be less than 100 characters").trim(),
-      roomId: external_exports.string().min(1, "Please select a room").cuid("Invalid room selection")
-    });
-    external_exports.object({
-      title: external_exports.string().min(1, "Title is required").max(200, "Title must be less than 200 characters").trim(),
-      description: external_exports.string().min(1, "Description is required").max(2e3, "Description must be less than 2000 characters").trim(),
-      assetId: external_exports.string().min(1, "Please select an asset").cuid("Invalid asset selection").optional(),
-      assignedToId: external_exports.string().cuid("Invalid user selection").optional(),
-      revisitSchedule: external_exports.string().datetime("Invalid date format").optional()
-    });
-    external_exports.object({
-      email: external_exports.string().email(errorMessages.email).trim().toLowerCase(),
-      passphrase: external_exports.string().min(1, "Passphrase is required").trim()
-    });
-    passwordResetSchema = external_exports.object({
-      token: external_exports.string().min(1, "Reset token is required").trim(),
-      password: external_exports.string().min(8, errorMessages.password.minLength).regex(passwordPatterns.uppercase, errorMessages.password.uppercase).regex(passwordPatterns.lowercase, errorMessages.password.lowercase).regex(passwordPatterns.number, errorMessages.password.number).regex(passwordPatterns.special, errorMessages.password.special),
-      confirmPassword: external_exports.string().min(1, "Please confirm your password")
-    }).refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords don't match",
-      path: ["confirmPassword"]
-    });
-    external_exports.object({
-      firstName: external_exports.string().min(1, errorMessages.name).max(50, errorMessages.name).trim().optional(),
-      lastName: external_exports.string().max(50, errorMessages.name).trim().optional(),
-      email: external_exports.string().email(errorMessages.email).trim().toLowerCase().optional(),
-      phoneNumber: external_exports.string().regex(/^[+]?[\d\s\-\(\)]+$/, "Please enter a valid phone number").optional()
-    });
   }
 });
 
@@ -29375,68 +29819,20 @@ var init__8 = __esm({
     index8 = 7;
     component8 = async () => component_cache8 ??= (await Promise.resolve().then(() => (init_page_svelte6(), page_svelte_exports6))).default;
     server_id7 = "src/routes/auth/login/+page.server.ts";
-    imports8 = ["_app/immutable/nodes/7.51979e45.js", "_app/immutable/chunks/_page.bbb96433.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
+    imports8 = ["_app/immutable/nodes/7.ac62ea6e.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
     stylesheets8 = [];
     fonts8 = [];
   }
 });
 
-// .svelte-kit/output/server/entries/pages/auth/logout/_page.server.ts.js
+// .svelte-kit/output/server/entries/pages/auth/register/_page.server.ts.js
 var page_server_ts_exports7 = {};
 __export(page_server_ts_exports7, {
-  actions: () => actions6
-});
-var actions6;
-var init_page_server_ts7 = __esm({
-  ".svelte-kit/output/server/entries/pages/auth/logout/_page.server.ts.js"() {
-    init_prisma();
-    init_chunks();
-    actions6 = {
-      default: async (event) => {
-        initEnvFromEvent(event);
-        const sessionId = event.cookies.get("spore_session");
-        if (sessionId) {
-          const client = await getPrisma();
-          await client.session.delete({ where: { id: sessionId } }).catch(() => {
-          });
-        }
-        event.cookies.delete("spore_session", { path: "/" });
-        throw redirect(303, "/auth/login");
-      }
-    };
-  }
-});
-
-// .svelte-kit/output/server/nodes/8.js
-var __exports9 = {};
-__export(__exports9, {
-  fonts: () => fonts9,
-  imports: () => imports9,
-  index: () => index9,
-  server: () => page_server_ts_exports7,
-  server_id: () => server_id8,
-  stylesheets: () => stylesheets9
-});
-var index9, server_id8, imports9, stylesheets9, fonts9;
-var init__9 = __esm({
-  ".svelte-kit/output/server/nodes/8.js"() {
-    init_page_server_ts7();
-    index9 = 8;
-    server_id8 = "src/routes/auth/logout/+page.server.ts";
-    imports9 = [];
-    stylesheets9 = [];
-    fonts9 = [];
-  }
-});
-
-// .svelte-kit/output/server/entries/pages/auth/register/_page.server.ts.js
-var page_server_ts_exports8 = {};
-__export(page_server_ts_exports8, {
-  actions: () => actions7,
+  actions: () => actions6,
   load: () => load7
 });
-var load7, actions7;
-var init_page_server_ts8 = __esm({
+var load7, actions6;
+var init_page_server_ts7 = __esm({
   ".svelte-kit/output/server/entries/pages/auth/register/_page.server.ts.js"() {
     init_chunks();
     init_auth();
@@ -29449,7 +29845,7 @@ var init_page_server_ts8 = __esm({
       }
       return {};
     };
-    actions7 = {
+    actions6 = {
       default: async ({ request, cookies, getClientAddress }) => {
         const security = SecurityManager.getInstance();
         const ip = getClientAddress() || "unknown";
@@ -29568,38 +29964,38 @@ var init_page_svelte7 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/9.js
-var __exports10 = {};
-__export(__exports10, {
+// .svelte-kit/output/server/nodes/8.js
+var __exports9 = {};
+__export(__exports9, {
   component: () => component9,
-  fonts: () => fonts10,
-  imports: () => imports10,
-  index: () => index10,
-  server: () => page_server_ts_exports8,
-  server_id: () => server_id9,
-  stylesheets: () => stylesheets10
+  fonts: () => fonts9,
+  imports: () => imports9,
+  index: () => index9,
+  server: () => page_server_ts_exports7,
+  server_id: () => server_id8,
+  stylesheets: () => stylesheets9
 });
-var index10, component_cache9, component9, server_id9, imports10, stylesheets10, fonts10;
-var init__10 = __esm({
-  ".svelte-kit/output/server/nodes/9.js"() {
-    init_page_server_ts8();
-    index10 = 9;
+var index9, component_cache9, component9, server_id8, imports9, stylesheets9, fonts9;
+var init__9 = __esm({
+  ".svelte-kit/output/server/nodes/8.js"() {
+    init_page_server_ts7();
+    index9 = 8;
     component9 = async () => component_cache9 ??= (await Promise.resolve().then(() => (init_page_svelte7(), page_svelte_exports7))).default;
-    server_id9 = "src/routes/auth/register/+page.server.ts";
-    imports10 = ["_app/immutable/chunks/9.db3bfb08.js", "_app/immutable/chunks/_page.85bdf6c2.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets10 = [];
-    fonts10 = [];
+    server_id8 = "src/routes/auth/register/+page.server.ts";
+    imports9 = ["_app/immutable/nodes/8.cb38e88d.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
+    stylesheets9 = [];
+    fonts9 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/auth/reset-password/_token_/_page.server.ts.js
-var page_server_ts_exports9 = {};
-__export(page_server_ts_exports9, {
-  actions: () => actions8,
+var page_server_ts_exports8 = {};
+__export(page_server_ts_exports8, {
+  actions: () => actions7,
   load: () => load8
 });
-var load8, actions8;
-var init_page_server_ts9 = __esm({
+var load8, actions7;
+var init_page_server_ts8 = __esm({
   ".svelte-kit/output/server/entries/pages/auth/reset-password/_token_/_page.server.ts.js"() {
     init_chunks();
     init_auth();
@@ -29619,7 +30015,7 @@ var init_page_server_ts9 = __esm({
         email: user.email
       };
     };
-    actions8 = {
+    actions7 = {
       default: async ({ request, getClientAddress }) => {
         const security = SecurityManager.getInstance();
         const clientIP = getClientAddress();
@@ -29702,37 +30098,37 @@ var init_page_svelte8 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/10.js
-var __exports11 = {};
-__export(__exports11, {
+// .svelte-kit/output/server/nodes/9.js
+var __exports10 = {};
+__export(__exports10, {
   component: () => component10,
-  fonts: () => fonts11,
-  imports: () => imports11,
-  index: () => index11,
-  server: () => page_server_ts_exports9,
-  server_id: () => server_id10,
-  stylesheets: () => stylesheets11
+  fonts: () => fonts10,
+  imports: () => imports10,
+  index: () => index10,
+  server: () => page_server_ts_exports8,
+  server_id: () => server_id9,
+  stylesheets: () => stylesheets10
 });
-var index11, component_cache10, component10, server_id10, imports11, stylesheets11, fonts11;
-var init__11 = __esm({
-  ".svelte-kit/output/server/nodes/10.js"() {
-    init_page_server_ts9();
-    index11 = 10;
+var index10, component_cache10, component10, server_id9, imports10, stylesheets10, fonts10;
+var init__10 = __esm({
+  ".svelte-kit/output/server/nodes/9.js"() {
+    init_page_server_ts8();
+    index10 = 9;
     component10 = async () => component_cache10 ??= (await Promise.resolve().then(() => (init_page_svelte8(), page_svelte_exports8))).default;
-    server_id10 = "src/routes/auth/reset-password/[token]/+page.server.ts";
-    imports11 = ["_app/immutable/nodes/10.d7a6e62e.js", "_app/immutable/chunks/_page.e4a7f7db.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets11 = [];
-    fonts11 = [];
+    server_id9 = "src/routes/auth/reset-password/[token]/+page.server.ts";
+    imports10 = ["_app/immutable/nodes/9.0ad6b0ef.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
+    stylesheets10 = [];
+    fonts10 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/dashboard/_page.server.ts.js
-var page_server_ts_exports10 = {};
-__export(page_server_ts_exports10, {
+var page_server_ts_exports9 = {};
+__export(page_server_ts_exports9, {
   load: () => load9
 });
 var RECENT_WORK_ORDERS_LIMIT, load9;
-var init_page_server_ts10 = __esm({
+var init_page_server_ts9 = __esm({
   ".svelte-kit/output/server/entries/pages/dashboard/_page.server.ts.js"() {
     init_prisma();
     init_guards();
@@ -29969,38 +30365,38 @@ var init_page_svelte9 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/11.js
-var __exports12 = {};
-__export(__exports12, {
+// .svelte-kit/output/server/nodes/10.js
+var __exports11 = {};
+__export(__exports11, {
   component: () => component11,
-  fonts: () => fonts12,
-  imports: () => imports12,
-  index: () => index12,
-  server: () => page_server_ts_exports10,
-  server_id: () => server_id11,
-  stylesheets: () => stylesheets12
+  fonts: () => fonts11,
+  imports: () => imports11,
+  index: () => index11,
+  server: () => page_server_ts_exports9,
+  server_id: () => server_id10,
+  stylesheets: () => stylesheets11
 });
-var index12, component_cache11, component11, server_id11, imports12, stylesheets12, fonts12;
-var init__12 = __esm({
-  ".svelte-kit/output/server/nodes/11.js"() {
-    init_page_server_ts10();
-    index12 = 11;
+var index11, component_cache11, component11, server_id10, imports11, stylesheets11, fonts11;
+var init__11 = __esm({
+  ".svelte-kit/output/server/nodes/10.js"() {
+    init_page_server_ts9();
+    index11 = 10;
     component11 = async () => component_cache11 ??= (await Promise.resolve().then(() => (init_page_svelte9(), page_svelte_exports9))).default;
-    server_id11 = "src/routes/dashboard/+page.server.ts";
-    imports12 = ["_app/immutable/chunks/11.ae21b596.js", "_app/immutable/chunks/_page.a41777bd.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/websocket.29f0dfae.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets12 = [];
-    fonts12 = [];
+    server_id10 = "src/routes/dashboard/+page.server.ts";
+    imports11 = ["_app/immutable/nodes/10.fcd28664.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/websocket.53b2f4b2.js", "_app/immutable/chunks/index.1d534c61.js"];
+    stylesheets11 = [];
+    fonts11 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/join-organization/_page.server.ts.js
-var page_server_ts_exports11 = {};
-__export(page_server_ts_exports11, {
-  actions: () => actions9,
+var page_server_ts_exports10 = {};
+__export(page_server_ts_exports10, {
+  actions: () => actions8,
   load: () => load10
 });
-var load10, actions9;
-var init_page_server_ts11 = __esm({
+var load10, actions8;
+var init_page_server_ts10 = __esm({
   ".svelte-kit/output/server/entries/pages/join-organization/_page.server.ts.js"() {
     init_chunks();
     init_validation();
@@ -30014,7 +30410,7 @@ var init_page_server_ts11 = __esm({
       }
       return {};
     };
-    actions9 = {
+    actions8 = {
       default: async ({ request, locals }) => {
         if (!locals.user) {
           throw redirect(303, "/auth/login");
@@ -30131,38 +30527,38 @@ var init_page_svelte10 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/12.js
-var __exports13 = {};
-__export(__exports13, {
+// .svelte-kit/output/server/nodes/11.js
+var __exports12 = {};
+__export(__exports12, {
   component: () => component12,
-  fonts: () => fonts13,
-  imports: () => imports13,
-  index: () => index13,
-  server: () => page_server_ts_exports11,
-  server_id: () => server_id12,
-  stylesheets: () => stylesheets13
+  fonts: () => fonts12,
+  imports: () => imports12,
+  index: () => index12,
+  server: () => page_server_ts_exports10,
+  server_id: () => server_id11,
+  stylesheets: () => stylesheets12
 });
-var index13, component_cache12, component12, server_id12, imports13, stylesheets13, fonts13;
-var init__13 = __esm({
-  ".svelte-kit/output/server/nodes/12.js"() {
-    init_page_server_ts11();
-    index13 = 12;
+var index12, component_cache12, component12, server_id11, imports12, stylesheets12, fonts12;
+var init__12 = __esm({
+  ".svelte-kit/output/server/nodes/11.js"() {
+    init_page_server_ts10();
+    index12 = 11;
     component12 = async () => component_cache12 ??= (await Promise.resolve().then(() => (init_page_svelte10(), page_svelte_exports10))).default;
-    server_id12 = "src/routes/join-organization/+page.server.ts";
-    imports13 = ["_app/immutable/nodes/12.83d41a0d.js", "_app/immutable/chunks/_page.cab03615.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets13 = [];
-    fonts13 = [];
+    server_id11 = "src/routes/join-organization/+page.server.ts";
+    imports12 = ["_app/immutable/nodes/11.fd79b0a0.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
+    stylesheets12 = [];
+    fonts12 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/onboarding/_page.server.ts.js
-var page_server_ts_exports12 = {};
-__export(page_server_ts_exports12, {
-  actions: () => actions10,
+var page_server_ts_exports11 = {};
+__export(page_server_ts_exports11, {
+  actions: () => actions9,
   load: () => load11
 });
-var load11, actions10;
-var init_page_server_ts12 = __esm({
+var load11, actions9;
+var init_page_server_ts11 = __esm({
   ".svelte-kit/output/server/entries/pages/onboarding/_page.server.ts.js"() {
     init_chunks();
     init_validation();
@@ -30176,7 +30572,7 @@ var init_page_server_ts12 = __esm({
       }
       return {};
     };
-    actions10 = {
+    actions9 = {
       default: async ({ request, locals }) => {
         if (!locals.user) {
           throw redirect(303, "/auth/login");
@@ -30259,38 +30655,38 @@ var init_page_svelte11 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/13.js
-var __exports14 = {};
-__export(__exports14, {
+// .svelte-kit/output/server/nodes/12.js
+var __exports13 = {};
+__export(__exports13, {
   component: () => component13,
-  fonts: () => fonts14,
-  imports: () => imports14,
-  index: () => index14,
-  server: () => page_server_ts_exports12,
-  server_id: () => server_id13,
-  stylesheets: () => stylesheets14
+  fonts: () => fonts13,
+  imports: () => imports13,
+  index: () => index13,
+  server: () => page_server_ts_exports11,
+  server_id: () => server_id12,
+  stylesheets: () => stylesheets13
 });
-var index14, component_cache13, component13, server_id13, imports14, stylesheets14, fonts14;
-var init__14 = __esm({
-  ".svelte-kit/output/server/nodes/13.js"() {
-    init_page_server_ts12();
-    index14 = 13;
+var index13, component_cache13, component13, server_id12, imports13, stylesheets13, fonts13;
+var init__13 = __esm({
+  ".svelte-kit/output/server/nodes/12.js"() {
+    init_page_server_ts11();
+    index13 = 12;
     component13 = async () => component_cache13 ??= (await Promise.resolve().then(() => (init_page_svelte11(), page_svelte_exports11))).default;
-    server_id13 = "src/routes/onboarding/+page.server.ts";
-    imports14 = ["_app/immutable/nodes/13.f53393f3.js", "_app/immutable/chunks/_page.6be293c8.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets14 = [];
-    fonts14 = [];
+    server_id12 = "src/routes/onboarding/+page.server.ts";
+    imports13 = ["_app/immutable/nodes/12.752aea25.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
+    stylesheets13 = [];
+    fonts13 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/profile/_page.server.ts.js
-var page_server_ts_exports13 = {};
-__export(page_server_ts_exports13, {
-  actions: () => actions11,
+var page_server_ts_exports12 = {};
+__export(page_server_ts_exports12, {
+  actions: () => actions10,
   load: () => load12
 });
-var load12, actions11;
-var init_page_server_ts13 = __esm({
+var load12, actions10;
+var init_page_server_ts12 = __esm({
   ".svelte-kit/output/server/entries/pages/profile/_page.server.ts.js"() {
     init_prisma();
     init_auth();
@@ -30314,7 +30710,7 @@ var init_page_server_ts13 = __esm({
       });
       return { profile: user };
     };
-    actions11 = {
+    actions10 = {
       updateProfile: async (event) => {
         requireAuth(event);
         const prisma = await createRequestPrisma(event);
@@ -30400,38 +30796,38 @@ var init_page_svelte12 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/14.js
-var __exports15 = {};
-__export(__exports15, {
+// .svelte-kit/output/server/nodes/13.js
+var __exports14 = {};
+__export(__exports14, {
   component: () => component14,
-  fonts: () => fonts15,
-  imports: () => imports15,
-  index: () => index15,
-  server: () => page_server_ts_exports13,
-  server_id: () => server_id14,
-  stylesheets: () => stylesheets15
+  fonts: () => fonts14,
+  imports: () => imports14,
+  index: () => index14,
+  server: () => page_server_ts_exports12,
+  server_id: () => server_id13,
+  stylesheets: () => stylesheets14
 });
-var index15, component_cache14, component14, server_id14, imports15, stylesheets15, fonts15;
-var init__15 = __esm({
-  ".svelte-kit/output/server/nodes/14.js"() {
-    init_page_server_ts13();
-    index15 = 14;
+var index14, component_cache14, component14, server_id13, imports14, stylesheets14, fonts14;
+var init__14 = __esm({
+  ".svelte-kit/output/server/nodes/13.js"() {
+    init_page_server_ts12();
+    index14 = 13;
     component14 = async () => component_cache14 ??= (await Promise.resolve().then(() => (init_page_svelte12(), page_svelte_exports12))).default;
-    server_id14 = "src/routes/profile/+page.server.ts";
-    imports15 = ["_app/immutable/chunks/14.22d55db4.js", "_app/immutable/chunks/_page.b7c14f7a.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets15 = [];
-    fonts15 = [];
+    server_id13 = "src/routes/profile/+page.server.ts";
+    imports14 = ["_app/immutable/nodes/13.20e09930.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
+    stylesheets14 = [];
+    fonts14 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/select-organization/_page.server.ts.js
-var page_server_ts_exports14 = {};
-__export(page_server_ts_exports14, {
-  actions: () => actions12,
+var page_server_ts_exports13 = {};
+__export(page_server_ts_exports13, {
+  actions: () => actions11,
   load: () => load13
 });
-var load13, actions12;
-var init_page_server_ts14 = __esm({
+var load13, actions11;
+var init_page_server_ts13 = __esm({
   ".svelte-kit/output/server/entries/pages/select-organization/_page.server.ts.js"() {
     init_chunks();
     init_prisma();
@@ -30461,7 +30857,7 @@ var init_page_server_ts14 = __esm({
         currentOrganization: locals.currentOrganization
       };
     };
-    actions12 = {
+    actions11 = {
       default: async ({ request, locals }) => {
         if (!locals.user) {
           throw redirect(303, "/auth/login");
@@ -30530,38 +30926,38 @@ var init_page_svelte13 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/15.js
-var __exports16 = {};
-__export(__exports16, {
+// .svelte-kit/output/server/nodes/14.js
+var __exports15 = {};
+__export(__exports15, {
   component: () => component15,
-  fonts: () => fonts16,
-  imports: () => imports16,
-  index: () => index16,
-  server: () => page_server_ts_exports14,
-  server_id: () => server_id15,
-  stylesheets: () => stylesheets16
+  fonts: () => fonts15,
+  imports: () => imports15,
+  index: () => index15,
+  server: () => page_server_ts_exports13,
+  server_id: () => server_id14,
+  stylesheets: () => stylesheets15
 });
-var index16, component_cache15, component15, server_id15, imports16, stylesheets16, fonts16;
-var init__16 = __esm({
-  ".svelte-kit/output/server/nodes/15.js"() {
-    init_page_server_ts14();
-    index16 = 15;
+var index15, component_cache15, component15, server_id14, imports15, stylesheets15, fonts15;
+var init__15 = __esm({
+  ".svelte-kit/output/server/nodes/14.js"() {
+    init_page_server_ts13();
+    index15 = 14;
     component15 = async () => component_cache15 ??= (await Promise.resolve().then(() => (init_page_svelte13(), page_svelte_exports13))).default;
-    server_id15 = "src/routes/select-organization/+page.server.ts";
-    imports16 = ["_app/immutable/chunks/15.bd39971f.js", "_app/immutable/chunks/_page.f9d66c8f.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets16 = [];
-    fonts16 = [];
+    server_id14 = "src/routes/select-organization/+page.server.ts";
+    imports15 = ["_app/immutable/nodes/14.18f12616.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
+    stylesheets15 = [];
+    fonts15 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/sites/_page.server.ts.js
-var page_server_ts_exports15 = {};
-__export(page_server_ts_exports15, {
-  actions: () => actions13,
+var page_server_ts_exports14 = {};
+__export(page_server_ts_exports14, {
+  actions: () => actions12,
   load: () => load14
 });
-var load14, actions13;
-var init_page_server_ts15 = __esm({
+var load14, actions12;
+var init_page_server_ts14 = __esm({
   ".svelte-kit/output/server/entries/pages/sites/_page.server.ts.js"() {
     init_prisma();
     init_chunks();
@@ -30571,8 +30967,16 @@ var init_page_server_ts15 = __esm({
       requireAuth(event);
       const prisma = await createRequestPrisma(event);
       const organizationId = event.locals.user.organizationId ?? void 0;
+      const search = event.url.searchParams.get("search") || "";
+      const where = { organizationId };
+      if (search) {
+        where.name = {
+          contains: search,
+          mode: "insensitive"
+        };
+      }
       const sites = await prisma.site.findMany({
-        where: { organizationId },
+        where,
         orderBy: { createdAt: "desc" },
         include: {
           _count: {
@@ -30598,9 +31002,9 @@ var init_page_server_ts15 = __esm({
           }
         }
       });
-      return { sites };
+      return { sites, search };
     };
-    actions13 = {
+    actions12 = {
       create: async (event) => {
         const prisma = await createRequestPrisma(event);
         const formData = await event.request.formData();
@@ -30680,49 +31084,50 @@ var init_page_svelte14 = __esm({
       let { data } = $$props;
       let editingSiteId = null;
       let editingSiteName = "";
+      let searchTerm = data.search || "";
       if ($$props.data === void 0 && $$bindings.data && data !== void 0)
         $$bindings.data(data);
       sites = data.sites || [];
-      return `${$$result.head += `<!-- HEAD_svelte-w7e4y3_START -->${$$result.title = `<title>Sites \u2014 Spore CMMS</title>`, ""}<!-- HEAD_svelte-w7e4y3_END -->`, ""} <div class="max-w-7xl mx-auto px-4 py-10"> <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-10"><div><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight" data-svelte-h="svelte-19ed5sy">Sites</h1> <p class="text-spore-cream/60 mt-2 text-sm font-medium" data-svelte-h="svelte-1yhfn8s">Manage your facility locations</p></div> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide">${escape("+ NEW SITE")}</button></div>  ${``}  ${sites.length > 0 ? `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${each(sites, (site) => {
+      return `${$$result.head += `<!-- HEAD_svelte-w7e4y3_START -->${$$result.title = `<title>Sites \u2014 Spore CMMS</title>`, ""}<!-- HEAD_svelte-w7e4y3_END -->`, ""} <div class="max-w-7xl mx-auto px-4 py-10"> <div class="mb-10"><div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4"><div><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight" data-svelte-h="svelte-19ed5sy">Sites</h1></div> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide">${escape("+ NEW SITE")}</button></div> <div class="flex flex-col sm:flex-row gap-4"><input type="text" placeholder="Search sites..." class="flex-1 max-w-md px-4 py-2 rounded-lg border border-spore-cream/30 bg-white text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange"${add_attribute("value", searchTerm, 0)}> ${searchTerm ? `<button class="text-sm font-semibold text-spore-cream/70 hover:text-spore-cream px-2" data-svelte-h="svelte-1k5n1zx">Clear</button>` : ``}</div></div>  ${``}  ${sites.length > 0 ? `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${each(sites, (site) => {
         return `${editingSiteId === site.id ? ` <div class="bg-spore-white rounded-xl p-6 ring-2 ring-spore-orange"><form method="POST" action="?/update"><input type="hidden" name="siteId"${add_attribute("value", site.id, 0)}> <div class="mb-4"><input type="text" name="name" class="w-full px-4 py-3 rounded-lg border border-spore-orange bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange text-lg font-bold" required${add_attribute("value", editingSiteName, 0)}></div> <div class="flex gap-2"><button type="submit" ${!editingSiteName.trim() ? "disabled" : ""} class="flex-1 bg-spore-forest text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-spore-forest/90 disabled:opacity-50 transition-colors">${escape("SAVE")}</button> <button type="button" class="px-4 py-2 rounded-lg font-bold text-sm text-spore-steel hover:bg-spore-cream transition-colors" data-svelte-h="svelte-vhk55s">CANCEL</button> </div></form> </div>` : ` <div class="bg-spore-white rounded-xl p-6 hover:shadow-lg transition-all group relative"><a href="${"/sites/" + escape(site.id, true)}" class="absolute inset-0 z-0"></a> <div class="relative z-10 pointer-events-none"><div class="flex justify-between items-start mb-4"><div class="w-12 h-12 bg-spore-forest/10 rounded-xl flex items-center justify-center"><span class="text-2xl" data-svelte-h="svelte-1xnl04j">\u{1F3E2}</span></div> <div class="flex gap-2 pointer-events-auto"><button class="text-spore-steel/40 hover:text-spore-orange transition-colors opacity-0 group-hover:opacity-100" data-svelte-h="svelte-s97alz">\u270F\uFE0F</button> <form method="POST" action="?/delete"><input type="hidden" name="siteId"${add_attribute("value", site.id, 0)}> <button type="submit" class="text-spore-steel/40 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" data-svelte-h="svelte-9vz145">\u2715
-										</button></form> </div></div> <h3 class="text-lg font-bold text-spore-dark group-hover:text-spore-forest transition-colors">${escape(site.name)}</h3> <p class="text-sm text-spore-steel mt-1">${escape(site._count?.buildings || 0)} building${escape(site._count?.buildings !== 1 ? "s" : "")} \u2022 ${escape(site._count?.units || 0)} unit${escape(site._count?.units !== 1 ? "s" : "")}</p> <div class="mt-4 pt-4 border-t border-spore-cream/50"><span class="text-xs text-spore-steel">Created ${escape(new Date(site.createdAt).toLocaleDateString())}</span> </div></div> </div>`}`;
+										</button></form> </div></div> <h3 class="text-lg font-bold text-spore-dark group-hover:text-spore-forest transition-colors">${escape(site.name)}</h3> <p class="text-sm text-spore-steel mt-1">${escape(site._count?.Building || 0)} building${escape(site._count?.Building !== 1 ? "s" : "")} \u2022 ${escape(site._count?.Unit || 0)} unit${escape(site._count?.Unit !== 1 ? "s" : "")}</p> <div class="mt-4 pt-4 border-t border-spore-cream/50"><span class="text-xs text-spore-steel">Created ${escape(new Date(site.createdAt).toLocaleDateString())}</span> </div></div> </div>`}`;
       })}</div>` : `<div class="text-center py-16 bg-spore-white rounded-xl"><div class="text-5xl mb-4" data-svelte-h="svelte-n08cxc">\u{1F3E2}</div> <h3 class="text-xl font-bold text-spore-dark mb-2" data-svelte-h="svelte-1r1pntd">No sites yet</h3> <p class="text-spore-steel mb-6" data-svelte-h="svelte-1itm7tw">Create your first site to get started</p> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold" data-svelte-h="svelte-1vkd0hb">+ CREATE SITE</button></div>`}</div>`;
     });
   }
 });
 
-// .svelte-kit/output/server/nodes/16.js
-var __exports17 = {};
-__export(__exports17, {
+// .svelte-kit/output/server/nodes/15.js
+var __exports16 = {};
+__export(__exports16, {
   component: () => component16,
-  fonts: () => fonts17,
-  imports: () => imports17,
-  index: () => index17,
-  server: () => page_server_ts_exports15,
-  server_id: () => server_id16,
-  stylesheets: () => stylesheets17
+  fonts: () => fonts16,
+  imports: () => imports16,
+  index: () => index16,
+  server: () => page_server_ts_exports14,
+  server_id: () => server_id15,
+  stylesheets: () => stylesheets16
 });
-var index17, component_cache16, component16, server_id16, imports17, stylesheets17, fonts17;
-var init__17 = __esm({
-  ".svelte-kit/output/server/nodes/16.js"() {
-    init_page_server_ts15();
-    index17 = 16;
+var index16, component_cache16, component16, server_id15, imports16, stylesheets16, fonts16;
+var init__16 = __esm({
+  ".svelte-kit/output/server/nodes/15.js"() {
+    init_page_server_ts14();
+    index16 = 15;
     component16 = async () => component_cache16 ??= (await Promise.resolve().then(() => (init_page_svelte14(), page_svelte_exports14))).default;
-    server_id16 = "src/routes/sites/+page.server.ts";
-    imports17 = ["_app/immutable/nodes/16.06243f93.js", "_app/immutable/chunks/_page.e94b58f4.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets17 = [];
-    fonts17 = [];
+    server_id15 = "src/routes/sites/+page.server.ts";
+    imports16 = ["_app/immutable/nodes/15.3715fd0f.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
+    stylesheets16 = [];
+    fonts16 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/sites/_id_/_page.server.ts.js
-var page_server_ts_exports16 = {};
-__export(page_server_ts_exports16, {
-  actions: () => actions14,
+var page_server_ts_exports15 = {};
+__export(page_server_ts_exports15, {
+  actions: () => actions13,
   load: () => load15
 });
-var load15, actions14;
-var init_page_server_ts16 = __esm({
+var load15, actions13;
+var init_page_server_ts15 = __esm({
   ".svelte-kit/output/server/entries/pages/sites/_id_/_page.server.ts.js"() {
     init_prisma();
     init_chunks();
@@ -30739,14 +31144,10 @@ var init_page_server_ts16 = __esm({
           },
           Unit: {
             orderBy: [
-              { Building: { name: "asc" } },
               { floor: "asc" },
               { roomNumber: "asc" }
             ],
             include: {
-              Building: {
-                select: { name: true }
-              },
               _count: {
                 select: { Asset: true }
               }
@@ -30764,17 +31165,16 @@ var init_page_server_ts16 = __esm({
       if (!site) {
         throw error(404, "Site not found");
       }
-      const unitsByBuilding = {};
-      for (const unit of site.Unit) {
-        const building2 = unit.Building?.name || "Unassigned";
-        if (!unitsByBuilding[building2]) {
-          unitsByBuilding[building2] = [];
-        }
-        unitsByBuilding[building2].push(unit);
-      }
-      return { site, unitsByBuilding };
+      const buildingsWithUnits = site.Building.map((building2) => ({
+        id: building2.id,
+        name: building2.name,
+        description: building2.description,
+        units: site.Unit.filter((u) => u.buildingId === building2.id)
+      }));
+      const unassignedUnits = site.Unit.filter((u) => !u.buildingId);
+      return { site, buildingsWithUnits, unassignedUnits };
     };
-    actions14 = {
+    actions13 = {
       createUnit: async (event) => {
         const prisma = await createRequestPrisma(event);
         const formData = await event.request.formData();
@@ -30851,6 +31251,57 @@ var init_page_server_ts16 = __esm({
         });
         return { success: true, building: building2 };
       },
+      updateBuilding: async (event) => {
+        const prisma = await createRequestPrisma(event);
+        const formData = await event.request.formData();
+        const { id: siteId } = event.params;
+        const buildingId = formData.get("buildingId");
+        const name = formData.get("name");
+        const description = formData.get("description");
+        if (!buildingId) {
+          return fail(400, { error: "Building ID is required" });
+        }
+        if (!name || name.trim() === "") {
+          return fail(400, { error: "Building name is required" });
+        }
+        const existingBuilding = await prisma.building.findFirst({
+          where: { id: buildingId, siteId }
+        });
+        if (!existingBuilding) {
+          return fail(404, { error: "Building not found" });
+        }
+        const building2 = await prisma.building.update({
+          where: { id: buildingId },
+          data: {
+            name: name.trim(),
+            description: description?.trim() || null
+          }
+        });
+        return { success: true, building: building2 };
+      },
+      deleteBuilding: async (event) => {
+        const prisma = await createRequestPrisma(event);
+        const formData = await event.request.formData();
+        const { id: siteId } = event.params;
+        const buildingId = formData.get("buildingId");
+        if (!buildingId) {
+          return fail(400, { error: "Building ID is required" });
+        }
+        const existingBuilding = await prisma.building.findFirst({
+          where: { id: buildingId, siteId }
+        });
+        if (!existingBuilding) {
+          return fail(404, { error: "Building not found" });
+        }
+        await prisma.unit.updateMany({
+          where: { buildingId },
+          data: { buildingId: null }
+        });
+        await prisma.building.delete({
+          where: { id: buildingId }
+        });
+        return { success: true };
+      },
       updateUnit: async (event) => {
         const prisma = await createRequestPrisma(event);
         const formData = await event.request.formData();
@@ -30907,60 +31358,76 @@ var init_page_svelte15 = __esm({
     init_devalue();
     Page15 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let site;
-      let unitsByBuilding;
-      let buildingNames;
+      let buildingsWithUnits;
+      let unassignedUnits;
+      let allBuildings;
       let { data } = $$props;
       let editingUnitId = null;
-      let editingUnit = { name: "", building: "", floor: "" };
+      let editingUnit = { name: "", buildingId: "", floor: "" };
+      let editingBuildingId = null;
+      let editingBuilding = { name: "", description: "" };
       if ($$props.data === void 0 && $$bindings.data && data !== void 0)
         $$bindings.data(data);
       site = data.site;
-      unitsByBuilding = data.unitsByBuilding || {};
-      buildingNames = Object.keys(unitsByBuilding).sort();
-      return `<div class="max-w-7xl mx-auto px-4 py-10"> <div class="mb-6"><a href="/sites" class="text-spore-cream/60 hover:text-spore-cream text-sm font-medium" data-svelte-h="svelte-1rrwjp1">\u2190 Back to Sites</a></div>  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-10"><div><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight">${escape(site.name)}</h1> <p class="text-spore-cream/60 mt-2 text-sm font-medium">${escape(site._count?.units || 0)} unit${escape(site._count?.units !== 1 ? "s" : "")}</p></div> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide">${escape("+ ADD UNIT")}</button></div>  ${``}  ${buildingNames.length > 0 ? `<div class="space-y-8">${each(buildingNames, (building2) => {
-        return `<div class="bg-spore-white rounded-xl overflow-hidden"> <div class="bg-spore-dark px-6 py-4"><h2 class="text-lg font-bold text-spore-cream">${escape(building2 === "Unassigned" ? "Unassigned Units" : `Building ${building2}`)}</h2> <p class="text-spore-cream/60 text-sm">${escape(unitsByBuilding[building2].length)} unit${escape(unitsByBuilding[building2].length !== 1 ? "s" : "")} </p></div>  <div class="p-6"><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">${each(unitsByBuilding[building2], (unit) => {
-          return `${editingUnitId === unit.id ? ` <div class="bg-spore-cream/20 rounded-lg p-4 border-2 border-spore-orange"><form method="POST" action="?/updateUnit"><input type="hidden" name="unitId"${add_attribute("value", unit.id, 0)}> <div class="space-y-3"><input type="text" name="name" placeholder="Unit name" class="w-full px-3 py-2 rounded border border-spore-cream bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange" required${add_attribute("value", editingUnit.name, 0)}> <div class="grid grid-cols-2 gap-2"><input type="text" name="building" placeholder="Building" class="px-3 py-2 rounded border border-spore-cream bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"${add_attribute("value", editingUnit.building, 0)}> <input type="number" name="floor" placeholder="Floor" class="px-3 py-2 rounded border border-spore-cream bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"${add_attribute("value", editingUnit.floor, 0)}></div> <div class="flex gap-2"><button type="submit" ${!editingUnit.name.trim() ? "disabled" : ""} class="flex-1 bg-spore-forest text-white px-3 py-2 rounded font-bold text-xs hover:bg-spore-forest/90 disabled:opacity-50 transition-colors">${escape("SAVE")}</button> <button type="button" class="px-3 py-2 rounded font-bold text-xs text-spore-steel hover:bg-spore-cream transition-colors" data-svelte-h="svelte-9mmxtg">CANCEL
+      buildingsWithUnits = data.buildingsWithUnits || [];
+      unassignedUnits = data.unassignedUnits || [];
+      allBuildings = site.Building || [];
+      return `<div class="max-w-7xl mx-auto px-4 py-10"> <div class="mb-6"><a href="/sites" class="text-spore-cream/60 hover:text-spore-cream text-sm font-medium" data-svelte-h="svelte-1rrwjp1">\u2190 Back to Sites</a></div>  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-10"><div><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight">${escape(site.name)}</h1> <p class="text-spore-cream/60 mt-2 text-sm font-medium">${escape(site._count?.units || 0)} unit${escape(site._count?.units !== 1 ? "s" : "")} \u2022 ${escape(site._count?.buildings || 0)} building${escape(site._count?.buildings !== 1 ? "s" : "")}</p></div> <div class="flex gap-3"><button class="bg-spore-steel text-white px-6 py-3 rounded-xl hover:bg-spore-steel/90 transition-colors text-sm font-bold tracking-wide">${escape("+ ADD BUILDING")}</button> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide">${escape("+ ADD UNIT")}</button></div></div>  ${``}  ${``}  ${buildingsWithUnits.length > 0 || unassignedUnits.length > 0 ? `<div class="space-y-8">${each(buildingsWithUnits, (building2) => {
+        return `${editingBuildingId === building2.id ? ` <div class="bg-spore-white rounded-xl p-6 ring-2 ring-spore-steel"><form method="POST" action="?/updateBuilding" class="mb-6"><input type="hidden" name="buildingId"${add_attribute("value", building2.id, 0)}> <div class="flex gap-4 items-end"><div class="flex-1"><label class="block text-sm font-medium text-spore-dark mb-1" data-svelte-h="svelte-dal9dr">Building Name</label> <input type="text" name="name" placeholder="Building name" class="w-full px-4 py-3 rounded-lg border border-spore-steel bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-steel font-bold" required${add_attribute("value", editingBuilding.name, 0)}></div> <div class="flex-1"><label class="block text-sm font-medium text-spore-dark mb-1" data-svelte-h="svelte-1mfkp1c">Description</label> <input type="text" name="description" placeholder="Description (optional)" class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-steel"${add_attribute("value", editingBuilding.description, 0)}></div> <div class="flex gap-2"><button type="submit" ${!editingBuilding.name.trim() ? "disabled" : ""} class="bg-spore-forest text-white px-4 py-3 rounded-lg font-bold text-sm hover:bg-spore-forest/90 disabled:opacity-50 transition-colors">${escape("SAVE")}</button> <button type="button" class="px-4 py-3 rounded-lg font-bold text-sm text-spore-steel hover:bg-spore-cream transition-colors" data-svelte-h="svelte-ze24xl">CANCEL
+									</button></div> </div></form> </div>` : ` <div class="bg-spore-white rounded-xl overflow-hidden"> <div class="bg-spore-dark px-6 py-4 flex justify-between items-center"><div><h2 class="text-lg font-bold text-spore-cream">${escape(building2.name)}</h2> <p class="text-spore-cream/60 text-sm">${escape(building2.units.length)} unit${escape(building2.units.length !== 1 ? "s" : "")} </p></div> <div class="flex gap-2"><button class="text-spore-cream/60 hover:text-spore-orange transition-colors" aria-label="${"Edit " + escape(building2.name, true)}">\u270F\uFE0F</button> <form method="POST" action="?/deleteBuilding"><input type="hidden" name="buildingId"${add_attribute("value", building2.id, 0)}> <button type="submit" class="text-spore-cream/60 hover:text-red-400 transition-colors" aria-label="${"Delete " + escape(building2.name, true)}">\u2715
+									</button></form> </div></div>  ${building2.units.length > 0 ? `<div class="p-6"><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">${each(building2.units, (unit) => {
+          let isEditing = editingUnitId === unit.id;
+          return ` ${isEditing ? ` <div class="bg-spore-cream/20 rounded-lg p-4 border-2 border-spore-orange"><form method="POST" action="?/updateUnit"><input type="hidden" name="unitId"${add_attribute("value", unit.id, 0)}> <div class="space-y-3"><input type="text" name="roomNumber" placeholder="Unit name" class="w-full px-3 py-2 rounded border border-spore-cream bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange" required${add_attribute("value", editingUnit.name, 0)}> <div class="grid grid-cols-2 gap-2"><select name="buildingId" class="px-3 py-2 rounded border border-spore-cream bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(allBuildings, (b) => {
+            return `<option${add_attribute("value", b.id, 0)}>${escape(b.name)}</option>`;
+          })}</select> <input type="number" name="floor" placeholder="Floor" class="px-3 py-2 rounded border border-spore-cream bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"${add_attribute("value", editingUnit.floor, 0)}></div> <div class="flex gap-2"><button type="submit" ${!editingUnit.name.trim() ? "disabled" : ""} class="flex-1 bg-spore-forest text-white px-3 py-2 rounded font-bold text-xs hover:bg-spore-forest/90 disabled:opacity-50 transition-colors">${escape("SAVE")}</button> <button type="button" class="px-3 py-2 rounded font-bold text-xs text-spore-steel hover:bg-spore-cream transition-colors" data-svelte-h="svelte-9fkin8">CANCEL
+															</button></div> </div></form> </div>` : ` <div class="bg-spore-cream/20 rounded-lg p-4 border border-spore-cream/50 group hover:border-spore-orange/50 transition-colors"><div class="flex justify-between items-start"><div><h3 class="font-bold text-spore-dark">${escape(unit.name || unit.roomNumber)}</h3> <p class="text-sm text-spore-steel mt-1">${unit.floor ? `Floor ${escape(unit.floor)}` : ``} ${unit._count?.assets ? `<span class="ml-2">\u2022 ${escape(unit._count.assets)} asset${escape(unit._count.assets !== 1 ? "s" : "")}</span>` : ``} </p></div> <div class="flex gap-2"><button class="text-spore-steel/40 hover:text-spore-orange transition-colors opacity-0 group-hover:opacity-100" data-svelte-h="svelte-xbha6c">\u270F\uFE0F</button> <form method="POST" action="?/deleteUnit"><input type="hidden" name="unitId"${add_attribute("value", unit.id, 0)}> <button type="submit" class="text-spore-steel/40 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" data-svelte-h="svelte-3v0zhq">\u2715
+															</button></form> </div></div> <div class="mt-4 pt-3 border-t border-spore-cream/50"><a href="${"/assets?unit=" + escape(unit.id, true)}" class="text-xs font-semibold text-spore-orange hover:text-spore-orange/80">View Assets \u2192
+													</a></div> </div>`}`;
+        })}</div> </div>` : `<div class="p-8 text-center"><p class="text-spore-steel text-sm" data-svelte-h="svelte-78k5a5">No units in this building yet</p> </div>`} </div>`}`;
+      })}  ${unassignedUnits.length > 0 ? `<div class="bg-spore-white rounded-xl overflow-hidden"><div class="bg-spore-cream/50 px-6 py-4"><h2 class="text-lg font-bold text-spore-cream" data-svelte-h="svelte-17hh07w">Unassigned Units</h2> <p class="text-spore-cream/60 text-sm">${escape(unassignedUnits.length)} unit${escape(unassignedUnits.length !== 1 ? "s" : "")}</p></div> <div class="p-6"><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">${each(unassignedUnits, (unit) => {
+        return `${editingUnitId === unit.id ? ` <div class="bg-spore-cream/20 rounded-lg p-4 border-2 border-spore-orange"><form method="POST" action="?/updateUnit"><input type="hidden" name="unitId"${add_attribute("value", unit.id, 0)}> <div class="space-y-3"><input type="text" name="roomNumber" placeholder="Unit name" class="w-full px-3 py-2 rounded border border-spore-cream bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange" required${add_attribute("value", editingUnit.name, 0)}> <div class="grid grid-cols-2 gap-2"><select name="buildingId" class="px-3 py-2 rounded border border-spore-cream bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(allBuildings, (b) => {
+          return `<option${add_attribute("value", b.id, 0)}>${escape(b.name)}</option>`;
+        })}</select> <input type="number" name="floor" placeholder="Floor" class="px-3 py-2 rounded border border-spore-cream bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"${add_attribute("value", editingUnit.floor, 0)}></div> <div class="flex gap-2"><button type="submit" ${!editingUnit.name.trim() ? "disabled" : ""} class="flex-1 bg-spore-forest text-white px-3 py-2 rounded font-bold text-xs hover:bg-spore-forest/90 disabled:opacity-50 transition-colors">${escape("SAVE")}</button> <button type="button" class="px-3 py-2 rounded font-bold text-xs text-spore-steel hover:bg-spore-cream transition-colors" data-svelte-h="svelte-9mmxtg">CANCEL
 													</button></div> </div></form> </div>` : ` <div class="bg-spore-cream/20 rounded-lg p-4 border border-spore-cream/50 group hover:border-spore-orange/50 transition-colors"><div class="flex justify-between items-start"><div><h3 class="font-bold text-spore-dark">${escape(unit.name || unit.roomNumber)}</h3> <p class="text-sm text-spore-steel mt-1">${unit.floor ? `Floor ${escape(unit.floor)}` : ``} ${unit._count?.assets ? `<span class="ml-2">\u2022 ${escape(unit._count.assets)} asset${escape(unit._count.assets !== 1 ? "s" : "")}</span>` : ``} </p></div> <div class="flex gap-2"><button class="text-spore-steel/40 hover:text-spore-orange transition-colors opacity-0 group-hover:opacity-100" data-svelte-h="svelte-rvh0p6">\u270F\uFE0F</button> <form method="POST" action="?/deleteUnit"><input type="hidden" name="unitId"${add_attribute("value", unit.id, 0)}> <button type="submit" class="text-spore-steel/40 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" data-svelte-h="svelte-40zcaq">\u2715
 													</button></form> </div></div> <div class="mt-4 pt-3 border-t border-spore-cream/50"><a href="${"/assets?unit=" + escape(unit.id, true)}" class="text-xs font-semibold text-spore-orange hover:text-spore-orange/80">View Assets \u2192
 											</a></div> </div>`}`;
-        })} </div></div> </div>`;
-      })}</div>` : `<div class="text-center py-16 bg-spore-white rounded-xl"><div class="text-5xl mb-4" data-svelte-h="svelte-1vg2ihf">\u{1F6AA}</div> <h3 class="text-xl font-bold text-spore-dark mb-2" data-svelte-h="svelte-1p044n4">No units yet</h3> <p class="text-spore-steel mb-6" data-svelte-h="svelte-16ou1o5">Add units to this site to start tracking assets</p> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold" data-svelte-h="svelte-84va2h">+ ADD UNIT</button></div>`}</div>`;
+      })}</div></div></div>` : ``}</div>` : `<div class="text-center py-16 bg-spore-white rounded-xl"><div class="text-5xl mb-4" data-svelte-h="svelte-n08cxc">\u{1F3E2}</div> <h3 class="text-xl font-bold text-spore-dark mb-2" data-svelte-h="svelte-1c0awzq">No buildings or units yet</h3> <p class="text-spore-steel mb-6" data-svelte-h="svelte-33yep1">Add a building to start organizing your site</p> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold" data-svelte-h="svelte-1cfi1x1">+ ADD BUILDING</button></div>`}</div>`;
     });
   }
 });
 
-// .svelte-kit/output/server/nodes/17.js
-var __exports18 = {};
-__export(__exports18, {
+// .svelte-kit/output/server/nodes/16.js
+var __exports17 = {};
+__export(__exports17, {
   component: () => component17,
-  fonts: () => fonts18,
-  imports: () => imports18,
-  index: () => index18,
-  server: () => page_server_ts_exports16,
-  server_id: () => server_id17,
-  stylesheets: () => stylesheets18
+  fonts: () => fonts17,
+  imports: () => imports17,
+  index: () => index17,
+  server: () => page_server_ts_exports15,
+  server_id: () => server_id16,
+  stylesheets: () => stylesheets17
 });
-var index18, component_cache17, component17, server_id17, imports18, stylesheets18, fonts18;
-var init__18 = __esm({
-  ".svelte-kit/output/server/nodes/17.js"() {
-    init_page_server_ts16();
-    index18 = 17;
+var index17, component_cache17, component17, server_id16, imports17, stylesheets17, fonts17;
+var init__17 = __esm({
+  ".svelte-kit/output/server/nodes/16.js"() {
+    init_page_server_ts15();
+    index17 = 16;
     component17 = async () => component_cache17 ??= (await Promise.resolve().then(() => (init_page_svelte15(), page_svelte_exports15))).default;
-    server_id17 = "src/routes/sites/[id]/+page.server.ts";
-    imports18 = ["_app/immutable/chunks/17.1da2f5ba.js", "_app/immutable/chunks/_page.032cb1d6.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets18 = [];
-    fonts18 = [];
+    server_id16 = "src/routes/sites/[id]/+page.server.ts";
+    imports17 = ["_app/immutable/nodes/16.ce3c14b0.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
+    stylesheets17 = [];
+    fonts17 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/users/_page.server.ts.js
-var page_server_ts_exports17 = {};
-__export(page_server_ts_exports17, {
-  actions: () => actions15,
+var page_server_ts_exports16 = {};
+__export(page_server_ts_exports16, {
+  actions: () => actions14,
   load: () => load16
 });
-var load16, actions15;
-var init_page_server_ts17 = __esm({
+var load16, actions14;
+var init_page_server_ts16 = __esm({
   ".svelte-kit/output/server/entries/pages/users/_page.server.ts.js"() {
     init_prisma();
     init_auth();
@@ -30986,7 +31453,7 @@ var init_page_server_ts17 = __esm({
       });
       return { users };
     };
-    actions15 = {
+    actions14 = {
       create: async (event) => {
         const { locals, request } = event;
         if (!locals.user || !canManageUsers(locals.user.role)) {
@@ -31129,27 +31596,27 @@ var init_page_svelte16 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/18.js
-var __exports19 = {};
-__export(__exports19, {
+// .svelte-kit/output/server/nodes/17.js
+var __exports18 = {};
+__export(__exports18, {
   component: () => component18,
-  fonts: () => fonts19,
-  imports: () => imports19,
-  index: () => index19,
-  server: () => page_server_ts_exports17,
-  server_id: () => server_id18,
-  stylesheets: () => stylesheets19
+  fonts: () => fonts18,
+  imports: () => imports18,
+  index: () => index18,
+  server: () => page_server_ts_exports16,
+  server_id: () => server_id17,
+  stylesheets: () => stylesheets18
 });
-var index19, component_cache18, component18, server_id18, imports19, stylesheets19, fonts19;
-var init__19 = __esm({
-  ".svelte-kit/output/server/nodes/18.js"() {
-    init_page_server_ts17();
-    index19 = 18;
+var index18, component_cache18, component18, server_id17, imports18, stylesheets18, fonts18;
+var init__18 = __esm({
+  ".svelte-kit/output/server/nodes/17.js"() {
+    init_page_server_ts16();
+    index18 = 17;
     component18 = async () => component_cache18 ??= (await Promise.resolve().then(() => (init_page_svelte16(), page_svelte_exports16))).default;
-    server_id18 = "src/routes/users/+page.server.ts";
-    imports19 = ["_app/immutable/nodes/18.f5da480f.js", "_app/immutable/chunks/_page.3c40b649.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js"];
-    stylesheets19 = [];
-    fonts19 = [];
+    server_id17 = "src/routes/users/+page.server.ts";
+    imports18 = ["_app/immutable/nodes/17.507efd54.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js"];
+    stylesheets18 = [];
+    fonts18 = [];
   }
 });
 
@@ -31220,23 +31687,23 @@ var init_page_svelte17 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/19.js
-var __exports20 = {};
-__export(__exports20, {
+// .svelte-kit/output/server/nodes/18.js
+var __exports19 = {};
+__export(__exports19, {
   component: () => component19,
-  fonts: () => fonts20,
-  imports: () => imports20,
-  index: () => index20,
-  stylesheets: () => stylesheets20
+  fonts: () => fonts19,
+  imports: () => imports19,
+  index: () => index19,
+  stylesheets: () => stylesheets19
 });
-var index20, component_cache19, component19, imports20, stylesheets20, fonts20;
-var init__20 = __esm({
-  ".svelte-kit/output/server/nodes/19.js"() {
-    index20 = 19;
+var index19, component_cache19, component19, imports19, stylesheets19, fonts19;
+var init__19 = __esm({
+  ".svelte-kit/output/server/nodes/18.js"() {
+    index19 = 18;
     component19 = async () => component_cache19 ??= (await Promise.resolve().then(() => (init_page_svelte17(), page_svelte_exports17))).default;
-    imports20 = ["_app/immutable/chunks/19.82161d5f.js", "_app/immutable/chunks/_page.6d829719.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.e9baf4e7.js"];
-    stylesheets20 = [];
-    fonts20 = [];
+    imports19 = ["_app/immutable/nodes/18.74ff553e.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.189c3083.js"];
+    stylesheets19 = [];
+    fonts19 = [];
   }
 });
 
@@ -31268,55 +31735,14 @@ var init_websocket_handler = __esm({
   }
 });
 
-// .svelte-kit/output/server/chunks/constants.js
-var WORK_ORDER_STATUSES, PRIORITIES, DEFAULT_SORT_OPTION, DEFAULT_PRIORITY, PRIORITY_ORDER, WORK_ORDER_STATUS_COLORS, WORK_ORDER_PRIORITY_COLORS;
-var init_constants2 = __esm({
-  ".svelte-kit/output/server/chunks/constants.js"() {
-    WORK_ORDER_STATUSES = [
-      "PENDING",
-      "IN_PROGRESS",
-      "ON_HOLD",
-      "COMPLETED",
-      "CANCELLED"
-    ];
-    PRIORITIES = [
-      "LOW",
-      "MEDIUM",
-      "HIGH",
-      "EMERGENCY"
-    ];
-    DEFAULT_SORT_OPTION = "dueDate";
-    DEFAULT_PRIORITY = "MEDIUM";
-    PRIORITY_ORDER = {
-      EMERGENCY: 0,
-      HIGH: 1,
-      MEDIUM: 2,
-      LOW: 3
-    };
-    WORK_ORDER_STATUS_COLORS = {
-      PENDING: "bg-yellow-100 text-yellow-800",
-      IN_PROGRESS: "bg-blue-100 text-blue-800",
-      COMPLETED: "bg-green-100 text-green-800",
-      ON_HOLD: "bg-gray-100 text-gray-800",
-      CANCELLED: "bg-red-100 text-red-800"
-    };
-    WORK_ORDER_PRIORITY_COLORS = {
-      LOW: "bg-gray-100 text-gray-600",
-      MEDIUM: "bg-blue-100 text-blue-600",
-      HIGH: "bg-orange-100 text-orange-600",
-      EMERGENCY: "bg-red-100 text-red-600"
-    };
-  }
-});
-
 // .svelte-kit/output/server/entries/pages/work-orders/_page.server.ts.js
-var page_server_ts_exports18 = {};
-__export(page_server_ts_exports18, {
-  actions: () => actions16,
+var page_server_ts_exports17 = {};
+__export(page_server_ts_exports17, {
+  actions: () => actions15,
   load: () => load17
 });
-var load17, actions16;
-var init_page_server_ts18 = __esm({
+var load17, actions15;
+var init_page_server_ts17 = __esm({
   ".svelte-kit/output/server/entries/pages/work-orders/_page.server.ts.js"() {
     init_prisma();
     init_websocket_handler();
@@ -31523,7 +31949,7 @@ var init_page_server_ts18 = __esm({
         sort
       };
     };
-    actions16 = {
+    actions15 = {
       /**
        * Create a new Work Order
        */
@@ -31734,6 +32160,7 @@ var init_page_svelte18 = __esm({
     init_ssr();
     init_websocket();
     init_devalue();
+    init_FilterBar();
     init_stores();
     init_constants2();
     Page18 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
@@ -31751,7 +32178,34 @@ var init_page_svelte18 = __esm({
       let filterPriority = data.priority || "";
       let filterSite = data.siteId || "";
       let sortOption = data.sort || DEFAULT_SORT_OPTION;
+      let showFilters = false;
       let myOnly = data.myOnly || false;
+      function applyFilters() {
+        const params = new URLSearchParams();
+        if (myOnly)
+          params.set("my", "true");
+        if (filterStatus)
+          params.set("status", filterStatus);
+        if (filterPriority)
+          params.set("priority", filterPriority);
+        if (filterSite)
+          params.set("siteId", filterSite);
+        if (sortOption && sortOption !== DEFAULT_SORT_OPTION)
+          params.set("sort", sortOption);
+        goto(`?${params.toString()}`, { keepFocus: true });
+      }
+      function clearFilters() {
+        filterStatus = "";
+        filterPriority = "";
+        filterSite = "";
+        sortOption = DEFAULT_SORT_OPTION;
+        myOnly = false;
+        applyFilters();
+      }
+      function toggleMyOrders() {
+        myOnly = !myOnly;
+        applyFilters();
+      }
       let wsConnected = false;
       let lastUpdate = null;
       let showCreateForm = false;
@@ -31781,93 +32235,162 @@ var init_page_svelte18 = __esm({
       onDestroy(() => unsubscribe());
       if ($$props.data === void 0 && $$bindings.data && data !== void 0)
         $$bindings.data(data);
-      {
-        if (data.workOrders)
-          workOrders = data.workOrders;
-      }
-      {
-        if (data.assets)
-          data.assets;
-      }
-      {
-        if (data.units)
-          data.units;
-      }
-      {
-        if (data.buildings)
-          data.buildings;
-      }
-      {
-        if (data.sites)
-          sites = data.sites;
-      }
-      {
-        if (data.users)
-          users = data.users;
-      }
-      $$unsubscribe_page();
-      return `${$$result.head += `<!-- HEAD_svelte-178cqdl_START -->${$$result.title = `<title>Work Orders \u2014 Spore CMMS</title>`, ""}<!-- HEAD_svelte-178cqdl_END -->`, ""} <div class="max-w-7xl mx-auto px-4 py-10"> <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6"><div><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight" data-svelte-h="svelte-hmu04k">Work Orders</h1> <div class="flex items-center gap-3 mt-2"><span class="${"flex items-center gap-2 text-sm font-medium " + escape(
-        wsConnected ? "text-spore-orange" : "text-spore-cream/50",
-        true
-      )}" role="status" aria-live="polite"><span class="${"w-2 h-2 rounded-full " + escape(
-        wsConnected ? "bg-spore-orange animate-pulse" : "bg-spore-cream/30",
-        true
-      )}" aria-hidden="true"></span> ${escape(wsConnected ? "Live updates enabled" : "Connecting...")}</span> ${lastUpdate ? `<span class="text-sm font-medium text-spore-orange animate-pulse" role="status" aria-live="polite">${escape(lastUpdate)}</span>` : ``}</div></div> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:ring-offset-2 focus:ring-offset-spore-steel transition-colors text-sm font-bold tracking-wide shadow-lg"${add_attribute("aria-expanded", showCreateForm, 0)} aria-controls="create-form">${escape("+ NEW WORK ORDER")}</button></div>  <div class="bg-spore-white rounded-xl mb-6 shadow-sm border border-spore-cream/50"> <div class="md:hidden p-4 border-b border-spore-cream/30 flex justify-between items-center bg-spore-cream/10"><span class="text-sm font-bold text-spore-dark uppercase tracking-wide" data-svelte-h="svelte-1t2qdoi">Filters &amp; Sort</span> <button class="text-spore-orange font-bold text-sm">${escape("Show")}</button></div>  <div class="${escape("hidden", true) + " md:block p-4 space-y-4 md:space-y-0"}"><div class="flex flex-col md:flex-row md:items-center gap-4"> <button class="${"flex items-center gap-2 px-3 py-2 rounded-lg transition-colors " + escape(
-        myOnly ? "bg-spore-orange/10 text-spore-orange ring-1 ring-spore-orange" : "bg-spore-cream/20 text-spore-steel hover:bg-spore-cream/30",
-        true
-      )}"><span class="w-4 h-4 rounded-full border border-current flex items-center justify-center">${myOnly ? `<span class="w-2 h-2 rounded-full bg-current"></span>` : ``}</span> <span class="text-sm font-bold" data-svelte-h="svelte-eyf1ik">My Work Orders</span></button> <div class="h-6 w-px bg-spore-cream/50 hidden md:block"></div>  ${filterStatus || filterPriority || filterSite || sortOption !== "dueDate" || myOnly ? `<button class="text-xs font-bold text-red-500 hover:text-red-600 px-2" data-svelte-h="svelte-3ex7ri">Reset</button> <div class="h-6 w-px bg-spore-cream/50 hidden md:block"></div>` : ``}  <div class="grid grid-cols-2 md:flex md:items-center gap-2 md:gap-4 flex-1"><select class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-1n598p3">All Statuses</option>${each(WORK_ORDER_STATUSES, (s3) => {
-        return `<option${add_attribute("value", s3, 0)}>${escape(s3.replace("_", " "))}</option>`;
-      })}</select> <select class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-1sepmzx">All Priorities</option>${each(PRIORITIES, (p) => {
-        return `<option${add_attribute("value", p, 0)}>${escape(p)}</option>`;
-      })}</select> ${sites.length > 0 ? `<select class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-128kygr">All Sites</option>${each(sites, (s3) => {
-        return `<option${add_attribute("value", s3.id, 0)}>${escape(s3.name)}</option>`;
-      })}</select>` : ``}  <select class="w-full md:w-auto bg-spore-cream/10 border border-spore-cream/30 rounded-lg px-3 py-2 text-sm text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"><option value="dueDate" data-svelte-h="svelte-uuj5mk">Due Date</option><option value="priority" data-svelte-h="svelte-11hy9v2">Priority</option><option value="created" data-svelte-h="svelte-1ksm85e">Newest</option><option value="updated" data-svelte-h="svelte-162axp8">Updated</option></select></div></div></div></div>  ${``}  ${workOrders && workOrders.length > 0 ? `<div class="bg-spore-white rounded-xl shadow-sm border border-spore-cream/50 overflow-hidden"> <div class="hidden md:block overflow-x-auto"><table class="min-w-full" role="table" aria-label="Work orders list"><thead class="bg-spore-dark"><tr><th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-3znkiu">Title</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-19faq7s">Priority</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-11id8rq">Status</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1eniqmk">Assigned</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden lg:table-cell" data-svelte-h="svelte-1n0iefz">Location</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden lg:table-cell" data-svelte-h="svelte-12ixr6g">Due Date</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-4s34th">Actions</th></tr></thead> <tbody class="divide-y divide-spore-cream/50">${each(workOrders, (workOrder) => {
-        return `<tr class="hover:bg-spore-cream/20 transition-colors"><td class="px-4 py-3"><a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-sm font-bold text-spore-dark hover:text-spore-orange transition-colors focus:outline-none focus:underline block">${escape(workOrder.title)} </a></td> <td class="px-4 py-3 whitespace-nowrap"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_PRIORITY_COLORS[workOrder.priority] || WORK_ORDER_PRIORITY_COLORS.MEDIUM, true)}">${escape(workOrder.priority)} </span></td> <td class="px-4 py-3 whitespace-nowrap"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_STATUS_COLORS[workOrder.status] || "", true)}">${escape(workOrder.status.replace("_", " "))} </span></td> <td class="px-4 py-3 whitespace-nowrap"><form method="POST" action="?/assign" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="text-xs bg-transparent border-0 text-spore-steel cursor-pointer hover:text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange rounded min-w-[120px]"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
-          return `<option${add_attribute("value", user.id, 0)}>${escape(getUserName2(user))}</option>`;
-        })}</select> </form></td> <td class="px-4 py-3 text-sm text-spore-steel font-medium hidden lg:table-cell">${workOrder.asset ? `${escape(workOrder.asset.name)}` : `${workOrder.building ? `${escape(workOrder.building.name)} ${escape(workOrder.building.site?.name ? `- ${workOrder.building.site.name}` : "")}` : `${workOrder.unit ? `Unit ${escape(workOrder.unit.roomNumber)} ${escape(workOrder.unit.name ? `- ${workOrder.unit.name}` : "")} ${escape(workOrder.unit.building ? ` \u2022 ${workOrder.unit.building.name}` : "")} ${escape(workOrder.unit.site?.name ? ` \u2022 ${workOrder.unit.site.name}` : "")}` : `${workOrder.site ? `${escape(workOrder.site.name)}` : `N/A`}`}`}`}</td> <td class="px-4 py-3 text-sm text-spore-steel hidden lg:table-cell">${workOrder.dueDate ? `${escape(new Date(workOrder.dueDate).toLocaleDateString())} ${isOverdue(workOrder.dueDate, workOrder.status) ? `<span class="text-red-500 font-semibold" data-svelte-h="svelte-w65mx2">(Overdue)</span>` : ``}` : `-`}</td> <td class="px-4 py-3 whitespace-nowrap text-xs font-medium space-x-2">${workOrder.status === "PENDING" ? `<form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="text-spore-orange hover:text-spore-orange/70 focus:outline-none focus:underline" title="${"Start working on " + escape(workOrder.title, true)}">Start</button> </form>` : ``} ${workOrder.status === "IN_PROGRESS" ? `<form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="COMPLETED"> <button type="submit" class="text-spore-forest hover:text-spore-forest/70 focus:outline-none focus:underline" title="${"Mark " + escape(workOrder.title, true) + " as completed"}">Complete</button> </form>` : ``} <a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-spore-steel hover:text-spore-dark focus:outline-none focus:underline" title="${"View details for " + escape(workOrder.title, true)}">View
+      let $$settled;
+      let $$rendered;
+      let previous_head = $$result.head;
+      do {
+        $$settled = true;
+        $$result.head = previous_head;
+        {
+          if (data.workOrders)
+            workOrders = data.workOrders;
+        }
+        {
+          if (data.assets)
+            data.assets;
+        }
+        {
+          if (data.units)
+            data.units;
+        }
+        {
+          if (data.buildings)
+            data.buildings;
+        }
+        {
+          if (data.sites)
+            sites = data.sites;
+        }
+        {
+          if (data.users)
+            users = data.users;
+        }
+        $$rendered = `${$$result.head += `<!-- HEAD_svelte-178cqdl_START -->${$$result.title = `<title>Work Orders \u2014 Spore CMMS</title>`, ""}<!-- HEAD_svelte-178cqdl_END -->`, ""} <div class="max-w-7xl mx-auto px-4 py-10"> <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6"><div><h1 class="text-4xl font-extrabold text-spore-cream tracking-tight" data-svelte-h="svelte-hmu04k">Work Orders</h1> <div class="flex items-center gap-3 mt-2"><span class="${"flex items-center gap-2 text-sm font-medium " + escape(
+          wsConnected ? "text-spore-orange" : "text-spore-cream/50",
+          true
+        )}" role="status" aria-live="polite"><span class="${"w-2 h-2 rounded-full " + escape(
+          wsConnected ? "bg-spore-orange animate-pulse" : "bg-spore-cream/30",
+          true
+        )}" aria-hidden="true"></span> ${escape(wsConnected ? "Live updates enabled" : "Connecting...")}</span> ${lastUpdate ? `<span class="text-sm font-medium text-spore-orange animate-pulse" role="status" aria-live="polite">${escape(lastUpdate)}</span>` : ``}</div></div> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:ring-offset-2 focus:ring-offset-spore-steel transition-colors text-sm font-bold tracking-wide shadow-lg"${add_attribute("aria-expanded", showCreateForm, 0)} aria-controls="create-form">${escape("+ NEW WORK ORDER")}</button></div>  ${validate_component(FilterBar, "FilterBar").$$render(
+          $$result,
+          {
+            toggleButtons: [
+              {
+                label: "My Work Orders",
+                active: myOnly,
+                onToggle: toggleMyOrders,
+                title: "Show only my assigned work orders"
+              }
+            ],
+            filters: [
+              {
+                value: filterStatus,
+                placeholder: "All Statuses",
+                title: "Filter by status",
+                onChange: (v) => {
+                  filterStatus = v;
+                  applyFilters();
+                },
+                options: WORK_ORDER_STATUSES.map((s3) => ({ value: s3, label: s3.replace("_", " ") }))
+              },
+              {
+                value: filterPriority,
+                placeholder: "All Priorities",
+                title: "Filter by priority",
+                onChange: (v) => {
+                  filterPriority = v;
+                  applyFilters();
+                },
+                options: PRIORITIES.map((p) => ({ value: p, label: p }))
+              },
+              {
+                value: filterSite,
+                placeholder: "All Sites",
+                title: "Filter by site",
+                onChange: (v) => {
+                  filterSite = v;
+                  applyFilters();
+                },
+                show: sites.length > 0,
+                options: sites.map((s3) => ({ value: s3.id, label: s3.name }))
+              }
+            ],
+            sortOptions: [
+              { value: "dueDate", label: "Due Date" },
+              { value: "priority", label: "Priority" },
+              { value: "created", label: "Newest" },
+              { value: "updated", label: "Updated" }
+            ],
+            onSortChange: (v) => {
+              sortOption = v;
+              applyFilters();
+            },
+            onClear: clearFilters,
+            clearLabel: "Reset",
+            showFilters,
+            sortValue: sortOption
+          },
+          {
+            showFilters: ($$value) => {
+              showFilters = $$value;
+              $$settled = false;
+            },
+            sortValue: ($$value) => {
+              sortOption = $$value;
+              $$settled = false;
+            }
+          },
+          {}
+        )}  ${``}  ${workOrders && workOrders.length > 0 ? `<div class="bg-spore-white rounded-xl shadow-sm border border-spore-cream/50 overflow-hidden"> <div class="hidden md:block overflow-x-auto"><table class="min-w-full" role="table" aria-label="Work orders list"><thead class="bg-spore-dark"><tr><th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-3znkiu">Title</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-19faq7s">Priority</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-11id8rq">Status</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1eniqmk">Assigned</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden lg:table-cell" data-svelte-h="svelte-1n0iefz">Location</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden lg:table-cell" data-svelte-h="svelte-12ixr6g">Due Date</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-4s34th">Actions</th></tr></thead> <tbody class="divide-y divide-spore-cream/50">${each(workOrders, (workOrder) => {
+          return `<tr class="hover:bg-spore-cream/20 transition-colors"><td class="px-4 py-3"><a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-sm font-bold text-spore-dark hover:text-spore-orange transition-colors focus:outline-none focus:underline block">${escape(workOrder.title)} </a></td> <td class="px-4 py-3 whitespace-nowrap"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_PRIORITY_COLORS[workOrder.priority] || WORK_ORDER_PRIORITY_COLORS.MEDIUM, true)}">${escape(workOrder.priority)} </span></td> <td class="px-4 py-3 whitespace-nowrap"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_STATUS_COLORS[workOrder.status] || "", true)}">${escape(workOrder.status.replace("_", " "))} </span></td> <td class="px-4 py-3 whitespace-nowrap"><form method="POST" action="?/assign" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="text-xs bg-transparent border-0 text-spore-steel cursor-pointer hover:text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange rounded min-w-[120px]"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
+            return `<option${add_attribute("value", user.id, 0)}>${escape(getUserName2(user))}</option>`;
+          })}</select> </form></td> <td class="px-4 py-3 text-sm text-spore-steel font-medium hidden lg:table-cell">${workOrder.asset ? `${escape(workOrder.asset.name)}` : `${workOrder.building ? `${escape(workOrder.building.name)} ${escape(workOrder.building.site?.name ? `- ${workOrder.building.site.name}` : "")}` : `${workOrder.unit ? `Unit ${escape(workOrder.unit.roomNumber)} ${escape(workOrder.unit.name ? `- ${workOrder.unit.name}` : "")} ${escape(workOrder.unit.building ? ` \u2022 ${workOrder.unit.building.name}` : "")} ${escape(workOrder.unit.site?.name ? ` \u2022 ${workOrder.unit.site.name}` : "")}` : `${workOrder.site ? `${escape(workOrder.site.name)}` : `N/A`}`}`}`}</td> <td class="px-4 py-3 text-sm text-spore-steel hidden lg:table-cell">${workOrder.dueDate ? `${escape(new Date(workOrder.dueDate).toLocaleDateString())} ${isOverdue(workOrder.dueDate, workOrder.status) ? `<span class="text-red-500 font-semibold" data-svelte-h="svelte-w65mx2">(Overdue)</span>` : ``}` : `-`}</td> <td class="px-4 py-3 whitespace-nowrap text-xs font-medium space-x-2">${workOrder.status === "PENDING" ? `<form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="text-spore-orange hover:text-spore-orange/70 focus:outline-none focus:underline" title="${"Start working on " + escape(workOrder.title, true)}">Start</button> </form>` : ``} ${workOrder.status === "IN_PROGRESS" ? `<form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="COMPLETED"> <button type="submit" class="text-spore-forest hover:text-spore-forest/70 focus:outline-none focus:underline" title="${"Mark " + escape(workOrder.title, true) + " as completed"}">Complete</button> </form>` : ``} <a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-spore-steel hover:text-spore-dark focus:outline-none focus:underline" title="${"View details for " + escape(workOrder.title, true)}">View
 									</a></td> </tr>`;
-      })}</tbody></table></div>  <div class="md:hidden divide-y divide-spore-cream/50">${each(workOrders, (workOrder) => {
-        return `<div class="p-4 hover:bg-spore-cream/10 transition-colors"><div class="flex items-start justify-between mb-2"><h3 class="text-base font-bold text-spore-dark flex-1 mr-2"><a href="${"/work-orders/" + escape(workOrder.id, true)}" class="hover:text-spore-orange transition-colors focus:outline-none focus:underline">${escape(workOrder.title)} </a></h3> <div class="flex flex-col gap-1"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_PRIORITY_COLORS[workOrder.priority] || WORK_ORDER_PRIORITY_COLORS.MEDIUM, true)}">${escape(workOrder.priority)}</span> <span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_STATUS_COLORS[workOrder.status] || "", true)}">${escape(workOrder.status.replace("_", " "))}</span> </div></div> <div class="space-y-2 mb-4"><div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-8jdlm4">Location:</span> <span class="text-sm text-spore-dark text-right">${workOrder.asset ? `${escape(workOrder.asset.name)}` : `${workOrder.building ? `${escape(workOrder.building.name)}` : `${workOrder.unit ? `Unit ${escape(workOrder.unit.roomNumber)}` : `${workOrder.site ? `${escape(workOrder.site.name)}` : `N/A`}`}`}`} </span></div> ${workOrder.dueDate ? `<div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1t4sczn">Due:</span> <span class="${"text-sm " + escape(getOverdueClass(workOrder.dueDate, workOrder.status), true)}">${escape(new Date(workOrder.dueDate).toLocaleDateString())} ${isOverdue(workOrder.dueDate, workOrder.status) ? `(Overdue)` : ``}</span> </div>` : ``} <div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1es34l">Assigned:</span> <form method="POST" action="?/assign" class="flex-1 max-w-[150px]"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="w-full text-sm bg-spore-cream/30 border border-spore-cream/50 rounded-lg px-2 py-1 text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
-          return `<option${add_attribute("value", user.id, 0)}>${escape(getUserName2(user))}</option>`;
-        })}</select></form> </div></div> <div class="flex gap-2 text-sm font-bold">${workOrder.status === "PENDING" ? `<form method="POST" action="?/updateStatus" class="flex-1"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="w-full bg-spore-orange text-white py-2 px-3 rounded-lg font-medium hover:bg-spore-orange/90 focus:outline-none focus:ring-1 focus:ring-spore-orange transition-colors" aria-label="${"Start work order: " + escape(workOrder.title, true)}">Start</button> </form>` : ``} ${workOrder.status === "IN_PROGRESS" ? `<form method="POST" action="?/updateStatus" class="flex-1"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="COMPLETED"> <button type="submit" class="w-full bg-spore-forest text-white py-2 px-3 rounded-lg font-medium hover:bg-spore-forest/90 focus:outline-none focus:ring-1 focus:ring-spore-forest transition-colors" aria-label="${"Complete work order: " + escape(workOrder.title, true)}">Complete</button> </form>` : ``} <a href="${"/work-orders/" + escape(workOrder.id, true)}" class="flex-1 bg-spore-cream text-spore-dark py-2 px-3 rounded-lg font-medium text-center hover:bg-spore-cream/70 focus:outline-none focus:ring-1 focus:ring-spore-cream transition-colors">View
+        })}</tbody></table></div>  <div class="md:hidden divide-y divide-spore-cream/50">${each(workOrders, (workOrder) => {
+          return `<div class="p-4 hover:bg-spore-cream/10 transition-colors"><div class="flex items-start justify-between mb-2"><h3 class="text-base font-bold text-spore-dark flex-1 mr-2"><a href="${"/work-orders/" + escape(workOrder.id, true)}" class="hover:text-spore-orange transition-colors focus:outline-none focus:underline">${escape(workOrder.title)} </a></h3> <div class="flex flex-col gap-1"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_PRIORITY_COLORS[workOrder.priority] || WORK_ORDER_PRIORITY_COLORS.MEDIUM, true)}">${escape(workOrder.priority)}</span> <span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_STATUS_COLORS[workOrder.status] || "", true)}">${escape(workOrder.status.replace("_", " "))}</span> </div></div> <div class="space-y-2 mb-4"><div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-8jdlm4">Location:</span> <span class="text-sm text-spore-dark text-right">${workOrder.asset ? `${escape(workOrder.asset.name)}` : `${workOrder.building ? `${escape(workOrder.building.name)}` : `${workOrder.unit ? `Unit ${escape(workOrder.unit.roomNumber)}` : `${workOrder.site ? `${escape(workOrder.site.name)}` : `N/A`}`}`}`} </span></div> ${workOrder.dueDate ? `<div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1t4sczn">Due:</span> <span class="${"text-sm " + escape(getOverdueClass(workOrder.dueDate, workOrder.status), true)}">${escape(new Date(workOrder.dueDate).toLocaleDateString())} ${isOverdue(workOrder.dueDate, workOrder.status) ? `(Overdue)` : ``}</span> </div>` : ``} <div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1es34l">Assigned:</span> <form method="POST" action="?/assign" class="flex-1 max-w-[150px]"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="w-full text-sm bg-spore-cream/30 border border-spore-cream/50 rounded-lg px-2 py-1 text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
+            return `<option${add_attribute("value", user.id, 0)}>${escape(getUserName2(user))}</option>`;
+          })}</select></form> </div></div> <div class="flex gap-2 text-sm font-bold">${workOrder.status === "PENDING" ? `<form method="POST" action="?/updateStatus" class="flex-1"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="w-full bg-spore-orange text-white py-2 px-3 rounded-lg font-medium hover:bg-spore-orange/90 focus:outline-none focus:ring-1 focus:ring-spore-orange transition-colors" aria-label="${"Start work order: " + escape(workOrder.title, true)}">Start</button> </form>` : ``} ${workOrder.status === "IN_PROGRESS" ? `<form method="POST" action="?/updateStatus" class="flex-1"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="COMPLETED"> <button type="submit" class="w-full bg-spore-forest text-white py-2 px-3 rounded-lg font-medium hover:bg-spore-forest/90 focus:outline-none focus:ring-1 focus:ring-spore-forest transition-colors" aria-label="${"Complete work order: " + escape(workOrder.title, true)}">Complete</button> </form>` : ``} <a href="${"/work-orders/" + escape(workOrder.id, true)}" class="flex-1 bg-spore-cream text-spore-dark py-2 px-3 rounded-lg font-medium text-center hover:bg-spore-cream/70 focus:outline-none focus:ring-1 focus:ring-spore-cream transition-colors">View
 							</a></div> </div>`;
-      })}</div></div>` : `<div class="text-center py-16 bg-spore-white rounded-xl" role="status"><div class="text-5xl mb-4" aria-hidden="true" data-svelte-h="svelte-idje0l">\u{1F4CB}</div> <h3 class="text-xl font-bold text-spore-dark mb-2" data-svelte-h="svelte-14qcuvf">No work orders yet</h3> <p class="text-spore-steel mb-6" data-svelte-h="svelte-jrvcoi">Create your first work order to get started</p> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:ring-offset-2 transition-colors text-sm font-bold" data-svelte-h="svelte-19pqfzv">+ CREATE WORK ORDER</button></div>`}</div>`;
+        })}</div></div>` : `<div class="text-center py-16 bg-spore-white rounded-xl" role="status"><div class="text-5xl mb-4" aria-hidden="true" data-svelte-h="svelte-idje0l">\u{1F4CB}</div> <h3 class="text-xl font-bold text-spore-dark mb-2" data-svelte-h="svelte-14qcuvf">No work orders yet</h3> <p class="text-spore-steel mb-6" data-svelte-h="svelte-jrvcoi">Create your first work order to get started</p> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:ring-offset-2 transition-colors text-sm font-bold" data-svelte-h="svelte-19pqfzv">+ CREATE WORK ORDER</button></div>`}</div>`;
+      } while (!$$settled);
+      $$unsubscribe_page();
+      return $$rendered;
     });
   }
 });
 
-// .svelte-kit/output/server/nodes/20.js
-var __exports21 = {};
-__export(__exports21, {
+// .svelte-kit/output/server/nodes/19.js
+var __exports20 = {};
+__export(__exports20, {
   component: () => component20,
-  fonts: () => fonts21,
-  imports: () => imports21,
-  index: () => index21,
-  server: () => page_server_ts_exports18,
-  server_id: () => server_id19,
-  stylesheets: () => stylesheets21
+  fonts: () => fonts20,
+  imports: () => imports20,
+  index: () => index20,
+  server: () => page_server_ts_exports17,
+  server_id: () => server_id18,
+  stylesheets: () => stylesheets20
 });
-var index21, component_cache20, component20, server_id19, imports21, stylesheets21, fonts21;
-var init__21 = __esm({
-  ".svelte-kit/output/server/nodes/20.js"() {
-    init_page_server_ts18();
-    index21 = 20;
+var index20, component_cache20, component20, server_id18, imports20, stylesheets20, fonts20;
+var init__20 = __esm({
+  ".svelte-kit/output/server/nodes/19.js"() {
+    init_page_server_ts17();
+    index20 = 19;
     component20 = async () => component_cache20 ??= (await Promise.resolve().then(() => (init_page_svelte18(), page_svelte_exports18))).default;
-    server_id19 = "src/routes/work-orders/+page.server.ts";
-    imports21 = ["_app/immutable/chunks/20.0024ab4a.js", "_app/immutable/chunks/_page.7c1102d1.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/websocket.29f0dfae.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/stores.992542e7.js", "_app/immutable/chunks/constants.d5ea747b.js"];
-    stylesheets21 = [];
-    fonts21 = [];
+    server_id18 = "src/routes/work-orders/+page.server.ts";
+    imports20 = ["_app/immutable/nodes/19.311278cf.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/websocket.53b2f4b2.js", "_app/immutable/chunks/index.1d534c61.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/stores.a8273ce7.js", "_app/immutable/chunks/constants.30bce2a0.js", "_app/immutable/chunks/FilterBar.54e33d9e.js"];
+    stylesheets20 = [];
+    fonts20 = [];
   }
 });
 
 // .svelte-kit/output/server/entries/pages/work-orders/_id_/_page.server.ts.js
-var page_server_ts_exports19 = {};
-__export(page_server_ts_exports19, {
-  actions: () => actions17,
+var page_server_ts_exports18 = {};
+__export(page_server_ts_exports18, {
+  actions: () => actions16,
   load: () => load18
 });
-var load18, actions17;
-var init_page_server_ts19 = __esm({
+var load18, actions16;
+var init_page_server_ts18 = __esm({
   ".svelte-kit/output/server/entries/pages/work-orders/_id_/_page.server.ts.js"() {
     init_prisma();
     init_websocket_handler();
@@ -31936,7 +32459,7 @@ var init_page_server_ts19 = __esm({
       }));
       return { workOrder: workOrderWithRoom, assets: assetsWithRoom };
     };
-    actions17 = {
+    actions16 = {
       updateStatus: async (event) => {
         const prisma = await createRequestPrisma(event);
         const formData = await event.request.formData();
@@ -32052,27 +32575,27 @@ var init_page_svelte19 = __esm({
   }
 });
 
-// .svelte-kit/output/server/nodes/21.js
-var __exports22 = {};
-__export(__exports22, {
+// .svelte-kit/output/server/nodes/20.js
+var __exports21 = {};
+__export(__exports21, {
   component: () => component21,
-  fonts: () => fonts22,
-  imports: () => imports22,
-  index: () => index22,
-  server: () => page_server_ts_exports19,
-  server_id: () => server_id20,
-  stylesheets: () => stylesheets22
+  fonts: () => fonts21,
+  imports: () => imports21,
+  index: () => index21,
+  server: () => page_server_ts_exports18,
+  server_id: () => server_id19,
+  stylesheets: () => stylesheets21
 });
-var index22, component_cache21, component21, server_id20, imports22, stylesheets22, fonts22;
-var init__22 = __esm({
-  ".svelte-kit/output/server/nodes/21.js"() {
-    init_page_server_ts19();
-    index22 = 21;
+var index21, component_cache21, component21, server_id19, imports21, stylesheets21, fonts21;
+var init__21 = __esm({
+  ".svelte-kit/output/server/nodes/20.js"() {
+    init_page_server_ts18();
+    index21 = 20;
     component21 = async () => component_cache21 ??= (await Promise.resolve().then(() => (init_page_svelte19(), page_svelte_exports19))).default;
-    server_id20 = "src/routes/work-orders/[id]/+page.server.ts";
-    imports22 = ["_app/immutable/nodes/21.d8b94471.js", "_app/immutable/chunks/_page.9e90a8c9.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js", "_app/immutable/chunks/forms.c8c50b43.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/constants.d5ea747b.js"];
-    stylesheets22 = [];
-    fonts22 = [];
+    server_id19 = "src/routes/work-orders/[id]/+page.server.ts";
+    imports21 = ["_app/immutable/nodes/20.b78269b7.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js", "_app/immutable/chunks/forms.66b03145.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js", "_app/immutable/chunks/constants.30bce2a0.js"];
+    stylesheets21 = [];
+    fonts21 = [];
   }
 });
 
@@ -32273,6 +32796,7 @@ var POST2;
 var init_server_ts4 = __esm({
   ".svelte-kit/output/server/entries/endpoints/auth/logout/_server.ts.js"() {
     init_prisma();
+    init_environment();
     POST2 = async (event) => {
       initEnvFromEvent(event);
       const sessionId = event.cookies.get("spore_session");
@@ -32288,14 +32812,19 @@ var init_server_ts4 = __esm({
       } else {
         console.log("[LOGOUT] No session ID found, nothing to delete");
       }
-      const secure = "";
-      const cookieValue = `spore_session=; Path=/; HttpOnly; SameSite=Strict; Domain=sporecmms.com;${secure} Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-      console.log("[LOGOUT] Set-Cookie header:", cookieValue);
-      return new Response(JSON.stringify({ success: true }), {
-        status: 200,
+      event.cookies.set("spore_session", "", {
+        path: "/",
+        httpOnly: true,
+        sameSite: "strict",
+        secure: !dev,
+        expires: /* @__PURE__ */ new Date(0),
+        maxAge: 0
+      });
+      console.log("[LOGOUT] Cookie deleted via cookies.set()");
+      return new Response(null, {
+        status: 303,
         headers: {
-          "Content-Type": "application/json",
-          "Set-Cookie": cookieValue
+          "Location": "/auth/login"
         }
       });
     };
@@ -32708,8 +33237,8 @@ function is_action_json_request(event) {
   return accept === "application/json" && event.request.method === "POST";
 }
 async function handle_action_json_request(event, options2, server2) {
-  const actions18 = server2?.actions;
-  if (!actions18) {
+  const actions17 = server2?.actions;
+  if (!actions17) {
     const no_actions_error = error(405, "POST method not allowed. No actions exist for this page");
     return action_json(
       {
@@ -32726,9 +33255,9 @@ async function handle_action_json_request(event, options2, server2) {
       }
     );
   }
-  check_named_default_separate(actions18);
+  check_named_default_separate(actions17);
   try {
-    const data = await call_action(event, actions18);
+    const data = await call_action(event, actions17);
     if (false)
       ;
     if (data instanceof ActionFailure) {
@@ -32789,8 +33318,8 @@ function is_action_request(event) {
   return event.request.method === "POST";
 }
 async function handle_action_request(event, server2) {
-  const actions18 = server2?.actions;
-  if (!actions18) {
+  const actions17 = server2?.actions;
+  if (!actions17) {
     event.setHeaders({
       // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/405
       // "The server must generate an Allow header field in a 405 status code response"
@@ -32801,9 +33330,9 @@ async function handle_action_request(event, server2) {
       error: error(405, "POST method not allowed. No actions exist for this page")
     };
   }
-  check_named_default_separate(actions18);
+  check_named_default_separate(actions17);
   try {
-    const data = await call_action(event, actions18);
+    const data = await call_action(event, actions17);
     if (false)
       ;
     if (data instanceof ActionFailure) {
@@ -32835,14 +33364,14 @@ async function handle_action_request(event, server2) {
     };
   }
 }
-function check_named_default_separate(actions18) {
-  if (actions18.default && Object.keys(actions18).length > 1) {
+function check_named_default_separate(actions17) {
+  if (actions17.default && Object.keys(actions17).length > 1) {
     throw new Error(
       "When using named actions, the default action cannot be used. See the docs for more info: https://kit.svelte.dev/docs/form-actions#named-actions"
     );
   }
 }
-async function call_action(event, actions18) {
+async function call_action(event, actions17) {
   const url2 = new URL(event.request.url);
   let name = "default";
   for (const param of url2.searchParams) {
@@ -32854,7 +33383,7 @@ async function call_action(event, actions18) {
       break;
     }
   }
-  const action = actions18[name];
+  const action = actions17[name];
   if (!action) {
     throw new Error(`No action with name '${name}' found`);
   }
@@ -33663,8 +34192,8 @@ async function render_response({
   }
   const { client } = manifest2._;
   const modulepreloads = new Set(client.imports);
-  const stylesheets23 = new Set(client.stylesheets);
-  const fonts23 = new Set(client.fonts);
+  const stylesheets22 = new Set(client.stylesheets);
+  const fonts22 = new Set(client.fonts);
   const link_header_preloads = /* @__PURE__ */ new Set();
   const inline_styles = /* @__PURE__ */ new Map();
   let rendered;
@@ -33718,9 +34247,9 @@ async function render_response({
       for (const url2 of node.imports)
         modulepreloads.add(url2);
       for (const url2 of node.stylesheets)
-        stylesheets23.add(url2);
+        stylesheets22.add(url2);
       for (const url2 of node.fonts)
-        fonts23.add(url2);
+        fonts22.add(url2);
       if (node.inline_styles) {
         Object.entries(await node.inline_styles()).forEach(([k, v]) => inline_styles.set(k, v));
       }
@@ -33748,7 +34277,7 @@ async function render_response({
     head += `
 	<style${attributes.join("")}>${content}</style>`;
   }
-  for (const dep of stylesheets23) {
+  for (const dep of stylesheets22) {
     const path = prefixed(dep);
     const attributes = ['rel="stylesheet"'];
     if (inline_styles.has(dep)) {
@@ -33762,7 +34291,7 @@ async function render_response({
     head += `
 		<link href="${path}" ${attributes.join(" ")}>`;
   }
-  for (const dep of fonts23) {
+  for (const dep of fonts22) {
     const path = prefixed(dep);
     if (resolve_opts.preload({ type: "font", path })) {
       const ext = dep.slice(dep.lastIndexOf(".") + 1);
@@ -34494,11 +35023,11 @@ async function render_page(event, page2, options2, manifest2, state, resolve_opt
           const error210 = await handle_error_and_jsonify(event, options2, err);
           while (i--) {
             if (page2.errors[i]) {
-              const index23 = (
+              const index22 = (
                 /** @type {number} */
                 page2.errors[i]
               );
-              const node2 = await manifest2._.nodes[index23]();
+              const node2 = await manifest2._.nodes[index22]();
               let j = i;
               while (!branch[j])
                 j -= 1;
@@ -35363,7 +35892,7 @@ var manifest = (() => {
     assets: /* @__PURE__ */ new Set(["favicon.png", "favicon.svg", "_headers"]),
     mimeTypes: { ".png": "image/png", ".svg": "image/svg+xml" },
     _: {
-      client: { "start": "_app/immutable/entry/start.40aded89.js", "app": "_app/immutable/entry/app.9f1f169f.js", "imports": ["_app/immutable/entry/start.40aded89.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/singletons.016370c0.js", "_app/immutable/chunks/index.7647694d.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.9f1f169f.js", "_app/immutable/chunks/scheduler.a6309769.js", "_app/immutable/chunks/index.e9baf4e7.js"], "stylesheets": [], "fonts": [] },
+      client: { "start": "_app/immutable/entry/start.817f7dd5.js", "app": "_app/immutable/entry/app.05296be1.js", "imports": ["_app/immutable/entry/start.817f7dd5.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/singletons.becaeabb.js", "_app/immutable/chunks/index.1d534c61.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.05296be1.js", "_app/immutable/chunks/scheduler.765195b9.js", "_app/immutable/chunks/index.189c3083.js"], "stylesheets": [], "fonts": [] },
       nodes: [
         __memo(() => Promise.resolve().then(() => (init__(), __exports))),
         __memo(() => Promise.resolve().then(() => (init__2(), __exports2))),
@@ -35385,8 +35914,7 @@ var manifest = (() => {
         __memo(() => Promise.resolve().then(() => (init__18(), __exports18))),
         __memo(() => Promise.resolve().then(() => (init__19(), __exports19))),
         __memo(() => Promise.resolve().then(() => (init__20(), __exports20))),
-        __memo(() => Promise.resolve().then(() => (init__21(), __exports21))),
-        __memo(() => Promise.resolve().then(() => (init__22(), __exports22)))
+        __memo(() => Promise.resolve().then(() => (init__21(), __exports21)))
       ],
       routes: [
         {
@@ -35456,28 +35984,28 @@ var manifest = (() => {
           id: "/auth/logout",
           pattern: /^\/auth\/logout\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 8 },
+          page: null,
           endpoint: __memo(() => Promise.resolve().then(() => (init_server_ts4(), server_ts_exports4)))
         },
         {
           id: "/auth/register",
           pattern: /^\/auth\/register\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 9 },
+          page: { layouts: [0], errors: [1], leaf: 8 },
           endpoint: null
         },
         {
           id: "/auth/reset-password/[token]",
           pattern: /^\/auth\/reset-password\/([^/]+?)\/?$/,
           params: [{ "name": "token", "optional": false, "rest": false, "chained": false }],
-          page: { layouts: [0], errors: [1], leaf: 10 },
+          page: { layouts: [0], errors: [1], leaf: 9 },
           endpoint: null
         },
         {
           id: "/dashboard",
           pattern: /^\/dashboard\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 11 },
+          page: { layouts: [0], errors: [1], leaf: 10 },
           endpoint: null
         },
         {
@@ -35491,70 +36019,70 @@ var manifest = (() => {
           id: "/join-organization",
           pattern: /^\/join-organization\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 12 },
+          page: { layouts: [0], errors: [1], leaf: 11 },
           endpoint: null
         },
         {
           id: "/onboarding",
           pattern: /^\/onboarding\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 13 },
+          page: { layouts: [0], errors: [1], leaf: 12 },
           endpoint: null
         },
         {
           id: "/profile",
           pattern: /^\/profile\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 14 },
+          page: { layouts: [0], errors: [1], leaf: 13 },
           endpoint: null
         },
         {
           id: "/select-organization",
           pattern: /^\/select-organization\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 15 },
+          page: { layouts: [0], errors: [1], leaf: 14 },
           endpoint: null
         },
         {
           id: "/sites",
           pattern: /^\/sites\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 16 },
+          page: { layouts: [0], errors: [1], leaf: 15 },
           endpoint: null
         },
         {
           id: "/sites/[id]",
           pattern: /^\/sites\/([^/]+?)\/?$/,
           params: [{ "name": "id", "optional": false, "rest": false, "chained": false }],
-          page: { layouts: [0], errors: [1], leaf: 17 },
+          page: { layouts: [0], errors: [1], leaf: 16 },
           endpoint: null
         },
         {
           id: "/users",
           pattern: /^\/users\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 18 },
+          page: { layouts: [0], errors: [1], leaf: 17 },
           endpoint: null
         },
         {
           id: "/users/security",
           pattern: /^\/users\/security\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 19 },
+          page: { layouts: [0], errors: [1], leaf: 18 },
           endpoint: null
         },
         {
           id: "/work-orders",
           pattern: /^\/work-orders\/?$/,
           params: [],
-          page: { layouts: [0], errors: [1], leaf: 20 },
+          page: { layouts: [0], errors: [1], leaf: 19 },
           endpoint: null
         },
         {
           id: "/work-orders/[id]",
           pattern: /^\/work-orders\/([^/]+?)\/?$/,
           params: [{ "name": "id", "optional": false, "rest": false, "chained": false }],
-          page: { layouts: [0], errors: [1], leaf: 21 },
+          page: { layouts: [0], errors: [1], leaf: 20 },
           endpoint: null
         }
       ],

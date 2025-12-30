@@ -6,8 +6,16 @@ const load = async (event) => {
   requireAuth(event);
   const prisma = await createRequestPrisma(event);
   const organizationId = event.locals.user.organizationId ?? void 0;
+  const search = event.url.searchParams.get("search") || "";
+  const where = { organizationId };
+  if (search) {
+    where.name = {
+      contains: search,
+      mode: "insensitive"
+    };
+  }
   const sites = await prisma.site.findMany({
-    where: { organizationId },
+    where,
     orderBy: { createdAt: "desc" },
     include: {
       _count: {
@@ -33,7 +41,7 @@ const load = async (event) => {
       }
     }
   });
-  return { sites };
+  return { sites, search };
 };
 const actions = {
   create: async (event) => {

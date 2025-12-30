@@ -1,10 +1,10 @@
-import * as server from '../entries/pages/dashboard/_page.server.ts.js';
+import * as server from '../entries/pages/join-organization/_page.server.ts.js';
 
 export const index = 11;
 let component_cache;
-export const component = async () => component_cache ??= (await import('../entries/pages/dashboard/_page.svelte.js')).default;
+export const component = async () => component_cache ??= (await import('../entries/pages/join-organization/_page.svelte.js')).default;
 export { server };
-export const server_id = "src/routes/dashboard/+page.server.ts";
-export const imports = ["_app/immutable/chunks/11.ae21b596.js","_app/immutable/chunks/_page.a41777bd.js","_app/immutable/chunks/scheduler.a6309769.js","_app/immutable/chunks/index.e9baf4e7.js","_app/immutable/chunks/websocket.29f0dfae.js","_app/immutable/chunks/index.7647694d.js"];
+export const server_id = "src/routes/join-organization/+page.server.ts";
+export const imports = ["_app/immutable/nodes/11.fd79b0a0.js","_app/immutable/chunks/scheduler.765195b9.js","_app/immutable/chunks/index.189c3083.js","_app/immutable/chunks/forms.66b03145.js","_app/immutable/chunks/parse.bee59afc.js","_app/immutable/chunks/singletons.becaeabb.js","_app/immutable/chunks/index.1d534c61.js"];
 export const stylesheets = [];
 export const fonts = [];
