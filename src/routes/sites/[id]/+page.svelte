@@ -48,13 +48,6 @@
 </script>
 
 <div class="max-w-7xl mx-auto px-4 py-10">
-	<!-- Breadcrumb -->
-	<div class="mb-6">
-		<a href="/sites" class="text-spore-cream/60 hover:text-spore-cream text-sm font-medium">
-			← Back to Sites
-		</a>
-	</div>
-
 	<!-- Header -->
 	<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-10">
 		<div>

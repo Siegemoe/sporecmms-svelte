@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import QuickFAB from '$lib/components/QuickFAB.svelte';
+	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import type { LayoutData } from './$types';
 
 	export let data: LayoutData;
@@ -227,6 +228,8 @@
 {/if}
 
 <!-- Page Content -->
+<Breadcrumb />
+
 <main class="{isAuthPage || isLandingPage ? '' : 'bg-spore-steel min-h-screen'}">
 	<slot />
 </main>

@@ -53,13 +53,6 @@
 </script>
 
 <div class="max-w-4xl mx-auto px-4 py-10">
-	<!-- Breadcrumb -->
-	<div class="mb-6">
-		<a href="/assets" class="text-spore-cream/60 hover:text-spore-cream text-sm font-medium" title="Return to assets list">
-			← Back to Assets
-		</a>
-	</div>
-
 	{#if isEditing}
 		<!-- Edit Mode -->
 		<div class="bg-spore-white rounded-xl p-8">
