@@ -41,6 +41,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let sortOption = data.sort || DEFAULT_SORT_OPTION;
   let showFilters = false;
   let myOnly = data.myOnly || false;
+  let searchValue = data.search || "";
   function applyFilters() {
     const params = new URLSearchParams();
     if (myOnly)
@@ -53,6 +54,8 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       params.set("siteId", filterSite);
     if (sortOption && sortOption !== DEFAULT_SORT_OPTION)
       params.set("sort", sortOption);
+    if (searchValue)
+      params.set("search", searchValue);
     goto(`?${params.toString()}`, { keepFocus: true });
   }
   function clearFilters() {
@@ -61,6 +64,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     filterSite = "";
     sortOption = DEFAULT_SORT_OPTION;
     myOnly = false;
+    searchValue = "";
     applyFilters();
   }
   function toggleMyOrders() {
@@ -135,6 +139,12 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     )}" aria-hidden="true"></span> ${escape(wsConnected ? "Live updates enabled" : "Connecting...")}</span> ${lastUpdate ? `<span class="text-sm font-medium text-spore-orange animate-pulse" role="status" aria-live="polite">${escape(lastUpdate)}</span>` : ``}</div></div> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:ring-offset-2 focus:ring-offset-spore-steel transition-colors text-sm font-bold tracking-wide shadow-lg"${add_attribute("aria-expanded", showCreateForm, 0)} aria-controls="create-form">${escape("+ NEW WORK ORDER")}</button></div>  ${validate_component(FilterBar, "FilterBar").$$render(
       $$result,
       {
+        searchPlaceholder: "Search work orders...",
+        searchTitle: "Search by title or description",
+        onSearch: (v) => {
+          searchValue = v;
+          applyFilters();
+        },
         toggleButtons: [
           {
             label: "My Work Orders",
@@ -189,11 +199,16 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
         onClear: clearFilters,
         clearLabel: "Reset",
         showFilters,
+        searchValue,
         sortValue: sortOption
       },
       {
         showFilters: ($$value) => {
           showFilters = $$value;
+          $$settled = false;
+        },
+        searchValue: ($$value) => {
+          searchValue = $$value;
           $$settled = false;
         },
         sortValue: ($$value) => {

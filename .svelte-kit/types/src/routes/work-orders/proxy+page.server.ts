@@ -21,6 +21,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	const priority = event.url.searchParams.get('priority');
 	const siteId = event.url.searchParams.get('siteId');
 	const sort = event.url.searchParams.get('sort') || 'dueDate';
+	const search = event.url.searchParams.get('search');
 
 	// Build Where Clause
 	const where: any = {
@@ -31,6 +32,14 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	if (status) where.status = status as WorkOrderStatus;
 	if (priority) where.priority = priority as Priority;
 	if (siteId) where.siteId = siteId;
+
+	// Add search condition (fuzzy search on title and description)
+	if (search && search.trim()) {
+		where.OR = [
+			{ title: { contains: search.trim(), mode: 'insensitive' } },
+			{ description: { contains: search.trim(), mode: 'insensitive' } }
+		];
+	}
 
 	// Build OrderBy - note: priority sort is handled in-memory after fetch
 	let orderBy: any = [];
@@ -224,7 +233,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		buildings: transformedBuildings,
 		sites,
 		users,
-		myOnly, status, priority, siteId, sort
+		myOnly, status, priority, siteId, sort, search
 	};
 };
 

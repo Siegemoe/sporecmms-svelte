@@ -32,6 +32,7 @@
 	let sortOption = data.sort || DEFAULT_SORT_OPTION;
 	let showFilters = false;
 	let myOnly = data.myOnly || false;
+	let searchValue = data.search || '';
 
 	// Sync when page data changes
 	$: if (data.workOrders) workOrders = data.workOrders;
@@ -48,6 +49,7 @@
 		if (filterPriority) params.set('priority', filterPriority);
 		if (filterSite) params.set('siteId', filterSite);
 		if (sortOption && sortOption !== DEFAULT_SORT_OPTION) params.set('sort', sortOption);
+		if (searchValue) params.set('search', searchValue);
 
 		goto(`?${params.toString()}`, { keepFocus: true });
 	}
@@ -58,6 +60,7 @@
 		filterSite = '';
 		sortOption = DEFAULT_SORT_OPTION;
 		myOnly = false;
+		searchValue = '';
 		applyFilters();
 	}
 
@@ -177,6 +180,10 @@
 	<!-- Filter Bar -->
 	<FilterBar
 		bind:showFilters
+		bind:searchValue={searchValue}
+		searchPlaceholder="Search work orders..."
+		searchTitle="Search by title or description"
+		onSearch={(v) => { searchValue = v; applyFilters(); }}
 		toggleButtons={[
 			{
 				label: 'My Work Orders',

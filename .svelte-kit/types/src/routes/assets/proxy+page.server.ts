@@ -18,6 +18,7 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	const statusFilter = event.url.searchParams.get('status');
 	const siteFilter = event.url.searchParams.get('siteId');
 	const sortFilter = event.url.searchParams.get('sort') || 'created';
+	const search = event.url.searchParams.get('search');
 
 	// Build where clause for filters
 	const where: any = {
@@ -31,6 +32,14 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	if (typeFilter) where.type = typeFilter;
 	if (statusFilter) where.status = statusFilter;
 	if (siteFilter) where.siteId = siteFilter;
+
+	// Add search condition (fuzzy search on name and description)
+	if (search && search.trim()) {
+		where.OR = [
+			{ name: { contains: search.trim(), mode: 'insensitive' } },
+			{ description: { contains: search.trim(), mode: 'insensitive' } }
+		];
+	}
 
 	// Determine sort order
 	let orderBy: any = { createdAt: 'desc' };
@@ -111,7 +120,8 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		type: typeFilter,
 		status: statusFilter,
 		siteId: siteFilter,
-		sort: sortFilter
+		sort: sortFilter,
+		search
 	};
 };
 

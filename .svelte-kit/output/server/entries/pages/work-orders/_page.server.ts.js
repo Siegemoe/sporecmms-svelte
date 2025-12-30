@@ -14,6 +14,7 @@ const load = async (event) => {
   const priority = event.url.searchParams.get("priority");
   const siteId = event.url.searchParams.get("siteId");
   const sort = event.url.searchParams.get("sort") || "dueDate";
+  const search = event.url.searchParams.get("search");
   const where = {
     organizationId
     // Implicitly enforced by extension, but explicit is cleaner
@@ -26,6 +27,12 @@ const load = async (event) => {
     where.priority = priority;
   if (siteId)
     where.siteId = siteId;
+  if (search && search.trim()) {
+    where.OR = [
+      { title: { contains: search.trim(), mode: "insensitive" } },
+      { description: { contains: search.trim(), mode: "insensitive" } }
+    ];
+  }
   let orderBy = [];
   if (sort === "priority") {
     orderBy = { createdAt: "desc" };
@@ -200,7 +207,8 @@ const load = async (event) => {
     status,
     priority,
     siteId,
-    sort
+    sort,
+    search
   };
 };
 const actions = {

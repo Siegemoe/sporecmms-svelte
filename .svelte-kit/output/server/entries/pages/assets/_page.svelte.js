@@ -77,6 +77,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let filterStatus = data.status || "";
   let filterSite = data.siteId || "";
   let sortOption = data.sort || "created";
+  let searchValue = data.search || "";
   function applyFilters() {
     const params = new URLSearchParams();
     if (filterType)
@@ -87,6 +88,8 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       params.set("siteId", filterSite);
     if (sortOption && sortOption !== "created")
       params.set("sort", sortOption);
+    if (searchValue)
+      params.set("search", searchValue);
     goto(`?${params.toString()}`, { keepFocus: true });
   }
   function clearFilters() {
@@ -94,6 +97,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     filterStatus = "";
     filterSite = "";
     sortOption = "created";
+    searchValue = "";
     applyFilters();
   }
   function cancelEdit() {
@@ -126,6 +130,12 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     )} class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide">${escape("+ NEW ASSET")}</button></div>  ${validate_component(FilterBar, "FilterBar").$$render(
       $$result,
       {
+        searchPlaceholder: "Search assets...",
+        searchTitle: "Search by name or description",
+        onSearch: (v) => {
+          searchValue = v;
+          applyFilters();
+        },
         toggleButtons: [],
         filters: [
           {
@@ -173,11 +183,16 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
         onClear: clearFilters,
         clearLabel: "Reset",
         showFilters,
+        searchValue,
         sortValue: sortOption
       },
       {
         showFilters: ($$value) => {
           showFilters = $$value;
+          $$settled = false;
+        },
+        searchValue: ($$value) => {
+          searchValue = $$value;
           $$settled = false;
         },
         sortValue: ($$value) => {

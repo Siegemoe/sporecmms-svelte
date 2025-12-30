@@ -11,6 +11,7 @@ const load = async (event) => {
   const statusFilter = event.url.searchParams.get("status");
   const siteFilter = event.url.searchParams.get("siteId");
   const sortFilter = event.url.searchParams.get("sort") || "created";
+  const search = event.url.searchParams.get("search");
   const where = {
     Unit: {
       Site: {
@@ -24,6 +25,12 @@ const load = async (event) => {
     where.status = statusFilter;
   if (siteFilter)
     where.siteId = siteFilter;
+  if (search && search.trim()) {
+    where.OR = [
+      { name: { contains: search.trim(), mode: "insensitive" } },
+      { description: { contains: search.trim(), mode: "insensitive" } }
+    ];
+  }
   let orderBy = { createdAt: "desc" };
   switch (sortFilter) {
     case "name":
@@ -96,7 +103,8 @@ const load = async (event) => {
     type: typeFilter,
     status: statusFilter,
     siteId: siteFilter,
-    sort: sortFilter
+    sort: sortFilter,
+    search
   };
 };
 const actions = {

@@ -37,6 +37,7 @@
 	let filterStatus = data.status || '';
 	let filterSite = data.siteId || '';
 	let sortOption = data.sort || 'created';
+	let searchValue = data.search || '';
 
 	$: assets = data.assets || [];
 	$: units = data.units || [];
@@ -48,6 +49,7 @@
 		if (filterStatus) params.set('status', filterStatus);
 		if (filterSite) params.set('siteId', filterSite);
 		if (sortOption && sortOption !== 'created') params.set('sort', sortOption);
+		if (searchValue) params.set('search', searchValue);
 
 		goto(`?${params.toString()}`, { keepFocus: true });
 	}
@@ -57,6 +59,7 @@
 		filterStatus = '';
 		filterSite = '';
 		sortOption = 'created';
+		searchValue = '';
 		applyFilters();
 	}
 
@@ -112,6 +115,10 @@
 	<!-- Filter Bar -->
 	<FilterBar
 		bind:showFilters
+		bind:searchValue={searchValue}
+		searchPlaceholder="Search assets..."
+		searchTitle="Search by name or description"
+		onSearch={(v) => { searchValue = v; applyFilters(); }}
 		toggleButtons={[]}
 		filters={[
 			{
