@@ -5,25 +5,78 @@ import { fail, redirect, error } from '@sveltejs/kit';
 import { logAudit } from '$lib/server/audit';
 
 export const load: PageServerLoad = async (event) => {
-	const { locals } = event;
-	
+	const { locals, url } = event;
+
 	// Only admins can access users page
 	if (!locals.user || !canManageUsers(locals.user.role)) {
 		throw error(403, 'Access denied. Admin privileges required.');
 	}
 
 	const prisma = await createRequestPrisma(event);
+	const organizationId = locals.user.organizationId!;
+
+	// Parse filter and sort parameters
+	const search = url.searchParams.get('search')?.trim();
+	const roleFilter = url.searchParams.get('role');
+	const statusFilter = url.searchParams.get('status');
+	const sort = url.searchParams.get('sort') || 'name';
+
+	// Build where clause
+	const where: any = { organizationId };
+
+	if (roleFilter) {
+		where.role = roleFilter;
+	}
+
+	if (statusFilter === 'active') {
+		where.isActive = true;
+	} else if (statusFilter === 'inactive') {
+		where.isActive = false;
+	}
+
+	// Fuzzy search on name and email
+	if (search) {
+		where.OR = [
+			{ email: { contains: search, mode: 'insensitive' } },
+			{ firstName: { contains: search, mode: 'insensitive' } },
+			{ lastName: { contains: search, mode: 'insensitive' } }
+		];
+	}
+
+	// Build orderBy based on sort option
+	let orderBy: any = {};
+	switch (sort) {
+		case 'name':
+			orderBy = [{ firstName: 'asc' as const }, { lastName: 'asc' as const }];
+			break;
+		case 'email':
+			orderBy = { email: 'asc' };
+			break;
+		case 'role':
+			orderBy = { role: 'asc' };
+			break;
+		case 'joined':
+			orderBy = { createdAt: 'desc' };
+			break;
+		case 'updated':
+			orderBy = { updatedAt: 'desc' };
+			break;
+		default:
+			orderBy = [{ firstName: 'asc' }, { lastName: 'asc' }];
+	}
 
 	const users = await prisma.user.findMany({
-		where: { organizationId: locals.user.organizationId },
-		orderBy: { createdAt: 'desc' },
+		where,
+		orderBy,
 		select: {
 			id: true,
 			email: true,
 			firstName: true,
 			lastName: true,
 			role: true,
-			createdAt: true
+			isActive: true,
+			createdAt: true,
+			updatedAt: true
 		}
 	});
 

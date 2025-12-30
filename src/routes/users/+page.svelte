@@ -1,7 +1,10 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { getRoleBadgeClasses, ROLE_NAMES } from '$lib/utils/badges';
+	import FilterBar from '$lib/components/FilterBar.svelte';
 
 	export let data: PageData;
 
@@ -9,30 +12,109 @@
 	let isSubmitting = false;
 	let newUser = { email: '', firstName: '', lastName: '', role: 'TECHNICIAN' as const, password: '' };
 
+	// Filter state
+	let showFilters = false;
+	let searchValue = '';
+	let filterRole = '';
+	let filterStatus = '';
+	let sortOption = 'name';
+
 	$: users = data.users || [];
+
+	// Read initial filter state from URL
+	$: {
+		const urlParams = page.url.searchParams;
+		searchValue = urlParams.get('search') || '';
+		filterRole = urlParams.get('role') || '';
+		filterStatus = urlParams.get('status') || '';
+		sortOption = urlParams.get('sort') || 'name';
+	}
+
+	function applyFilters() {
+		const params = new URLSearchParams();
+		if (searchValue) params.set('search', searchValue);
+		if (filterRole) params.set('role', filterRole);
+		if (filterStatus) params.set('status', filterStatus);
+		if (sortOption !== 'name') params.set('sort', sortOption);
+
+		const queryString = params.toString();
+		goto(`?${queryString}`, { replaceState: true, keepFocus: true });
+	}
+
+	function clearFilters() {
+		searchValue = '';
+		filterRole = '';
+		filterStatus = '';
+		sortOption = 'name';
+		goto('?', { replaceState: true, keepFocus: true });
+	}
 </script>
 
 <div class="max-w-7xl mx-auto px-4 py-10">
-	<!-- Header -->
-	<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-10">
-		<div>
-			<h1 class="text-4xl font-extrabold text-spore-cream tracking-tight">Users</h1>
-			<p class="text-spore-cream/60 mt-2 text-sm font-medium">{users.length} team member{users.length !== 1 ? 's' : ''}</p>
+	<!-- Header with Filters -->
+	<div class="mb-8">
+		<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+			<div>
+				<h1 class="text-4xl font-extrabold text-spore-cream tracking-tight">Users</h1>
+				<p class="text-spore-cream/60 mt-2 text-sm font-medium">
+					{users.length} team member{users.length !== 1 ? 's' : ''}
+				</p>
+			</div>
+			<div class="flex gap-3">
+				<a
+					href="/users/security"
+					class="bg-spore-steel text-spore-cream px-6 py-3 rounded-xl hover:bg-spore-steel/90 transition-colors text-sm font-bold tracking-wide"
+				>
+					🔒 Security
+				</a>
+				<button
+					on:click={() => showCreateForm = !showCreateForm}
+					class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide"
+				>
+					{showCreateForm ? 'CANCEL' : '+ ADD USER'}
+				</button>
+			</div>
 		</div>
-		<div class="flex gap-3">
-			<a
-				href="/users/security"
-				class="bg-spore-steel text-spore-cream px-6 py-3 rounded-xl hover:bg-spore-steel/90 transition-colors text-sm font-bold tracking-wide"
-			>
-				🔒 Security
-			</a>
-			<button
-				on:click={() => showCreateForm = !showCreateForm}
-				class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide"
-			>
-				{showCreateForm ? 'CANCEL' : '+ ADD USER'}
-			</button>
-		</div>
+
+		<!-- Filter Bar -->
+		<FilterBar
+			bind:showFilters
+			bind:searchValue={searchValue}
+			searchPlaceholder="Search users..."
+			searchTitle="Search by name or email"
+			onSearch={(v) => { searchValue = v; applyFilters(); }}
+			toggleButtons={[]}
+			filters={[
+				{
+					value: filterRole,
+					placeholder: 'All Roles',
+					title: 'Filter by role',
+					onChange: (v) => { filterRole = v; applyFilters(); },
+					options: Object.entries(ROLE_NAMES).map(([value, label]) => ({ value, label }))
+				},
+				{
+					value: filterStatus,
+					placeholder: 'All Status',
+					title: 'Filter by status',
+					onChange: (v) => { filterStatus = v; applyFilters(); },
+					options: [
+						{ value: 'active', label: 'Active' },
+						{ value: 'inactive', label: 'Inactive' }
+					]
+				}
+			]}
+			sortOptions={[
+				{ value: 'name', label: 'Name' },
+				{ value: 'email', label: 'Email' },
+				{ value: 'role', label: 'Role' },
+				{ value: 'joined', label: 'Joined' },
+				{ value: 'updated', label: 'Updated' }
+			]}
+			bind:sortValue={sortOption}
+			onSortChange={(v) => { sortOption = v; applyFilters(); }}
+			onClear={clearFilters}
+			clearLabel="Reset"
+		/>
 	</div>
 
 	<!-- Create Form -->
@@ -120,6 +202,7 @@
 							<th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider">User</th>
 							<th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider">Email</th>
 							<th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider">Role</th>
+							<th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider">Status</th>
 							<th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider">Joined</th>
 							<th class="px-6 py-4 text-left text-xs font-bold text-spore-cream uppercase tracking-wider">Actions</th>
 						</tr>
@@ -152,6 +235,13 @@
 											{/each}
 										</select>
 									</form>
+								</td>
+								<td class="px-6 py-4 whitespace-nowrap">
+									<span class="px-2 py-1 text-xs font-medium rounded-full {user.isActive
+										? 'bg-green-100 text-green-800'
+										: 'bg-red-100 text-red-800'}">
+										{user.isActive ? 'Active' : 'Inactive'}
+									</span>
 								</td>
 								<td class="px-6 py-4 whitespace-nowrap text-sm text-spore-steel">
 									{new Date(user.createdAt).toLocaleDateString()}
