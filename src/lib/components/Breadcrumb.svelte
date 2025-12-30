@@ -20,7 +20,7 @@
 </script>
 
 {#if showBreadcrumbs && breadcrumbs.length > 0}
-	<nav class="bg-spore-steel/10 border-b border-spore-steel/20" aria-label="Breadcrumb">
+	<nav class="bg-spore-cream border-b border-spore-cream" aria-label="Breadcrumb">
 		<div class="max-w-7xl mx-auto px-4 py-2">
 			<ol class="flex items-center gap-2 text-sm overflow-x-auto">
 				{#each breadcrumbs as crumb, index}
