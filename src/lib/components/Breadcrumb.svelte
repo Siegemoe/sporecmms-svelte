@@ -41,13 +41,13 @@
 						{#if crumb.href}
 							<a
 								href={crumb.href}
-								class="text-spore-cream/60 hover:text-spore-orange transition-colors"
+								class="text-spore-cream/60 hover:text-spore-orange transition-colors truncate max-w-[200px]"
 							>
-								<span class="truncate max-w-[200px]">{crumb.title}</span>
+								{crumb.title}
 							</a>
 						{:else}
-							<span class="text-spore-orange font-semibold">
-								<span class="truncate max-w-[200px]">{crumb.title}</span>
+							<span class="text-spore-orange font-semibold truncate max-w-[200px]">
+								{crumb.title}
 							</span>
 						{/if}
 					</li>
