@@ -36,6 +36,7 @@
 		type="text"
 		name="name"
 		placeholder="Asset name (e.g., HVAC Unit #1)"
+		title="Enter a descriptive name for this asset"
 		class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange"
 		required
 	/>
@@ -43,6 +44,7 @@
 	<select
 		bind:value={unitId}
 		name="unitId"
+		title="Select the unit where this asset is located"
 		class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
 		required
 	>
@@ -55,6 +57,7 @@
 	<select
 		bind:value={type}
 		name="type"
+		title="Choose the asset type/category"
 		class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
 	>
 		{#each ASSET_TYPES as typeOption}
@@ -65,6 +68,7 @@
 	<select
 		bind:value={status}
 		name="status"
+		title="Set the current operational status of this asset"
 		class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
 	>
 		{#each ASSET_STATUSES as statusOption}
@@ -76,6 +80,7 @@
 		bind:value={purchaseDate}
 		type="date"
 		name="purchaseDate"
+		title="Enter the date this asset was purchased"
 		class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
 	/>
 
@@ -83,6 +88,7 @@
 		bind:value={warrantyExpiry}
 		type="date"
 		name="warrantyExpiry"
+		title="Enter the warranty expiration date"
 		class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
 	/>
 
@@ -90,6 +96,7 @@
 		bind:value={description}
 		name="description"
 		placeholder="Description (optional)"
+		title="Add additional details about this asset"
 		rows="3"
 		class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange md:col-span-2"
 	></textarea>
@@ -98,6 +105,7 @@
 		<button
 			type="submit"
 			disabled={isSubmitting || !name.trim() || !unitId}
+			title="Save this asset"
 			class="bg-spore-forest text-white px-6 py-3 rounded-lg font-bold text-sm tracking-wide hover:bg-spore-forest/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 		>
 			{isSubmitting ? 'SAVING...' : submitLabel}
@@ -106,6 +114,7 @@
 			<button
 				type="button"
 				on:click={onCancel}
+				title="Cancel and return to view mode"
 				class="px-6 py-3 rounded-lg font-bold text-sm text-spore-steel hover:bg-spore-cream transition-colors"
 			>
 				CANCEL

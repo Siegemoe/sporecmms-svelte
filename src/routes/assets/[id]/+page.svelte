@@ -55,7 +55,7 @@
 <div class="max-w-4xl mx-auto px-4 py-10">
 	<!-- Breadcrumb -->
 	<div class="mb-6">
-		<a href="/assets" class="text-spore-cream/60 hover:text-spore-cream text-sm font-medium">
+		<a href="/assets" class="text-spore-cream/60 hover:text-spore-cream text-sm font-medium" title="Return to assets list">
 			← Back to Assets
 		</a>
 	</div>
@@ -111,6 +111,7 @@
 						<button
 							on:click={startEdit}
 							class="bg-spore-forest text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-spore-forest/90 transition-colors"
+							title="Edit asset details"
 						>
 							EDIT
 						</button>
@@ -118,6 +119,7 @@
 							<button
 								type="submit"
 								class="px-4 py-2 rounded-lg font-bold text-sm text-red-400 border border-red-400/30 hover:bg-red-400/10 transition-colors"
+								title="Delete this asset"
 								on:click={(e) => !confirm('Delete this asset? All associated work orders will also be deleted.') && e.preventDefault()}
 							>
 								DELETE
@@ -185,6 +187,7 @@
 					<a
 						href="/work-orders?asset={asset.id}"
 						class="text-sm font-bold text-spore-orange hover:text-spore-orange/80"
+						title="View all work orders for this asset"
 					>
 						View All →
 					</a>
@@ -196,6 +199,7 @@
 							<a
 								href="/work-orders/{wo.id}"
 								class="flex items-center justify-between p-4 bg-spore-cream/20 rounded-lg hover:bg-spore-cream/40 transition-colors border border-spore-cream/50"
+								title="View work order: {wo.title}"
 							>
 								<div class="flex-1 min-w-0">
 									<p class="font-bold text-spore-dark truncate">{wo.title}</p>
@@ -203,7 +207,7 @@
 										Created {new Date(wo.createdAt).toLocaleDateString()}
 									</p>
 								</div>
-								<span class="ml-4 px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-full {getStatusColor(wo.status)}">
+								<span class="ml-4 px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-full {getStatusColor(wo.status)}" title="Status: {wo.status.replace('_', ' ')}">
 									{wo.status.replace('_', ' ')}
 								</span>
 							</a>
@@ -215,6 +219,7 @@
 						<a
 							href="/work-orders"
 							class="inline-block mt-4 bg-spore-orange text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-spore-orange/90 transition-colors"
+							title="Create a new work order"
 						>
 							Create Work Order
 						</a>

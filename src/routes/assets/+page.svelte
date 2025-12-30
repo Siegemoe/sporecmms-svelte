@@ -77,7 +77,7 @@
 			<p class="text-spore-cream/60 mt-2 text-sm font-medium">
 				{#if unitFilter}
 					Showing assets for selected unit
-					<button on:click={clearFilter} class="ml-2 text-spore-orange hover:underline">Clear filter</button>
+					<button on:click={clearFilter} class="ml-2 text-spore-orange hover:underline" title="Remove unit filter">Clear filter</button>
 				{:else}
 					{assets.length} total asset{assets.length !== 1 ? 's' : ''}
 				{/if}
@@ -85,6 +85,7 @@
 		</div>
 		<button
 			on:click={() => showCreateForm = !showCreateForm}
+			title={showCreateForm ? 'Close create form' : 'Create a new asset'}
 			class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide"
 		>
 			{showCreateForm ? 'CANCEL' : '+ NEW ASSET'}
@@ -190,7 +191,7 @@
 								<!-- View Row -->
 								<tr class="hover:bg-spore-cream/20 transition-colors group">
 									<td class="px-4 py-3">
-										<a href="/assets/{asset.id}" class="text-sm font-bold text-spore-dark hover:text-spore-orange transition-colors block">
+										<a href="/assets/{asset.id}" class="text-sm font-bold text-spore-dark hover:text-spore-orange transition-colors block" title="View asset details">
 											{asset.name}
 											{#if asset.description}
 												<span class="text-xs text-spore-steel/70 font-normal block">{asset.description.slice(0, 50)}{asset.description.length > 50 ? '...' : ''}</span>
@@ -198,7 +199,7 @@
 										</a>
 									</td>
 									<td class="px-4 py-3">
-										<span class="px-2 py-1 text-xs font-semibold rounded-full bg-spore-cream/20 text-spore-steel">
+										<span class="px-2 py-1 text-xs font-semibold rounded-full bg-spore-cream/20 text-spore-steel" title="Asset type: {formatAssetStatus(asset.type || 'OTHER')}">
 											{formatAssetStatus(asset.type || 'OTHER')}
 										</span>
 									</td>
@@ -206,7 +207,7 @@
 										<AssetStatusBadge status={asset.status} size="sm" />
 									</td>
 									<td class="px-4 py-3 hidden md:table-cell">
-										<div class="text-sm text-spore-steel">
+										<div class="text-sm text-spore-steel" title="Location: {asset.Unit?.Site?.name || 'Unknown'} - Unit {asset.Unit?.roomNumber || 'N/A'}">
 											<span class="font-medium">{asset.Unit?.Site?.name || 'Unknown'}</span>
 											<br/>
 											<span class="text-xs">
@@ -219,26 +220,28 @@
 									</td>
 									<td class="px-4 py-3 text-center">
 										{#if asset._count?.WorkOrder > 0}
-											<span class="px-2 py-1 text-xs font-bold rounded-full bg-spore-orange/10 text-spore-orange">
+											<span class="px-2 py-1 text-xs font-bold rounded-full bg-spore-orange/10 text-spore-orange" title="{asset._count.WorkOrder} work order{asset._count.WorkOrder > 1 ? 's' : ''} associated">
 												{asset._count.WorkOrder}
 											</span>
 										{:else}
-											<span class="text-xs text-spore-steel/50">0</span>
+											<span class="text-xs text-spore-steel/50" title="No work orders">0</span>
 										{/if}
 									</td>
 									<td class="px-4 py-3 text-sm text-spore-steel hidden lg:table-cell">
-										{new Date(asset.createdAt).toLocaleDateString()}
+										<span title="Created on {new Date(asset.createdAt).toLocaleDateString()}">{new Date(asset.createdAt).toLocaleDateString()}</span>
 									</td>
 									<td class="px-4 py-3 whitespace-nowrap text-xs font-medium space-x-2">
 										<a
 											href="/assets/{asset.id}"
 											class="text-spore-forest hover:text-spore-forest/70 transition-colors"
+											title="View full details"
 										>
 											View
 										</a>
 										<button
 											on:click={() => startEdit(asset)}
 											class="text-spore-orange hover:text-spore-orange/70 transition-colors"
+											title="Edit this asset"
 										>
 											Edit
 										</button>
@@ -252,6 +255,7 @@
 											<button
 												type="submit"
 												class="text-red-500 hover:text-red-400 transition-colors"
+												title="Delete this asset"
 												on:click|preventDefault={(e) => {
 													if (confirm('Delete this asset? This will also delete all associated work orders.')) {
 														e.currentTarget.closest('form')?.requestSubmit();
@@ -283,6 +287,7 @@
 			<button
 				on:click={() => showCreateForm = true}
 				class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold"
+				title="Create your first asset"
 			>
 				+ CREATE ASSET
 			</button>
