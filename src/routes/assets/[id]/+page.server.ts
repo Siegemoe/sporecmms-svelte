@@ -2,6 +2,8 @@ import type { PageServerLoad, Actions } from './$types';
 import { createRequestPrisma } from '$lib/server/prisma';
 import { fail, error, redirect } from '@sveltejs/kit';
 import { requireAuth, isManagerOrAbove } from '$lib/server/guards';
+import { assetSchema } from '$lib/validation';
+import { ASSET_TYPES, ASSET_STATUSES } from '$lib/constants';
 
 export const load: PageServerLoad = async (event) => {
 	requireAuth(event);
@@ -33,7 +35,6 @@ export const load: PageServerLoad = async (event) => {
 					id: true,
 					title: true,
 					status: true,
-					// failureMode: true, // Removed: Field does not exist in WorkOrder schema
 					createdAt: true,
 					updatedAt: true
 				}
@@ -48,7 +49,7 @@ export const load: PageServerLoad = async (event) => {
 		throw error(404, 'Asset not found');
 	}
 
-	// Get all rooms (units) for edit dropdown
+	// Get all units for edit dropdown
 	const units = await prisma.unit.findMany({
 		where: {
 			Site: {
@@ -60,41 +61,34 @@ export const load: PageServerLoad = async (event) => {
 			{ Building: { name: 'asc' } },
 			{ roomNumber: 'asc' }
 		],
-		take: 50,
 		include: {
 			Site: { select: { name: true } },
 			Building: { select: { name: true } }
 		}
 	});
 
-	// Transform asset to include 'room' property for frontend compatibility
-	const assetWithRoom = {
-		...asset,
-		room: asset.Unit ? {
-			...asset.Unit,
-			name: asset.Unit.name || asset.Unit.roomNumber
-		} : null,
-		Unit: undefined // Optional: remove unit if we want to be strict, but keeping it is fine
+	// Optimized: Single query for all work order stats using grouping
+	const woStatsByStatus = await prisma.workOrder.groupBy({
+		by: ['status'],
+		where: { assetId: id },
+		_count: { status: true }
+	});
+
+	const statsMap = Object.fromEntries(
+		woStatsByStatus.map(s => [s.status, s._count.status])
+	);
+
+	const woStats = {
+		total: asset._count.WorkOrder,
+		pending: statsMap['PENDING'] || 0,
+		inProgress: statsMap['IN_PROGRESS'] || 0,
+		completed: statsMap['COMPLETED'] || 0
 	};
 
-	// Transform units to rooms
-	const rooms = units.map(unit => ({
-		...unit,
-		name: unit.name || unit.roomNumber
-	}));
-
-	// Work order stats for this asset
-	const [totalWO, pendingWO, inProgressWO, completedWO] = await Promise.all([
-		prisma.workOrder.count({ where: { assetId: id } }),
-		prisma.workOrder.count({ where: { assetId: id, status: 'PENDING' } }),
-		prisma.workOrder.count({ where: { assetId: id, status: 'IN_PROGRESS' } }),
-		prisma.workOrder.count({ where: { assetId: id, status: 'COMPLETED' } })
-	]);
-
 	return {
-		asset: assetWithRoom,
-		rooms,
-		woStats: { total: totalWO, pending: pendingWO, inProgress: inProgressWO, completed: completedWO }
+		asset,
+		units,
+		woStats
 	};
 };
 
@@ -105,16 +99,25 @@ export const actions: Actions = {
 		const { id } = event.params;
 		const organizationId = event.locals.user!.organizationId;
 
-		const name = formData.get('name') as string;
-		const roomId = formData.get('roomId') as string;
+		// Validate with Zod schema
+		const rawData = {
+			name: formData.get('name'),
+			unitId: formData.get('unitId'),
+			type: formData.get('type'),
+			status: formData.get('status'),
+			description: formData.get('description'),
+			purchaseDate: formData.get('purchaseDate'),
+			warrantyExpiry: formData.get('warrantyExpiry')
+		};
 
-		if (!name || name.trim() === '') {
-			return fail(400, { error: 'Asset name is required' });
+		const validationResult = assetSchema.safeParse(rawData);
+
+		if (!validationResult.success) {
+			const firstError = validationResult.error.issues[0];
+			return fail(400, { error: firstError.message });
 		}
 
-		if (!roomId) {
-			return fail(400, { error: 'Room is required' });
-		}
+		const data = validationResult.data;
 
 		// Verify the asset belongs to the user's org
 		const existingAsset = await prisma.asset.findFirst({
@@ -132,10 +135,10 @@ export const actions: Actions = {
 			return fail(404, { error: 'Asset not found' });
 		}
 
-		// Verify the room (unit) belongs to the user's org
+		// Verify the unit belongs to the user's org
 		const unit = await prisma.unit.findFirst({
 			where: {
-				id: roomId,
+				id: data.unitId,
 				Site: {
 					organizationId: organizationId ?? undefined
 				}
@@ -143,14 +146,20 @@ export const actions: Actions = {
 		});
 
 		if (!unit) {
-			return fail(404, { error: 'Room not found' });
+			return fail(404, { error: 'Unit not found' });
 		}
 
 		const asset = await prisma.asset.update({
 			where: { id },
 			data: {
-				name: name.trim(),
-				unitId: roomId
+				name: data.name.trim(),
+				type: data.type ? data.type as typeof ASSET_TYPES[number] : undefined,
+				status: data.status ? data.status as typeof ASSET_STATUSES[number] : undefined,
+				description: data.description ? data.description.trim() : undefined,
+				purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
+				warrantyExpiry: data.warrantyExpiry ? new Date(data.warrantyExpiry) : null,
+				unitId: data.unitId,
+				siteId: unit.siteId
 			}
 		});
 

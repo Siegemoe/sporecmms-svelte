@@ -1,21 +1,37 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
+	import { ASSET_TYPES, formatAssetStatus, type AssetType, type AssetStatus } from '$lib/constants';
+	import AssetStatusBadge from '$lib/components/AssetStatusBadge.svelte';
+	import AssetForm from '$lib/components/AssetForm.svelte';
 
 	export let data: PageData;
 
 	let isEditing = false;
 	let isSubmitting = false;
-	let editData = { name: '', roomId: '' };
+	let editData = {
+		name: '',
+		unitId: '',
+		type: 'OTHER' as AssetType,
+		status: 'OPERATIONAL' as AssetStatus,
+		description: '',
+		purchaseDate: '',
+		warrantyExpiry: ''
+	};
 
 	$: asset = data.asset;
-	$: rooms = data.rooms || [];
+	$: units = data.units || [];
 	$: woStats = data.woStats;
 
 	function startEdit() {
 		editData = {
 			name: asset.name,
-			roomId: asset.roomId
+			unitId: asset.unitId || asset.Unit?.id || '',
+			type: (asset.type || 'OTHER') as AssetType,
+			status: (asset.status || 'OPERATIONAL') as AssetStatus,
+			description: asset.description || '',
+			purchaseDate: asset.purchaseDate ? new Date(asset.purchaseDate).toISOString().split('T')[0] : '',
+			warrantyExpiry: asset.warrantyExpiry ? new Date(asset.warrantyExpiry).toISOString().split('T')[0] : ''
 		};
 		isEditing = true;
 	}
@@ -48,8 +64,8 @@
 		<!-- Edit Mode -->
 		<div class="bg-spore-white rounded-xl p-8">
 			<h1 class="text-2xl font-extrabold text-spore-dark mb-6">Edit Asset</h1>
-			<form 
-				method="POST" 
+			<form
+				method="POST"
 				action="?/update"
 				use:enhance={() => {
 					isSubmitting = true;
@@ -59,52 +75,21 @@
 						isEditing = false;
 					};
 				}}
-				class="space-y-6"
 			>
-				<div>
-					<label class="block text-sm font-bold text-spore-steel mb-2">Asset Name</label>
-					<input
-						type="text"
-						name="name"
-						bind:value={editData.name}
-						class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-						required
-					/>
-				</div>
-
-				<div>
-					<label class="block text-sm font-bold text-spore-steel mb-2">Location</label>
-					<select
-						name="roomId"
-						bind:value={editData.roomId}
-						class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-						required
-					>
-						{#each rooms as room}
-							<option value={room.id}>
-								{room.site?.name} - Room {room.name}
-								{room.building ? ` (Bldg ${room.building})` : ''}
-							</option>
-						{/each}
-					</select>
-				</div>
-
-				<div class="flex gap-4 pt-4">
-					<button
-						type="submit"
-						disabled={isSubmitting || !editData.name.trim()}
-						class="bg-spore-forest text-white px-8 py-3 rounded-lg font-bold text-sm hover:bg-spore-forest/90 disabled:opacity-50 transition-colors"
-					>
-						{isSubmitting ? 'SAVING...' : 'SAVE CHANGES'}
-					</button>
-					<button
-						type="button"
-						on:click={cancelEdit}
-						class="px-8 py-3 rounded-lg font-bold text-sm text-spore-steel hover:bg-spore-cream transition-colors"
-					>
-						CANCEL
-					</button>
-				</div>
+				<AssetForm
+					bind:name={editData.name}
+					bind:unitId={editData.unitId}
+					bind:type={editData.type}
+					bind:status={editData.status}
+					bind:description={editData.description}
+					bind:purchaseDate={editData.purchaseDate}
+					bind:warrantyExpiry={editData.warrantyExpiry}
+					{units}
+					submitLabel="SAVE CHANGES"
+					{isSubmitting}
+					showCancel={true}
+					onCancel={cancelEdit}
+				/>
 			</form>
 		</div>
 
@@ -117,9 +102,9 @@
 					<div>
 						<h1 class="text-2xl font-extrabold text-spore-cream">{asset.name}</h1>
 						<p class="text-spore-cream/60 mt-1 text-sm">
-							{asset.room?.site?.name} • Room {asset.room?.name}
-							{#if asset.room?.building} • Bldg {asset.room.building}{/if}
-							{#if asset.room?.floor} • Floor {asset.room.floor}{/if}
+							{asset.Unit?.Site?.name} • Unit {asset.Unit?.roomNumber || asset.Unit?.name || 'N/A'}
+							{#if asset.Unit?.Building} • Bldg {asset.Unit.Building.name}{/if}
+							{#if asset.Unit?.floor} • Floor {asset.Unit.floor}{/if}
 						</p>
 					</div>
 					<div class="flex gap-2">
@@ -141,6 +126,37 @@
 					</div>
 				</div>
 			</div>
+
+			<!-- Asset Details -->
+			<div class="grid grid-cols-2 sm:grid-cols-4 border-b border-spore-cream">
+				<div class="p-4 border-r border-spore-cream">
+					<p class="text-xs font-bold text-spore-steel uppercase mb-1">Type</p>
+					<p class="text-sm font-medium text-spore-dark">{formatAssetStatus(asset.type || 'OTHER')}</p>
+				</div>
+				<div class="p-4 border-r border-spore-cream">
+					<p class="text-xs font-bold text-spore-steel uppercase mb-1">Status</p>
+					<AssetStatusBadge status={asset.status} size="sm" />
+				</div>
+				<div class="p-4 border-r border-spore-cream">
+					<p class="text-xs font-bold text-spore-steel uppercase mb-1">Purchase Date</p>
+					<p class="text-sm font-medium text-spore-dark">
+						{asset.purchaseDate ? new Date(asset.purchaseDate).toLocaleDateString() : 'N/A'}
+					</p>
+				</div>
+				<div class="p-4">
+					<p class="text-xs font-bold text-spore-steel uppercase mb-1">Warranty</p>
+					<p class="text-sm font-medium text-spore-dark">
+						{asset.warrantyExpiry ? new Date(asset.warrantyExpiry).toLocaleDateString() : 'N/A'}
+					</p>
+				</div>
+			</div>
+
+			{#if asset.description}
+				<div class="p-4 border-b border-spore-cream bg-spore-cream/10">
+					<p class="text-xs font-bold text-spore-steel uppercase mb-1">Description</p>
+					<p class="text-sm text-spore-dark">{asset.description}</p>
+				</div>
+			{/if}
 
 			<!-- Stats Row -->
 			<div class="grid grid-cols-2 sm:grid-cols-4 border-b border-spore-cream">
@@ -166,25 +182,25 @@
 			<div class="p-6">
 				<div class="flex justify-between items-center mb-4">
 					<h2 class="text-lg font-bold text-spore-dark">Work Order History</h2>
-					<a 
-						href="/work-orders?asset={asset.id}" 
+					<a
+						href="/work-orders?asset={asset.id}"
 						class="text-sm font-bold text-spore-orange hover:text-spore-orange/80"
 					>
 						View All →
 					</a>
 				</div>
 
-				{#if asset.workOrders && asset.workOrders.length > 0}
+				{#if asset.WorkOrder && asset.WorkOrder.length > 0}
 					<div class="space-y-3">
-						{#each asset.workOrders as wo}
-							<a 
+						{#each asset.WorkOrder as wo}
+							<a
 								href="/work-orders/{wo.id}"
 								class="flex items-center justify-between p-4 bg-spore-cream/20 rounded-lg hover:bg-spore-cream/40 transition-colors border border-spore-cream/50"
 							>
 								<div class="flex-1 min-w-0">
 									<p class="font-bold text-spore-dark truncate">{wo.title}</p>
 									<p class="text-xs text-spore-steel mt-1">
-										{wo.failureMode || 'General'} • {new Date(wo.createdAt).toLocaleDateString()}
+										Created {new Date(wo.createdAt).toLocaleDateString()}
 									</p>
 								</div>
 								<span class="ml-4 px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-full {getStatusColor(wo.status)}">
@@ -196,8 +212,8 @@
 				{:else}
 					<div class="text-center py-8 bg-spore-cream/20 rounded-lg">
 						<p class="text-spore-steel">No work orders for this asset</p>
-						<a 
-							href="/work-orders" 
+						<a
+							href="/work-orders"
 							class="inline-block mt-4 bg-spore-orange text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-spore-orange/90 transition-colors"
 						>
 							Create Work Order

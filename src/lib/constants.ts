@@ -57,3 +57,35 @@ export const WORK_ORDER_PRIORITY_COLORS: Record<Priority, string> = {
 	HIGH: 'bg-orange-100 text-orange-600',
 	EMERGENCY: 'bg-red-100 text-red-600'
 };
+
+// Asset types and statuses
+export const ASSET_TYPES = [
+	'HVAC',
+	'ELECTRICAL',
+	'PLUMBING',
+	'FIRE_SAFETY',
+	'ELEVATOR',
+	'SECURITY_SYSTEM',
+	'OTHER'
+] as const;
+
+export const ASSET_STATUSES = [
+	'OPERATIONAL',
+	'NEEDS_MAINTENANCE',
+	'OUT_OF_SERVICE'
+] as const;
+
+export type AssetType = typeof ASSET_TYPES[number];
+export type AssetStatus = typeof ASSET_STATUSES[number];
+
+// Color mappings for assets
+export const ASSET_STATUS_COLORS: Record<AssetStatus, string> = {
+	OPERATIONAL: 'bg-green-100 text-green-800',
+	NEEDS_MAINTENANCE: 'bg-yellow-100 text-yellow-800',
+	OUT_OF_SERVICE: 'bg-red-100 text-red-800'
+};
+
+// Helper function to format asset status for display
+export function formatAssetStatus(status: string): string {
+	return status?.replace('_', ' ') || 'Unknown';
+}

@@ -96,13 +96,27 @@ export const roomSchema = z.object({
 
 // Asset creation/update schema
 export const assetSchema = z.object({
-  name: z.string()
-    .min(1, 'Asset name is required')
-    .max(100, 'Asset name must be less than 100 characters')
-    .trim(),
-  roomId: z.string()
-    .min(1, 'Please select a room')
-    .cuid('Invalid room selection')
+	name: z.string()
+		.min(1, 'Asset name is required')
+		.max(100, 'Asset name must be less than 100 characters')
+		.trim(),
+	unitId: z.string()
+		.min(1, 'Please select a unit')
+		.cuid('Invalid unit selection'),
+	type: z.enum(['HVAC', 'ELECTRICAL', 'PLUMBING', 'FIRE_SAFETY', 'ELEVATOR', 'SECURITY_SYSTEM', 'OTHER'])
+		.optional(),
+	status: z.enum(['OPERATIONAL', 'NEEDS_MAINTENANCE', 'OUT_OF_SERVICE'])
+		.optional(),
+	description: z.string()
+		.max(1000, 'Description must be less than 1000 characters')
+		.trim()
+		.optional(),
+	purchaseDate: z.string()
+		.datetime('Invalid date format')
+		.optional(),
+	warrantyExpiry: z.string()
+		.datetime('Invalid date format')
+		.optional()
 });
 
 // Work order creation/update schema

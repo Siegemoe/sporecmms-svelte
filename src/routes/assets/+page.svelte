@@ -2,6 +2,9 @@
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { ASSET_TYPES, formatAssetStatus, type AssetType, type AssetStatus } from '$lib/constants';
+	import AssetStatusBadge from '$lib/components/AssetStatusBadge.svelte';
+	import AssetForm from '$lib/components/AssetForm.svelte';
 
 	export let data: PageData;
 
@@ -10,8 +13,8 @@
 	let newAsset = {
 		name: '',
 		unitId: '',
-		type: 'OTHER',
-		status: 'OPERATIONAL',
+		type: 'OTHER' as AssetType,
+		status: 'OPERATIONAL' as AssetStatus,
 		description: '',
 		purchaseDate: '',
 		warrantyExpiry: ''
@@ -20,8 +23,8 @@
 	let editingAsset = {
 		name: '',
 		unitId: '',
-		type: 'OTHER',
-		status: 'OPERATIONAL',
+		type: 'OTHER' as AssetType,
+		status: 'OPERATIONAL' as AssetStatus,
 		description: '',
 		purchaseDate: '',
 		warrantyExpiry: ''
@@ -39,9 +42,9 @@
 		editingAssetId = asset.id;
 		editingAsset = {
 			name: asset.name,
-			unitId: asset.unitId,
-			type: asset.type || 'OTHER',
-			status: asset.status || 'OPERATIONAL',
+			unitId: asset.Unit?.id || asset.unitId,
+			type: (asset.type || 'OTHER') as AssetType,
+			status: (asset.status || 'OPERATIONAL') as AssetStatus,
 			description: asset.description || '',
 			purchaseDate: asset.purchaseDate ? new Date(asset.purchaseDate).toISOString().split('T')[0] : '',
 			warrantyExpiry: asset.warrantyExpiry ? new Date(asset.warrantyExpiry).toISOString().split('T')[0] : ''
@@ -80,7 +83,7 @@
 				{/if}
 			</p>
 		</div>
-		<button 
+		<button
 			on:click={() => showCreateForm = !showCreateForm}
 			class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold tracking-wide"
 		>
@@ -112,88 +115,21 @@
 						};
 					};
 				}}
-				class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
 			>
-				<input
-					type="text"
-					name="name"
-					bind:value={newAsset.name}
-					placeholder="Asset name (e.g., HVAC Unit #1)"
-					class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange"
-					required
+				<AssetForm
+					bind:name={newAsset.name}
+					bind:unitId={newAsset.unitId}
+					bind:type={newAsset.type}
+					bind:status={newAsset.status}
+					bind:description={newAsset.description}
+					bind:purchaseDate={newAsset.purchaseDate}
+					bind:warrantyExpiry={newAsset.warrantyExpiry}
+					{units}
+					submitLabel="CREATE ASSET"
+					{isSubmitting}
+					showCancel={true}
+					onCancel={() => showCreateForm = false}
 				/>
-				<select
-					name="unitId"
-					bind:value={newAsset.unitId}
-					class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-					required
-				>
-					<option value="">Select a unit...</option>
-					{#each units as unit}
-						<option value={unit.id}>
-							{unit.site?.name} - Unit {unit.roomNumber}
-							{unit.building ? ` (Bldg ${unit.building.name})` : ''}
-							{unit.name ? ` - ${unit.name}` : ''}
-						</option>
-					{/each}
-				</select>
-				<select
-					name="type"
-					bind:value={newAsset.type}
-					class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-				>
-					<option value="HVAC">HVAC</option>
-					<option value="ELECTRICAL">Electrical</option>
-					<option value="PLUMBING">Plumbing</option>
-					<option value="FIRE_SAFETY">Fire Safety</option>
-					<option value="ELEVATOR">Elevator</option>
-					<option value="SECURITY_SYSTEM">Security System</option>
-					<option value="OTHER">Other</option>
-				</select>
-				<select
-					name="status"
-					bind:value={newAsset.status}
-					class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-				>
-					<option value="OPERATIONAL">Operational</option>
-					<option value="NEEDS_MAINTENANCE">Needs Maintenance</option>
-					<option value="OUT_OF_SERVICE">Out of Service</option>
-				</select>
-				<input
-					type="date"
-					name="purchaseDate"
-					bind:value={newAsset.purchaseDate}
-					class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-				/>
-				<input
-					type="date"
-					name="warrantyExpiry"
-					bind:value={newAsset.warrantyExpiry}
-					class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
-				/>
-				<textarea
-					name="description"
-					bind:value={newAsset.description}
-					placeholder="Description (optional)"
-					rows="3"
-					class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange md:col-span-2"
-				></textarea>
-				<div class="flex gap-2 md:col-span-3">
-					<button
-						type="submit"
-						disabled={isSubmitting || !newAsset.name.trim() || !newAsset.unitId}
-						class="bg-spore-forest text-white px-6 py-3 rounded-lg font-bold text-sm tracking-wide hover:bg-spore-forest/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-					>
-						{isSubmitting ? 'CREATING...' : 'CREATE ASSET'}
-					</button>
-					<button
-						type="button"
-						on:click={() => showCreateForm = false}
-						class="px-6 py-3 rounded-lg font-bold text-sm text-spore-steel hover:bg-spore-cream transition-colors"
-					>
-						CANCEL
-					</button>
-				</div>
 			</form>
 		</div>
 	{/if}
@@ -231,89 +167,22 @@
 													cancelEdit();
 												};
 											}}
-											class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
 										>
 											<input type="hidden" name="assetId" value={asset.id} />
-											<input
-												type="text"
-												name="name"
-												bind:value={editingAsset.name}
-												placeholder="Asset name"
-												class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"
-												required
+											<AssetForm
+												bind:name={editingAsset.name}
+												bind:unitId={editingAsset.unitId}
+												bind:type={editingAsset.type}
+												bind:status={editingAsset.status}
+												bind:description={editingAsset.description}
+												bind:purchaseDate={editingAsset.purchaseDate}
+												bind:warrantyExpiry={editingAsset.warrantyExpiry}
+												{units}
+												submitLabel="SAVE"
+												{isSubmitting}
+												showCancel={true}
+												onCancel={cancelEdit}
 											/>
-											<select
-												name="unitId"
-												bind:value={editingAsset.unitId}
-												class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"
-												required
-											>
-												<option value="">Select unit...</option>
-												{#each units as unit}
-													<option value={unit.id}>
-														{unit.site?.name} - Unit {unit.roomNumber}
-														{unit.building ? ` (${unit.building.name})` : ''}
-														{unit.name ? ` - ${unit.name}` : ''}
-													</option>
-												{/each}
-											</select>
-											<select
-												name="type"
-												bind:value={editingAsset.type}
-												class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"
-											>
-												<option value="HVAC">HVAC</option>
-												<option value="ELECTRICAL">Electrical</option>
-												<option value="PLUMBING">Plumbing</option>
-												<option value="FIRE_SAFETY">Fire Safety</option>
-												<option value="ELEVATOR">Elevator</option>
-												<option value="SECURITY_SYSTEM">Security System</option>
-												<option value="OTHER">Other</option>
-											</select>
-											<select
-												name="status"
-												bind:value={editingAsset.status}
-												class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"
-											>
-												<option value="OPERATIONAL">Operational</option>
-												<option value="NEEDS_MAINTENANCE">Needs Maintenance</option>
-												<option value="OUT_OF_SERVICE">Out of Service</option>
-											</select>
-											<input
-												type="date"
-												name="purchaseDate"
-												bind:value={editingAsset.purchaseDate}
-												class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"
-											/>
-											<input
-												type="date"
-												name="warrantyExpiry"
-												bind:value={editingAsset.warrantyExpiry}
-												class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange"
-											/>
-											<textarea
-												name="description"
-												bind:value={editingAsset.description}
-												placeholder="Description"
-												rows="2"
-												class="px-3 py-2 rounded border border-spore-orange bg-white text-spore-dark text-sm focus:outline-none focus:ring-2 focus:ring-spore-orange md:col-span-2"
-											></textarea>
-											<div class="flex gap-2 md:col-span-3 justify-end">
-												<button
-													type="submit"
-													disabled={isSubmitting || !editingAsset.name.trim()}
-													class="bg-spore-forest text-white px-4 py-2 rounded font-bold text-xs hover:bg-spore-forest/90 disabled:opacity-50 transition-colors"
-												>
-													{isSubmitting ? 'SAVING...' : 'SAVE'}
-												</button>
-												<button
-													type="button"
-													on:click={cancelEdit}
-													class="px-4 py-2 rounded font-bold text-xs text-spore-steel hover:bg-spore-cream transition-colors"
-												>
-													CANCEL
-												</button>
-											</div>
 										</form>
 									</td>
 								</tr>
@@ -330,30 +199,28 @@
 									</td>
 									<td class="px-4 py-3">
 										<span class="px-2 py-1 text-xs font-semibold rounded-full bg-spore-cream/20 text-spore-steel">
-											{asset.type?.replace('_', ' ') || 'Other'}
+											{formatAssetStatus(asset.type || 'OTHER')}
 										</span>
 									</td>
 									<td class="px-4 py-3">
-										<span class="px-2 py-1 text-xs font-semibold rounded-full {asset.status === 'OPERATIONAL' ? 'bg-green-100 text-green-800' : asset.status === 'NEEDS_MAINTENANCE' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
-											{asset.status?.replace('_', ' ') || 'Unknown'}
-										</span>
+										<AssetStatusBadge status={asset.status} size="sm" />
 									</td>
 									<td class="px-4 py-3 hidden md:table-cell">
 										<div class="text-sm text-spore-steel">
-											<span class="font-medium">{asset.unit?.site?.name || 'Unknown'}</span>
+											<span class="font-medium">{asset.Unit?.Site?.name || 'Unknown'}</span>
 											<br/>
 											<span class="text-xs">
-												Unit {asset.unit?.roomNumber || 'N/A'}
-												{asset.unit?.name ? ` - ${asset.unit.name}` : ''}
-												{asset.unit?.building ? ` • Bldg ${asset.unit.building.name}` : ''}
-												{asset.unit?.floor ? ` • Floor ${asset.unit.floor}` : ''}
+												Unit {asset.Unit?.roomNumber || 'N/A'}
+												{asset.Unit?.name ? ` - ${asset.Unit.name}` : ''}
+												{asset.Unit?.Building ? ` • Bldg ${asset.Unit.Building.name}` : ''}
+												{asset.Unit?.floor ? ` • Floor ${asset.Unit.floor}` : ''}
 											</span>
 										</div>
 									</td>
 									<td class="px-4 py-3 text-center">
-										{#if asset._count?.workOrders > 0}
+										{#if asset._count?.WorkOrder > 0}
 											<span class="px-2 py-1 text-xs font-bold rounded-full bg-spore-orange/10 text-spore-orange">
-												{asset._count.workOrders}
+												{asset._count.WorkOrder}
 											</span>
 										{:else}
 											<span class="text-xs text-spore-steel/50">0</span>
@@ -413,7 +280,7 @@
 					Create your first asset to start tracking equipment
 				{/if}
 			</p>
-			<button 
+			<button
 				on:click={() => showCreateForm = true}
 				class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 transition-colors text-sm font-bold"
 			>
