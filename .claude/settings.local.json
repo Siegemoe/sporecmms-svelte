@@ -63,7 +63,11 @@
       "Bash(npx wrangler pages project list:*)",
       "Bash(npx wrangler pages deployment list:*)",
       "Bash(git restore:*)",
-      "Bash(git show:*)"
+      "Bash(git show:*)",
+      "mcp__plugin_serena_serena__activate_project",
+      "mcp__plugin_serena_serena__list_dir",
+      "Bash(sh:*)",
+      "Bash(npx prisma format:*)"
     ],
     "deny": [],
     "ask": []

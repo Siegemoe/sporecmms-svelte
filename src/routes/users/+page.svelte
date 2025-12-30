@@ -22,7 +22,7 @@
 	$: users = data.users || [];
 
 	// Read initial filter state from URL
-	$: {
+	$: if (page.url) {
 		const urlParams = page.url.searchParams;
 		searchValue = urlParams.get('search') || '';
 		filterRole = urlParams.get('role') || '';
