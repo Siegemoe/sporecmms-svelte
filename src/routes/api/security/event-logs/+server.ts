@@ -3,7 +3,6 @@ import { SecurityManager } from '$lib/server/security';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-	// Only admins can access security logs
 	if (!locals.user || locals.user.role !== 'ADMIN') {
 		return json({ error: 'Unauthorized' }, { status: 403 });
 	}
@@ -31,7 +30,8 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 			limit,
 			offset,
 			startDate,
-			endDate
+			endDate,
+			organizationId: locals.user.organizationId ?? undefined // Filter by organization
 		});
 
 		return json(result);

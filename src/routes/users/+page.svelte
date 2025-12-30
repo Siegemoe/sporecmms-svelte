@@ -1,22 +1,15 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
+	import { getRoleBadgeClasses, ROLE_NAMES } from '$lib/utils/badges';
 
 	export let data: PageData;
 
 	let showCreateForm = false;
 	let isSubmitting = false;
-	let newUser = { email: '', firstName: '', lastName: '', role: 'TECHNICIAN', password: '' };
+	let newUser = { email: '', firstName: '', lastName: '', role: 'TECHNICIAN' as const, password: '' };
 
 	$: users = data.users || [];
-
-	function getRoleBadgeColor(role: string) {
-		switch (role) {
-			case 'ADMIN': return 'bg-spore-orange text-white';
-			case 'MANAGER': return 'bg-spore-forest text-white';
-			default: return 'bg-spore-steel text-white';
-		}
-	}
 </script>
 
 <div class="max-w-7xl mx-auto px-4 py-10">
@@ -101,9 +94,9 @@
 						bind:value={newUser.role}
 						class="px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
 					>
-						<option value="TECHNICIAN">Technician</option>
-						<option value="MANAGER">Manager</option>
-						<option value="ADMIN">Admin</option>
+						{#each Object.entries(ROLE_NAMES) as [value, label]}
+							<option {value}>{label}</option>
+						{/each}
 					</select>
 				</div>
 				<button
@@ -152,11 +145,11 @@
 											name="role"
 											value={user.role}
 											on:change={(e) => e.currentTarget.form?.requestSubmit()}
-											class="px-2 py-1 text-xs font-bold uppercase rounded-full border-0 cursor-pointer {getRoleBadgeColor(user.role)}"
+											class="{getRoleBadgeClasses(user.role)}"
 										>
-											<option value="TECHNICIAN">Technician</option>
-											<option value="MANAGER">Manager</option>
-											<option value="ADMIN">Admin</option>
+											{#each ['TECHNICIAN', 'MANAGER', 'ADMIN'] as role}
+												<option value={role}>{ROLE_NAMES[role]}</option>
+											{/each}
 										</select>
 									</form>
 								</td>

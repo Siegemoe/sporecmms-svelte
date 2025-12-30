@@ -1,23 +1,34 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
+	import type { SecurityLog, IPBlock, SecurityLogsFilters, PaginationState } from '$lib/types/security';
+	import { getSeverityBadgeClasses, getBlockSeverityClasses, formatAction } from '$lib/utils/badges';
 
 	export let data: PageData;
 
-	let securityLogs: any[] = [];
-	let blockedIPs: any[] = [];
+	let securityLogs: SecurityLog[] = [];
+	let blockedIPs: IPBlock[] = [];
 	let loading = true;
 	let activeTab = 'logs';
-	let filters = {
+	let filters: SecurityLogsFilters = {
 		severity: '',
 		action: '',
 		ipAddress: '',
 		startDate: '',
 		endDate: ''
 	};
-	let pagination = {
+	let pagination: Record<string, PaginationState> = {
 		logs: { page: 1, total: 0, limit: 50 },
 		blocks: { page: 1, total: 0, limit: 50 }
+	};
+
+	// Block IP modal state
+	let showBlockModal = false;
+	let blockForm = {
+		ipAddress: '',
+		reason: '',
+		submitting: false,
+		error: ''
 	};
 
 	async function loadSecurityLogs() {
@@ -33,7 +44,7 @@
 			if (filters.startDate) params.set('startDate', new Date(filters.startDate).toISOString());
 			if (filters.endDate) params.set('endDate', new Date(filters.endDate).toISOString());
 
-			const response = await fetch(`/api/security/logs?${params}`);
+			const response = await fetch(`/api/security/event-logs?${params}`);
 			if (response.ok) {
 				const result = await response.json();
 				securityLogs = result.logs;
@@ -72,38 +83,58 @@
 				body: JSON.stringify({ ipAddress })
 			});
 
-			if (response.ok) {
-				await loadBlockedIPs();
+			if (!response.ok) {
+				const error = await response.json();
+				console.error('Failed to unblock IP:', error.error);
 			} else {
-				alert('Failed to unblock IP');
+				await loadBlockedIPs();
 			}
 		} catch (error) {
 			console.error('Failed to unblock IP:', error);
-			alert('Failed to unblock IP');
 		}
 	}
 
 	async function blockIP() {
-		const ipAddress = prompt('Enter IP address to block:');
-		const reason = prompt('Enter reason for blocking:');
+		blockForm.error = '';
 
-		if (!ipAddress || !reason) return;
+		// Basic IP validation
+		const ipPattern = /^((25[0-5]|(2[0-4]|1\d|[1-9])?\d)\.){3}(25[0-5]|(2[0-4]|1\d|[1-9])?\d)$/;
+		if (!ipPattern.test(blockForm.ipAddress)) {
+			blockForm.error = 'Please enter a valid IPv4 address';
+			return;
+		}
+
+		if (!blockForm.reason.trim()) {
+			blockForm.error = 'Please provide a reason for blocking';
+			return;
+		}
+
+		blockForm.submitting = true;
 
 		try {
 			const response = await fetch('/api/security/blocks', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ ipAddress, reason, severity: 'TEMPORARY' })
+				body: JSON.stringify({
+					ipAddress: blockForm.ipAddress.trim(),
+					reason: blockForm.reason.trim(),
+					severity: 'TEMPORARY'
+				})
 			});
 
 			if (response.ok) {
+				showBlockModal = false;
+				blockForm = { ipAddress: '', reason: '', submitting: false, error: '' };
 				await loadBlockedIPs();
 			} else {
-				alert('Failed to block IP');
+				const error = await response.json();
+				blockForm.error = error.error || 'Failed to block IP';
 			}
 		} catch (error) {
 			console.error('Failed to block IP:', error);
-			alert('Failed to block IP');
+			blockForm.error = 'Network error. Please try again.';
+		} finally {
+			blockForm.submitting = false;
 		}
 	}
 
@@ -259,15 +290,11 @@
 							<tr class="border-b border-spore-steel/20 hover:bg-spore-steel/20 transition-colors">
 								<td class="p-4 text-spore-cream/70">{new Date(log.createdAt).toLocaleString()}</td>
 								<td class="p-4">
-									<span class="px-2 py-1 text-xs font-medium rounded {
-										log.severity === 'CRITICAL' ? 'bg-red-500/20 text-red-400' :
-										log.severity === 'WARNING' ? 'bg-yellow-500/20 text-yellow-400' :
-										'bg-blue-500/20 text-blue-400'
-									}">
+									<span class="{getSeverityBadgeClasses(log.severity)}">
 										{log.severity}
 									</span>
 								</td>
-								<td class="p-4 text-spore-cream/70">{log.action.replace(/_/g, ' ')}</td>
+								<td class="p-4 text-spore-cream/70">{formatAction(log.action)}</td>
 								<td class="p-4 font-mono text-sm text-spore-cream/70">{log.ipAddress}</td>
 								<td class="p-4 text-spore-cream/70">
 									{log.user ? `${log.user.firstName} ${log.user.lastName}` || log.user.email : '-'}
@@ -330,7 +357,7 @@
 			<div class="mb-6 flex justify-between items-center">
 				<h2 class="text-lg font-semibold text-spore-cream">Blocked IP Addresses</h2>
 				<button
-					on:click={blockIP}
+					on:click={() => showBlockModal = true}
 					class="px-4 py-2 bg-spore-orange text-white rounded-lg font-medium hover:bg-orange-600 transition-colors"
 				>
 					Block New IP
@@ -360,10 +387,7 @@
 									{block.expiresAt ? new Date(block.expiresAt).toLocaleString() : 'Never'}
 								</td>
 								<td class="p-4">
-									<span class="px-2 py-1 text-xs font-medium rounded {
-										block.severity === 'PERSISTENT' ? 'bg-red-500/20 text-red-400' :
-										'bg-yellow-500/20 text-yellow-400'
-									}">
+									<span class="{getBlockSeverityClasses(block.severity)}">
 										{block.severity}
 									</span>
 								</td>
@@ -424,6 +448,61 @@
 					</div>
 				</div>
 			{/if}
+		</div>
+	{/if}
+
+	<!-- Block IP Modal -->
+	{#if showBlockModal}
+		<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" on:click|self={() => showBlockModal = false}>
+			<div class="bg-spore-dark rounded-xl p-6 max-w-md w-full mx-4 border border-spore-steel/30">
+				<h2 class="text-xl font-bold text-spore-cream mb-4">Block IP Address</h2>
+
+				{#if blockForm.error}
+					<div class="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg">
+						<p class="text-sm text-red-400">{blockForm.error}</p>
+					</div>
+				{/if}
+
+				<div class="space-y-4">
+					<div>
+						<label class="block text-sm font-medium text-spore-cream mb-1">IP Address</label>
+						<input
+							type="text"
+							bind:value={blockForm.ipAddress}
+							placeholder="e.g., 192.168.1.1"
+							class="w-full px-3 py-2 bg-spore-steel border border-spore-steel/30 rounded-lg text-spore-cream placeholder-spore-cream/50 focus:outline-none focus:ring-2 focus:ring-spore-orange"
+							disabled={blockForm.submitting}
+						/>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-spore-cream mb-1">Reason</label>
+						<textarea
+							bind:value={blockForm.reason}
+							placeholder="e.g., Multiple failed login attempts"
+							rows="3"
+							class="w-full px-3 py-2 bg-spore-steel border border-spore-steel/30 rounded-lg text-spore-cream placeholder-spore-cream/50 focus:outline-none focus:ring-2 focus:ring-spore-orange resize-none"
+							disabled={blockForm.submitting}
+						></textarea>
+					</div>
+				</div>
+
+				<div class="mt-6 flex gap-3 justify-end">
+					<button
+						on:click={() => showBlockModal = false}
+						class="px-4 py-2 bg-spore-steel text-spore-cream rounded-lg font-medium hover:bg-spore-steel/80 transition-colors"
+						disabled={blockForm.submitting}
+					>
+						Cancel
+					</button>
+					<button
+						on:click={blockIP}
+						class="px-4 py-2 bg-spore-orange text-white rounded-lg font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+						disabled={blockForm.submitting}
+					>
+						{blockForm.submitting ? 'Blocking...' : 'Block IP'}
+					</button>
+				</div>
+			</div>
 		</div>
 	{/if}
 </div>

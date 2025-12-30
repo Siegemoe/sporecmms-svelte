@@ -343,6 +343,7 @@ export class SecurityManager {
     offset?: number;
     startDate?: Date;
     endDate?: Date;
+    organizationId?: string;
   }) {
     const prisma = await getPrisma();
     const {
@@ -352,7 +353,8 @@ export class SecurityManager {
       limit = 50,
       offset = 0,
       startDate,
-      endDate
+      endDate,
+      organizationId
     } = filters;
 
     const where: any = {};
@@ -363,6 +365,10 @@ export class SecurityManager {
       where.createdAt = {};
       if (startDate) where.createdAt.gte = startDate;
       if (endDate) where.createdAt.lte = endDate;
+    }
+    // Filter by organization through User relation
+    if (organizationId) {
+      where.User = { organizationId };
     }
 
     const [logs, total] = await Promise.all([

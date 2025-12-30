@@ -15,6 +15,8 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 	const offset = parseInt(url.searchParams.get('offset') || '0');
 
 	try {
+		// TODO: Add organizationId parameter once IPBlock schema includes organizationId
+		// Currently IPBlocks are global - this is a data isolation concern
 		const result = await security.getBlockedIPs(limit, offset);
 		return json(result);
 	} catch (error) {
