@@ -29,10 +29,15 @@ export interface IPBlock {
 	blockedBy?: string | null;
 	blockedAt: Date;
 	expiresAt?: Date | null;
+	organizationId?: string | null;
 	blockedByUser?: {
 		id: string;
 		firstName: string | null;
 		lastName: string | null;
+	} | null;
+	Organization?: {
+		id: string;
+		name: string;
 	} | null;
 }
 

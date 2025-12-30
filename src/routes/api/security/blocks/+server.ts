@@ -3,21 +3,21 @@ import { SecurityManager } from '$lib/server/security';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-	// Only admins can view blocked IPs
 	if (!locals.user || locals.user.role !== 'ADMIN') {
 		return json({ error: 'Unauthorized' }, { status: 403 });
 	}
 
 	const security = SecurityManager.getInstance();
 
-	// Parse query parameters
 	const limit = parseInt(url.searchParams.get('limit') || '50');
 	const offset = parseInt(url.searchParams.get('offset') || '0');
 
 	try {
-		// TODO: Add organizationId parameter once IPBlock schema includes organizationId
-		// Currently IPBlocks are global - this is a data isolation concern
-		const result = await security.getBlockedIPs(limit, offset);
+		const result = await security.getBlockedIPs(
+			limit,
+			offset,
+			locals.user.organizationId ?? undefined
+		);
 		return json(result);
 	} catch (error) {
 		console.error('Blocked IPs API error:', error);
@@ -26,9 +26,12 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 };
 
 export const POST: RequestHandler = async ({ locals, request }) => {
-	// Only admins can block IPs
 	if (!locals.user || locals.user.role !== 'ADMIN') {
 		return json({ error: 'Unauthorized' }, { status: 403 });
+	}
+
+	if (!locals.user.organizationId) {
+		return json({ error: 'Organization context required' }, { status: 400 });
 	}
 
 	const security = SecurityManager.getInstance();
@@ -44,7 +47,8 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 			ipAddress,
 			reason,
 			severity || 'TEMPORARY',
-			locals.user.id
+			locals.user.id,
+			locals.user.organizationId
 		);
 
 		return json({ success: true, message: 'IP blocked successfully' });
@@ -55,7 +59,6 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 };
 
 export const DELETE: RequestHandler = async ({ locals, request }) => {
-	// Only admins can unblock IPs
 	if (!locals.user || locals.user.role !== 'ADMIN') {
 		return json({ error: 'Unauthorized' }, { status: 403 });
 	}

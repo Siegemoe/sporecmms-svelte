@@ -68,20 +68,23 @@ model Building {
 }
 
 model IPBlock {
-  id             String    @id @default(dbgenerated("gen_random_uuid()"))
-  ipAddress      String    @unique
+  id             String        @id @default(dbgenerated("gen_random_uuid()"))
+  ipAddress      String        @unique
   reason         String
   severity       String
-  violationCount Int       @default(1)
+  violationCount Int           @default(1)
   blockedBy      String?
-  blockedAt      DateTime  @default(now())
+  blockedAt      DateTime      @default(now())
   expiresAt      DateTime?
-  createdAt      DateTime  @default(now())
+  organizationId String?
+  createdAt      DateTime      @default(now())
   updatedAt      DateTime
-  User           User?     @relation(fields: [blockedBy], references: [id])
+  User           User?         @relation(fields: [blockedBy], references: [id])
+  Organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([expiresAt])
   @@index([ipAddress])
+  @@index([organizationId])
   @@index([severity])
 }
 
@@ -90,6 +93,7 @@ model Organization {
   name               String               @unique
   createdAt          DateTime             @default(now())
   updatedAt          DateTime
+  IPBlock            IPBlock[]
   OrganizationInvite OrganizationInvite[]
   Site               Site[]
   User               User[]
@@ -191,9 +195,9 @@ model User {
   id                                     String               @id @default(dbgenerated("gen_random_uuid()"))
   email                                  String               @unique
   password                               String
-  recoveryPassphrase                     String?              // For emergency password recovery
-  passwordResetToken                     String?              @unique        // One-time reset token
-  passwordResetExpiresAt                 DateTime?            // Token expiration
+  recoveryPassphrase                     String? // For emergency password recovery
+  passwordResetToken                     String?              @unique // One-time reset token
+  passwordResetExpiresAt                 DateTime? // Token expiration
   firstName                              String?
   lastName                               String?
   phoneNumber                            String?

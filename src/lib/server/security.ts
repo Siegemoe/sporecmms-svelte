@@ -86,7 +86,13 @@ export class SecurityManager {
   }
 
   // Block an IP address
-  async blockIP(ip: string, reason: string, severity: 'TEMPORARY' | 'PERSISTENT' = 'TEMPORARY', blockedBy?: string): Promise<void> {
+  async blockIP(
+    ip: string,
+    reason: string,
+    severity: 'TEMPORARY' | 'PERSISTENT' = 'TEMPORARY',
+    blockedBy?: string,
+    organizationId?: string
+  ): Promise<void> {
     const prisma = await getPrisma();
     const now = new Date();
     let expiresAt: Date | undefined;
@@ -95,7 +101,14 @@ export class SecurityManager {
       expiresAt = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes
     }
 
-    // Build update data - only include blockedBy if defined
+    // For manual blocks (blockedBy provided), organizationId is required
+    // For automatic system blocks (rate limit), organizationId is null (global block)
+    const isSystemBlock = !blockedBy;
+    if (!isSystemBlock && !organizationId) {
+      throw new Error('organizationId is required for manual IP blocks');
+    }
+
+    // Build update data
     const updateData: any = {
       reason,
       severity,
@@ -103,11 +116,10 @@ export class SecurityManager {
       expiresAt,
       violationCount: { increment: 1 }
     };
-    if (blockedBy !== undefined) {
-      updateData.blockedBy = blockedBy;
-    }
+    if (organizationId) updateData.organizationId = organizationId;
+    if (blockedBy !== undefined) updateData.blockedBy = blockedBy;
 
-    // Build create data - only include blockedBy if defined
+    // Build create data
     const createData: any = {
       ipAddress: ip,
       reason,
@@ -116,9 +128,8 @@ export class SecurityManager {
       expiresAt,
       violationCount: 1
     };
-    if (blockedBy !== undefined) {
-      createData.blockedBy = blockedBy;
-    }
+    if (organizationId) createData.organizationId = organizationId;
+    if (blockedBy !== undefined) createData.blockedBy = blockedBy;
 
     await prisma.iPBlock.upsert({
       where: { ipAddress: ip },
@@ -137,7 +148,7 @@ export class SecurityManager {
     await this.logSecurityEvent({
       ipAddress: ip,
       action: 'IP_BLOCKED',
-      details: { reason, severity, blockedBy },
+      details: { reason, severity, blockedBy, organizationId },
       severity: severity === 'PERSISTENT' ? 'CRITICAL' : 'WARNING'
     });
   }
@@ -395,16 +406,31 @@ export class SecurityManager {
   }
 
   // Get blocked IPs for dashboard
-  async getBlockedIPs(limit = 50, offset = 0) {
+  async getBlockedIPs(limit = 50, offset = 0, organizationId?: string) {
     const prisma = await getPrisma();
+
+    // Show org-specific blocks AND global system blocks (organizationId is null)
+    // This allows admins to see both manual blocks they created AND auto-blocks from rate limiting
+    const where = organizationId
+      ? { OR: [{ organizationId }, { organizationId: null }] }
+      : undefined;
 
     const [blocks, total] = await Promise.all([
       prisma.iPBlock.findMany({
+        where,
         orderBy: { blockedAt: 'desc' },
         take: limit,
-        skip: offset
+        skip: offset,
+        include: {
+          Organization: {
+            select: { id: true, name: true }
+          },
+          User: {
+            select: { id: true, firstName: true, lastName: true }
+          }
+        }
       }),
-      prisma.iPBlock.count()
+      prisma.iPBlock.count({ where })
     ]);
 
     return { blocks, total };
