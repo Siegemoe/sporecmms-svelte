@@ -18,6 +18,12 @@ import {
 } from '$lib/server/work-orders/comments';
 import { queryStatusHistory, formatStatusHistory } from '$lib/server/work-orders/status-history';
 import { queryMentionableUsers, formatMentionUsername } from '$lib/server/work-orders/mentions';
+import {
+	queryChecklistItems,
+	createChecklistItem,
+	toggleChecklistItem,
+	deleteChecklistItem
+} from '$lib/server/work-orders/checklist';
 
 export const load: PageServerLoad = async (event) => {
 	requireAuth(event);
@@ -40,6 +46,9 @@ export const load: PageServerLoad = async (event) => {
 	// Get status history
 	const statusHistory = await queryStatusHistory(prisma, id);
 
+	// Get checklist items
+	const checklistItems = await queryChecklistItems(prisma, id);
+
 	// Get mentionable users for @mention dropdown
 	const organizationId = event.locals.user!.organizationId;
 	if (!organizationId) {
@@ -61,7 +70,8 @@ export const load: PageServerLoad = async (event) => {
 		assets,
 		comments,
 		statusHistory: formatStatusHistory(statusHistory),
-		mentionableUsers: mentionableUsersWithUsername
+		mentionableUsers: mentionableUsersWithUsername,
+		checklistItems
 	};
 };
 
@@ -177,5 +187,73 @@ export const actions: Actions = {
 		}
 
 		return deleteCommentService(event, prisma, commentId, event.locals.user!.id);
+	},
+
+	/**
+	 * Add a checklist item
+	 */
+	addChecklistItem: async (event) => {
+		const prisma = await createRequestPrisma(event);
+		const formData = await event.request.formData();
+		const { id } = event.params;
+
+		const title = formData.get('title') as string;
+
+		if (!title || title.trim() === '') {
+			return fail(400, { error: 'Item title is required.' });
+		}
+
+		try {
+			const item = await createChecklistItem(prisma, id, title);
+			return { success: true, item };
+		} catch (e) {
+			console.error('Error creating checklist item:', e);
+			return fail(500, { error: 'Failed to create checklist item.' });
+		}
+	},
+
+	/**
+	 * Toggle checklist item completion
+	 */
+	toggleChecklistItem: async (event) => {
+		const prisma = await createRequestPrisma(event);
+		const formData = await event.request.formData();
+
+		const itemId = formData.get('itemId') as string;
+		const isCompleted = formData.get('isCompleted') === 'true';
+
+		if (!itemId) {
+			return fail(400, { error: 'Item ID is required.' });
+		}
+
+		try {
+			const item = await toggleChecklistItem(prisma, itemId, isCompleted);
+			return { success: true, item };
+		} catch (e) {
+			console.error('Error toggling checklist item:', e);
+			return fail(500, { error: 'Failed to update checklist item.' });
+		}
+	},
+
+	/**
+	 * Delete a checklist item
+	 */
+	deleteChecklistItem: async (event) => {
+		const prisma = await createRequestPrisma(event);
+		const formData = await event.request.formData();
+
+		const itemId = formData.get('itemId') as string;
+
+		if (!itemId) {
+			return fail(400, { error: 'Item ID is required.' });
+		}
+
+		try {
+			await deleteChecklistItem(prisma, itemId);
+			return { success: true };
+		} catch (e) {
+			console.error('Error deleting checklist item:', e);
+			return fail(500, { error: 'Failed to delete checklist item.' });
+		}
 	}
 };

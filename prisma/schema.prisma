@@ -263,6 +263,7 @@ model WorkOrder {
   WorkOrderEvent                    WorkOrderEvent[]
   WorkOrderComment                  WorkOrderComment[]
   WorkOrderStatusHistory            WorkOrderStatusHistory[]
+  WorkOrderChecklistItem            WorkOrderChecklistItem[]
 
   @@index([assetId])
   @@index([assignedToId])
@@ -350,6 +351,20 @@ model WorkOrderStatusHistory {
 
   @@index([workOrderId])
   @@index([createdAt])
+}
+
+model WorkOrderChecklistItem {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  title       String
+  isCompleted Boolean  @default(false)
+  position    Int      @default(0)
+  workOrderId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+
+  @@index([workOrderId])
+  @@index([position])
 }
 
 enum AssetStatus {

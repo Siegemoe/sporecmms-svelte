@@ -4,6 +4,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { FAILURE_MODES, WORK_ORDER_STATUSES } from '$lib/constants';
 	import StatusHistory from '$lib/components/work-orders/StatusHistory.svelte';
+	import Checklist from '$lib/components/work-orders/Checklist.svelte';
 	import CommentThread from '$lib/components/work-orders/CommentThread.svelte';
 
 	export let data: PageData;
@@ -22,6 +23,7 @@
 	$: assets = data.assets || [];
 	$: comments = data.comments || [];
 	$: statusHistory = data.statusHistory || [];
+	$: checklistItems = data.checklistItems || [];
 	$: mentionableUsers = data.mentionableUsers || [];
 	$: currentUser = data.user;
 
@@ -298,6 +300,11 @@
 	<!-- Status History -->
 	<div class="max-w-4xl mx-auto px-4 py-6">
 		<StatusHistory history={statusHistory} />
+	</div>
+
+	<!-- Checklist -->
+	<div class="max-w-4xl mx-auto px-4 py-6">
+		<Checklist items={checklistItems} workOrderId={workOrder.id} />
 	</div>
 
 	<!-- Comments Section -->
