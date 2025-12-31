@@ -119,27 +119,75 @@ export const assetSchema = z.object({
 		.optional()
 });
 
-// Work order creation/update schema
-export const workOrderSchema = z.object({
-  title: z.string()
-    .min(1, 'Title is required')
-    .max(200, 'Title must be less than 200 characters')
-    .trim(),
-  description: z.string()
-    .min(1, 'Description is required')
-    .max(2000, 'Description must be less than 2000 characters')
-    .trim(),
-  assetId: z.string()
-    .min(1, 'Please select an asset')
-    .cuid('Invalid asset selection')
-    .optional(),
-  assignedToId: z.string()
-    .cuid('Invalid user selection')
-    .optional(),
-  revisitSchedule: z.string()
-    .datetime('Invalid date format')
-    .optional()
+// Work order creation schema
+export const workOrderCreateSchema = z.object({
+	title: z.string()
+		.min(1, 'Title is required')
+		.max(200, 'Title must be less than 200 characters')
+		.trim(),
+	description: z.string()
+		.max(5000, 'Description must be less than 5000 characters')
+		.trim()
+		.optional(),
+	priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'EMERGENCY'])
+		.optional(),
+	dueDate: z.string()
+		.datetime('Invalid due date format')
+		.optional(),
+	assignedToId: z.string()
+		.cuid('Invalid user selection')
+		.optional(),
+	selectionMode: z.enum(['asset', 'unit', 'building', 'site'])
+		.optional(),
+	assetId: z.string()
+		.cuid('Invalid asset selection')
+		.optional(),
+	unitId: z.string()
+		.cuid('Invalid unit selection')
+		.optional(),
+	buildingId: z.string()
+		.cuid('Invalid building selection')
+		.optional(),
+	siteId: z.string()
+		.cuid('Invalid site selection')
+		.optional()
 });
+
+// Work order update schema (for detail page edits)
+export const workOrderUpdateSchema = z.object({
+	title: z.string()
+		.min(1, 'Title is required')
+		.max(200, 'Title must be less than 200 characters')
+		.trim(),
+	description: z.string()
+		.max(5000, 'Description must be less than 5000 characters')
+		.trim()
+		.optional(),
+	assetId: z.string()
+		.min(1, 'Asset is required')
+		.cuid('Invalid asset selection')
+});
+
+// Work order status change schema
+export const workOrderStatusSchema = z.object({
+	workOrderId: z.string()
+		.min(1, 'Work order ID is required')
+		.cuid('Invalid work order ID'),
+	status: z.enum(['PENDING', 'IN_PROGRESS', 'ON_HOLD', 'COMPLETED', 'CANCELLED'])
+});
+
+// Work order assignment schema
+export const workOrderAssignSchema = z.object({
+	workOrderId: z.string()
+		.min(1, 'Work order ID is required')
+		.cuid('Invalid work order ID'),
+	assignedToId: z.string()
+		.cuid('Invalid user selection')
+		.optional()
+});
+
+// Legacy alias for backward compatibility
+export const workOrderSchema = workOrderCreateSchema;
 
 // Emergency password reset request schema
 export const emergencyResetRequestSchema = z.object({
@@ -198,6 +246,10 @@ export type SiteInput = z.infer<typeof siteSchema>;
 export type RoomInput = z.infer<typeof roomSchema>;
 export type AssetInput = z.infer<typeof assetSchema>;
 export type WorkOrderInput = z.infer<typeof workOrderSchema>;
+export type WorkOrderCreateInput = z.infer<typeof workOrderCreateSchema>;
+export type WorkOrderUpdateInput = z.infer<typeof workOrderUpdateSchema>;
+export type WorkOrderStatusInput = z.infer<typeof workOrderStatusSchema>;
+export type WorkOrderAssignInput = z.infer<typeof workOrderAssignSchema>;
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;
 export type EmergencyResetRequestInput = z.infer<typeof emergencyResetRequestSchema>;
 export type PasswordResetInput = z.infer<typeof passwordResetSchema>;

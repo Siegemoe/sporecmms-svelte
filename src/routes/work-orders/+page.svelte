@@ -3,7 +3,7 @@
 	import { wsStore } from '$lib/stores/websocket';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import {
 		WORK_ORDER_STATUSES,
 		PRIORITIES,
@@ -24,6 +24,11 @@
 	let buildings = data.buildings || [];
 	let sites = data.sites || [];
 	let users = data.users || [];
+
+	// Helper function for site options (to avoid type annotation issues in markup)
+	function getSiteOptions() {
+		return sites.map((s: any) => ({ value: s.id, label: s.name }));
+	}
 
 	// Filter State - initialize from URL params
 	let filterStatus = data.status || '';
@@ -95,17 +100,17 @@
 	}
 
 	// Check if a work order is overdue (compares dates at midnight to avoid timezone issues)
-	function isOverdue(dueDate: string, status: string): boolean {
-		if (status === 'COMPLETED') return false;
+	function isOverdue(dueDate: Date | string | null | undefined, status: string): boolean {
+		if (status === 'COMPLETED' || !dueDate) return false;
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
-		const due = new Date(dueDate);
+		const due = typeof dueDate === 'string' ? new Date(dueDate) : dueDate;
 		due.setHours(0, 0, 0, 0);
 		return due < today;
 	}
 
 	// Get overdue styling class
-	function getOverdueClass(dueDate: string, status: string): string {
+	function getOverdueClass(dueDate: Date | string | null | undefined, status: string): string {
 		return isOverdue(dueDate, status) ? 'text-red-500 font-semibold' : 'text-spore-dark';
 	}
 
@@ -124,16 +129,19 @@
 				workOrders = workOrders.map((wo) => {
 					if (wo.id === updated.id) {
 						lastUpdate = `${updated.title} → ${updated.status}`;
-						return { ...wo, ...updated };
+						// Merge with proper type handling
+						return { ...wo, status: updated.status as typeof wo.status };
 					}
 					return wo;
 				});
 			}
 			if (latest.type === 'WO_NEW' && latest.payload) {
-				const newWo = latest.payload as typeof workOrders[0];
-				if (!workOrders.some(wo => wo.id === newWo.id)) {
-					workOrders = [newWo, ...workOrders];
-					lastUpdate = `New: ${newWo.title}`;
+				const newWoPayload = latest.payload as { id: string; title: string };
+				if (!workOrders.some(wo => wo.id === newWoPayload.id)) {
+					// Just use the ID to fetch fresh data, or add a placeholder
+					lastUpdate = `New: ${newWoPayload.title}`;
+					// Trigger page refresh to get fresh data
+					invalidateAll();
 				}
 			}
 		}
@@ -213,7 +221,7 @@
 				title: 'Filter by site',
 				onChange: (v) => { filterSite = v; applyFilters(); },
 				show: sites.length > 0,
-				options: sites.map(s => ({ value: s.id, label: s.name }))
+				options: getSiteOptions()
 			}
 		]}
 		sortOptions={[
@@ -358,7 +366,7 @@
 							<option value="">Select an asset...</option>
 							{#each assets as asset}
 								<option value={asset.id}>
-									{asset.name} — {asset.unit?.site?.name || 'Unknown'}, Unit {asset.unit?.roomNumber || 'N/A'}
+									{asset.name} — {asset.room?.site?.name || 'Unknown'}, Unit {asset.room?.roomNumber || 'N/A'}
 								</option>
 							{/each}
 						</select>

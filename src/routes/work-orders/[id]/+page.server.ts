@@ -1,82 +1,32 @@
 import type { PageServerLoad, Actions } from './$types';
 import { createRequestPrisma } from '$lib/server/prisma';
-import { broadcastToOrg } from '$lib/server/websocket-handler';
 import { fail, error, redirect } from '@sveltejs/kit';
-import { WorkOrderStatus } from '@prisma/client';
-import { requireAuth, isManagerOrAbove } from '$lib/server/guards';
-import { logAudit } from '$lib/server/audit';
+import type { WorkOrderStatus } from '@prisma/client';
+import { requireAuth } from '$lib/server/guards';
+import {
+	queryWorkOrderById,
+	queryAssetsForDropdown,
+	updateWorkOrderStatus,
+	updateWorkOrderDetails,
+	deleteWorkOrder
+} from '$lib/server/work-orders/service';
 
 export const load: PageServerLoad = async (event) => {
 	requireAuth(event);
-	
+
 	const prisma = await createRequestPrisma(event);
 	const { id } = event.params;
 
-	const workOrder = await prisma.workOrder.findUnique({
-		where: { id },
-		include: {
-			Asset: {
-				include: {
-					Unit: {
-						include: {
-							Site: { select: { id: true, name: true } },
-							Building: { select: { id: true, name: true } }
-						}
-					}
-				}
-			}
-		}
-	});
+	const workOrder = await queryWorkOrderById(prisma, id);
 
 	if (!workOrder) {
 		throw error(404, 'Work order not found');
 	}
 
 	// Get all assets for edit dropdown
-	const assets = await prisma.asset.findMany({
-		where: {
-			Unit: {
-				Site: {
-					organizationId: event.locals.user!.organizationId ?? undefined
-				}
-			}
-		},
-		include: {
-			Unit: {
-				include: {
-					Site: { select: { name: true } }
-				}
-			}
-		},
-		orderBy: { name: 'asc' }
-	});
+	const assets = await queryAssetsForDropdown(prisma, event.locals.user!.organizationId);
 
-	// Map unit to room for frontend compatibility
-	// Since we throw a 404 if workOrder is not found, workOrderWithRoom will never be null
-	const workOrderWithRoom = {
-		...workOrder,
-		asset: workOrder.Asset ? {
-			...workOrder.Asset,
-			room: workOrder.Asset.Unit ? {
-				...workOrder.Asset.Unit,
-				name: workOrder.Asset.Unit.name || workOrder.Asset.Unit.roomNumber,
-				building: workOrder.Asset.Unit.Building,
-				site: workOrder.Asset.Unit.Site
-			} : null
-		} : null
-	};
-
-	const assetsWithRoom = assets.map(asset => ({
-		...asset,
-		room: asset.Unit ? {
-			...asset.Unit,
-			name: asset.Unit.name || asset.Unit.roomNumber,
-			site: asset.Unit.Site,
-			building: asset.Unit.Building
-		} : null
-	}));
-
-	return { workOrder: workOrderWithRoom, assets: assetsWithRoom };
+	return { workOrder, assets };
 };
 
 export const actions: Actions = {
@@ -84,89 +34,53 @@ export const actions: Actions = {
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id } = event.params;
-		
+
 		const newStatus = formData.get('status') as WorkOrderStatus;
-		
+
 		if (!newStatus) {
 			return fail(400, { error: 'Status is required' });
 		}
 
-		const updatedWo = await prisma.workOrder.update({
-			where: { id },
-			data: { status: newStatus },
-			select: {
-				id: true,
-				title: true,
-				status: true,
-				assetId: true,
-				organizationId: true
-			}
-		});
-
-		broadcastToOrg(updatedWo.organizationId, {
-			type: 'WO_UPDATE',
-			payload: updatedWo
-		});
-
-		return { success: true, workOrder: updatedWo };
+		return updateWorkOrderStatus(event, prisma, id, newStatus);
 	},
 
 	update: async (event) => {
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id } = event.params;
-		
+
 		const title = formData.get('title') as string;
 		const description = formData.get('description') as string;
 		const assetId = formData.get('assetId') as string;
-		const failureMode = formData.get('failureMode') as string;
-		
+
 		if (!title || title.trim() === '') {
 			return fail(400, { error: 'Title is required' });
 		}
-		
+
 		if (!assetId) {
 			return fail(400, { error: 'Asset is required' });
 		}
 
-		const workOrder = await prisma.workOrder.update({
-			where: { id },
-			data: {
-				title: title.trim(),
-				description: description?.trim() || '',
-				assetId,
-				// failureMode: failureMode || 'General' // Removed: Field does not exist in WorkOrder schema
-			}
+		return updateWorkOrderDetails(event, prisma, id, {
+			title,
+			description,
+			assetId
 		});
-
-		return { success: true, workOrder };
 	},
 
 	delete: async (event) => {
-		// Only Admin/Manager can delete work orders
-		if (!isManagerOrAbove(event)) {
-			return fail(403, { error: 'Permission denied. Only managers can delete work orders.' });
-		}
-		
 		const prisma = await createRequestPrisma(event);
 		const { id } = event.params;
 
-		// Get WO details before deletion for audit
-		const wo = await prisma.workOrder.findUnique({
-			where: { id },
-			select: { title: true }
-		});
+		const result = await deleteWorkOrder(event, prisma, id);
 
-		await prisma.workOrder.delete({
-			where: { id }
-		});
+		// Check if the result indicates success
+		if (typeof result === 'object' && result !== null && 'success' in result && result.success === true) {
+			// Redirect after successful delete
+			throw redirect(303, '/work-orders');
+		}
 
-		// Audit log
-		await logAudit(event.locals.user!.id, 'WORK_ORDER_DELETED', {
-			workOrderId: id,
-			title: wo?.title
-		});
-
-		throw redirect(303, '/work-orders');
+		// Return error if delete failed
+		return result;
 	}
 };

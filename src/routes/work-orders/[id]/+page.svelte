@@ -24,7 +24,7 @@
 		editData = {
 			title: workOrder.title,
 			description: workOrder.description || '',
-			assetId: workOrder.assetId
+			assetId: workOrder.assetId || ''
 		};
 		isEditing = true;
 	}
