@@ -1,12 +1,15 @@
 import { getPrisma } from './prisma';
 import { SecurityManager } from './security';
 
-type AuditAction = 
+type AuditAction =
 	| 'WORK_ORDER_CREATED'
 	| 'WORK_ORDER_UPDATED'
 	| 'WORK_ORDER_STATUS_CHANGED'
 	| 'WORK_ORDER_ASSIGNED'
 	| 'WORK_ORDER_DELETED'
+	| 'WORK_ORDER_COMMENT_ADDED'
+	| 'WORK_ORDER_COMMENT_EDITED'
+	| 'WORK_ORDER_COMMENT_DELETED'
 	| 'ASSET_CREATED'
 	| 'ASSET_UPDATED'
 	| 'ASSET_DELETED'

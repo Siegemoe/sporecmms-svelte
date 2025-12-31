@@ -215,6 +215,10 @@ model User {
   WorkOrder_WorkOrder_assignedToIdToUser WorkOrder[]          @relation("WorkOrder_assignedToIdToUser")
   WorkOrder_WorkOrder_createdByIdToUser  WorkOrder[]          @relation("WorkOrder_createdByIdToUser")
   WorkOrderEvent                         WorkOrderEvent[]
+  WorkOrderComment                       WorkOrderComment[]   @relation("UserComments")
+  CommentEdit                            CommentEdit[]        @relation("CommentEditUser")
+  CommentMentionReceived                 CommentMention[]    @relation("MentionedUser")
+  WorkOrderStatusHistory                 WorkOrderStatusHistory[] @relation("StatusHistoryUser")
 
   @@index([email])
   @@index([organizationId])
@@ -257,6 +261,8 @@ model WorkOrder {
   Site                              Site?            @relation(fields: [siteId], references: [id], onDelete: Cascade)
   Unit                              Unit?            @relation(fields: [unitId], references: [id], onDelete: Cascade)
   WorkOrderEvent                    WorkOrderEvent[]
+  WorkOrderComment                  WorkOrderComment[]
+  WorkOrderStatusHistory            WorkOrderStatusHistory[]
 
   @@index([assetId])
   @@index([assignedToId])
@@ -280,6 +286,70 @@ model WorkOrderEvent {
 
   @@index([createdAt])
   @@index([workOrderId])
+}
+
+model WorkOrderComment {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  content     String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isEdited    Boolean  @default(false)
+  isDeleted   Boolean  @default(false)
+  editedAt    DateTime?
+  workOrderId String
+  userId      String
+  parentId    String?
+  workOrder   WorkOrder          @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  user        User               @relation("UserComments", fields: [userId], references: [id], onDelete: Cascade)
+  parent      WorkOrderComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     WorkOrderComment[] @relation("CommentReplies")
+  mentions    CommentMention[]
+  editHistory CommentEdit[]
+
+  @@index([workOrderId])
+  @@index([userId])
+  @@index([parentId])
+  @@index([createdAt])
+  @@index([isDeleted])
+}
+
+model CommentEdit {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  content   String   @db.Text
+  editedAt  DateTime @default(now())
+  commentId String
+  userId    String
+  comment   WorkOrderComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User             @relation("CommentEditUser", fields: [userId], references: [id])
+
+  @@index([commentId])
+  @@index([editedAt])
+}
+
+model CommentMention {
+  id               String   @id @default(dbgenerated("gen_random_uuid()"))
+  commentId        String
+  mentionedUserId  String
+  comment          WorkOrderComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  mentionedUser    User             @relation("MentionedUser", fields: [mentionedUserId], references: [id], onDelete: Cascade)
+
+  @@index([commentId])
+  @@index([mentionedUserId])
+}
+
+model WorkOrderStatusHistory {
+  id          String           @id @default(dbgenerated("gen_random_uuid()"))
+  fromStatus  WorkOrderStatus
+  toStatus    WorkOrderStatus
+  reason      String?
+  createdAt   DateTime         @default(now())
+  workOrderId String
+  userId      String?
+  workOrder   WorkOrder        @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  user        User?            @relation("StatusHistoryUser", fields: [userId], references: [id])
+
+  @@index([workOrderId])
+  @@index([createdAt])
 }
 
 enum AssetStatus {

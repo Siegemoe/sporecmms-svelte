@@ -471,15 +471,16 @@ export async function updateWorkOrderStatus(
 	event: RequestEvent,
 	prisma: any,
 	workOrderId: string,
-	newStatus: WorkOrderStatus
+	newStatus: WorkOrderStatus,
+	reason?: string
 ) {
 	const userId = event.locals.user!.id;
 
 	try {
-		// First fetch to check authorization
+		// First fetch to check authorization and get current status
 		const existing = await prisma.workOrder.findUnique({
 			where: { id: workOrderId },
-			select: { createdById: true, assignedToId: true }
+			select: { createdById: true, assignedToId: true, status: true }
 		});
 
 		if (!existing) {
@@ -488,6 +489,10 @@ export async function updateWorkOrderStatus(
 
 		// Check authorization
 		assertCanUpdateWorkOrder(event, existing);
+
+		// Record status history before updating
+		const { recordStatusChange } = await import('./status-history');
+		await recordStatusChange(prisma, workOrderId, existing.status, newStatus, userId, reason);
 
 		const updatedWo = await prisma.workOrder.update({
 			where: { id: workOrderId },
@@ -511,7 +516,9 @@ export async function updateWorkOrderStatus(
 		await logAudit(userId, 'WORK_ORDER_STATUS_CHANGED', {
 			workOrderId: updatedWo.id,
 			title: updatedWo.title,
-			newStatus
+			fromStatus: existing.status,
+			toStatus: newStatus,
+			reason
 		});
 
 		return { success: true, updatedWo };

@@ -3,11 +3,15 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { FAILURE_MODES, WORK_ORDER_STATUSES } from '$lib/constants';
+	import StatusHistory from '$lib/components/work-orders/StatusHistory.svelte';
+	import CommentThread from '$lib/components/work-orders/CommentThread.svelte';
 
 	export let data: PageData;
 
 	let isEditing = false;
 	let isSubmitting = false;
+	let selectedStatus: string | null = null;
+	let statusReason = '';
 	let editData = {
 		title: '',
 		description: '',
@@ -16,9 +20,24 @@
 
 	$: workOrder = data.workOrder;
 	$: assets = data.assets || [];
+	$: comments = data.comments || [];
+	$: statusHistory = data.statusHistory || [];
+	$: mentionableUsers = data.mentionableUsers || [];
+	$: currentUser = data.user;
 
 	// Failure modes removed from schema
 	const statuses = WORK_ORDER_STATUSES;
+
+	// Statuses that require a reason
+	const STATUSES_REQUIRING_REASON = ['ON_HOLD', 'COMPLETED', 'CANCELLED'];
+
+	function statusRequiresReason(status: string): boolean {
+		return STATUSES_REQUIRING_REASON.includes(status);
+	}
+
+	function selectStatus(status: string) {
+		selectedStatus = status === selectedStatus ? null : status;
+	}
 
 	function startEdit() {
 		editData = {
@@ -181,19 +200,76 @@
 				<!-- Status Change Actions -->
 				<div class="border-t border-spore-cream pt-6">
 					<h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-4">Change Status</h3>
-					<div class="flex flex-wrap gap-2">
-						{#each statuses as status}
-							<form method="POST" action="?/updateStatus" use:enhance>
-								<input type="hidden" name="status" value={status} />
-								<button
-									type="submit"
-									disabled={workOrder.status === status}
-									class="px-4 py-2 rounded-lg text-sm font-bold transition-colors disabled:opacity-30 disabled:cursor-not-allowed {getStatusColor(status)} hover:opacity-80"
-								>
-									{status.replace('_', ' ')}
-								</button>
+
+					<!-- Status buttons that require reason -->
+					<div class="space-y-4">
+						<div class="flex flex-wrap gap-2">
+							{#each statuses as status}
+								{#if workOrder.status !== status}
+									<button
+										on:click={() => selectStatus(status)}
+										class="px-4 py-2 rounded-lg text-sm font-bold transition-colors {selectedStatus ===
+										status
+											? 'ring-2 ring-offset-2 ring-spore-orange'
+											: ''} {getStatusColor(status)} hover:opacity-80"
+									>
+										{status.replace('_', ' ')}
+									</button>
+								{/if}
+							{/each}
+						</div>
+
+						<!-- Reason input and submit for selected status -->
+						{#if selectedStatus}
+							<form
+								method="POST"
+								action="?/updateStatus"
+								use:enhance={() => {
+									statusReason = '';
+									return async ({ update }) => {
+										selectedStatus = null;
+										await update();
+									};
+								}}
+								class="bg-spore-cream/30 rounded-lg p-4 space-y-3"
+							>
+								<input type="hidden" name="status" value={selectedStatus} />
+
+								{#if statusRequiresReason(selectedStatus)}
+									<div>
+										<label class="block text-sm font-bold text-spore-dark mb-2">
+											Reason <span class="text-red-500">*</span>
+										</label>
+										<input
+											type="text"
+											name="reason"
+											bind:value={statusReason}
+											placeholder="Please provide a reason for this status change..."
+											class="w-full px-3 py-2 rounded-lg border border-spore-cream bg-white text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange text-sm"
+											required
+										/>
+									</div>
+								{/if}
+
+								<div class="flex gap-2">
+									<button
+										type="submit"
+										disabled={statusRequiresReason(selectedStatus) &&
+											!statusReason.trim()}
+										class="bg-spore-forest text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-spore-forest/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+									>
+										Confirm: {selectedStatus.replace('_', ' ')}
+									</button>
+									<button
+										type="button"
+										on:click={() => (selectedStatus = null)}
+										class="px-4 py-2 rounded-lg font-bold text-sm text-spore-steel hover:bg-spore-cream/50 transition-colors"
+									>
+										Cancel
+									</button>
+								</div>
 							</form>
-						{/each}
+						{/if}
 					</div>
 				</div>
 
@@ -218,4 +294,19 @@
 			</div>
 		</div>
 	{/if}
+
+	<!-- Status History -->
+	<div class="max-w-4xl mx-auto px-4 py-6">
+		<StatusHistory history={statusHistory} />
+	</div>
+
+	<!-- Comments Section -->
+	<div class="max-w-4xl mx-auto px-4 py-6">
+		<CommentThread
+			{comments}
+			currentUserId={currentUser?.id || ''}
+			{mentionableUsers}
+			workOrderId={workOrder.id}
+		/>
+	</div>
 </div>
