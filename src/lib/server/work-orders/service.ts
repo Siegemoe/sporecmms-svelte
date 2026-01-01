@@ -387,6 +387,7 @@ export async function createWorkOrder(
 		unitId?: string;
 		buildingId?: string;
 		siteId?: string;
+		checklistItems?: Array<{ title: string }>;
 	}
 ) {
 	const organizationId = event.locals.user!.organizationId;
@@ -438,6 +439,19 @@ export async function createWorkOrder(
 			}
 		});
 
+		// Create checklist items if provided
+		if (data.checklistItems && data.checklistItems.length > 0) {
+			const checklistItems = data.checklistItems.map((item, index) => ({
+				title: item.title.trim(),
+				position: index,
+				workOrderId: newWo.id
+			}));
+
+			await prisma.workOrderChecklistItem.createMany({
+				data: checklistItems
+			});
+		}
+
 		// Broadcast to all connected clients
 		broadcastToOrg(organizationId, {
 			type: 'WO_NEW',
@@ -451,6 +465,7 @@ export async function createWorkOrder(
 			priority: newWo.priority,
 			dueDate: newWo.dueDate,
 			selectionMode: data.selectionMode,
+			checklistItemCount: data.checklistItems?.length || 0,
 			selectionDetails:
 				data.selectionMode === 'asset' ? { assetId: data.assetId }
 				: data.selectionMode === 'unit' ? { unitId: data.unitId }

@@ -24,6 +24,10 @@
 	let buildings = data.buildings || [];
 	let sites = data.sites || [];
 	let users = data.users || [];
+	let templates = data.templates || [];
+
+	// Template state
+	let selectedTemplateId = '';
 
 	// Helper function for site options (to avoid type annotation issues in markup)
 	function getSiteOptions() {
@@ -46,6 +50,7 @@
 	$: if (data.buildings) buildings = data.buildings;
 	$: if (data.sites) sites = data.sites;
 	$: if (data.users) users = data.users;
+	$: if (data.templates) templates = data.templates;
 
 	function applyFilters() {
 		const params = new URLSearchParams();
@@ -88,7 +93,8 @@
 		assetId: '',
 		unitId: '',
 		buildingId: '',
-		siteId: ''
+		siteId: '',
+		templateId: ''
 	};
 
 	function getUserName(user: { firstName?: string | null; lastName?: string | null; email?: string } | null) {
@@ -97,6 +103,22 @@
 			return [user.firstName, user.lastName].filter(Boolean).join(' ');
 		}
 		return user.email || 'Unknown';
+	}
+
+	// Handle template selection
+	function selectTemplate(templateId: string) {
+		selectedTemplateId = templateId;
+		newWO.templateId = templateId;
+
+		if (templateId) {
+			const template = templates.find((t: any) => t.id === templateId);
+			if (template) {
+				// Auto-fill form fields with template values (can be overridden)
+				if (template.title) newWO.title = template.title;
+				if (template.workDescription) newWO.description = template.workDescription;
+				if (template.priority) newWO.priority = template.priority;
+			}
+		}
 	}
 
 	// Check if a work order is overdue (compares dates at midnight to avoid timezone issues)
@@ -250,6 +272,7 @@
 						// Only hide form and reset on success
 						if (result.type === 'success') {
 							showCreateForm = false;
+							selectedTemplateId = '';
 							newWO = {
 								title: '',
 								description: '',
@@ -260,13 +283,43 @@
 								assetId: '',
 								unitId: '',
 								buildingId: '',
-								siteId: ''
+								siteId: '',
+								templateId: ''
 							};
 						}
 					};
 				}}
 				class="space-y-4"
 			>
+				<!-- Template Selection -->
+				{#if templates && templates.length > 0}
+					<div class="bg-spore-cream/20 rounded-lg p-4">
+						<label for="template-select" class="block text-sm font-medium text-spore-dark mb-2">
+							Start from Template (Optional)
+						</label>
+						<select
+							id="template-select"
+							bind:value={selectedTemplateId}
+							on:change={(e) => selectTemplate(e.currentTarget.value)}
+							class="w-full px-4 py-2 rounded-lg border border-spore-cream bg-white text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+						>
+							<option value="">Select a template...</option>
+							{#each templates as template}
+								<option value={template.id}>
+									{template.name} ({template._itemCount || 0} items)
+								</option>
+							{/each}
+						</select>
+						{#if selectedTemplateId}
+							<p class="text-xs text-spore-steel mt-2">
+								Template values have been applied. You can edit them before creating the work order.
+							</p>
+						{/if}
+					</div>
+				{/if}
+
+				<input type="hidden" name="templateId" bind:value={newWO.templateId} />
+
 				<!-- Title and Description -->
 				<div>
 					<label for="wo-title" class="sr-only">Work order title</label>

@@ -205,6 +205,44 @@ export const workOrderChecklistSchema = z.object({
 		.trim()
 });
 
+// Work order template item schema (used within templates)
+const workOrderTemplateItemSchema = z.object({
+	title: z.string()
+		.min(1, 'Item title is required')
+		.max(200, 'Item title must be less than 200 characters')
+		.trim(),
+	id: z.string().optional() // For updates - existing items have IDs
+});
+
+// Work order template creation schema
+export const workOrderTemplateSchema = z.object({
+	name: z.string()
+		.min(1, 'Template name is required')
+		.max(100, 'Name must be less than 100 characters')
+		.trim(),
+	description: z.string()
+		.max(500, 'Description must be less than 500 characters')
+		.trim()
+		.optional(),
+	title: z.string()
+		.min(1, 'Default title is required')
+		.max(200, 'Title must be less than 200 characters')
+		.trim()
+		.optional(),
+	workDescription: z.string()
+		.max(5000, 'Description must be less than 5000 characters')
+		.trim()
+		.optional(),
+	priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'EMERGENCY'])
+		.optional(),
+	isGlobal: z.boolean().optional(),
+	items: z.array(workOrderTemplateItemSchema)
+		.min(1, 'At least one checklist item is required')
+});
+
+// Work order template update schema (partial - all fields optional)
+export const workOrderTemplateUpdateSchema = workOrderTemplateSchema.partial();
+
 // Legacy alias for backward compatibility
 export const workOrderSchema = workOrderCreateSchema;
 
@@ -271,6 +309,8 @@ export type WorkOrderStatusInput = z.infer<typeof workOrderStatusSchema>;
 export type WorkOrderAssignInput = z.infer<typeof workOrderAssignSchema>;
 export type WorkOrderCommentInput = z.infer<typeof workOrderCommentSchema>;
 export type WorkOrderChecklistInput = z.infer<typeof workOrderChecklistSchema>;
+export type WorkOrderTemplateInput = z.infer<typeof workOrderTemplateSchema>;
+export type WorkOrderTemplateUpdateInput = z.infer<typeof workOrderTemplateUpdateSchema>;
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;
 export type EmergencyResetRequestInput = z.infer<typeof emergencyResetRequestSchema>;
 export type PasswordResetInput = z.infer<typeof passwordResetSchema>;

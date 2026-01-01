@@ -98,6 +98,7 @@ model Organization {
   Site               Site[]
   User               User[]
   WorkOrder          WorkOrder[]
+  WorkOrderTemplate  WorkOrderTemplate[]
 
   @@index([name])
 }
@@ -219,6 +220,7 @@ model User {
   CommentEdit                            CommentEdit[]        @relation("CommentEditUser")
   CommentMentionReceived                 CommentMention[]    @relation("MentionedUser")
   WorkOrderStatusHistory                 WorkOrderStatusHistory[] @relation("StatusHistoryUser")
+  WorkOrderTemplate                      WorkOrderTemplate[]  @relation("TemplateCreator")
 
   @@index([email])
   @@index([organizationId])
@@ -364,6 +366,42 @@ model WorkOrderChecklistItem {
   workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
 
   @@index([workOrderId])
+  @@index([position])
+}
+
+model WorkOrderTemplate {
+  id             String      @id @default(dbgenerated("gen_random_uuid()"))
+  name           String
+  description    String?     @db.Text
+  title          String?     // Default title for work orders from this template
+  workDescription String?    @db.Text  // Default description
+  priority       Priority    @default(MEDIUM)
+  isGlobal       Boolean     @default(false)  // System-wide templates
+  organizationId String?     // Null for global, set for org-specific
+  isActive       Boolean     @default(true)
+  usageCount     Int         @default(0)  // Track how many times used
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  createdBy      String
+
+  Organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  Creator        User         @relation("TemplateCreator", fields: [createdBy], references: [id])
+  TemplateItems  WorkOrderTemplateItem[]
+
+  @@index([organizationId])
+  @@index([isGlobal])
+  @@index([isActive])
+  @@index([organizationId, isActive])
+}
+
+model WorkOrderTemplateItem {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  title       String
+  position    Int      @default(0)
+  templateId  String
+  template    WorkOrderTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([templateId])
   @@index([position])
 }
 
