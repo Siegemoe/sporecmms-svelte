@@ -5,6 +5,8 @@ import type { WorkOrderStatus } from '@prisma/client';
 import { requireAuth } from '$lib/server/guards';
 import { formatUserName } from '$lib/utils/user';
 import { logError } from '$lib/server/logger';
+import { SecurityManager, SECURITY_RATE_LIMITS } from '$lib/server/security';
+import { validateInput, workOrderCommentSchema, workOrderChecklistSchema } from '$lib/validation';
 import {
 	queryWorkOrderById,
 	queryAssetsForDropdown,
@@ -77,6 +79,19 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions: Actions = {
 	updateStatus: async (event) => {
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'work_order_status_update', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.FORM
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return fail(429, { error: 'Too many requests. Your IP has been temporarily blocked.' });
+			}
+			return fail(429, { error: 'Too many requests. Please try again later.' });
+		}
+
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id } = event.params;
@@ -98,6 +113,19 @@ export const actions: Actions = {
 	},
 
 	update: async (event) => {
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'work_order_update', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.FORM
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return fail(429, { error: 'Too many requests. Your IP has been temporarily blocked.' });
+			}
+			return fail(429, { error: 'Too many requests. Please try again later.' });
+		}
+
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id } = event.params;
@@ -122,6 +150,19 @@ export const actions: Actions = {
 	},
 
 	delete: async (event) => {
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'work_order_delete', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.FORM
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return fail(429, { error: 'Too many requests. Your IP has been temporarily blocked.' });
+			}
+			return fail(429, { error: 'Too many requests. Please try again later.' });
+		}
+
 		const prisma = await createRequestPrisma(event);
 		const { id } = event.params;
 
@@ -141,18 +182,39 @@ export const actions: Actions = {
 	 * Add a new comment
 	 */
 	addComment: async (event) => {
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'work_order_comment_add', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.FORM
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return fail(429, { error: 'Too many requests. Your IP has been temporarily blocked.' });
+			}
+			return fail(429, { error: 'Too many requests. Please try again later.' });
+		}
+
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id } = event.params;
 
-		const content = formData.get('content') as string;
-		const parentId = formData.get('parentId') as string | undefined;
+		// Validate with Zod
+		const validation = validateInput(workOrderCommentSchema, {
+			content: formData.get('content'),
+			parentId: formData.get('parentId')
+		});
+
+		if (!validation.success) {
+			const firstError = Object.values(validation.errors)[0];
+			return fail(400, { error: firstError });
+		}
 
 		return createComment(event, prisma, {
 			workOrderId: id,
-			content,
+			content: validation.data.content,
 			userId: event.locals.user!.id,
-			parentId
+			parentId: validation.data.parentId
 		});
 	},
 
@@ -160,23 +222,59 @@ export const actions: Actions = {
 	 * Update an existing comment
 	 */
 	updateComment: async (event) => {
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'work_order_comment_update', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.FORM
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return fail(429, { error: 'Too many requests. Your IP has been temporarily blocked.' });
+			}
+			return fail(429, { error: 'Too many requests. Please try again later.' });
+		}
+
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 
 		const commentId = formData.get('commentId') as string;
-		const content = formData.get('content') as string;
 
 		if (!commentId) {
 			return fail(400, { error: 'Comment ID is required.' });
 		}
 
-		return updateCommentService(event, prisma, commentId, event.locals.user!.id, content);
+		// Validate content with Zod
+		const validation = validateInput(workOrderCommentSchema, {
+			content: formData.get('content'),
+			parentId: undefined // Not used for updates
+		});
+
+		if (!validation.success) {
+			const firstError = Object.values(validation.errors)[0];
+			return fail(400, { error: firstError });
+		}
+
+		return updateCommentService(event, prisma, commentId, event.locals.user!.id, validation.data.content);
 	},
 
 	/**
 	 * Delete a comment
 	 */
 	deleteComment: async (event) => {
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'work_order_comment_delete', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.FORM
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return fail(429, { error: 'Too many requests. Your IP has been temporarily blocked.' });
+			}
+			return fail(429, { error: 'Too many requests. Please try again later.' });
+		}
+
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 
@@ -193,67 +291,99 @@ export const actions: Actions = {
 	 * Add a checklist item
 	 */
 	addChecklistItem: async (event) => {
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'work_order_checklist_add', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.FORM
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return fail(429, { error: 'Too many requests. Your IP has been temporarily blocked.' });
+			}
+			return fail(429, { error: 'Too many requests. Please try again later.' });
+		}
+
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 		const { id } = event.params;
 
-		const title = formData.get('title') as string;
+		// Validate with Zod
+		const validation = validateInput(workOrderChecklistSchema, {
+			title: formData.get('title')
+		});
 
-		if (!title || title.trim() === '') {
-			return fail(400, { error: 'Item title is required.' });
+		if (!validation.success) {
+			const firstError = Object.values(validation.errors)[0];
+			return fail(400, { error: firstError });
 		}
 
-		try {
-			const item = await createChecklistItem(prisma, id, title);
-			return { success: true, item };
-		} catch (e) {
-			logError('Error creating checklist item', e, { workOrderId: id });
-			return fail(500, { error: 'Failed to create checklist item.' });
-		}
+		const userId = event.locals.user!.id;
+		const organizationId = event.locals.user!.organizationId;
+
+		return createChecklistItem(prisma, id, validation.data.title, userId, organizationId);
 	},
 
 	/**
 	 * Toggle checklist item completion
 	 */
 	toggleChecklistItem: async (event) => {
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'work_order_checklist_toggle', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.FORM
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return fail(429, { error: 'Too many requests. Your IP has been temporarily blocked.' });
+			}
+			return fail(429, { error: 'Too many requests. Please try again later.' });
+		}
+
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 
 		const itemId = formData.get('itemId') as string;
 		const isCompleted = formData.get('isCompleted') === 'true';
+		const userId = event.locals.user!.id;
+		const organizationId = event.locals.user!.organizationId;
 
 		if (!itemId) {
 			return fail(400, { error: 'Item ID is required.' });
 		}
 
-		try {
-			const item = await toggleChecklistItem(prisma, itemId, isCompleted);
-			return { success: true, item };
-		} catch (e) {
-			logError('Error toggling checklist item', e, { itemId });
-			return fail(500, { error: 'Failed to update checklist item.' });
-		}
+		return toggleChecklistItem(prisma, itemId, isCompleted, userId, organizationId);
 	},
 
 	/**
 	 * Delete a checklist item
 	 */
 	deleteChecklistItem: async (event) => {
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'work_order_checklist_delete', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.FORM
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return fail(429, { error: 'Too many requests. Your IP has been temporarily blocked.' });
+			}
+			return fail(429, { error: 'Too many requests. Please try again later.' });
+		}
+
 		const prisma = await createRequestPrisma(event);
 		const formData = await event.request.formData();
 
 		const itemId = formData.get('itemId') as string;
+		const userId = event.locals.user!.id;
+		const organizationId = event.locals.user!.organizationId;
 
 		if (!itemId) {
 			return fail(400, { error: 'Item ID is required.' });
 		}
 
-		try {
-			await deleteChecklistItem(prisma, itemId);
-			return { success: true };
-		} catch (e) {
-			logError('Error deleting checklist item', e, { itemId });
-			return fail(500, { error: 'Failed to delete checklist item.' });
-		}
+		return deleteChecklistItem(prisma, itemId, userId, organizationId);
 	}
 };

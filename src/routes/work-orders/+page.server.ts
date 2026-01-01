@@ -5,6 +5,7 @@ import { error, fail } from '@sveltejs/kit';
 import type { WorkOrderStatus, Priority } from '@prisma/client';
 import { DEFAULT_PRIORITY, DEFAULT_SELECTION_MODE, PRIORITIES } from '$lib/constants';
 import { MAX_DESCRIPTION_LENGTH } from '$lib/constants/limits';
+import { SecurityManager, SECURITY_RATE_LIMITS } from '$lib/server/security';
 import {
 	queryWorkOrders,
 	queryLocationOptions,
@@ -64,6 +65,19 @@ export const actions: Actions = {
 	 * Create a new Work Order
 	 */
 	create: async (event) => {
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'work_order_create', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.FORM
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return fail(429, { error: 'Too many requests. Your IP has been temporarily blocked.' });
+			}
+			return fail(429, { error: 'Too many requests. Please try again later.' });
+		}
+
 		const prisma = await createRequestPrisma(event);
 		const data = await event.request.formData();
 
@@ -129,6 +143,19 @@ export const actions: Actions = {
 	 * This is the core workflow trigger for the real-time system.
 	 */
 	updateStatus: async (event) => {
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'work_order_status_update', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.FORM
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return fail(429, { error: 'Too many requests. Your IP has been temporarily blocked.' });
+			}
+			return fail(429, { error: 'Too many requests. Please try again later.' });
+		}
+
 		const prisma = await createRequestPrisma(event);
 		const data = await event.request.formData();
 		const woId = data.get('workOrderId') as string;
@@ -142,6 +169,19 @@ export const actions: Actions = {
 	},
 
 	assign: async (event) => {
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'work_order_assign', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.FORM
+		);
+
+		if (!rateLimitResult.success) {
+			if (rateLimitResult.blocked) {
+				return fail(429, { error: 'Too many requests. Your IP has been temporarily blocked.' });
+			}
+			return fail(429, { error: 'Too many requests. Please try again later.' });
+		}
+
 		const prisma = await createRequestPrisma(event);
 		const data = await event.request.formData();
 

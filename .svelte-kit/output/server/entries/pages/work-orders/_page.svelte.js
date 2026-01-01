@@ -1,7 +1,7 @@
-import { c as create_ssr_component, b as validate_store, d as subscribe, o as onDestroy, e as escape, g as add_attribute, v as validate_component, f as each } from "../../../chunks/ssr.js";
+import { c as create_ssr_component, b as validate_store, d as subscribe, o as onDestroy, g as escape, f as add_attribute, v as validate_component, e as each } from "../../../chunks/ssr.js";
 import { w as wsStore } from "../../../chunks/websocket.js";
 import "devalue";
-import { g as goto, F as FilterBar } from "../../../chunks/FilterBar.js";
+import { i as invalidateAll, g as goto, F as FilterBar } from "../../../chunks/FilterBar.js";
 import { p as page } from "../../../chunks/stores.js";
 import { D as DEFAULT_SORT_OPTION, W as WORK_ORDER_STATUSES, P as PRIORITIES, c as WORK_ORDER_PRIORITY_COLORS, d as WORK_ORDER_STATUS_COLORS } from "../../../chunks/constants.js";
 function getUserName(user) {
@@ -13,11 +13,11 @@ function getUserName(user) {
   return user.email || "Unknown";
 }
 function isOverdue(dueDate, status) {
-  if (status === "COMPLETED")
+  if (status === "COMPLETED" || !dueDate)
     return false;
   const today = /* @__PURE__ */ new Date();
   today.setHours(0, 0, 0, 0);
-  const due = new Date(dueDate);
+  const due = typeof dueDate === "string" ? new Date(dueDate) : dueDate;
   due.setHours(0, 0, 0, 0);
   return due < today;
 }
@@ -35,6 +35,9 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   data.buildings || [];
   let sites = data.sites || [];
   let users = data.users || [];
+  function getSiteOptions() {
+    return sites.map((s) => ({ value: s.id, label: s.name }));
+  }
   let filterStatus = data.status || "";
   let filterPriority = data.priority || "";
   let filterSite = data.siteId || "";
@@ -83,16 +86,16 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
         workOrders = workOrders.map((wo) => {
           if (wo.id === updated.id) {
             lastUpdate = `${updated.title} → ${updated.status}`;
-            return { ...wo, ...updated };
+            return { ...wo, status: updated.status };
           }
           return wo;
         });
       }
       if (latest.type === "WO_NEW" && latest.payload) {
-        const newWo = latest.payload;
-        if (!workOrders.some((wo) => wo.id === newWo.id)) {
-          workOrders = [newWo, ...workOrders];
-          lastUpdate = `New: ${newWo.title}`;
+        const newWoPayload = latest.payload;
+        if (!workOrders.some((wo) => wo.id === newWoPayload.id)) {
+          lastUpdate = `New: ${newWoPayload.title}`;
+          invalidateAll();
         }
       }
     }
@@ -183,7 +186,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
               applyFilters();
             },
             show: sites.length > 0,
-            options: sites.map((s) => ({ value: s.id, label: s.name }))
+            options: getSiteOptions()
           }
         ],
         sortOptions: [

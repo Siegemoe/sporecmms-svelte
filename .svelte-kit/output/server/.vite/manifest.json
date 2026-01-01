@@ -67,6 +67,9 @@
       "_ssr.js"
     ]
   },
+  "_mentions.js": {
+    "file": "chunks/mentions.js"
+  },
   "_prisma.js": {
     "file": "chunks/prisma.js"
   },
@@ -76,8 +79,27 @@
       "_prisma.js"
     ]
   },
+  "_service.js": {
+    "dynamicImports": [
+      "_status-history.js"
+    ],
+    "file": "chunks/service.js",
+    "imports": [
+      "_index.js",
+      "_audit.js",
+      "_guards.js",
+      "_constants.js"
+    ]
+  },
   "_ssr.js": {
     "file": "chunks/ssr.js"
+  },
+  "_status-history.js": {
+    "file": "chunks/status-history.js",
+    "imports": [
+      "_service.js"
+    ],
+    "isDynamicEntry": true
   },
   "_stores.js": {
     "file": "chunks/stores.js",
@@ -90,9 +112,6 @@
   },
   "_validation.js": {
     "file": "chunks/validation.js"
-  },
-  "_websocket-handler.js": {
-    "file": "chunks/websocket-handler.js"
   },
   "_websocket.js": {
     "file": "chunks/websocket.js",
@@ -132,7 +151,7 @@
     "src": "src/hooks.server.ts"
   },
   "src/routes/+layout.css": {
-    "file": "_app/immutable/assets/_layout.43d5fecd.css",
+    "file": "_app/immutable/assets/_layout.272f8381.css",
     "src": "src/routes/+layout.css"
   },
   "src/routes/+layout.server.ts": {
@@ -145,7 +164,7 @@
   },
   "src/routes/+layout.svelte": {
     "css": [
-      "_app/immutable/assets/_layout.43d5fecd.css"
+      "_app/immutable/assets/_layout.272f8381.css"
     ],
     "file": "entries/pages/_layout.svelte.js",
     "imports": [
@@ -265,8 +284,8 @@
     "file": "entries/pages/auth/emergency-reset/_page.server.ts.js",
     "imports": [
       "_index.js",
-      "_auth.js",
-      "_prisma.js"
+      "_prisma.js",
+      "_auth.js"
     ],
     "isEntry": true,
     "src": "src/routes/auth/emergency-reset/+page.server.ts"
@@ -497,7 +516,9 @@
   "src/routes/users/+page.svelte": {
     "file": "entries/pages/users/_page.svelte.js",
     "imports": [
-      "_ssr.js"
+      "_ssr.js",
+      "_FilterBar.js",
+      "_stores.js"
     ],
     "isEntry": true,
     "src": "src/routes/users/+page.svelte"
@@ -514,11 +535,11 @@
     "file": "entries/pages/work-orders/_page.server.ts.js",
     "imports": [
       "_prisma.js",
-      "_websocket-handler.js",
       "_guards.js",
       "_index.js",
-      "_audit.js",
-      "_constants.js"
+      "_constants.js",
+      "_service.js",
+      "_security.js"
     ],
     "isEntry": true,
     "src": "src/routes/work-orders/+page.server.ts"
@@ -539,10 +560,14 @@
     "file": "entries/pages/work-orders/_id_/_page.server.ts.js",
     "imports": [
       "_prisma.js",
-      "_websocket-handler.js",
       "_index.js",
       "_guards.js",
-      "_audit.js"
+      "_status-history.js",
+      "_security.js",
+      "_validation.js",
+      "_service.js",
+      "_audit.js",
+      "_mentions.js"
     ],
     "isEntry": true,
     "src": "src/routes/work-orders/[id]/+page.server.ts"
@@ -551,7 +576,8 @@
     "file": "entries/pages/work-orders/_id_/_page.svelte.js",
     "imports": [
       "_ssr.js",
-      "_constants.js"
+      "_constants.js",
+      "_mentions.js"
     ],
     "isEntry": true,
     "src": "src/routes/work-orders/[id]/+page.svelte"

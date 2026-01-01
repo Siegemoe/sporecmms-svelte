@@ -11,8 +11,20 @@ function isManagerOrAbove(event) {
   const role = event.locals.user?.role;
   return role === "ADMIN" || role === "MANAGER";
 }
+function canUpdateWorkOrder(userId, userRole, workOrderCreatedById, workOrderAssignedToId) {
+  return userRole === "ADMIN" || userRole === "MANAGER" || userId === workOrderCreatedById || userId === workOrderAssignedToId;
+}
+function canAssignWorkOrder(userRole) {
+  return userRole === "ADMIN" || userRole === "MANAGER";
+}
+function canDeleteWorkOrder(userRole) {
+  return userRole === "ADMIN" || userRole === "MANAGER";
+}
 export {
   isAdmin as a,
+  canAssignWorkOrder as b,
+  canUpdateWorkOrder as c,
+  canDeleteWorkOrder as d,
   isManagerOrAbove as i,
   requireAuth as r
 };

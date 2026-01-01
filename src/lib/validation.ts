@@ -186,6 +186,25 @@ export const workOrderAssignSchema = z.object({
 		.optional()
 });
 
+// Work order comment schema
+export const workOrderCommentSchema = z.object({
+	content: z.string()
+		.min(1, 'Comment cannot be empty')
+		.max(5000, 'Comment must be less than 5000 characters')
+		.trim(),
+	parentId: z.string()
+		.min(1, 'Invalid parent comment ID')
+		.optional()
+});
+
+// Work order checklist item schema
+export const workOrderChecklistSchema = z.object({
+	title: z.string()
+		.min(1, 'Title is required')
+		.max(200, 'Title must be less than 200 characters')
+		.trim()
+});
+
 // Legacy alias for backward compatibility
 export const workOrderSchema = workOrderCreateSchema;
 
@@ -250,6 +269,8 @@ export type WorkOrderCreateInput = z.infer<typeof workOrderCreateSchema>;
 export type WorkOrderUpdateInput = z.infer<typeof workOrderUpdateSchema>;
 export type WorkOrderStatusInput = z.infer<typeof workOrderStatusSchema>;
 export type WorkOrderAssignInput = z.infer<typeof workOrderAssignSchema>;
+export type WorkOrderCommentInput = z.infer<typeof workOrderCommentSchema>;
+export type WorkOrderChecklistInput = z.infer<typeof workOrderChecklistSchema>;
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;
 export type EmergencyResetRequestInput = z.infer<typeof emergencyResetRequestSchema>;
 export type PasswordResetInput = z.infer<typeof passwordResetSchema>;

@@ -1,4 +1,4 @@
-import { c as create_ssr_component, a as createEventDispatcher, b as validate_store, d as subscribe, e as escape, f as each, g as add_attribute, v as validate_component } from "../../chunks/ssr.js";
+import { c as create_ssr_component, a as createEventDispatcher, b as validate_store, d as subscribe, e as each, f as add_attribute, g as escape, v as validate_component } from "../../chunks/ssr.js";
 import { p as page } from "../../chunks/stores.js";
 import "devalue";
 const app = "";
@@ -14,6 +14,186 @@ const QuickFAB = create_ssr_component(($$result, $$props, $$bindings, slots) => 
   if ($$props.rooms === void 0 && $$bindings.rooms && rooms !== void 0)
     $$bindings.rooms(rooms);
   return ` ${` <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 lg:hidden" title="Create Work Order" aria-label="Create Work Order"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>  <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 hidden lg:flex" title="Create Work Order" aria-label="Create Work Order"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>`}  ${``}`;
+});
+const breadcrumbConfig = {
+  excludedPaths: [
+    "/",
+    "/auth.*",
+    "/onboarding",
+    "/join-organization",
+    "/select-organization"
+  ],
+  routes: [
+    { path: "/dashboard", title: "Dashboard", icon: "📊" },
+    {
+      path: "/work-orders",
+      title: "Work Orders",
+      icon: "📋",
+      parent: "/dashboard"
+    },
+    {
+      path: "/work-orders/[id]",
+      title: "Work Order",
+      dynamic: true,
+      fetchTitle: (_params, data) => data.pageData?.workOrder?.title || "Work Order",
+      parent: "/work-orders"
+    },
+    {
+      path: "/sites",
+      title: "Sites",
+      icon: "🏢",
+      parent: "/dashboard"
+    },
+    {
+      path: "/sites/[id]",
+      title: "Site",
+      dynamic: true,
+      fetchTitle: (_params, data) => data.pageData?.site?.name || "Site",
+      parent: "/sites"
+    },
+    {
+      path: "/assets",
+      title: "Assets",
+      icon: "⚙️",
+      parent: "/dashboard"
+    },
+    {
+      path: "/assets/[id]",
+      title: "Asset",
+      dynamic: true,
+      fetchTitle: (_params, data) => data.pageData?.asset?.name || "Asset",
+      parent: "/assets"
+    },
+    {
+      path: "/users",
+      title: "Users",
+      icon: "👥",
+      parent: "/dashboard"
+    },
+    { path: "/users/security", title: "Security", parent: "/users" },
+    {
+      path: "/audit-log",
+      title: "Audit Log",
+      icon: "📜",
+      parent: "/dashboard"
+    },
+    { path: "/profile", title: "Profile" }
+  ]
+};
+function isPathExcluded(pathname) {
+  return breadcrumbConfig.excludedPaths.some((pattern) => {
+    const regex = new RegExp(`^${pattern}$`);
+    return regex.test(pathname);
+  });
+}
+function patternToRegex(pattern) {
+  return new RegExp(
+    "^" + pattern.replace(/\[([^\]]+)\]/g, "([^/]+)") + "$"
+  );
+}
+function extractParams(pattern, pathname) {
+  const regex = patternToRegex(pattern);
+  const match = pathname.match(regex);
+  if (!match)
+    return null;
+  const paramNames = pattern.match(/\[([^\]]+)\]/g) || [];
+  const params = {};
+  paramNames.forEach((param, index) => {
+    const paramName = param.slice(1, -1);
+    params[paramName] = match[index + 1];
+  });
+  return params;
+}
+function findRoute(pathname) {
+  for (const route of breadcrumbConfig.routes) {
+    const params = extractParams(route.path, pathname);
+    if (params) {
+      return { route, params };
+    }
+  }
+  return null;
+}
+function getParentPath(routePath, explicitParent) {
+  if (explicitParent)
+    return explicitParent;
+  const segments = routePath.split("/").filter(Boolean);
+  if (segments.length <= 1)
+    return null;
+  segments.pop();
+  return "/" + segments.join("/");
+}
+function buildHref(pattern, params) {
+  let href = pattern;
+  Object.entries(params).forEach(([key, value]) => {
+    href = href.replace(`[${key}]`, value);
+  });
+  return href;
+}
+function getBreadcrumbs(pathname, pageParams, pageData, userRole) {
+  const items = [];
+  const match = findRoute(pathname);
+  if (!match)
+    return items;
+  const { route, params } = match;
+  if (route.role && route.role !== userRole)
+    return items;
+  const visited = /* @__PURE__ */ new Set();
+  const buildHierarchy = (currentPath) => {
+    if (visited.has(currentPath))
+      return [];
+    visited.add(currentPath);
+    const routeMatch = findRoute(currentPath);
+    if (!routeMatch)
+      return [];
+    const { route: currentRoute, params: currentParams } = routeMatch;
+    if (currentRoute.role && currentRoute.role !== userRole)
+      return [];
+    const parentPath = getParentPath(currentRoute.path, currentRoute.parent);
+    const parentItems = parentPath ? buildHierarchy(parentPath) : [];
+    let title = currentRoute.title;
+    if (currentRoute.dynamic && currentRoute.fetchTitle) {
+      title = currentRoute.fetchTitle(currentParams, { pageData, user: { role: userRole } });
+    }
+    const href = buildHref(currentRoute.path, currentParams);
+    const isCurrentPage = href === pathname;
+    return [
+      ...parentItems,
+      {
+        title,
+        href: isCurrentPage ? void 0 : href,
+        icon: currentRoute.icon
+      }
+    ];
+  };
+  return buildHierarchy(pathname);
+}
+const Breadcrumb = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let showBreadcrumbs;
+  let breadcrumbs;
+  let $page, $$unsubscribe_page;
+  validate_store(page, "page");
+  $$unsubscribe_page = subscribe(page, (value) => $page = value);
+  let currentPathname = "";
+  {
+    if ($page.url) {
+      currentPathname = $page.url.pathname;
+    }
+  }
+  showBreadcrumbs = !isPathExcluded(currentPathname);
+  breadcrumbs = getBreadcrumbs(
+    currentPathname,
+    $page.params || {},
+    {
+      pageData: $page.data,
+      user: { role: $page.data?.user?.role }
+    },
+    $page.data?.user?.role
+  );
+  $$unsubscribe_page();
+  return `${showBreadcrumbs && breadcrumbs.length > 0 ? `<nav class="bg-spore-steel" aria-label="Breadcrumb"><div class="max-w-7xl mx-auto px-4 py-2"><ol class="flex items-center gap-2 text-sm overflow-x-auto">${each(breadcrumbs, (crumb, index) => {
+    return `<li class="flex items-center gap-2">${index > 0 ? `<svg class="w-4 h-4 text-spore-cream/30 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg> ` : ``}}
+						${crumb.href ? `<a${add_attribute("href", crumb.href, 0)} class="text-spore-cream/60 hover:text-spore-orange transition-colors truncate max-w-[200px]">${escape(crumb.title)} </a>` : `<span class="text-spore-orange font-semibold truncate max-w-[200px]">${escape(crumb.title)} </span>`} </li>`;
+  })}</ol></div></nav>` : ``}`;
 });
 const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let currentPath;
@@ -78,7 +258,7 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   )}"><span class="text-lg leading-none" data-svelte-h="svelte-kzuy6d">👥</span></a> <a href="/audit-log" class="${"flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-colors " + escape(
     currentPath.startsWith("/audit-log") ? "text-spore-orange bg-spore-cream/10" : "text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5",
     true
-  )}"><span class="text-lg leading-none" data-svelte-h="svelte-r3t20g">📜</span></a></div>` : ``}</div></nav>` : ``}  <main${add_attribute(
+  )}"><span class="text-lg leading-none" data-svelte-h="svelte-r3t20g">📜</span></a></div>` : ``}</div></nav>` : ``}  ${validate_component(Breadcrumb, "Breadcrumb").$$render($$result, {}, {}, {})} <main${add_attribute(
     "class",
     isAuthPage || isLandingPage ? "" : "bg-spore-steel min-h-screen",
     0
