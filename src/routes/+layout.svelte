@@ -85,12 +85,14 @@
 							<div class="py-1">
 								<a
 									href="/work-orders"
+									on:click={() => document.getElementById('wo-menu')?.classList.add('hidden')}
 									class="block px-4 py-2 text-sm font-bold text-spore-forest hover:bg-spore-forest/10 transition-colors"
 								>
 									Work Order Manager
 								</a>
 								<a
 									href="/templates"
+									on:click={() => document.getElementById('wo-menu')?.classList.add('hidden')}
 									class="block px-4 py-2 text-sm font-bold text-spore-forest hover:bg-spore-forest/10 transition-colors"
 								>
 									Template Manager

@@ -51,6 +51,24 @@ export const breadcrumbConfig: BreadcrumbConfig = {
 			parent: '/assets'
 		},
 		{
+			path: '/templates',
+			title: 'Templates',
+			icon: '📝',
+			parent: '/dashboard'
+		},
+		{
+			path: '/templates/[id]',
+			title: 'Template',
+			dynamic: true,
+			fetchTitle: (_params, data) => data.pageData?.template?.name || 'Template',
+			parent: '/templates'
+		},
+		{
+			path: '/work-orders/new',
+			title: 'New Work Order',
+			parent: '/work-orders'
+		},
+		{
 			path: '/users',
 			title: 'Users',
 			icon: '👥',
