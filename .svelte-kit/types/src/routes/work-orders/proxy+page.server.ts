@@ -14,6 +14,7 @@ import {
 	updateWorkOrderStatus,
 	assignWorkOrder
 } from '$lib/server/work-orders/service';
+import { queryTemplates, applyTemplate } from '$lib/server/work-orders/templates';
 import type { WorkOrderCreateInput } from '$lib/validation';
 
 export const load = async (event: Parameters<PageServerLoad>[0]) => {
@@ -49,9 +50,16 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	// Get location options for the create form
 	const locationOptions = await queryLocationOptions(prisma, organizationId);
 
+	// Get active templates for the organization
+	const templates = await queryTemplates(prisma, {
+		organizationId,
+		isActive: true
+	});
+
 	return {
 		workOrders,
 		...locationOptions,
+		templates,
 		myOnly,
 		status,
 		priority,
@@ -80,11 +88,13 @@ export const actions = {
 		}
 
 		const prisma = await createRequestPrisma(event);
+		const userId = event.locals.user?.id;
+		const organizationId = event.locals.user?.organizationId;
 		const data = await event.request.formData();
 
-		const title = data.get('title') as string;
-		const description = data.get('description') as string;
-		const priority = (data.get('priority') as string) || DEFAULT_PRIORITY;
+		let title = data.get('title') as string;
+		let description = data.get('description') as string;
+		let priority = (data.get('priority') as string) || DEFAULT_PRIORITY;
 		const dueDate = data.get('dueDate') as string;
 		const assignedToId = data.get('assignedToId') as string;
 		const selectionMode = (data.get('selectionMode') as string) || DEFAULT_SELECTION_MODE;
@@ -94,6 +104,33 @@ export const actions = {
 		const unitId = (data.get('unitId') || data.get('roomId')) as string;
 		const buildingId = data.get('buildingId') as string;
 		const siteId = data.get('siteId') as string;
+
+		// Template handling
+		const templateId = data.get('templateId') as string;
+		let checklistItems: Array<{ title: string }> = [];
+
+		// Apply template if selected
+		if (templateId && organizationId) {
+			const templateResult = await applyTemplate(prisma, templateId, organizationId);
+
+			if ('status' in templateResult) {
+				// Template error - return the error
+				return templateResult;
+			}
+
+			// Use template values as defaults if form fields are empty
+			if (!title?.trim() && templateResult.title) {
+				title = templateResult.title;
+			}
+			if (!description?.trim() && templateResult.description) {
+				description = templateResult.description;
+			}
+			// Only override priority if not explicitly set
+			if (priority === DEFAULT_PRIORITY && templateResult.priority) {
+				priority = templateResult.priority;
+			}
+			checklistItems = templateResult.items || [];
+		}
 
 		// Validate title
 		if (!title?.trim()) {
@@ -135,7 +172,8 @@ export const actions = {
 			assetId,
 			unitId,
 			buildingId,
-			siteId
+			siteId,
+			checklistItems
 		});
 	},
 

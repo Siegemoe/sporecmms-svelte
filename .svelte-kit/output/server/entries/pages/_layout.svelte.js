@@ -6,6 +6,7 @@ const QuickFAB = create_ssr_component(($$result, $$props, $$bindings, slots) => 
   let { assets = [] } = $$props;
   let { buildings = [] } = $$props;
   let { rooms = [] } = $$props;
+  let { templates = [] } = $$props;
   createEventDispatcher();
   if ($$props.assets === void 0 && $$bindings.assets && assets !== void 0)
     $$bindings.assets(assets);
@@ -13,6 +14,8 @@ const QuickFAB = create_ssr_component(($$result, $$props, $$bindings, slots) => 
     $$bindings.buildings(buildings);
   if ($$props.rooms === void 0 && $$bindings.rooms && rooms !== void 0)
     $$bindings.rooms(rooms);
+  if ($$props.templates === void 0 && $$bindings.templates && templates !== void 0)
+    $$bindings.templates(templates);
   return ` ${` <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 lg:hidden" title="Create Work Order" aria-label="Create Work Order"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>  <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 hidden lg:flex" title="Create Work Order" aria-label="Create Work Order"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>`}  ${``}`;
 });
 const breadcrumbConfig = {
@@ -63,6 +66,24 @@ const breadcrumbConfig = {
       dynamic: true,
       fetchTitle: (_params, data) => data.pageData?.asset?.name || "Asset",
       parent: "/assets"
+    },
+    {
+      path: "/templates",
+      title: "Templates",
+      icon: "📝",
+      parent: "/dashboard"
+    },
+    {
+      path: "/templates/[id]",
+      title: "Template",
+      dynamic: true,
+      fetchTitle: (_params, data) => data.pageData?.template?.name || "Template",
+      parent: "/templates"
+    },
+    {
+      path: "/work-orders/new",
+      title: "New Work Order",
+      parent: "/work-orders"
     },
     {
       path: "/users",
@@ -220,10 +241,11 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${!isAuthPage && !isLandingPage && !isOnboardingPage && user && authState === "org_member" ? ` <nav class="bg-spore-dark border-b border-spore-steel/30"><div class="max-w-7xl mx-auto px-4"><div class="flex justify-between h-16"><div class="flex items-center gap-10"> <a href="/dashboard" class="flex items-center gap-2"><span class="text-2xl font-extrabold text-spore-cream tracking-tight" data-svelte-h="svelte-p6fqmb">SPORE</span> <span class="text-xs font-medium text-spore-steel uppercase tracking-widest" data-svelte-h="svelte-1fermaa">CMMS</span></a>  <div class="hidden md:flex items-center gap-1"><a href="/dashboard" class="${"px-4 py-2 text-sm font-semibold tracking-wide transition-colors " + escape(
     currentPath === "/dashboard" ? "text-spore-orange" : "text-spore-cream/70 hover:text-spore-cream",
     true
-  )}">Dashboard</a> <a href="/work-orders" class="${"px-4 py-2 text-sm font-semibold tracking-wide transition-colors " + escape(
-    currentPath.startsWith("/work-orders") ? "text-spore-orange" : "text-spore-cream/70 hover:text-spore-cream",
+  )}">Dashboard</a>  <div class="relative"><button class="${"px-4 py-2 text-sm font-semibold tracking-wide transition-colors flex items-center gap-1 " + escape(
+    currentPath.startsWith("/work-orders") || currentPath.startsWith("/templates") ? "text-spore-orange" : "text-spore-cream/70 hover:text-spore-cream",
     true
-  )}">Work Orders</a> <a href="/sites" class="${"px-4 py-2 text-sm font-semibold tracking-wide transition-colors " + escape(
+  )}">Work Orders
+							<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg></button>  <div id="wo-menu" class="hidden absolute left-0 mt-2 w-48 bg-spore-cream rounded-lg shadow-lg border border-spore-forest/20 z-50"><div class="py-1"><a href="/work-orders" class="block px-4 py-2 text-sm font-bold text-spore-forest hover:bg-spore-forest/10 transition-colors" data-svelte-h="svelte-19kcx05">Work Order Manager</a> <a href="/templates" class="block px-4 py-2 text-sm font-bold text-spore-forest hover:bg-spore-forest/10 transition-colors" data-svelte-h="svelte-vgv6ve">Template Manager</a></div></div></div> <a href="/sites" class="${"px-4 py-2 text-sm font-semibold tracking-wide transition-colors " + escape(
     currentPath.startsWith("/sites") ? "text-spore-orange" : "text-spore-cream/70 hover:text-spore-cream",
     true
   )}">Sites</a> <a href="/assets" class="${"px-4 py-2 text-sm font-semibold tracking-wide transition-colors " + escape(
@@ -246,7 +268,10 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   )}"><span class="text-xl leading-none" data-svelte-h="svelte-n8oaaj">📊</span> <span class="text-xs font-medium" data-svelte-h="svelte-q6iwf9">Dashboard</span></a> <a href="/work-orders" class="${"flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors " + escape(
     currentPath.startsWith("/work-orders") ? "text-spore-orange bg-spore-cream/10" : "text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5",
     true
-  )}"><span class="text-xl leading-none" data-svelte-h="svelte-ud50em">📋</span> <span class="text-xs font-medium" data-svelte-h="svelte-t3cpir">Work Orders</span></a> <a href="/sites" class="${"flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors " + escape(
+  )}"><span class="text-xl leading-none" data-svelte-h="svelte-ud50em">📋</span> <span class="text-xs font-medium" data-svelte-h="svelte-t3cpir">Work Orders</span></a> <a href="/templates" class="${"flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors " + escape(
+    currentPath.startsWith("/templates") ? "text-spore-orange bg-spore-cream/10" : "text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5",
+    true
+  )}"><span class="text-xl leading-none" data-svelte-h="svelte-108gef0">📝</span> <span class="text-xs font-medium" data-svelte-h="svelte-fxknzk">Templates</span></a> <a href="/sites" class="${"flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors " + escape(
     currentPath.startsWith("/sites") ? "text-spore-orange bg-spore-cream/10" : "text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5",
     true
   )}"><span class="text-xl leading-none" data-svelte-h="svelte-1oi8lds">🏢</span> <span class="text-xs font-medium" data-svelte-h="svelte-1vga3wp">Sites</span></a> <a href="/assets" class="${"flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors " + escape(
@@ -267,7 +292,8 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     {
       assets: data.assets || [],
       buildings: data.buildings || [],
-      rooms: data.rooms || []
+      rooms: data.rooms || [],
+      templates: data.templates || []
     },
     {},
     {}

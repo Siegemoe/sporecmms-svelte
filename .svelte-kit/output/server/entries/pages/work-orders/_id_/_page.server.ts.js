@@ -1,12 +1,15 @@
 import { c as createRequestPrisma } from "../../../../chunks/prisma.js";
 import { f as fail, e as error, r as redirect } from "../../../../chunks/index.js";
 import { r as requireAuth } from "../../../../chunks/guards.js";
-import { f as formatUserName, q as queryStatusHistory, a as formatStatusHistory } from "../../../../chunks/status-history.js";
+import { f as formatUserName } from "../../../../chunks/user.js";
 import { S as SecurityManager, a as SECURITY_RATE_LIMITS } from "../../../../chunks/security.js";
-import { v as validateInput, w as workOrderCommentSchema, b as workOrderChecklistSchema } from "../../../../chunks/validation.js";
-import { d as MAX_COMMENT_LENGTH, e as MAX_COMMENT_DEPTH, f as broadcastToOrg, l as logError, g as queryWorkOrderById, h as queryAssetsForDropdown, u as updateWorkOrderStatus, i as updateWorkOrderDetails, j as deleteWorkOrder } from "../../../../chunks/service.js";
+import { v as validateInput, d as workOrderCommentSchema, e as workOrderChecklistSchema } from "../../../../chunks/validation.js";
+import { S as STATUSES_REQUIRING_REASON } from "../../../../chunks/constants.js";
+import { d as MAX_COMMENT_LENGTH, e as MAX_COMMENT_DEPTH, f as broadcastToOrg, g as queryWorkOrderById, h as queryAssetsForDropdown, u as updateWorkOrderStatus, i as updateWorkOrderDetails, j as deleteWorkOrder } from "../../../../chunks/service.js";
 import { l as logAudit } from "../../../../chunks/audit.js";
+import { l as logError } from "../../../../chunks/logger.js";
 import { p as parseMentions, f as formatMentionUsername } from "../../../../chunks/mentions.js";
+import { queryStatusHistory, formatStatusHistory } from "../../../../chunks/status-history.js";
 async function findUsersByUsernamePattern(prisma, pattern, organizationId) {
   return prisma.user.findMany({
     where: {
@@ -537,8 +540,7 @@ const actions = {
     if (!newStatus) {
       return fail(400, { error: "Status is required" });
     }
-    const statusesRequiringReason = ["ON_HOLD", "COMPLETED", "CANCELLED"];
-    if (statusesRequiringReason.includes(newStatus) && !reason?.trim()) {
+    if (STATUSES_REQUIRING_REASON.includes(newStatus) && !reason?.trim()) {
       return fail(400, { error: "A reason is required for this status change." });
     }
     return updateWorkOrderStatus(event, prisma, id, newStatus, reason?.trim());

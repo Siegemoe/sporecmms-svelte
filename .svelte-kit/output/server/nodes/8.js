@@ -5,6 +5,6 @@ let component_cache;
 export const component = async () => component_cache ??= (await import('../entries/pages/auth/register/_page.svelte.js')).default;
 export { server };
 export const server_id = "src/routes/auth/register/+page.server.ts";
-export const imports = ["_app/immutable/nodes/8.2c710d56.js","_app/immutable/chunks/scheduler.ba200a68.js","_app/immutable/chunks/index.80ab9a85.js","_app/immutable/chunks/forms.c2c344f8.js","_app/immutable/chunks/parse.bee59afc.js","_app/immutable/chunks/singletons.a0a40bc0.js","_app/immutable/chunks/index.d89378c2.js"];
+export const imports = ["_app/immutable/nodes/8.30165aa0.js","_app/immutable/chunks/_page.f217545d.js","_app/immutable/chunks/scheduler.1a6e5117.js","_app/immutable/chunks/index.db98bb86.js","_app/immutable/chunks/forms.4811ed8e.js","_app/immutable/chunks/parse.bee59afc.js","_app/immutable/chunks/singletons.af756979.js","_app/immutable/chunks/index.9628e424.js"];
 export const stylesheets = [];
 export const fonts = [];

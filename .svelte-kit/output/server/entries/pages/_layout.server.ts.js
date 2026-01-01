@@ -1,10 +1,12 @@
-import { c as createRequestPrisma } from "../../chunks/prisma.js";
+import { g as getPrisma } from "../../chunks/prisma.js";
+import { q as queryTemplates } from "../../chunks/templates.js";
 const load = async ({ locals }) => {
   let assets = [];
   let buildings = [];
   let rooms = [];
+  let templates = [];
   if (locals.user && locals.authState === "org_member") {
-    const prisma = await createRequestPrisma({ locals });
+    const prisma = await getPrisma();
     assets = await prisma.asset.findMany({
       where: {
         Unit: {
@@ -58,6 +60,10 @@ const load = async ({ locals }) => {
       take: 35
       // Limit to keep it performant
     });
+    templates = await queryTemplates(prisma, {
+      organizationId: locals.user.organizationId,
+      isActive: true
+    });
   }
   return {
     user: locals.user ?? null,
@@ -90,7 +96,8 @@ const load = async ({ locals }) => {
       site: unit.Site ? {
         name: unit.Site.name
       } : void 0
-    }))
+    })),
+    templates
   };
 };
 export {

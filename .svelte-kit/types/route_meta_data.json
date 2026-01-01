@@ -75,6 +75,14 @@
 		"src/routes/sites/[id]/+page.server.ts",
 		"src/routes/+layout.server.ts"
 	],
+	"/templates": [
+		"src/routes/templates/+page.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/templates/[id]": [
+		"src/routes/templates/[id]/+page.server.ts",
+		"src/routes/+layout.server.ts"
+	],
 	"/users": [
 		"src/routes/users/+page.server.ts",
 		"src/routes/+layout.server.ts"

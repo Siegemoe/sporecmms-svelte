@@ -1,9 +1,10 @@
 import { c as createRequestPrisma } from "../../../chunks/prisma.js";
 import { r as requireAuth } from "../../../chunks/guards.js";
 import { e as error, f as fail } from "../../../chunks/index.js";
-import { e as DEFAULT_PRIORITY, g as DEFAULT_SELECTION_MODE, P as PRIORITIES } from "../../../chunks/constants.js";
+import { D as DEFAULT_PRIORITY, h as DEFAULT_SELECTION_MODE, P as PRIORITIES } from "../../../chunks/constants.js";
 import { q as queryWorkOrders, a as queryLocationOptions, M as MAX_DESCRIPTION_LENGTH, c as createWorkOrder, u as updateWorkOrderStatus, b as assignWorkOrder } from "../../../chunks/service.js";
 import { a as SECURITY_RATE_LIMITS, S as SecurityManager } from "../../../chunks/security.js";
+import { q as queryTemplates, a as applyTemplate } from "../../../chunks/templates.js";
 const load = async (event) => {
   requireAuth(event);
   const prisma = await createRequestPrisma(event);
@@ -28,9 +29,14 @@ const load = async (event) => {
     search: search || void 0
   });
   const locationOptions = await queryLocationOptions(prisma, organizationId);
+  const templates = await queryTemplates(prisma, {
+    organizationId,
+    isActive: true
+  });
   return {
     workOrders,
     ...locationOptions,
+    templates,
     myOnly,
     status,
     priority,
@@ -56,10 +62,12 @@ const actions = {
       return fail(429, { error: "Too many requests. Please try again later." });
     }
     const prisma = await createRequestPrisma(event);
+    event.locals.user?.id;
+    const organizationId = event.locals.user?.organizationId;
     const data = await event.request.formData();
-    const title = data.get("title");
-    const description = data.get("description");
-    const priority = data.get("priority") || DEFAULT_PRIORITY;
+    let title = data.get("title");
+    let description = data.get("description");
+    let priority = data.get("priority") || DEFAULT_PRIORITY;
     const dueDate = data.get("dueDate");
     const assignedToId = data.get("assignedToId");
     const selectionMode = data.get("selectionMode") || DEFAULT_SELECTION_MODE;
@@ -67,6 +75,24 @@ const actions = {
     const unitId = data.get("unitId") || data.get("roomId");
     const buildingId = data.get("buildingId");
     const siteId = data.get("siteId");
+    const templateId = data.get("templateId");
+    let checklistItems = [];
+    if (templateId && organizationId) {
+      const templateResult = await applyTemplate(prisma, templateId, organizationId);
+      if ("status" in templateResult) {
+        return templateResult;
+      }
+      if (!title?.trim() && templateResult.title) {
+        title = templateResult.title;
+      }
+      if (!description?.trim() && templateResult.description) {
+        description = templateResult.description;
+      }
+      if (priority === DEFAULT_PRIORITY && templateResult.priority) {
+        priority = templateResult.priority;
+      }
+      checklistItems = templateResult.items || [];
+    }
     if (!title?.trim()) {
       return fail(400, { error: "Title is required." });
     }
@@ -97,7 +123,8 @@ const actions = {
       assetId,
       unitId,
       buildingId,
-      siteId
+      siteId,
+      checklistItems
     });
   },
   /**

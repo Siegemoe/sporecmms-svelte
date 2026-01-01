@@ -10,7 +10,7 @@ return {
 	assets: new Set(["favicon.png","favicon.svg","_headers"]),
 	mimeTypes: {".png":"image/png",".svg":"image/svg+xml"},
 	_: {
-		client: {"start":"_app/immutable/entry/start.2875a704.js","app":"_app/immutable/entry/app.c32d47e6.js","imports":["_app/immutable/entry/start.2875a704.js","_app/immutable/chunks/scheduler.ba200a68.js","_app/immutable/chunks/singletons.a0a40bc0.js","_app/immutable/chunks/index.d89378c2.js","_app/immutable/chunks/parse.bee59afc.js","_app/immutable/entry/app.c32d47e6.js","_app/immutable/chunks/scheduler.ba200a68.js","_app/immutable/chunks/index.80ab9a85.js"],"stylesheets":[],"fonts":[]},
+		client: {"start":"_app/immutable/entry/start.8bfd0190.js","app":"_app/immutable/entry/app.fe889466.js","imports":["_app/immutable/entry/start.8bfd0190.js","_app/immutable/chunks/scheduler.1a6e5117.js","_app/immutable/chunks/singletons.af756979.js","_app/immutable/chunks/index.9628e424.js","_app/immutable/chunks/parse.bee59afc.js","_app/immutable/entry/app.fe889466.js","_app/immutable/chunks/scheduler.1a6e5117.js","_app/immutable/chunks/index.db98bb86.js"],"stylesheets":[],"fonts":[]},
 		nodes: [
 			__memo(() => import('../output/server/nodes/0.js')),
 			__memo(() => import('../output/server/nodes/1.js')),
@@ -32,7 +32,9 @@ return {
 			__memo(() => import('../output/server/nodes/17.js')),
 			__memo(() => import('../output/server/nodes/18.js')),
 			__memo(() => import('../output/server/nodes/19.js')),
-			__memo(() => import('../output/server/nodes/20.js'))
+			__memo(() => import('../output/server/nodes/20.js')),
+			__memo(() => import('../output/server/nodes/21.js')),
+			__memo(() => import('../output/server/nodes/22.js'))
 		],
 		routes: [
 			{
@@ -176,31 +178,45 @@ return {
 				endpoint: null
 			},
 			{
+				id: "/templates",
+				pattern: /^\/templates\/?$/,
+				params: [],
+				page: { layouts: [0,], errors: [1,], leaf: 17 },
+				endpoint: null
+			},
+			{
+				id: "/templates/[id]",
+				pattern: /^\/templates\/([^/]+?)\/?$/,
+				params: [{"name":"id","optional":false,"rest":false,"chained":false}],
+				page: { layouts: [0,], errors: [1,], leaf: 18 },
+				endpoint: null
+			},
+			{
 				id: "/users",
 				pattern: /^\/users\/?$/,
 				params: [],
-				page: { layouts: [0,], errors: [1,], leaf: 17 },
+				page: { layouts: [0,], errors: [1,], leaf: 19 },
 				endpoint: null
 			},
 			{
 				id: "/users/security",
 				pattern: /^\/users\/security\/?$/,
 				params: [],
-				page: { layouts: [0,], errors: [1,], leaf: 18 },
+				page: { layouts: [0,], errors: [1,], leaf: 20 },
 				endpoint: null
 			},
 			{
 				id: "/work-orders",
 				pattern: /^\/work-orders\/?$/,
 				params: [],
-				page: { layouts: [0,], errors: [1,], leaf: 19 },
+				page: { layouts: [0,], errors: [1,], leaf: 21 },
 				endpoint: null
 			},
 			{
 				id: "/work-orders/[id]",
 				pattern: /^\/work-orders\/([^/]+?)\/?$/,
 				params: [{"name":"id","optional":false,"rest":false,"chained":false}],
-				page: { layouts: [0,], errors: [1,], leaf: 20 },
+				page: { layouts: [0,], errors: [1,], leaf: 22 },
 				endpoint: null
 			}
 		],

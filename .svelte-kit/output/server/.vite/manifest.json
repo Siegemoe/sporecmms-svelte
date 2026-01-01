@@ -67,6 +67,9 @@
       "_ssr.js"
     ]
   },
+  "_logger.js": {
+    "file": "chunks/logger.js"
+  },
   "_mentions.js": {
     "file": "chunks/mentions.js"
   },
@@ -81,25 +84,19 @@
   },
   "_service.js": {
     "dynamicImports": [
-      "_status-history.js"
+      "src/lib/server/work-orders/status-history.ts"
     ],
     "file": "chunks/service.js",
     "imports": [
       "_index.js",
       "_audit.js",
       "_guards.js",
-      "_constants.js"
+      "_constants.js",
+      "_logger.js"
     ]
   },
   "_ssr.js": {
     "file": "chunks/ssr.js"
-  },
-  "_status-history.js": {
-    "file": "chunks/status-history.js",
-    "imports": [
-      "_service.js"
-    ],
-    "isDynamicEntry": true
   },
   "_stores.js": {
     "file": "chunks/stores.js",
@@ -107,8 +104,20 @@
       "_ssr.js"
     ]
   },
+  "_templates.js": {
+    "file": "chunks/templates.js",
+    "imports": [
+      "_index.js",
+      "_logger.js",
+      "_audit.js",
+      "_security.js"
+    ]
+  },
   "_true.js": {
     "file": "chunks/true.js"
+  },
+  "_user.js": {
+    "file": "chunks/user.js"
   },
   "_validation.js": {
     "file": "chunks/validation.js"
@@ -150,21 +159,31 @@
     "isDynamicEntry": true,
     "src": "src/hooks.server.ts"
   },
+  "src/lib/server/work-orders/status-history.ts": {
+    "file": "chunks/status-history.js",
+    "imports": [
+      "_user.js",
+      "_logger.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "src/lib/server/work-orders/status-history.ts"
+  },
   "src/routes/+layout.css": {
-    "file": "_app/immutable/assets/_layout.272f8381.css",
+    "file": "_app/immutable/assets/_layout.e9695463.css",
     "src": "src/routes/+layout.css"
   },
   "src/routes/+layout.server.ts": {
     "file": "entries/pages/_layout.server.ts.js",
     "imports": [
-      "_prisma.js"
+      "_prisma.js",
+      "_templates.js"
     ],
     "isEntry": true,
     "src": "src/routes/+layout.server.ts"
   },
   "src/routes/+layout.svelte": {
     "css": [
-      "_app/immutable/assets/_layout.272f8381.css"
+      "_app/immutable/assets/_layout.e9695463.css"
     ],
     "file": "entries/pages/_layout.svelte.js",
     "imports": [
@@ -284,8 +303,8 @@
     "file": "entries/pages/auth/emergency-reset/_page.server.ts.js",
     "imports": [
       "_index.js",
-      "_prisma.js",
-      "_auth.js"
+      "_auth.js",
+      "_prisma.js"
     ],
     "isEntry": true,
     "src": "src/routes/auth/emergency-reset/+page.server.ts"
@@ -502,6 +521,58 @@
     "isEntry": true,
     "src": "src/routes/sites/[id]/+page.svelte"
   },
+  "src/routes/templates/+page.css": {
+    "file": "_app/immutable/assets/_page.b74b4820.css",
+    "src": "src/routes/templates/+page.css"
+  },
+  "src/routes/templates/+page.server.ts": {
+    "file": "entries/pages/templates/_page.server.ts.js",
+    "imports": [
+      "_prisma.js",
+      "_guards.js",
+      "_index.js",
+      "_constants.js",
+      "_security.js",
+      "_templates.js",
+      "_validation.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/templates/+page.server.ts"
+  },
+  "src/routes/templates/+page.svelte": {
+    "css": [
+      "_app/immutable/assets/_page.b74b4820.css"
+    ],
+    "file": "entries/pages/templates/_page.svelte.js",
+    "imports": [
+      "_ssr.js",
+      "_constants.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/templates/+page.svelte"
+  },
+  "src/routes/templates/[id]/+page.server.ts": {
+    "file": "entries/pages/templates/_id_/_page.server.ts.js",
+    "imports": [
+      "_prisma.js",
+      "_guards.js",
+      "_index.js",
+      "_security.js",
+      "_templates.js",
+      "_validation.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/templates/[id]/+page.server.ts"
+  },
+  "src/routes/templates/[id]/+page.svelte": {
+    "file": "entries/pages/templates/_id_/_page.svelte.js",
+    "imports": [
+      "_ssr.js",
+      "_constants.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/templates/[id]/+page.svelte"
+  },
   "src/routes/users/+page.server.ts": {
     "file": "entries/pages/users/_page.server.ts.js",
     "imports": [
@@ -539,7 +610,8 @@
       "_index.js",
       "_constants.js",
       "_service.js",
-      "_security.js"
+      "_security.js",
+      "_templates.js"
     ],
     "isEntry": true,
     "src": "src/routes/work-orders/+page.server.ts"
@@ -551,7 +623,8 @@
       "_websocket.js",
       "_FilterBar.js",
       "_stores.js",
-      "_constants.js"
+      "_constants.js",
+      "_user.js"
     ],
     "isEntry": true,
     "src": "src/routes/work-orders/+page.svelte"
@@ -562,12 +635,15 @@
       "_prisma.js",
       "_index.js",
       "_guards.js",
-      "_status-history.js",
+      "_user.js",
       "_security.js",
       "_validation.js",
+      "_constants.js",
       "_service.js",
       "_audit.js",
-      "_mentions.js"
+      "_logger.js",
+      "_mentions.js",
+      "src/lib/server/work-orders/status-history.ts"
     ],
     "isEntry": true,
     "src": "src/routes/work-orders/[id]/+page.server.ts"

@@ -1,24 +1,8 @@
 import { c as create_ssr_component, e as each, g as escape, f as add_attribute, v as validate_component } from "../../../../chunks/ssr.js";
 import "devalue";
-import { W as WORK_ORDER_STATUSES } from "../../../../chunks/constants.js";
+import { g as getStatusColor, d as WORK_ORDER_STATUSES } from "../../../../chunks/constants.js";
 import { l as linkifyMentions } from "../../../../chunks/mentions.js";
-function getStatusColor$1(status) {
-  switch (status) {
-    case "COMPLETED":
-      return "bg-spore-forest text-white";
-    case "IN_PROGRESS":
-      return "bg-spore-orange text-white";
-    case "PENDING":
-      return "bg-spore-steel text-white";
-    case "ON_HOLD":
-      return "bg-spore-cream text-spore-steel border border-spore-steel";
-    case "CANCELLED":
-      return "bg-red-600 text-white";
-    default:
-      return "bg-spore-steel text-white";
-  }
-}
-function formatStatus(status) {
+function formatStatus$1(status) {
   return status.replace(/_/g, " ");
 }
 const StatusHistory = create_ssr_component(($$result, $$props, $$bindings, slots) => {
@@ -26,7 +10,7 @@ const StatusHistory = create_ssr_component(($$result, $$props, $$bindings, slots
   if ($$props.history === void 0 && $$bindings.history && history !== void 0)
     $$bindings.history(history);
   return `<div class="bg-spore-white rounded-xl p-6"><h2 class="text-lg font-extrabold text-spore-dark mb-4 flex items-center gap-2"><span data-svelte-h="svelte-stchci">📋</span> <span data-svelte-h="svelte-8dhk2s">Status History</span></h2> ${history.length === 0 ? `<p class="text-spore-steel text-sm italic" data-svelte-h="svelte-kqr86c">No status changes recorded yet.</p>` : `<div class="relative"> <div class="absolute left-[7px] top-2 bottom-2 w-0.5 bg-spore-cream"></div> <div class="space-y-4">${each(history, (entry, index) => {
-    return `<div class="relative flex gap-4"> <div class="flex-shrink-0 w-4 h-4 rounded-full bg-spore-forest border-2 border-spore-cream z-10 mt-1"></div>  <div class="flex-1 min-w-0 pb-2"><div class="flex flex-wrap items-center gap-2 mb-1"><span class="${"px-2 py-0.5 text-xs font-bold rounded " + escape(getStatusColor$1(entry.fromStatus), true)}">${escape(formatStatus(entry.fromStatus))}</span> <span class="text-spore-steel" data-svelte-h="svelte-1s1x4f8">→</span> <span class="${"px-2 py-0.5 text-xs font-bold rounded " + escape(getStatusColor$1(entry.toStatus), true)}">${escape(formatStatus(entry.toStatus))} </span></div> <div class="text-sm text-spore-dark">${entry.user ? `<span class="font-semibold">${escape(entry.user.displayName)}</span>
+    return `<div class="relative flex gap-4"> <div class="flex-shrink-0 w-4 h-4 rounded-full bg-spore-forest border-2 border-spore-cream z-10 mt-1"></div>  <div class="flex-1 min-w-0 pb-2"><div class="flex flex-wrap items-center gap-2 mb-1"><span class="${"px-2 py-0.5 text-xs font-bold rounded " + escape(getStatusColor(entry.fromStatus), true)}">${escape(formatStatus$1(entry.fromStatus))}</span> <span class="text-spore-steel" data-svelte-h="svelte-1s1x4f8">→</span> <span class="${"px-2 py-0.5 text-xs font-bold rounded " + escape(getStatusColor(entry.toStatus), true)}">${escape(formatStatus$1(entry.toStatus))} </span></div> <div class="text-sm text-spore-dark">${entry.user ? `<span class="font-semibold">${escape(entry.user.displayName)}</span>
 									changed the status` : `Status changed`} <span class="text-spore-steel">${escape(new Date(entry.createdAt).toLocaleDateString())} at ${escape(new Date(entry.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }))} </span></div> ${entry.reason ? `<div class="mt-1 text-sm text-spore-steel italic">Reason: &quot;${escape(entry.reason)}&quot;
 								</div>` : ``}</div> </div>`;
   })}</div></div>`}</div>`;
@@ -200,21 +184,8 @@ const CommentThread = create_ssr_component(($$result, $$props, $$bindings, slots
     )}`;
   })}</div>`}</div>`;
 });
-function getStatusColor(status) {
-  switch (status) {
-    case "COMPLETED":
-      return "bg-spore-forest text-white";
-    case "IN_PROGRESS":
-      return "bg-spore-orange text-white";
-    case "PENDING":
-      return "bg-spore-steel text-white";
-    case "ON_HOLD":
-      return "bg-spore-cream text-spore-steel";
-    case "CANCELLED":
-      return "bg-red-600 text-white";
-    default:
-      return "bg-spore-steel text-white";
-  }
+function formatStatus(status) {
+  return status.replace(/_/g, " ");
 }
 const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let workOrder;
@@ -235,7 +206,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   checklistItems = data.checklistItems || [];
   mentionableUsers = data.mentionableUsers || [];
   currentUser = data.user;
-  return `<div class="max-w-4xl mx-auto px-4 py-10">${` <div class="bg-spore-white rounded-xl overflow-hidden"> <div class="bg-spore-dark p-6"><div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4"><div><h1 class="text-2xl font-extrabold text-spore-cream">${escape(workOrder.title)}</h1> <p class="text-spore-cream/60 mt-1 text-sm">Created ${escape(new Date(workOrder.createdAt).toLocaleDateString())}</p></div> <span class="${"px-4 py-2 text-sm font-bold uppercase tracking-wide rounded-full " + escape(getStatusColor(workOrder.status), true)}">${escape(workOrder.status.replace("_", " "))}</span></div></div>  <div class="p-6 space-y-6"> <div class="grid grid-cols-1 sm:grid-cols-2 gap-6"><div><h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-2" data-svelte-h="svelte-exijn3">Asset</h3> <p class="text-spore-dark font-semibold">${escape(workOrder.asset?.name || "Unassigned")}</p></div> <div><h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-2" data-svelte-h="svelte-2zeft2">Location</h3> <p class="text-spore-dark font-semibold">${workOrder.asset?.room ? `${escape(workOrder.asset.room.site?.name ?? "Unknown Site")} • Room ${escape(workOrder.asset.room.name ?? "Unknown Room")} ${workOrder.asset.room.building ? `• ${escape(workOrder.asset.room.building.name ?? "Unknown Building")}` : ``} ${workOrder.asset.room.floor ? `• Floor ${escape(workOrder.asset.room.floor)}` : ``}` : `No location`}</p></div> <div><h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-2" data-svelte-h="svelte-11fnt6e">Last Updated</h3> <p class="text-spore-dark font-semibold">${escape(new Date(workOrder.updatedAt).toLocaleString())}</p></div></div>  ${workOrder.description ? `<div><h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-2" data-svelte-h="svelte-rq73nx">Description</h3> <p class="text-spore-dark whitespace-pre-wrap">${escape(workOrder.description)}</p></div>` : ``}  <div class="border-t border-spore-cream pt-6"><h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-4" data-svelte-h="svelte-c3uwlf">Change Status</h3>  <div class="space-y-4"><div class="flex flex-wrap gap-2">${each(statuses, (status) => {
+  return `<div class="max-w-4xl mx-auto px-4 py-10">${` <div class="bg-spore-white rounded-xl overflow-hidden"> <div class="bg-spore-dark p-6"><div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4"><div><h1 class="text-2xl font-extrabold text-spore-cream">${escape(workOrder.title)}</h1> <p class="text-spore-cream/60 mt-1 text-sm">Created ${escape(new Date(workOrder.createdAt).toLocaleDateString())}</p></div> <span class="${"px-4 py-2 text-sm font-bold uppercase tracking-wide rounded-full " + escape(getStatusColor(workOrder.status), true)}">${escape(formatStatus(workOrder.status))}</span></div></div>  <div class="p-6 space-y-6"> <div class="grid grid-cols-1 sm:grid-cols-2 gap-6"><div><h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-2" data-svelte-h="svelte-exijn3">Asset</h3> <p class="text-spore-dark font-semibold">${escape(workOrder.asset?.name || "Unassigned")}</p></div> <div><h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-2" data-svelte-h="svelte-2zeft2">Location</h3> <p class="text-spore-dark font-semibold">${workOrder.asset?.room ? `${escape(workOrder.asset.room.site?.name ?? "Unknown Site")} • Room ${escape(workOrder.asset.room.name ?? "Unknown Room")} ${workOrder.asset.room.building ? `• ${escape(workOrder.asset.room.building.name ?? "Unknown Building")}` : ``} ${workOrder.asset.room.floor ? `• Floor ${escape(workOrder.asset.room.floor)}` : ``}` : `No location`}</p></div> <div><h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-2" data-svelte-h="svelte-11fnt6e">Last Updated</h3> <p class="text-spore-dark font-semibold">${escape(new Date(workOrder.updatedAt).toLocaleString())}</p></div></div>  ${workOrder.description ? `<div><h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-2" data-svelte-h="svelte-rq73nx">Description</h3> <p class="text-spore-dark whitespace-pre-wrap">${escape(workOrder.description)}</p></div>` : ``}  <div class="border-t border-spore-cream pt-6"><h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-4" data-svelte-h="svelte-c3uwlf">Change Status</h3>  <div class="space-y-4"><div class="flex flex-wrap gap-2">${each(statuses, (status) => {
     return `${workOrder.status !== status ? `<button class="${"px-4 py-2 rounded-lg text-sm font-bold transition-colors " + escape(
       selectedStatus === status ? "ring-2 ring-offset-2 ring-spore-orange" : "",
       true
