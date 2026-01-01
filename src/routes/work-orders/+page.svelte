@@ -48,6 +48,9 @@
 		return expandedCardIds.has(workOrderId);
 	}
 
+	// Reactive helper - Svelte tracks this and updates template when expandedCardIds changes
+	$: isExpanded = (id: string) => expandedCardIds.has(id);
+
 	// Helper function for site options (to avoid type annotation issues in markup)
 	function getSiteOptions() {
 		return sites.map((s: any) => ({ value: s.id, label: s.name }));
@@ -629,7 +632,7 @@
 						<button
 							on:click={() => toggleCardExpansion(workOrder.id)}
 							class="w-full p-4 flex items-start justify-between text-left"
-							aria-expanded={isCardExpanded(workOrder.id)}
+							aria-expanded={isExpanded(workOrder.id)}
 							aria-controls={"card-content-" + workOrder.id}
 						>
 							<div class="flex items-center gap-3 flex-1 min-w-0">
@@ -647,7 +650,7 @@
 							</div>
 							<div class="flex-shrink-0 ml-2 text-spore-steel">
 								<svg
-									class="w-5 h-5 transition-transform {isCardExpanded(workOrder.id) ? 'rotate-180' : ''}"
+									class="w-5 h-5 transition-transform {isExpanded(workOrder.id) ? 'rotate-180' : ''}"
 									fill="none"
 									stroke="currentColor"
 									viewBox="0 0 24 24"
@@ -660,7 +663,7 @@
 						<!-- Expandable Card Content -->
 						<div
 							id={"card-content-" + workOrder.id}
-							class="overflow-hidden transition-all duration-200 {isCardExpanded(workOrder.id) ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}"
+							class="overflow-hidden transition-all duration-200 {isExpanded(workOrder.id) ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}"
 						>
 							<div class="px-4 pb-4 space-y-2">
 								<div class="flex items-center justify-between">
