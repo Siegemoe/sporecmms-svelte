@@ -44,12 +44,36 @@ export const PRIORITY_ORDER: Record<Priority, number> = {
 
 // Color mappings for work orders
 export const WORK_ORDER_STATUS_COLORS: Record<string, string> = {
-	PENDING: 'bg-yellow-100 text-yellow-800',
-	IN_PROGRESS: 'bg-blue-100 text-blue-800',
-	COMPLETED: 'bg-green-100 text-green-800',
-	ON_HOLD: 'bg-gray-100 text-gray-800',
-	CANCELLED: 'bg-red-100 text-red-800'
+	PENDING: 'bg-spore-steel text-white',
+	IN_PROGRESS: 'bg-spore-orange text-white',
+	COMPLETED: 'bg-spore-forest text-white',
+	ON_HOLD: 'bg-spore-cream text-spore-steel',
+	CANCELLED: 'bg-red-600 text-white'
 };
+
+/**
+ * Get CSS classes for work order status display
+ * @param status - The work order status
+ * @returns Tailwind CSS classes for status styling
+ */
+export function getStatusColor(status: string): string {
+	return WORK_ORDER_STATUS_COLORS[status] || WORK_ORDER_STATUS_COLORS.PENDING;
+}
+
+/**
+ * Statuses that require a reason when changing to them
+ */
+export const STATUSES_REQUIRING_REASON = ['ON_HOLD', 'COMPLETED', 'CANCELLED'] as const;
+export type StatusRequiringReason = typeof STATUSES_REQUIRING_REASON[number];
+
+/**
+ * Format status for display (replace underscores with spaces)
+ * @param status - The status string to format
+ * @returns Formatted status string
+ */
+export function formatStatus(status: string): string {
+	return status.replace(/_/g, ' ');
+}
 
 export const WORK_ORDER_PRIORITY_COLORS: Record<Priority, string> = {
 	LOW: 'bg-gray-100 text-gray-600',

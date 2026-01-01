@@ -7,6 +7,7 @@ import { formatUserName } from '$lib/utils/user';
 import { logError } from '$lib/server/logger';
 import { SecurityManager, SECURITY_RATE_LIMITS } from '$lib/server/security';
 import { validateInput, workOrderCommentSchema, workOrderChecklistSchema } from '$lib/validation';
+import { STATUSES_REQUIRING_REASON } from '$lib/constants';
 import {
 	queryWorkOrderById,
 	queryAssetsForDropdown,
@@ -104,8 +105,7 @@ export const actions: Actions = {
 		}
 
 		// Validate reason requirement for certain statuses
-		const statusesRequiringReason = ['ON_HOLD', 'COMPLETED', 'CANCELLED'];
-		if (statusesRequiringReason.includes(newStatus) && !reason?.trim()) {
+		if (STATUSES_REQUIRING_REASON.includes(newStatus as any) && !reason?.trim()) {
 			return fail(400, { error: 'A reason is required for this status change.' });
 		}
 

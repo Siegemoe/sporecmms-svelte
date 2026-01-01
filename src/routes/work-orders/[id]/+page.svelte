@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import { WORK_ORDER_STATUSES } from '$lib/constants';
+	import { WORK_ORDER_STATUSES, getStatusColor, STATUSES_REQUIRING_REASON } from '$lib/constants';
 	import StatusHistory from '$lib/components/work-orders/StatusHistory.svelte';
 	import Checklist from '$lib/components/work-orders/Checklist.svelte';
 	import CommentThread from '$lib/components/work-orders/CommentThread.svelte';
@@ -29,9 +29,6 @@
 
 	const statuses = WORK_ORDER_STATUSES;
 
-	// Statuses that require a reason
-	const STATUSES_REQUIRING_REASON = ['ON_HOLD', 'COMPLETED', 'CANCELLED'];
-
 	function statusRequiresReason(status: string): boolean {
 		return STATUSES_REQUIRING_REASON.includes(status);
 	}
@@ -53,15 +50,8 @@
 		isEditing = false;
 	}
 
-	function getStatusColor(status: string) {
-		switch (status) {
-			case 'COMPLETED': return 'bg-spore-forest text-white';
-			case 'IN_PROGRESS': return 'bg-spore-orange text-white';
-			case 'PENDING': return 'bg-spore-steel text-white';
-			case 'ON_HOLD': return 'bg-spore-cream text-spore-steel';
-			case 'CANCELLED': return 'bg-red-600 text-white';
-			default: return 'bg-spore-steel text-white';
-		}
+	function formatStatus(status: string): string {
+		return status.replace(/_/g, ' ');
 	}
 </script>
 
@@ -153,7 +143,7 @@
 						</p>
 					</div>
 					<span class="px-4 py-2 text-sm font-bold uppercase tracking-wide rounded-full {getStatusColor(workOrder.status)}">
-						{workOrder.status.replace('_', ' ')}
+						{formatStatus(workOrder.status)}
 					</span>
 				</div>
 			</div>

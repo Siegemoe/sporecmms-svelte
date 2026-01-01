@@ -11,8 +11,11 @@
 		DEFAULT_PRIORITY,
 		DEFAULT_SELECTION_MODE,
 		WORK_ORDER_STATUS_COLORS,
-		WORK_ORDER_PRIORITY_COLORS
+		WORK_ORDER_PRIORITY_COLORS,
+		getStatusColor,
+		formatStatus
 	} from '$lib/constants';
+	import { formatUserName } from '$lib/utils/user';
 	import FilterBar from '$lib/components/FilterBar.svelte';
 	import type { PageData } from './$types';
 
@@ -28,6 +31,22 @@
 
 	// Template state
 	let selectedTemplateId = '';
+
+	// Mobile card expansion state - track which cards are expanded (by work order ID)
+	let expandedCardIds = new Set<string>();
+
+	function toggleCardExpansion(workOrderId: string) {
+		if (expandedCardIds.has(workOrderId)) {
+			expandedCardIds.delete(workOrderId);
+		} else {
+			expandedCardIds.add(workOrderId);
+		}
+		expandedCardIds = new Set(expandedCardIds); // Trigger reactivity
+	}
+
+	function isCardExpanded(workOrderId: string): boolean {
+		return expandedCardIds.has(workOrderId);
+	}
 
 	// Helper function for site options (to avoid type annotation issues in markup)
 	function getSiteOptions() {
@@ -96,14 +115,6 @@
 		siteId: '',
 		templateId: ''
 	};
-
-	function getUserName(user: { firstName?: string | null; lastName?: string | null; email?: string } | null) {
-		if (!user) return 'Unassigned';
-		if (user.firstName || user.lastName) {
-			return [user.firstName, user.lastName].filter(Boolean).join(' ');
-		}
-		return user.email || 'Unknown';
-	}
 
 	// Handle template selection
 	function selectTemplate(templateId: string) {
@@ -260,7 +271,7 @@
 
 	<!-- Create Form -->
 	{#if showCreateForm}
-		<div id="create-form" class="bg-spore-white rounded-xl p-6 mb-8 border border-spore-orange/20 shadow-lg" role="region" aria-label="Create work order form">
+		<div id="create-form" class="bg-spore-white rounded-xl p-4 md:p-6 mb-8 border border-spore-orange/20 shadow-lg" role="region" aria-label="Create work order form">
 			<h2 class="text-lg font-bold text-spore-dark mb-4">Create New Work Order</h2>
 			<form
 				method="POST"
@@ -289,11 +300,11 @@
 						}
 					};
 				}}
-				class="space-y-4"
+				class="space-y-4 md:space-y-4"
 			>
 				<!-- Template Selection -->
 				{#if templates && templates.length > 0}
-					<div class="bg-spore-cream/20 rounded-lg p-4">
+					<div class="bg-spore-cream/20 rounded-lg p-3 md:p-4">
 						<label for="template-select" class="block text-sm font-medium text-spore-dark mb-2">
 							Start from Template (Optional)
 						</label>
@@ -301,7 +312,7 @@
 							id="template-select"
 							bind:value={selectedTemplateId}
 							on:change={(e) => selectTemplate(e.currentTarget.value)}
-							class="w-full px-4 py-2 rounded-lg border border-spore-cream bg-white text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+							class="w-full px-3 md:px-4 py-3 rounded-lg border border-spore-cream bg-white text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
 						>
 							<option value="">Select a template...</option>
 							{#each templates as template}
@@ -329,7 +340,7 @@
 						name="title"
 						bind:value={newWO.title}
 						placeholder="Work order title"
-						class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange"
+						class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
 						required
 						aria-required="true"
 					/>
@@ -339,18 +350,18 @@
 					bind:value={newWO.description}
 					placeholder="Description (optional)"
 					rows="2"
-					class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange resize-none"
+					class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange resize-none min-h-[80px]"
 				></textarea>
 
 				<!-- Priority, Due Date, Assignment -->
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
 					<div>
 						<label for="wo-priority" class="block text-sm font-medium text-spore-dark mb-1">Priority</label>
 						<select
 							id="wo-priority"
 							name="priority"
 							bind:value={newWO.priority}
-							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+							class="w-full px-3 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
 						>
 							{#each PRIORITIES as priority}
 								<option value={priority}>{priority}</option>
@@ -364,7 +375,7 @@
 							id="wo-due"
 							name="dueDate"
 							bind:value={newWO.dueDate}
-							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+							class="w-full px-3 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
 						/>
 					</div>
 					<div>
@@ -373,11 +384,11 @@
 							id="wo-assign"
 							name="assignedToId"
 							bind:value={newWO.assignedToId}
-							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+							class="w-full px-3 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
 						>
 							<option value="">Unassigned</option>
 							{#each users as user}
-								<option value={user.id}>{getUserName(user)}</option>
+								<option value={user.id}>{formatUserName(user)}</option>
 							{/each}
 						</select>
 					</div>
@@ -390,7 +401,7 @@
 						{#each ['asset', 'unit', 'building', 'site'] as mode}
 							<button
 								type="button"
-								class="px-3 py-2 text-sm font-medium rounded-lg transition-colors {
+								class="px-3 py-3 text-sm font-medium rounded-lg transition-colors min-h-[44px] {
 									newWO.selectionMode === mode
 										? 'bg-spore-orange text-white'
 										: 'bg-spore-cream/20 text-spore-steel hover:bg-spore-cream/30'
@@ -413,7 +424,7 @@
 						<select
 							name="assetId"
 							bind:value={newWO.assetId}
-							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
 							required
 						>
 							<option value="">Select an asset...</option>
@@ -427,7 +438,7 @@
 						<select
 							name="unitId"
 							bind:value={newWO.unitId}
-							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
 							required
 						>
 							<option value="">Select a unit...</option>
@@ -443,7 +454,7 @@
 						<select
 							name="buildingId"
 							bind:value={newWO.buildingId}
-							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
 							required
 						>
 							<option value="">Select a building...</option>
@@ -457,7 +468,7 @@
 						<select
 							name="siteId"
 							bind:value={newWO.siteId}
-							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange"
+							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
 							required
 						>
 							<option value="">Select a site...</option>
@@ -469,18 +480,18 @@
 				</div>
 
 				<!-- Submit Button -->
-				<div class="flex justify-end gap-3">
+				<div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
 					<button
 						type="button"
 						on:click={() => showCreateForm = false}
-						class="px-6 py-3 rounded-lg font-bold text-sm text-spore-steel hover:bg-spore-cream transition-colors"
+						class="w-full sm:w-auto px-6 py-3 rounded-lg font-bold text-sm text-spore-steel hover:bg-spore-cream transition-colors min-h-[44px]"
 					>
 						CANCEL
 					</button>
 					<button
 						type="submit"
 						disabled={isSubmitting || !newWO.title.trim() || !(newWO.assetId || newWO.unitId || newWO.buildingId || newWO.siteId)}
-						class="bg-spore-forest text-white px-8 py-3 rounded-lg font-bold text-sm tracking-wide hover:bg-spore-forest/90 focus:outline-none focus:ring-2 focus:ring-spore-forest focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+						class="w-full sm:w-auto bg-spore-forest text-white px-8 py-3 rounded-lg font-bold text-sm tracking-wide hover:bg-spore-forest/90 focus:outline-none focus:ring-2 focus:ring-spore-forest focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
 						aria-busy={isSubmitting}
 					>
 						{isSubmitting ? 'CREATING...' : 'CREATE WORK ORDER'}
@@ -524,8 +535,8 @@
 									</span>
 								</td>
 								<td class="px-4 py-3 whitespace-nowrap">
-									<span class="px-2 py-1 text-xs font-semibold rounded-full {WORK_ORDER_STATUS_COLORS[workOrder.status] || ''}">
-										{workOrder.status.replace('_', ' ')}
+									<span class="px-2 py-1 text-xs font-semibold rounded-full {getStatusColor(workOrder.status)}">
+										{formatStatus(workOrder.status)}
 									</span>
 								</td>
 								<td class="px-4 py-3 whitespace-nowrap">
@@ -539,7 +550,7 @@
 										>
 											<option value="">Unassigned</option>
 											{#each users as user}
-												<option value={user.id}>{getUserName(user)}</option>
+												<option value={user.id}>{formatUserName(user)}</option>
 											{/each}
 										</select>
 									</form>
@@ -613,49 +624,67 @@
 			<!-- Mobile Cards -->
 			<div class="md:hidden divide-y divide-spore-cream/50">
 				{#each workOrders as workOrder (workOrder.id)}
-					<div class="p-4 hover:bg-spore-cream/10 transition-colors">
-						<div class="flex items-start justify-between mb-2">
-							<h3 class="text-base font-bold text-spore-dark flex-1 mr-2">
-								<a
-									href="/work-orders/{workOrder.id}"
-									class="hover:text-spore-orange transition-colors focus:outline-none focus:underline"
-								>
+					<div class="hover:bg-spore-cream/10 transition-colors">
+						<!-- Card Header (Always Visible) -->
+						<button
+							on:click={() => toggleCardExpansion(workOrder.id)}
+							class="w-full p-4 flex items-start justify-between text-left"
+							aria-expanded={isCardExpanded(workOrder.id)}
+							aria-controls="card-content-{workOrder.id}"
+						>
+							<div class="flex items-center gap-3 flex-1 min-w-0">
+								<div class="flex flex-col gap-1 flex-shrink-0">
+									<span class="px-2 py-1 text-xs font-semibold rounded-full {WORK_ORDER_PRIORITY_COLORS[workOrder.priority] || WORK_ORDER_PRIORITY_COLORS.MEDIUM}">
+										{workOrder.priority}
+									</span>
+									<span class="px-2 py-1 text-xs font-semibold rounded-full {getStatusColor(workOrder.status)}">
+										{formatStatus(workOrder.status)}
+									</span>
+								</div>
+								<h3 class="text-base font-bold text-spore-dark truncate">
 									{workOrder.title}
-								</a>
-							</h3>
-							<div class="flex flex-col gap-1">
-								<span class="px-2 py-1 text-xs font-semibold rounded-full {WORK_ORDER_PRIORITY_COLORS[workOrder.priority] || WORK_ORDER_PRIORITY_COLORS.MEDIUM}">
-									{workOrder.priority}
-								</span>
-								<span class="px-2 py-1 text-xs font-semibold rounded-full {WORK_ORDER_STATUS_COLORS[workOrder.status] || ''}">
-									{workOrder.status.replace('_', ' ')}
-								</span>
+								</h3>
 							</div>
-						</div>
-
-						<div class="space-y-2 mb-4">
-							<div class="flex items-center justify-between">
-								<span class="text-sm font-medium text-spore-steel">Location:</span>
-								<span class="text-sm text-spore-dark text-right">
-									{#if workOrder.asset}
-										{workOrder.asset.name}
-									{:else if workOrder.building}
-										{workOrder.building.name}
-									{:else if workOrder.unit}
-										Unit {workOrder.unit.roomNumber}
-									{:else if workOrder.site}
-										{workOrder.site.name}
-									{:else}
-										N/A
-									{/if}
-								</span>
+							<div class="flex-shrink-0 ml-2 text-spore-steel">
+								<svg
+									class="w-5 h-5 transition-transform {isCardExpanded(workOrder.id) ? 'rotate-180' : ''}"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+								</svg>
 							</div>
+						</button>
 
-							{#if workOrder.dueDate}
+						<!-- Expandable Card Content -->
+						<div
+							id="card-content-{workOrder.id}"
+							class="overflow-hidden transition-all duration-200 {isCardExpanded(workOrder.id) ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}"
+						>
+							<div class="px-4 pb-4 space-y-2">
 								<div class="flex items-center justify-between">
-									<span class="text-sm font-medium text-spore-steel">Due:</span>
-									<span class="text-sm {getOverdueClass(workOrder.dueDate, workOrder.status)}">
-										{new Date(workOrder.dueDate).toLocaleDateString()}
+									<span class="text-sm font-medium text-spore-steel">Location:</span>
+									<span class="text-sm text-spore-dark text-right">
+										{#if workOrder.asset}
+											{workOrder.asset.name}
+										{:else if workOrder.building}
+											{workOrder.building.name}
+										{:else if workOrder.unit}
+											Unit {workOrder.unit.roomNumber}
+										{:else if workOrder.site}
+											{workOrder.site.name}
+										{:else}
+											N/A
+										{/if}
+									</span>
+								</div>
+
+								{#if workOrder.dueDate}
+									<div class="flex items-center justify-between">
+										<span class="text-sm font-medium text-spore-steel">Due:</span>
+										<span class="text-sm {getOverdueClass(workOrder.dueDate, workOrder.status)}">
+											{new Date(workOrder.dueDate).toLocaleDateString()}
 										{#if isOverdue(workOrder.dueDate, workOrder.status)}
 											 (Overdue)
 										{/if}
@@ -665,56 +694,57 @@
 
 							<div class="flex items-center justify-between">
 								<span class="text-sm font-medium text-spore-steel">Assigned:</span>
-								<form method="POST" action="?/assign" use:enhance class="flex-1 max-w-[150px]">
+								<form method="POST" action="?/assign" use:enhance class="flex-1 max-w-[180px]">
 									<input type="hidden" name="workOrderId" value={workOrder.id} />
 									<select
 										name="assignedToId"
 										value={workOrder.assignedToId || ''}
 										on:change={(e) => e.currentTarget.form?.requestSubmit()}
-										class="w-full text-sm bg-spore-cream/30 border border-spore-cream/50 rounded-lg px-2 py-1 text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange"
+										class="w-full text-sm bg-spore-cream/30 border border-spore-cream/50 rounded-lg px-3 py-2.5 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
 									>
 										<option value="">Unassigned</option>
 										{#each users as user}
-											<option value={user.id}>{getUserName(user)}</option>
+											<option value={user.id}>{formatUserName(user)}</option>
 										{/each}
 									</select>
 								</form>
 							</div>
-						</div>
 
-						<div class="flex gap-2 text-sm font-bold">
-							{#if workOrder.status === 'PENDING'}
-								<form method="POST" action="?/updateStatus" class="flex-1" use:enhance>
-									<input type="hidden" name="workOrderId" value={workOrder.id} />
-									<input type="hidden" name="status" value="IN_PROGRESS" />
-									<button
-										type="submit"
-										class="w-full bg-spore-orange text-white py-2 px-3 rounded-lg font-medium hover:bg-spore-orange/90 focus:outline-none focus:ring-1 focus:ring-spore-orange transition-colors"
-										aria-label="Start work order: {workOrder.title}"
-									>
-										Start
-									</button>
-								</form>
-							{/if}
-							{#if workOrder.status === 'IN_PROGRESS'}
-								<form method="POST" action="?/updateStatus" class="flex-1" use:enhance>
-									<input type="hidden" name="workOrderId" value={workOrder.id} />
-									<input type="hidden" name="status" value="COMPLETED" />
-									<button
-										type="submit"
-										class="w-full bg-spore-forest text-white py-2 px-3 rounded-lg font-medium hover:bg-spore-forest/90 focus:outline-none focus:ring-1 focus:ring-spore-forest transition-colors"
-										aria-label="Complete work order: {workOrder.title}"
-									>
-										Complete
-									</button>
-								</form>
-							{/if}
-							<a
-								href="/work-orders/{workOrder.id}"
-								class="flex-1 bg-spore-cream text-spore-dark py-2 px-3 rounded-lg font-medium text-center hover:bg-spore-cream/70 focus:outline-none focus:ring-1 focus:ring-spore-cream transition-colors"
-							>
-								View
-							</a>
+							<div class="flex gap-2 text-sm font-bold pt-2">
+								{#if workOrder.status === 'PENDING'}
+									<form method="POST" action="?/updateStatus" class="flex-1" use:enhance>
+										<input type="hidden" name="workOrderId" value={workOrder.id} />
+										<input type="hidden" name="status" value="IN_PROGRESS" />
+										<button
+											type="submit"
+											class="w-full bg-spore-orange text-white py-3 px-4 rounded-lg font-medium hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange transition-colors min-h-[44px]"
+											aria-label="Start work order: {workOrder.title}"
+										>
+											Start
+										</button>
+									</form>
+								{/if}
+								{#if workOrder.status === 'IN_PROGRESS'}
+									<form method="POST" action="?/updateStatus" class="flex-1" use:enhance>
+										<input type="hidden" name="workOrderId" value={workOrder.id} />
+										<input type="hidden" name="status" value="COMPLETED" />
+										<button
+											type="submit"
+											class="w-full bg-spore-forest text-white py-3 px-4 rounded-lg font-medium hover:bg-spore-forest/90 focus:outline-none focus:ring-2 focus:ring-spore-forest transition-colors min-h-[44px]"
+											aria-label="Complete work order: {workOrder.title}"
+										>
+											Complete
+										</button>
+									</form>
+								{/if}
+								<a
+									href="/work-orders/{workOrder.id}"
+									class="flex-1 bg-spore-cream text-spore-dark py-3 px-4 rounded-lg font-medium text-center hover:bg-spore-cream/70 focus:outline-none focus:ring-2 focus:ring-spore-cream transition-colors min-h-[44px] flex items-center justify-center"
+								>
+									View
+								</a>
+							</div>
+						</div>
 						</div>
 					</div>
 				{/each}

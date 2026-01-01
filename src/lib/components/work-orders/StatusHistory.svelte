@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { WorkOrderStatus } from '@prisma/client';
+	import { getStatusColor } from '$lib/constants';
 
 	export let history: Array<{
 		fromStatus: WorkOrderStatus;
@@ -10,23 +11,6 @@
 			displayName: string;
 		} | null;
 	}>;
-
-	function getStatusColor(status: string) {
-		switch (status) {
-			case 'COMPLETED':
-				return 'bg-spore-forest text-white';
-			case 'IN_PROGRESS':
-				return 'bg-spore-orange text-white';
-			case 'PENDING':
-				return 'bg-spore-steel text-white';
-			case 'ON_HOLD':
-				return 'bg-spore-cream text-spore-steel border border-spore-steel';
-			case 'CANCELLED':
-				return 'bg-red-600 text-white';
-			default:
-				return 'bg-spore-steel text-white';
-		}
-	}
 
 	function formatStatus(status: string): string {
 		return status.replace(/_/g, ' ');
