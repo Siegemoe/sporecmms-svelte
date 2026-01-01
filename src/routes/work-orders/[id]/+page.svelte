@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import { FAILURE_MODES, WORK_ORDER_STATUSES } from '$lib/constants';
+	import { WORK_ORDER_STATUSES } from '$lib/constants';
 	import StatusHistory from '$lib/components/work-orders/StatusHistory.svelte';
 	import Checklist from '$lib/components/work-orders/Checklist.svelte';
 	import CommentThread from '$lib/components/work-orders/CommentThread.svelte';
@@ -27,7 +27,6 @@
 	$: mentionableUsers = data.mentionableUsers || [];
 	$: currentUser = data.user;
 
-	// Failure modes removed from schema
 	const statuses = WORK_ORDER_STATUSES;
 
 	// Statuses that require a reason
@@ -111,7 +110,6 @@
 							{/each}
 						</select>
 					</div>
-					<!-- Failure Mode field removed -->
 				</div>
 
 				<div>
@@ -184,7 +182,6 @@
 							{/if}
 						</p>
 					</div>
-					<!-- Failure Mode removed from schema - no longer displayed -->
 					<div>
 						<h3 class="text-xs font-bold text-spore-steel uppercase tracking-wide mb-2">Last Updated</h3>
 						<p class="text-spore-dark font-semibold">{new Date(workOrder.updatedAt).toLocaleString()}</p>

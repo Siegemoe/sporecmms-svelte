@@ -3,6 +3,8 @@ import { createRequestPrisma } from '$lib/server/prisma';
 import { fail, error, redirect } from '@sveltejs/kit';
 import type { WorkOrderStatus } from '@prisma/client';
 import { requireAuth } from '$lib/server/guards';
+import { formatUserName } from '$lib/utils/user';
+import { logError } from '$lib/server/logger';
 import {
 	queryWorkOrderById,
 	queryAssetsForDropdown,
@@ -59,9 +61,7 @@ export const load: PageServerLoad = async (event) => {
 	// Format users with their @mention username
 	const mentionableUsersWithUsername = mentionableUsers.map((u: any) => ({
 		...u,
-		displayName: u.firstName
-			? [u.firstName, u.lastName].filter(Boolean).join(' ')
-			: u.email,
+		displayName: formatUserName(u),
 		mentionUsername: formatMentionUsername(u)
 	}));
 
@@ -207,7 +207,7 @@ export const actions: Actions = {
 			const item = await createChecklistItem(prisma, id, title);
 			return { success: true, item };
 		} catch (e) {
-			console.error('Error creating checklist item:', e);
+			logError('Error creating checklist item', e, { workOrderId: id });
 			return fail(500, { error: 'Failed to create checklist item.' });
 		}
 	},
@@ -230,7 +230,7 @@ export const actions: Actions = {
 			const item = await toggleChecklistItem(prisma, itemId, isCompleted);
 			return { success: true, item };
 		} catch (e) {
-			console.error('Error toggling checklist item:', e);
+			logError('Error toggling checklist item', e, { itemId });
 			return fail(500, { error: 'Failed to update checklist item.' });
 		}
 	},
@@ -252,7 +252,7 @@ export const actions: Actions = {
 			await deleteChecklistItem(prisma, itemId);
 			return { success: true };
 		} catch (e) {
-			console.error('Error deleting checklist item:', e);
+			logError('Error deleting checklist item', e, { itemId });
 			return fail(500, { error: 'Failed to delete checklist item.' });
 		}
 	}

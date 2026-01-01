@@ -1,10 +1,13 @@
 import type { WorkOrderStatus } from '@prisma/client';
+import type { RequestPrisma } from '$lib/types/prisma';
+import { formatUserName } from '$lib/utils/user';
+import { logError } from '$lib/server/logger';
 
 /**
  * Record a status change in the work order's history
  */
 export async function recordStatusChange(
-	prisma: any,
+	prisma: RequestPrisma,
 	workOrderId: string,
 	fromStatus: WorkOrderStatus | null,
 	toStatus: WorkOrderStatus,
@@ -22,7 +25,7 @@ export async function recordStatusChange(
 			}
 		});
 	} catch (e) {
-		console.error('Failed to record status history:', e);
+		logError('Failed to record status history', e, { workOrderId, fromStatus, toStatus });
 		// Don't throw - status change is more important than history
 	}
 }
@@ -31,7 +34,7 @@ export async function recordStatusChange(
  * Query status history for a work order
  */
 export async function queryStatusHistory(
-	prisma: any,
+	prisma: RequestPrisma,
 	workOrderId: string
 ) {
 	return prisma.workOrderStatusHistory.findMany({
@@ -69,9 +72,7 @@ export function formatStatusHistory(history: Array<{
 		...h,
 		user: h.user ? {
 			...h.user,
-			displayName: h.user.firstName
-				? [h.user.firstName, h.user.lastName].filter(Boolean).join(' ')
-				: h.user.email
+			displayName: formatUserName(h.user)
 		} : null
 	}));
 }

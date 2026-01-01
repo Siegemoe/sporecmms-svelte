@@ -4,6 +4,7 @@ import { requireAuth } from '$lib/server/guards';
 import { error, fail } from '@sveltejs/kit';
 import type { WorkOrderStatus, Priority } from '@prisma/client';
 import { DEFAULT_PRIORITY, DEFAULT_SELECTION_MODE, PRIORITIES } from '$lib/constants';
+import { MAX_DESCRIPTION_LENGTH } from '$lib/constants/limits';
 import {
 	queryWorkOrders,
 	queryLocationOptions,
@@ -91,8 +92,8 @@ export const actions: Actions = {
 
 		// Validate and sanitize description
 		const trimmedDescription = description?.trim() || '';
-		if (trimmedDescription.length > 5000) {
-			return fail(400, { error: 'Description is too long (max 5000 characters).' });
+		if (trimmedDescription.length > MAX_DESCRIPTION_LENGTH) {
+			return fail(400, { error: `Description is too long (max ${MAX_DESCRIPTION_LENGTH} characters).` });
 		}
 
 		// Validate dueDate format if provided

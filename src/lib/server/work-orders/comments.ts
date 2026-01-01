@@ -1,22 +1,68 @@
 import type { Prisma, WorkOrderStatus } from '@prisma/client';
+import type { RequestEvent } from '@sveltejs/kit';
 import { fail } from '@sveltejs/kit';
 import { broadcastToOrg } from '$lib/server/websocket-handler';
 import { logAudit } from '$lib/server/audit';
+import type { RequestPrisma } from '$lib/types/prisma';
+import { MAX_COMMENT_DEPTH, MAX_COMMENT_LENGTH } from '$lib/constants/limits';
+import { formatUserName } from '$lib/utils/user';
+import { logError } from '$lib/server/logger';
 import { parseMentions, findUsersByUsernamePattern, createMentionRecords } from './mentions';
 
-const MAX_COMMENT_DEPTH = 5;
-const MAX_COMMENT_LENGTH = 5000;
+/**
+ * Type for comment user with display fields
+ */
+interface CommentUser {
+	id: string;
+	firstName: string | null;
+	lastName: string | null;
+	email: string;
+}
+
+/**
+ * Type for comment mention
+ */
+interface CommentMention {
+	id: string;
+	mentionedUser: CommentUser;
+}
+
+/**
+ * Type for enriched comment with replies
+ */
+interface EnrichedComment {
+	id: string;
+	parentId: string | null;
+	content: string;
+	createdAt: Date;
+	updatedAt: Date;
+	isEdited: boolean;
+	editedAt: Date | null;
+	isDeleted: boolean;
+	user: CommentUser & { displayName: string };
+	mentions: CommentMention[];
+	replies: EnrichedComment[];
+	depth: number;
+}
 
 /**
  * Query all comments for a work order with nested replies
  */
-export async function queryComments(prisma: any, workOrderId: string) {
+export async function queryComments(prisma: RequestPrisma, workOrderId: string): Promise<EnrichedComment[]> {
 	const comments = await prisma.workOrderComment.findMany({
 		where: {
 			workOrderId,
 			isDeleted: false
 		},
-		include: {
+		select: {
+			id: true,
+			parentId: true,
+			content: true,
+			createdAt: true,
+			updatedAt: true,
+			isEdited: true,
+			editedAt: true,
+			isDeleted: true,
 			user: {
 				select: {
 					id: true,
@@ -57,22 +103,21 @@ function buildCommentTree(
 		updatedAt: Date;
 		isEdited: boolean;
 		editedAt: Date | null;
-		user: any;
-		mentions: any[];
+		isDeleted: boolean;
+		user: CommentUser;
+		mentions: CommentMention[];
 	}>
-): Array<any> {
-	const commentMap = new Map();
-	const rootComments: any[] = [];
+): EnrichedComment[] {
+	const commentMap = new Map<string, EnrichedComment>();
+	const rootComments: EnrichedComment[] = [];
 
 	// First pass: create map and identify root comments
 	comments.forEach((comment) => {
-		const enriched = {
+		const enriched: EnrichedComment = {
 			...comment,
 			user: {
 				...comment.user,
-				displayName: comment.user.firstName
-					? [comment.user.firstName, comment.user.lastName].filter(Boolean).join(' ')
-					: comment.user.email
+				displayName: formatUserName(comment.user)
 			},
 			replies: [],
 			depth: 0
@@ -88,16 +133,17 @@ function buildCommentTree(
 	comments.forEach((comment) => {
 		if (comment.parentId) {
 			const parent = commentMap.get(comment.parentId);
-			if (parent) {
-				parent.replies.push(commentMap.get(comment.id));
+			const child = commentMap.get(comment.id);
+			if (parent && child) {
+				parent.replies.push(child);
 			}
 		}
 	});
 
 	// Calculate depth for each comment
-	function calculateDepth(comment: any, currentDepth: number = 0) {
+	function calculateDepth(comment: EnrichedComment, currentDepth: number = 0) {
 		comment.depth = currentDepth;
-		comment.replies.forEach((reply: any) => calculateDepth(reply, currentDepth + 1));
+		comment.replies.forEach((reply) => calculateDepth(reply, currentDepth + 1));
 	}
 
 	rootComments.forEach((comment) => calculateDepth(comment));
@@ -109,8 +155,8 @@ function buildCommentTree(
  * Create a new comment
  */
 export async function createComment(
-	event: any,
-	prisma: any,
+	event: RequestEvent,
+	prisma: RequestPrisma,
 	data: {
 		workOrderId: string;
 		content: string;
@@ -228,7 +274,7 @@ export async function createComment(
 					content: comment.content,
 					createdAt: comment.createdAt,
 					userId: comment.userId,
-					userName: [comment.user.firstName, comment.user.lastName].filter(Boolean).join(' ') || comment.user.email,
+					userName: formatUserName(comment.user),
 					parentId: comment.parentId
 				}
 			}
@@ -243,7 +289,7 @@ export async function createComment(
 
 		return { success: true, comment };
 	} catch (e) {
-		console.error('Error creating comment:', e);
+		logError('Error creating comment', e, { workOrderId });
 		return fail(500, { error: 'Failed to create comment.' });
 	}
 }
@@ -251,7 +297,7 @@ export async function createComment(
 /**
  * Calculate the depth of a comment in the reply tree
  */
-async function getCommentDepth(prisma: any, commentId: string): Promise<number> {
+async function getCommentDepth(prisma: RequestPrisma, commentId: string): Promise<number> {
 	let depth = 0;
 	let currentId = commentId;
 
@@ -273,8 +319,8 @@ async function getCommentDepth(prisma: any, commentId: string): Promise<number> 
  * Update a comment (with edit tracking)
  */
 export async function updateComment(
-	event: any,
-	prisma: any,
+	event: RequestEvent,
+	prisma: RequestPrisma,
 	commentId: string,
 	userId: string,
 	newContent: string
@@ -382,7 +428,7 @@ export async function updateComment(
 
 		return { success: true, comment: updated };
 	} catch (e) {
-		console.error('Error updating comment:', e);
+		logError('Error updating comment', e, { commentId });
 		return fail(500, { error: 'Failed to update comment.' });
 	}
 }
@@ -391,8 +437,8 @@ export async function updateComment(
  * Delete a comment (soft delete)
  */
 export async function deleteComment(
-	event: any,
-	prisma: any,
+	event: RequestEvent,
+	prisma: RequestPrisma,
 	commentId: string,
 	userId: string
 ) {
@@ -443,7 +489,7 @@ export async function deleteComment(
 
 		return { success: true };
 	} catch (e) {
-		console.error('Error deleting comment:', e);
+		logError('Error deleting comment', e, { commentId });
 		return fail(500, { error: 'Failed to delete comment.' });
 	}
 }
@@ -451,7 +497,7 @@ export async function deleteComment(
 /**
  * Get comment edit history
  */
-export async function queryCommentEdits(prisma: any, commentId: string) {
+export async function queryCommentEdits(prisma: RequestPrisma, commentId: string) {
 	return prisma.commentEdit.findMany({
 		where: { commentId },
 		include: {

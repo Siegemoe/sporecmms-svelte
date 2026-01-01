@@ -1,9 +1,10 @@
 import type { Prisma } from '@prisma/client';
+import type { RequestPrisma } from '$lib/types/prisma';
 
 /**
  * Query all checklist items for a work order
  */
-export async function queryChecklistItems(prisma: any, workOrderId: string) {
+export async function queryChecklistItems(prisma: RequestPrisma, workOrderId: string) {
 	return prisma.workOrderChecklistItem.findMany({
 		where: { workOrderId },
 		orderBy: { position: 'asc' }
@@ -14,7 +15,7 @@ export async function queryChecklistItems(prisma: any, workOrderId: string) {
  * Create a new checklist item
  */
 export async function createChecklistItem(
-	prisma: any,
+	prisma: RequestPrisma,
 	workOrderId: string,
 	title: string
 ) {
@@ -40,7 +41,7 @@ export async function createChecklistItem(
  * Toggle checklist item completion
  */
 export async function toggleChecklistItem(
-	prisma: any,
+	prisma: RequestPrisma,
 	itemId: string,
 	isCompleted: boolean
 ) {
@@ -53,7 +54,7 @@ export async function toggleChecklistItem(
 /**
  * Delete a checklist item
  */
-export async function deleteChecklistItem(prisma: any, itemId: string) {
+export async function deleteChecklistItem(prisma: RequestPrisma, itemId: string) {
 	return prisma.workOrderChecklistItem.delete({
 		where: { id: itemId }
 	});
@@ -63,7 +64,7 @@ export async function deleteChecklistItem(prisma: any, itemId: string) {
  * Reorder checklist items
  */
 export async function reorderChecklistItems(
-	prisma: any,
+	prisma: RequestPrisma,
 	workOrderId: string,
 	itemIds: string[]
 ) {

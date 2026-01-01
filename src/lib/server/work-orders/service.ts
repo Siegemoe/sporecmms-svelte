@@ -5,6 +5,8 @@ import { broadcastToOrg } from '$lib/server/websocket-handler';
 import { logAudit } from '$lib/server/audit';
 import { canUpdateWorkOrder, canAssignWorkOrder, canDeleteWorkOrder } from '$lib/server/guards';
 import { PRIORITY_ORDER, PRIORITIES } from '$lib/constants';
+import type { RequestPrisma } from '$lib/types/prisma';
+import { logError } from '$lib/server/logger';
 import {
 	transformWorkOrder,
 	transformWorkOrders,
@@ -95,7 +97,7 @@ export function sortByPriority<T extends { priority: Priority; createdAt: Date }
  * Query work orders with filters and sorting
  */
 export async function queryWorkOrders(
-	prisma: any,
+	prisma: RequestPrisma,
 	filters: {
 		organizationId: string;
 		assignedToId?: string;
@@ -168,7 +170,7 @@ export async function queryWorkOrders(
 /**
  * Query location options for the create form dropdowns
  */
-export async function queryLocationOptions(prisma: any, organizationId: string | null | undefined) {
+export async function queryLocationOptions(prisma: RequestPrisma, organizationId: string | null | undefined) {
 	const orgFilter = organizationId ?? undefined;
 
 	const [assets, units, buildings, sites, users] = await Promise.all([
@@ -250,7 +252,7 @@ export async function queryLocationOptions(prisma: any, organizationId: string |
 /**
  * Query a single work order by ID with full relations
  */
-export async function queryWorkOrderById(prisma: any, id: string) {
+export async function queryWorkOrderById(prisma: RequestPrisma, id: string) {
 	const workOrder = await prisma.workOrder.findUnique({
 		where: { id },
 		include: {
@@ -277,7 +279,7 @@ export async function queryWorkOrderById(prisma: any, id: string) {
 /**
  * Query assets for dropdown
  */
-export async function queryAssetsForDropdown(prisma: any, organizationId: string | null | undefined) {
+export async function queryAssetsForDropdown(prisma: RequestPrisma, organizationId: string | null | undefined) {
 	const assets = await prisma.asset.findMany({
 		where: {
 			Unit: {
@@ -352,7 +354,7 @@ export function assertCanDeleteWorkOrder(event: RequestEvent): void {
  * Validate assigned user belongs to the same organization
  */
 export async function validateAssignedUser(
-	prisma: any,
+	prisma: RequestPrisma,
 	assignedToId: string | null | undefined,
 	organizationId: string
 ): Promise<boolean> {
@@ -373,7 +375,7 @@ export async function validateAssignedUser(
  */
 export async function createWorkOrder(
 	event: RequestEvent,
-	prisma: any,
+	prisma: RequestPrisma,
 	data: {
 		title: string;
 		description?: string;
@@ -459,7 +461,7 @@ export async function createWorkOrder(
 
 		return { success: true, workOrder: newWo };
 	} catch (e) {
-		console.error('Error creating work order:', e);
+		logError('Error creating work order', e, { title: data.title });
 		return { success: false, error: 'Failed to create work order.' };
 	}
 }
@@ -469,7 +471,7 @@ export async function createWorkOrder(
  */
 export async function updateWorkOrderStatus(
 	event: RequestEvent,
-	prisma: any,
+	prisma: RequestPrisma,
 	workOrderId: string,
 	newStatus: WorkOrderStatus,
 	reason?: string
@@ -527,7 +529,7 @@ export async function updateWorkOrderStatus(
 			// Re-throw fail() responses
 			throw e;
 		}
-		console.error('Error updating WO status:', e);
+		logError('Error updating WO status', e, { workOrderId, newStatus });
 		return { success: false, error: 'Database transaction failed.' };
 	}
 }
@@ -537,7 +539,7 @@ export async function updateWorkOrderStatus(
  */
 export async function assignWorkOrder(
 	event: RequestEvent,
-	prisma: any,
+	prisma: RequestPrisma,
 	workOrderId: string,
 	assignedToId: string | null
 ) {
@@ -594,7 +596,7 @@ export async function assignWorkOrder(
 			// Re-throw fail() responses
 			throw e;
 		}
-		console.error('Error assigning WO:', e);
+		logError('Error assigning WO', e, { workOrderId, assignedToId });
 		return fail(500, { error: 'Failed to assign work order' });
 	}
 }
@@ -604,7 +606,7 @@ export async function assignWorkOrder(
  */
 export async function updateWorkOrderDetails(
 	event: RequestEvent,
-	prisma: any,
+	prisma: RequestPrisma,
 	workOrderId: string,
 	data: {
 		title: string;
@@ -661,7 +663,7 @@ export async function updateWorkOrderDetails(
 			// Re-throw fail() responses
 			throw e;
 		}
-		console.error('Error updating work order:', e);
+		logError('Error updating work order', e, { workOrderId });
 		return fail(500, { error: 'Failed to update work order' });
 	}
 }
@@ -671,7 +673,7 @@ export async function updateWorkOrderDetails(
  */
 export async function deleteWorkOrder(
 	event: RequestEvent,
-	prisma: any,
+	prisma: RequestPrisma,
 	workOrderId: string
 ) {
 	const userId = event.locals.user!.id;
@@ -706,7 +708,7 @@ export async function deleteWorkOrder(
 			// Re-throw fail() responses
 			throw e;
 		}
-		console.error('Error deleting work order:', e);
+		logError('Error deleting work order', e, { workOrderId });
 		return fail(500, { error: 'Failed to delete work order' });
 	}
 }
