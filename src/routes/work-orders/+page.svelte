@@ -630,7 +630,7 @@
 							on:click={() => toggleCardExpansion(workOrder.id)}
 							class="w-full p-4 flex items-start justify-between text-left"
 							aria-expanded={isCardExpanded(workOrder.id)}
-							aria-controls="card-content-{workOrder.id}"
+							aria-controls={"card-content-" + workOrder.id}
 						>
 							<div class="flex items-center gap-3 flex-1 min-w-0">
 								<div class="flex flex-col gap-1 flex-shrink-0">
@@ -659,7 +659,7 @@
 
 						<!-- Expandable Card Content -->
 						<div
-							id="card-content-{workOrder.id}"
+							id={"card-content-" + workOrder.id}
 							class="overflow-hidden transition-all duration-200 {isCardExpanded(workOrder.id) ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}"
 						>
 							<div class="px-4 pb-4 space-y-2">

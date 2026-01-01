@@ -91,7 +91,7 @@
 
 <!-- Quick Create Modal/Sheet -->
 {#if showCreateForm}
-	<div class="fixed inset-0 z-50 flex items-end justify-center">
+	<div class="fixed inset-0 z-50 flex items-end lg:items-center lg:justify-center">
 		<!-- Backdrop -->
 		<div
 			class="absolute inset-0 bg-black/50 backdrop-blur-sm"
