@@ -560,11 +560,15 @@
 								</td>
 								<td class="px-4 py-3 text-sm text-spore-steel font-medium hidden lg:table-cell">
 									{#if workOrder.asset && workOrder.asset.Unit}
-										{workOrder.asset.Unit.Site?.name || ''} {workOrder.asset.Unit.Building ? `• ${workOrder.asset.Unit.Building.name}` : ''} {workOrder.asset.Unit.name ? `• ${workOrder.asset.Unit.name}` : ''}
+										{workOrder.asset.Unit.Site?.name || 'N/A'} • Unit {workOrder.asset.Unit.roomNumber || workOrder.asset.Unit.name || 'N/A'}
+										{#if workOrder.asset.Unit.Building} • Bldg {workOrder.asset.Unit.Building.name}{/if}
+										{#if workOrder.asset.Unit.floor} • Floor {workOrder.asset.Unit.floor}{/if}
 									{:else if workOrder.building}
-										{workOrder.building.Site?.name || ''} {workOrder.building.name ? `• ${workOrder.building.name}` : ''}
+										{workOrder.building.Site?.name || 'N/A'} • Bldg {workOrder.building.name}
 									{:else if workOrder.unit}
-										{workOrder.unit.Site?.name || ''} {workOrder.unit.Building ? `• ${workOrder.unit.Building.name}` : ''} {workOrder.unit.name ? `• ${workOrder.unit.name}` : `• Unit ${workOrder.unit.roomNumber}`}
+										{workOrder.unit.Site?.name || 'N/A'} • Unit {workOrder.unit.roomNumber || workOrder.unit.name || 'N/A'}
+										{#if workOrder.unit.Building} • Bldg {workOrder.unit.Building.name}{/if}
+										{#if workOrder.unit.floor} • Floor {workOrder.unit.floor}{/if}
 									{:else if workOrder.site}
 										{workOrder.site.name}
 									{:else}
@@ -668,11 +672,15 @@
 									<span class="text-sm font-medium text-spore-steel">Location:</span>
 									<span class="text-sm text-spore-dark text-right">
 										{#if workOrder.asset && workOrder.asset.Unit}
-											{workOrder.asset.Unit.Site?.name || ''} {workOrder.asset.Unit.Building ? '> ' + workOrder.asset.Unit.Building.name : ''} {workOrder.asset.Unit.name ? '> ' + workOrder.asset.Unit.name : ''}
+											{workOrder.asset.Unit.Site?.name || 'N/A'} • Unit {workOrder.asset.Unit.roomNumber || workOrder.asset.Unit.name || 'N/A'}
+											{#if workOrder.asset.Unit.Building} • Bldg {workOrder.asset.Unit.Building.name}{/if}
+											{#if workOrder.asset.Unit.floor} • Floor {workOrder.asset.Unit.floor}{/if}
 										{:else if workOrder.building}
-											{workOrder.building.Site?.name || ''} {workOrder.building.name ? '> ' + workOrder.building.name : ''}
+											{workOrder.building.Site?.name || 'N/A'} • Bldg {workOrder.building.name}
 										{:else if workOrder.unit}
-											{workOrder.unit.Site?.name || ''} {workOrder.unit.Building ? '> ' + workOrder.unit.Building.name : ''} {workOrder.unit.name ? '> ' + workOrder.unit.name : '> ' + workOrder.unit.roomNumber}
+											{workOrder.unit.Site?.name || 'N/A'} • Unit {workOrder.unit.roomNumber || workOrder.unit.name || 'N/A'}
+											{#if workOrder.unit.Building} • Bldg {workOrder.unit.Building.name}{/if}
+											{#if workOrder.unit.floor} • Floor {workOrder.unit.floor}{/if}
 										{:else if workOrder.site}
 											{workOrder.site.name}
 										{:else}

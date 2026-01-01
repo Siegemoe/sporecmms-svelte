@@ -13534,7 +13534,7 @@ var init_internal = __esm({
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
       },
-      version_hash: "hsi0gl"
+      version_hash: "wmz03a"
     };
   }
 });
@@ -15634,7 +15634,7 @@ var init__ = __esm({
     index = 0;
     component = async () => component_cache ??= (await Promise.resolve().then(() => (init_layout_svelte(), layout_svelte_exports))).default;
     server_id = "src/routes/+layout.server.ts";
-    imports = ["_app/immutable/chunks/0.6052de4b.js", "_app/immutable/chunks/_layout.d904581f.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/stores.1987b915.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/constants.cc7bddc0.js"];
+    imports = ["_app/immutable/nodes/0.4e77ab64.js", "_app/immutable/chunks/_layout.94fcb4e6.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/stores.e6b76d1c.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/constants.cc7bddc0.js"];
     stylesheets = ["_app/immutable/assets/_layout.1ec5a2f9.css"];
     fonts = [];
   }
@@ -15674,7 +15674,7 @@ var init__2 = __esm({
   ".svelte-kit/output/server/nodes/1.js"() {
     index2 = 1;
     component2 = async () => component_cache2 ??= (await Promise.resolve().then(() => (init_error_svelte(), error_svelte_exports))).default;
-    imports2 = ["_app/immutable/chunks/1.42e5e4fb.js", "_app/immutable/chunks/error.58deb02b.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/stores.1987b915.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports2 = ["_app/immutable/nodes/1.dbeccec8.js", "_app/immutable/chunks/error.522891f4.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/stores.e6b76d1c.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets2 = [];
     fonts2 = [];
   }
@@ -15765,7 +15765,7 @@ var init__3 = __esm({
     index3 = 2;
     component3 = async () => component_cache3 ??= (await Promise.resolve().then(() => (init_page_svelte(), page_svelte_exports))).default;
     server_id2 = "src/routes/+page.server.ts";
-    imports3 = ["_app/immutable/chunks/2.8a7ddf18.js", "_app/immutable/chunks/_page.44396bf4.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports3 = ["_app/immutable/chunks/2.4b56285a.js", "_app/immutable/chunks/_page.a7320398.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets3 = [];
     fonts3 = [];
   }
@@ -29834,7 +29834,7 @@ var init__4 = __esm({
     index4 = 3;
     component4 = async () => component_cache4 ??= (await Promise.resolve().then(() => (init_page_svelte2(), page_svelte_exports2))).default;
     server_id3 = "src/routes/assets/+page.server.ts";
-    imports4 = ["_app/immutable/nodes/3.819e6860.js", "_app/immutable/chunks/_page.5e447d39.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/constants.cc7bddc0.js", "_app/immutable/chunks/AssetForm.f3459561.js", "_app/immutable/chunks/FilterBar.818eb3a9.js"];
+    imports4 = ["_app/immutable/nodes/3.83dbcc01.js", "_app/immutable/chunks/_page.7b2b618b.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/constants.cc7bddc0.js", "_app/immutable/chunks/AssetForm.f3459561.js", "_app/immutable/chunks/FilterBar.0110061d.js"];
     stylesheets4 = [];
     fonts4 = [];
   }
@@ -30088,7 +30088,7 @@ var init__5 = __esm({
     index5 = 4;
     component5 = async () => component_cache5 ??= (await Promise.resolve().then(() => (init_page_svelte3(), page_svelte_exports3))).default;
     server_id4 = "src/routes/assets/[id]/+page.server.ts";
-    imports5 = ["_app/immutable/chunks/4.65d4cd0c.js", "_app/immutable/chunks/_page.12e0d92b.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/constants.cc7bddc0.js", "_app/immutable/chunks/AssetForm.f3459561.js"];
+    imports5 = ["_app/immutable/nodes/4.ce1012ee.js", "_app/immutable/chunks/_page.a02fb855.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/constants.cc7bddc0.js", "_app/immutable/chunks/AssetForm.f3459561.js"];
     stylesheets5 = [];
     fonts5 = [];
   }
@@ -30353,7 +30353,7 @@ var init__7 = __esm({
     index7 = 6;
     component7 = async () => component_cache7 ??= (await Promise.resolve().then(() => (init_page_svelte5(), page_svelte_exports5))).default;
     server_id6 = "src/routes/auth/emergency-reset/+page.server.ts";
-    imports7 = ["_app/immutable/nodes/6.ea68502c.js", "_app/immutable/chunks/_page.2eea35dd.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports7 = ["_app/immutable/chunks/6.be3b2a02.js", "_app/immutable/chunks/_page.f8aa9021.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets7 = [];
     fonts7 = [];
   }
@@ -30522,7 +30522,7 @@ var init__8 = __esm({
     index8 = 7;
     component8 = async () => component_cache8 ??= (await Promise.resolve().then(() => (init_page_svelte6(), page_svelte_exports6))).default;
     server_id7 = "src/routes/auth/login/+page.server.ts";
-    imports8 = ["_app/immutable/chunks/7.dc14d369.js", "_app/immutable/chunks/_page.397fc89c.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports8 = ["_app/immutable/chunks/7.3aca7fcd.js", "_app/immutable/chunks/_page.b2dcc93a.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets8 = [];
     fonts8 = [];
   }
@@ -30685,7 +30685,7 @@ var init__9 = __esm({
     index9 = 8;
     component9 = async () => component_cache9 ??= (await Promise.resolve().then(() => (init_page_svelte7(), page_svelte_exports7))).default;
     server_id8 = "src/routes/auth/register/+page.server.ts";
-    imports9 = ["_app/immutable/nodes/8.30165aa0.js", "_app/immutable/chunks/_page.f217545d.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports9 = ["_app/immutable/chunks/8.f5272396.js", "_app/immutable/chunks/_page.e281c412.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets9 = [];
     fonts9 = [];
   }
@@ -30819,7 +30819,7 @@ var init__10 = __esm({
     index10 = 9;
     component10 = async () => component_cache10 ??= (await Promise.resolve().then(() => (init_page_svelte8(), page_svelte_exports8))).default;
     server_id9 = "src/routes/auth/reset-password/[token]/+page.server.ts";
-    imports10 = ["_app/immutable/chunks/9.10c82e6a.js", "_app/immutable/chunks/_page.c55faf7f.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports10 = ["_app/immutable/chunks/9.d00b31b3.js", "_app/immutable/chunks/_page.99313784.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets10 = [];
     fonts10 = [];
   }
@@ -31086,7 +31086,7 @@ var init__11 = __esm({
     index11 = 10;
     component11 = async () => component_cache11 ??= (await Promise.resolve().then(() => (init_page_svelte9(), page_svelte_exports9))).default;
     server_id10 = "src/routes/dashboard/+page.server.ts";
-    imports11 = ["_app/immutable/chunks/10.8a702668.js", "_app/immutable/chunks/_page.b2002d4b.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/websocket.ff281e65.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports11 = ["_app/immutable/nodes/10.3852fac7.js", "_app/immutable/chunks/_page.b2002d4b.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/websocket.ff281e65.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets11 = [];
     fonts11 = [];
   }
@@ -31248,7 +31248,7 @@ var init__12 = __esm({
     index12 = 11;
     component12 = async () => component_cache12 ??= (await Promise.resolve().then(() => (init_page_svelte10(), page_svelte_exports10))).default;
     server_id11 = "src/routes/join-organization/+page.server.ts";
-    imports12 = ["_app/immutable/chunks/11.62403148.js", "_app/immutable/chunks/_page.ff0eb514.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports12 = ["_app/immutable/chunks/11.38a9ad2b.js", "_app/immutable/chunks/_page.712b7f4e.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets12 = [];
     fonts12 = [];
   }
@@ -31376,7 +31376,7 @@ var init__13 = __esm({
     index13 = 12;
     component13 = async () => component_cache13 ??= (await Promise.resolve().then(() => (init_page_svelte11(), page_svelte_exports11))).default;
     server_id12 = "src/routes/onboarding/+page.server.ts";
-    imports13 = ["_app/immutable/chunks/12.0a94197b.js", "_app/immutable/chunks/_page.461811c6.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports13 = ["_app/immutable/chunks/12.23c3a1c8.js", "_app/immutable/chunks/_page.35493fbc.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets13 = [];
     fonts13 = [];
   }
@@ -31517,7 +31517,7 @@ var init__14 = __esm({
     index14 = 13;
     component14 = async () => component_cache14 ??= (await Promise.resolve().then(() => (init_page_svelte12(), page_svelte_exports12))).default;
     server_id13 = "src/routes/profile/+page.server.ts";
-    imports14 = ["_app/immutable/chunks/13.f2dff8d2.js", "_app/immutable/chunks/_page.4cc5f8c3.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports14 = ["_app/immutable/chunks/13.e5975abc.js", "_app/immutable/chunks/_page.bc100e93.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets14 = [];
     fonts14 = [];
   }
@@ -31647,7 +31647,7 @@ var init__15 = __esm({
     index15 = 14;
     component15 = async () => component_cache15 ??= (await Promise.resolve().then(() => (init_page_svelte13(), page_svelte_exports13))).default;
     server_id14 = "src/routes/select-organization/+page.server.ts";
-    imports15 = ["_app/immutable/nodes/14.5ff8861a.js", "_app/immutable/chunks/_page.b7ab585b.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports15 = ["_app/immutable/nodes/14.5f299f27.js", "_app/immutable/chunks/_page.e37169f7.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets15 = [];
     fonts15 = [];
   }
@@ -31817,7 +31817,7 @@ var init__16 = __esm({
     index16 = 15;
     component16 = async () => component_cache16 ??= (await Promise.resolve().then(() => (init_page_svelte14(), page_svelte_exports14))).default;
     server_id15 = "src/routes/sites/+page.server.ts";
-    imports16 = ["_app/immutable/nodes/15.41fdbf63.js", "_app/immutable/chunks/_page.ebaf68c3.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports16 = ["_app/immutable/chunks/15.650fc23d.js", "_app/immutable/chunks/_page.e1015e72.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets16 = [];
     fonts16 = [];
   }
@@ -32117,7 +32117,7 @@ var init__17 = __esm({
     index17 = 16;
     component17 = async () => component_cache17 ??= (await Promise.resolve().then(() => (init_page_svelte15(), page_svelte_exports15))).default;
     server_id16 = "src/routes/sites/[id]/+page.server.ts";
-    imports17 = ["_app/immutable/chunks/16.466eeb1d.js", "_app/immutable/chunks/_page.d63923c5.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports17 = ["_app/immutable/chunks/16.3b60b98b.js", "_app/immutable/chunks/_page.130a976f.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
     stylesheets17 = [];
     fonts17 = [];
   }
@@ -32300,7 +32300,7 @@ var init__18 = __esm({
     index18 = 17;
     component18 = async () => component_cache18 ??= (await Promise.resolve().then(() => (init_page_svelte16(), page_svelte_exports16))).default;
     server_id17 = "src/routes/templates/+page.server.ts";
-    imports18 = ["_app/immutable/nodes/17.6e672467.js", "_app/immutable/chunks/_page.33670a70.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/stores.1987b915.js", "_app/immutable/chunks/constants.cc7bddc0.js"];
+    imports18 = ["_app/immutable/nodes/17.1a1f92a3.js", "_app/immutable/chunks/_page.2252b26e.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/stores.e6b76d1c.js", "_app/immutable/chunks/constants.cc7bddc0.js"];
     stylesheets18 = ["_app/immutable/assets/_page.b74b4820.css"];
     fonts18 = [];
   }
@@ -32496,7 +32496,7 @@ var init__19 = __esm({
     index19 = 18;
     component19 = async () => component_cache19 ??= (await Promise.resolve().then(() => (init_page_svelte17(), page_svelte_exports17))).default;
     server_id18 = "src/routes/templates/[id]/+page.server.ts";
-    imports19 = ["_app/immutable/nodes/18.9966ae6d.js", "_app/immutable/chunks/_page.e0ed3342.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/constants.cc7bddc0.js"];
+    imports19 = ["_app/immutable/chunks/18.3cc46594.js", "_app/immutable/chunks/_page.45132f49.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/constants.cc7bddc0.js"];
     stylesheets19 = [];
     fonts19 = [];
   }
@@ -32859,7 +32859,7 @@ var init__20 = __esm({
     index20 = 19;
     component20 = async () => component_cache20 ??= (await Promise.resolve().then(() => (init_page_svelte18(), page_svelte_exports18))).default;
     server_id19 = "src/routes/users/+page.server.ts";
-    imports20 = ["_app/immutable/chunks/19.f6a42464.js", "_app/immutable/chunks/_page.1ca8031b.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/stores.1987b915.js", "_app/immutable/chunks/badges.487c14ed.js", "_app/immutable/chunks/FilterBar.818eb3a9.js"];
+    imports20 = ["_app/immutable/nodes/19.8299d912.js", "_app/immutable/chunks/_page.bce61d57.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/stores.e6b76d1c.js", "_app/immutable/chunks/badges.487c14ed.js", "_app/immutable/chunks/FilterBar.0110061d.js"];
     stylesheets20 = [];
     fonts20 = [];
   }
@@ -34117,13 +34117,13 @@ var init_page_svelte20 = __esm({
         )}  ${``}  ${workOrders && workOrders.length > 0 ? `<div class="bg-spore-white rounded-xl shadow-sm border border-spore-cream/50 overflow-hidden"> <div class="hidden md:block overflow-x-auto"><table class="min-w-full" role="table" aria-label="Work orders list"><thead class="bg-spore-dark"><tr><th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-3znkiu">Title</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-19faq7s">Priority</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-11id8rq">Status</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-1eniqmk">Assigned</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden lg:table-cell" data-svelte-h="svelte-1n0iefz">Location</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider hidden lg:table-cell" data-svelte-h="svelte-12ixr6g">Due Date</th> <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-spore-cream uppercase tracking-wider" data-svelte-h="svelte-4s34th">Actions</th></tr></thead> <tbody class="divide-y divide-spore-cream/50">${each(workOrders, (workOrder) => {
           return `<tr class="hover:bg-spore-cream/20 transition-colors"><td class="px-4 py-3"><a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-sm font-bold text-spore-dark hover:text-spore-orange transition-colors focus:outline-none focus:underline block">${escape(workOrder.title)} </a></td> <td class="px-4 py-3 whitespace-nowrap"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_PRIORITY_COLORS[workOrder.priority] || WORK_ORDER_PRIORITY_COLORS.MEDIUM, true)}">${escape(workOrder.priority)} </span></td> <td class="px-4 py-3 whitespace-nowrap"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(getStatusColor(workOrder.status), true)}">${escape(formatStatus(workOrder.status))} </span></td> <td class="px-4 py-3 whitespace-nowrap"><form method="POST" action="?/assign" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="text-xs bg-transparent border-0 text-spore-steel cursor-pointer hover:text-spore-dark focus:outline-none focus:ring-1 focus:ring-spore-orange rounded min-w-[120px]"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
             return `<option${add_attribute("value", user.id, 0)}>${escape(formatUserName(user))}</option>`;
-          })}</select> </form></td> <td class="px-4 py-3 text-sm text-spore-steel font-medium hidden lg:table-cell">${workOrder.asset && workOrder.asset.Unit ? `${escape(workOrder.asset.Unit.Site?.name || "")} ${escape(workOrder.asset.Unit.Building ? `\u2022 ${workOrder.asset.Unit.Building.name}` : "")} ${escape(workOrder.asset.Unit.name ? `\u2022 ${workOrder.asset.Unit.name}` : "")}` : `${workOrder.building ? `${escape(workOrder.building.Site?.name || "")} ${escape(workOrder.building.name ? `\u2022 ${workOrder.building.name}` : "")}` : `${workOrder.unit ? `${escape(workOrder.unit.Site?.name || "")} ${escape(workOrder.unit.Building ? `\u2022 ${workOrder.unit.Building.name}` : "")} ${escape(workOrder.unit.name ? `\u2022 ${workOrder.unit.name}` : `\u2022 Unit ${workOrder.unit.roomNumber}`)}` : `${workOrder.site ? `${escape(workOrder.site.name)}` : `N/A`}`}`}`}</td> <td class="px-4 py-3 text-sm text-spore-steel hidden lg:table-cell">${workOrder.dueDate ? `${escape(new Date(workOrder.dueDate).toLocaleDateString())} ${isOverdue(workOrder.dueDate, workOrder.status) ? `<span class="text-red-500 font-semibold" data-svelte-h="svelte-w65mx2">(Overdue)</span>` : ``}` : `-`}</td> <td class="px-4 py-3 whitespace-nowrap text-xs font-medium space-x-2">${workOrder.status === "PENDING" ? `<form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="text-spore-orange hover:text-spore-orange/70 focus:outline-none focus:underline" title="${"Start working on " + escape(workOrder.title, true)}">Start</button> </form>` : ``} ${workOrder.status === "IN_PROGRESS" ? `<form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="COMPLETED"> <button type="submit" class="text-spore-forest hover:text-spore-forest/70 focus:outline-none focus:underline" title="${"Mark " + escape(workOrder.title, true) + " as completed"}">Complete</button> </form>` : ``} <a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-spore-steel hover:text-spore-dark focus:outline-none focus:underline" title="${"View details for " + escape(workOrder.title, true)}">View
+          })}</select> </form></td> <td class="px-4 py-3 text-sm text-spore-steel font-medium hidden lg:table-cell">${workOrder.asset && workOrder.asset.Unit ? `${escape(workOrder.asset.Unit.Site?.name || "N/A")} \u2022 Unit ${escape(workOrder.asset.Unit.roomNumber || workOrder.asset.Unit.name || "N/A")} ${workOrder.asset.Unit.Building ? `\u2022 Bldg ${escape(workOrder.asset.Unit.Building.name)}` : ``} ${workOrder.asset.Unit.floor ? `\u2022 Floor ${escape(workOrder.asset.Unit.floor)}` : ``}` : `${workOrder.building ? `${escape(workOrder.building.Site?.name || "N/A")} \u2022 Bldg ${escape(workOrder.building.name)}` : `${workOrder.unit ? `${escape(workOrder.unit.Site?.name || "N/A")} \u2022 Unit ${escape(workOrder.unit.roomNumber || workOrder.unit.name || "N/A")} ${workOrder.unit.Building ? `\u2022 Bldg ${escape(workOrder.unit.Building.name)}` : ``} ${workOrder.unit.floor ? `\u2022 Floor ${escape(workOrder.unit.floor)}` : ``}` : `${workOrder.site ? `${escape(workOrder.site.name)}` : `N/A`}`}`}`}</td> <td class="px-4 py-3 text-sm text-spore-steel hidden lg:table-cell">${workOrder.dueDate ? `${escape(new Date(workOrder.dueDate).toLocaleDateString())} ${isOverdue(workOrder.dueDate, workOrder.status) ? `<span class="text-red-500 font-semibold" data-svelte-h="svelte-w65mx2">(Overdue)</span>` : ``}` : `-`}</td> <td class="px-4 py-3 whitespace-nowrap text-xs font-medium space-x-2">${workOrder.status === "PENDING" ? `<form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="text-spore-orange hover:text-spore-orange/70 focus:outline-none focus:underline" title="${"Start working on " + escape(workOrder.title, true)}">Start</button> </form>` : ``} ${workOrder.status === "IN_PROGRESS" ? `<form method="POST" action="?/updateStatus" class="inline"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="COMPLETED"> <button type="submit" class="text-spore-forest hover:text-spore-forest/70 focus:outline-none focus:underline" title="${"Mark " + escape(workOrder.title, true) + " as completed"}">Complete</button> </form>` : ``} <a href="${"/work-orders/" + escape(workOrder.id, true)}" class="text-spore-steel hover:text-spore-dark focus:outline-none focus:underline" title="${"View details for " + escape(workOrder.title, true)}">View
 									</a></td> </tr>`;
         })}</tbody></table></div>  <div class="md:hidden divide-y divide-spore-cream/50">${each(workOrders, (workOrder) => {
           return `<div class="hover:bg-spore-cream/10 transition-colors"> <button class="w-full p-4 flex items-start justify-between text-left"${add_attribute("aria-expanded", isExpanded(workOrder.id), 0)}${add_attribute("aria-controls", "card-content-" + workOrder.id, 0)}><div class="flex items-center gap-3 flex-1 min-w-0"><div class="flex flex-col gap-1 flex-shrink-0"><span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(WORK_ORDER_PRIORITY_COLORS[workOrder.priority] || WORK_ORDER_PRIORITY_COLORS.MEDIUM, true)}">${escape(workOrder.priority)}</span> <span class="${"px-2 py-1 text-xs font-semibold rounded-full " + escape(getStatusColor(workOrder.status), true)}">${escape(formatStatus(workOrder.status))} </span></div> <h3 class="text-base font-bold text-spore-dark truncate">${escape(workOrder.title)} </h3></div> <div class="flex-shrink-0 ml-2 text-spore-steel"><svg class="${"w-5 h-5 transition-transform " + escape(isExpanded(workOrder.id) ? "rotate-180" : "", true)}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg> </div></button>  <div${add_attribute("id", "card-content-" + workOrder.id, 0)} class="${"overflow-hidden transition-all duration-200 " + escape(
             isExpanded(workOrder.id) ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0",
             true
-          )}"><div class="px-4 pb-4 space-y-2"><div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-8jdlm4">Location:</span> <span class="text-sm text-spore-dark text-right">${workOrder.asset && workOrder.asset.Unit ? `${escape(workOrder.asset.Unit.Site?.name || "")} ${escape(workOrder.asset.Unit.Building ? "> " + workOrder.asset.Unit.Building.name : "")} ${escape(workOrder.asset.Unit.name ? "> " + workOrder.asset.Unit.name : "")}` : `${workOrder.building ? `${escape(workOrder.building.Site?.name || "")} ${escape(workOrder.building.name ? "> " + workOrder.building.name : "")}` : `${workOrder.unit ? `${escape(workOrder.unit.Site?.name || "")} ${escape(workOrder.unit.Building ? "> " + workOrder.unit.Building.name : "")} ${escape(workOrder.unit.name ? "> " + workOrder.unit.name : "> " + workOrder.unit.roomNumber)}` : `${workOrder.site ? `${escape(workOrder.site.name)}` : `N/A`}`}`}`} </span></div> ${workOrder.dueDate ? `<div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1t4sczn">Due:</span> <span class="${"text-sm " + escape(getOverdueClass(workOrder.dueDate, workOrder.status), true)}">${escape(new Date(workOrder.dueDate).toLocaleDateString())} ${isOverdue(workOrder.dueDate, workOrder.status) ? `(Overdue)` : ``}</span> </div>` : ``} <div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1es34l">Assigned:</span> <form method="POST" action="?/assign" class="flex-1 max-w-[180px]"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="w-full text-sm bg-spore-cream/30 border border-spore-cream/50 rounded-lg px-3 py-2.5 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
+          )}"><div class="px-4 pb-4 space-y-2"><div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-8jdlm4">Location:</span> <span class="text-sm text-spore-dark text-right">${workOrder.asset && workOrder.asset.Unit ? `${escape(workOrder.asset.Unit.Site?.name || "N/A")} \u2022 Unit ${escape(workOrder.asset.Unit.roomNumber || workOrder.asset.Unit.name || "N/A")} ${workOrder.asset.Unit.Building ? `\u2022 Bldg ${escape(workOrder.asset.Unit.Building.name)}` : ``} ${workOrder.asset.Unit.floor ? `\u2022 Floor ${escape(workOrder.asset.Unit.floor)}` : ``}` : `${workOrder.building ? `${escape(workOrder.building.Site?.name || "N/A")} \u2022 Bldg ${escape(workOrder.building.name)}` : `${workOrder.unit ? `${escape(workOrder.unit.Site?.name || "N/A")} \u2022 Unit ${escape(workOrder.unit.roomNumber || workOrder.unit.name || "N/A")} ${workOrder.unit.Building ? `\u2022 Bldg ${escape(workOrder.unit.Building.name)}` : ``} ${workOrder.unit.floor ? `\u2022 Floor ${escape(workOrder.unit.floor)}` : ``}` : `${workOrder.site ? `${escape(workOrder.site.name)}` : `N/A`}`}`}`} </span></div> ${workOrder.dueDate ? `<div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1t4sczn">Due:</span> <span class="${"text-sm " + escape(getOverdueClass(workOrder.dueDate, workOrder.status), true)}">${escape(new Date(workOrder.dueDate).toLocaleDateString())} ${isOverdue(workOrder.dueDate, workOrder.status) ? `(Overdue)` : ``}</span> </div>` : ``} <div class="flex items-center justify-between"><span class="text-sm font-medium text-spore-steel" data-svelte-h="svelte-1es34l">Assigned:</span> <form method="POST" action="?/assign" class="flex-1 max-w-[180px]"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <select name="assignedToId"${add_attribute("value", workOrder.assignedToId || "", 0)} class="w-full text-sm bg-spore-cream/30 border border-spore-cream/50 rounded-lg px-3 py-2.5 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"><option value="" data-svelte-h="svelte-nkh85j">Unassigned</option>${each(users, (user) => {
             return `<option${add_attribute("value", user.id, 0)}>${escape(formatUserName(user))}</option>`;
           })}</select> </form></div> <div class="flex gap-2 text-sm font-bold pt-2">${workOrder.status === "PENDING" ? `<form method="POST" action="?/updateStatus" class="flex-1"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="IN_PROGRESS"> <button type="submit" class="w-full bg-spore-orange text-white py-3 px-4 rounded-lg font-medium hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange transition-colors min-h-[44px]" aria-label="${"Start work order: " + escape(workOrder.title, true)}">Start</button> </form>` : ``} ${workOrder.status === "IN_PROGRESS" ? `<form method="POST" action="?/updateStatus" class="flex-1"><input type="hidden" name="workOrderId"${add_attribute("value", workOrder.id, 0)}> <input type="hidden" name="status" value="COMPLETED"> <button type="submit" class="w-full bg-spore-forest text-white py-3 px-4 rounded-lg font-medium hover:bg-spore-forest/90 focus:outline-none focus:ring-2 focus:ring-spore-forest transition-colors min-h-[44px]" aria-label="${"Complete work order: " + escape(workOrder.title, true)}">Complete</button> </form>` : ``} <a href="${"/work-orders/" + escape(workOrder.id, true)}" class="flex-1 bg-spore-cream text-spore-dark py-3 px-4 rounded-lg font-medium text-center hover:bg-spore-cream/70 focus:outline-none focus:ring-2 focus:ring-spore-cream transition-colors min-h-[44px] flex items-center justify-center">View
 								</a></div> </div></div> </div>`;
@@ -34153,7 +34153,7 @@ var init__22 = __esm({
     index22 = 21;
     component22 = async () => component_cache22 ??= (await Promise.resolve().then(() => (init_page_svelte20(), page_svelte_exports20))).default;
     server_id20 = "src/routes/work-orders/+page.server.ts";
-    imports22 = ["_app/immutable/nodes/21.a5a6a490.js", "_app/immutable/chunks/_page.1ea0b52a.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/websocket.ff281e65.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/stores.1987b915.js", "_app/immutable/chunks/constants.cc7bddc0.js", "_app/immutable/chunks/FilterBar.818eb3a9.js"];
+    imports22 = ["_app/immutable/nodes/21.1ae08e3f.js", "_app/immutable/chunks/_page.a9e36868.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/websocket.ff281e65.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/stores.e6b76d1c.js", "_app/immutable/chunks/constants.cc7bddc0.js", "_app/immutable/chunks/FilterBar.0110061d.js"];
     stylesheets22 = [];
     fonts22 = [];
   }
@@ -35241,7 +35241,7 @@ var init__23 = __esm({
     index23 = 22;
     component23 = async () => component_cache23 ??= (await Promise.resolve().then(() => (init_page_svelte21(), page_svelte_exports21))).default;
     server_id21 = "src/routes/work-orders/[id]/+page.server.ts";
-    imports23 = ["_app/immutable/nodes/22.36caad40.js", "_app/immutable/chunks/_page.883af652.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4811ed8e.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/constants.cc7bddc0.js"];
+    imports23 = ["_app/immutable/chunks/22.37b2d588.js", "_app/immutable/chunks/_page.a2bc2991.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/constants.cc7bddc0.js"];
     stylesheets23 = [];
     fonts23 = [];
   }
@@ -38550,7 +38550,7 @@ var manifest = (() => {
     assets: /* @__PURE__ */ new Set(["favicon.png", "favicon.svg", "_headers"]),
     mimeTypes: { ".png": "image/png", ".svg": "image/svg+xml" },
     _: {
-      client: { "start": "_app/immutable/entry/start.8bfd0190.js", "app": "_app/immutable/entry/app.fe889466.js", "imports": ["_app/immutable/entry/start.8bfd0190.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/singletons.af756979.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.fe889466.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js"], "stylesheets": [], "fonts": [] },
+      client: { "start": "_app/immutable/entry/start.c1485827.js", "app": "_app/immutable/entry/app.64e68449.js", "imports": ["_app/immutable/entry/start.c1485827.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.64e68449.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js"], "stylesheets": [], "fonts": [] },
       nodes: [
         __memo(() => Promise.resolve().then(() => (init__(), __exports))),
         __memo(() => Promise.resolve().then(() => (init__2(), __exports2))),
