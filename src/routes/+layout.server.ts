@@ -1,7 +1,8 @@
 import type { LayoutServerLoad } from './$types';
-import { createRequestPrisma } from '$lib/server/prisma';
+import { getPrisma } from '$lib/server/prisma';
 import type { Asset, Building, Unit } from '@prisma/client';
 import type { Prisma } from '@prisma/client';
+import { queryTemplates } from '$lib/server/work-orders/templates';
 
 // Types with relations included
 type AssetWithUnit = Prisma.AssetGetPayload<{
@@ -15,17 +16,17 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	let assets: AssetWithUnit[] = [];
 	let buildings: BuildingWithSite[] = [];
 	let rooms: UnitWithBuildingAndSite[] = [];
+	let templates: any[] = [];
 
 	if (locals.user && locals.authState === 'org_member') {
-		const prisma = await createRequestPrisma({ locals } as any);
+		const prisma = await getPrisma();
 
 		// Get assets
 		assets = await prisma.asset.findMany({
 			where: {
 				Unit: {
 					Site: {
-						                        organizationId: locals.user.organizationId ?? undefined
-
+						organizationId: locals.user.organizationId ?? undefined
 					}
 				}
 			},
@@ -47,8 +48,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		buildings = await prisma.building.findMany({
 			where: {
 				Site: {
-					                        organizationId: locals.user.organizationId ?? undefined
-
+					organizationId: locals.user.organizationId ?? undefined
 				}
 			},
 			include: {
@@ -64,8 +64,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		rooms = await prisma.unit.findMany({
 			where: {
 				Site: {
-					                        organizationId: locals.user.organizationId ?? undefined
-
+					organizationId: locals.user.organizationId ?? undefined
 				}
 			},
 			include: {
@@ -76,6 +75,12 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 				roomNumber: 'asc'
 			},
 			take: 35 // Limit to keep it performant
+		});
+
+		// Get active templates for the organization
+		templates = await queryTemplates(prisma, {
+			organizationId: locals.user.organizationId,
+			isActive: true
 		});
 	}
 
@@ -110,6 +115,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 			site: unit.Site ? {
 				name: unit.Site.name
 			} : undefined
-		}))
+		})),
+		templates
 	};
 };

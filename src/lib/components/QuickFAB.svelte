@@ -6,20 +6,45 @@
 	export let assets: Array<{ id: string; name: string; room?: { id: string; name: string; building?: { id: string; name: string }; site?: { name?: string } } }> = [];
 	export let buildings: Array<{ id: string; name: string; site?: { name?: string } }> = [];
 	export let rooms: Array<{ id: string; name: string; building?: { id: string; name: string }; site?: { name?: string } }> = [];
+	export let templates: Array<{
+		id: string;
+		name: string;
+		_itemCount?: number;
+		title?: string | null;
+		workDescription?: string | null;
+		priority?: string;
+	}> = [];
 
 	let showCreateForm = false;
 	let isSubmitting = false;
 	let selectionMode = 'asset'; // 'asset' | 'room' | 'building'
-	let newWO = { title: '', description: '', assetId: '', failureMode: 'General', roomId: '', buildingId: '' };
+	let selectedTemplateId = '';
+	let newWO = { title: '', description: '', assetId: '', failureMode: 'General', roomId: '', buildingId: '', templateId: '' };
 
 	const dispatch = createEventDispatcher();
 
 	const failureModes = FAILURE_MODES;
 
+	function selectTemplate() {
+		const template = templates.find((t) => t.id === selectedTemplateId);
+		if (template) {
+			newWO.templateId = template.id;
+			if (template.title) {
+				newWO.title = template.title;
+			}
+			if (template.workDescription) {
+				newWO.description = template.workDescription;
+			}
+		} else {
+			newWO.templateId = '';
+		}
+	}
+
 	function closeForm() {
 		showCreateForm = false;
-		newWO = { title: '', description: '', assetId: '', failureMode: 'General', roomId: '', buildingId: '' };
+		newWO = { title: '', description: '', assetId: '', failureMode: 'General', roomId: '', buildingId: '', templateId: '' };
 		selectionMode = 'asset';
+		selectedTemplateId = '';
 		dispatch('close');
 	}
 
@@ -146,6 +171,30 @@
 
 					<!-- Hidden field for selection mode -->
 					<input type="hidden" name="selectionMode" value={selectionMode} />
+					<!-- Hidden field for template -->
+					<input type="hidden" name="templateId" value={newWO.templateId} />
+
+					<!-- Template Selection -->
+					{#if templates && templates.length > 0}
+						<div class="bg-spore-cream/20 rounded-lg p-3">
+							<label for="fab-wo-template" class="block text-xs font-semibold text-gray-700 mb-1">
+								Start from Template (Optional)
+							</label>
+							<select
+								id="fab-wo-template"
+								bind:value={selectedTemplateId}
+								on:change={selectTemplate}
+								class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+							>
+								<option value="">Select a template...</option>
+								{#each templates as template}
+									<option value={template.id}>
+										{template.name} ({template._itemCount || 0} items)
+									</option>
+								{/each}
+							</select>
+						</div>
+					{/if}
 
 					<div class="w-full">
 						<label for="fab-wo-title" class="block text-sm font-semibold text-gray-900 mb-2">Title *</label>
@@ -330,6 +379,30 @@
 
 					<!-- Hidden field for selection mode -->
 					<input type="hidden" name="selectionMode" value={selectionMode} />
+					<!-- Hidden field for template -->
+					<input type="hidden" name="templateId" value={newWO.templateId} />
+
+					<!-- Template Selection -->
+					{#if templates && templates.length > 0}
+						<div class="bg-spore-cream/20 rounded-lg p-3">
+							<label for="fab-wo-template-desktop" class="block text-xs font-semibold text-gray-700 mb-1">
+								Start from Template (Optional)
+							</label>
+							<select
+								id="fab-wo-template-desktop"
+								bind:value={selectedTemplateId}
+								on:change={selectTemplate}
+								class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+							>
+								<option value="">Select a template...</option>
+								{#each templates as template}
+									<option value={template.id}>
+										{template.name} ({template._itemCount || 0} items)
+									</option>
+								{/each}
+							</select>
+						</div>
+					{/if}
 
 					<div class="w-full">
 						<label for="fab-wo-title-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Title *</label>

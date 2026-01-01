@@ -55,57 +55,83 @@
 				
 				<!-- Nav Links -->
 				<div class="hidden md:flex items-center gap-1">
-					<a 
-						href="/dashboard" 
+					<a
+						href="/dashboard"
 						class="px-4 py-2 text-sm font-semibold tracking-wide transition-colors
-							{currentPath === '/dashboard' 
-								? 'text-spore-orange' 
+							{currentPath === '/dashboard'
+								? 'text-spore-orange'
 								: 'text-spore-cream/70 hover:text-spore-cream'}"
 					>
 						Dashboard
 					</a>
-					<a 
-						href="/work-orders" 
+
+					<!-- Work Orders Dropdown -->
+					<div class="relative">
+						<button
+							class="px-4 py-2 text-sm font-semibold tracking-wide transition-colors flex items-center gap-1
+								{(currentPath.startsWith('/work-orders') || currentPath.startsWith('/templates'))
+									? 'text-spore-orange'
+									: 'text-spore-cream/70 hover:text-spore-cream'}"
+							on:click={() => document.getElementById('wo-menu')?.classList.toggle('hidden')}
+						>
+							Work Orders
+							<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+								<path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+							</svg>
+						</button>
+
+						<!-- Work Orders Dropdown Menu -->
+						<div id="wo-menu" class="hidden absolute left-0 mt-2 w-48 bg-spore-cream rounded-lg shadow-lg border border-spore-forest/20 z-50">
+							<div class="py-1">
+								<a
+									href="/work-orders"
+									class="block px-4 py-2 text-sm font-bold text-spore-forest hover:bg-spore-forest/10 transition-colors"
+								>
+									Work Order Manager
+								</a>
+								<a
+									href="/templates"
+									class="block px-4 py-2 text-sm font-bold text-spore-forest hover:bg-spore-forest/10 transition-colors"
+								>
+									Template Manager
+								</a>
+							</div>
+						</div>
+					</div>
+
+					<a
+						href="/sites"
 						class="px-4 py-2 text-sm font-semibold tracking-wide transition-colors
-							{currentPath.startsWith('/work-orders') 
-								? 'text-spore-orange' 
-								: 'text-spore-cream/70 hover:text-spore-cream'}"
-					>
-						Work Orders
-					</a>
-					<a 
-						href="/sites" 
-						class="px-4 py-2 text-sm font-semibold tracking-wide transition-colors
-							{currentPath.startsWith('/sites') 
-								? 'text-spore-orange' 
+							{currentPath.startsWith('/sites')
+								? 'text-spore-orange'
 								: 'text-spore-cream/70 hover:text-spore-cream'}"
 					>
 						Sites
 					</a>
-					<a 
-						href="/assets" 
+					<a
+						href="/assets"
 						class="px-4 py-2 text-sm font-semibold tracking-wide transition-colors
-							{currentPath.startsWith('/assets') 
-								? 'text-spore-orange' 
+							{currentPath.startsWith('/assets')
+								? 'text-spore-orange'
 								: 'text-spore-cream/70 hover:text-spore-cream'}"
 					>
 						Assets
 					</a>
 					{#if user.role === 'ADMIN'}
-						<a 
-							href="/users" 
+						<a
+							href="/users"
 							class="px-4 py-2 text-sm font-semibold tracking-wide transition-colors
-								{currentPath.startsWith('/users') 
-									? 'text-spore-orange' 
+								{currentPath.startsWith('/users')
+									? 'text-spore-orange'
 									: 'text-spore-cream/70 hover:text-spore-cream'}"
 						>
 							Users
 						</a>
-						<a 
-							href="/audit-log" 
+						<a
+							href="/audit-log"
 							class="px-4 py-2 text-sm font-semibold tracking-wide transition-colors
-								{currentPath.startsWith('/audit-log') 
-									? 'text-spore-orange' 
+								{currentPath.startsWith('/audit-log')
+									? 'text-spore-orange'
 									: 'text-spore-cream/70 hover:text-spore-cream'}"
 						>
 							Audit Log
@@ -205,6 +231,10 @@
 			<span class="text-xl leading-none">📋</span>
 			<span class="text-xs font-medium">Work Orders</span>
 		</a>
+		<a href="/templates" class="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors {currentPath.startsWith('/templates') ? 'text-spore-orange bg-spore-cream/10' : 'text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5'}">
+			<span class="text-xl leading-none">📝</span>
+			<span class="text-xs font-medium">Templates</span>
+		</a>
 		<a href="/sites" class="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors {currentPath.startsWith('/sites') ? 'text-spore-orange bg-spore-cream/10' : 'text-spore-cream/70 hover:text-spore-cream hover:bg-spore-cream/5'}">
 			<span class="text-xl leading-none">🏢</span>
 			<span class="text-xs font-medium">Sites</span>
@@ -236,5 +266,5 @@
 
 <!-- Quick FAB -->
 {#if showFAB}
-	<QuickFAB assets={data.assets || []} buildings={data.buildings || []} rooms={data.rooms || []} />
+	<QuickFAB assets={data.assets || []} buildings={data.buildings || []} rooms={data.rooms || []} templates={data.templates || []} />
 {/if}
