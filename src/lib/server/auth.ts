@@ -154,7 +154,7 @@ export async function destroySession(cookies: Cookies): Promise<void> {
 		cookies.set(SESSION_COOKIE, '', {
 			path: '/',
 			httpOnly: true,
-			sameSite: 'strict',
+			sameSite: 'lax',
 			secure: !dev, // Match the secure attribute used when setting the cookie
 			expires: new Date(0), // Expire immediately (Unix epoch)
 			maxAge: 0 // Also set maxAge to 0 for belt-and-suspenders
@@ -166,7 +166,7 @@ export function setSessionCookie(cookies: Cookies, sessionId: string): void {
 	cookies.set(SESSION_COOKIE, sessionId, {
 		path: '/',
 		httpOnly: true,
-		sameSite: 'strict', // Upgrade from 'lax' for better security
+		sameSite: 'lax',
 		secure: !dev, // Always secure in production (Cloudflare Pages enforces HTTPS)
 		maxAge: 60 * 60 * 24 * SESSION_EXPIRY_DAYS
 	});
