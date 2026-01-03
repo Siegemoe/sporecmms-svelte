@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { invalidate } from '$app/navigation';
 	import type { ActionData } from './$types';
 
 	export let form: ActionData;
@@ -33,10 +32,6 @@
 					return async ({ result, update }) => {
 						await update();
 						isSubmitting = false;
-						// Invalidate layout data so menu appears immediately
-						if (result.type === 'success' || result.status === 303) {
-							await invalidate('layout');
-						}
 					};
 				}}
 				class="space-y-5"
