@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { g as getPrisma } from "./prisma.js";
-import { d as dev } from "./environment.js";
+import { D as DEV } from "./true.js";
+const dev = DEV;
 const SESSION_COOKIE = "spore_session";
 const SESSION_EXPIRY_DAYS = 30;
 async function hashPassword(password) {
@@ -85,12 +86,30 @@ async function validateSessionWithOrg(cookies) {
     currentOrganization: user.Organization
   };
 }
+async function destroySession(cookies) {
+  const sessionId = cookies.get(SESSION_COOKIE);
+  if (sessionId) {
+    const client = await getPrisma();
+    await client.session.delete({ where: { id: sessionId } }).catch(() => {
+    });
+    cookies.set(SESSION_COOKIE, "", {
+      path: "/",
+      httpOnly: true,
+      sameSite: "lax",
+      secure: !dev,
+      // Match the secure attribute used when setting the cookie
+      expires: /* @__PURE__ */ new Date(0),
+      // Expire immediately (Unix epoch)
+      maxAge: 0
+      // Also set maxAge to 0 for belt-and-suspenders
+    });
+  }
+}
 function setSessionCookie(cookies, sessionId) {
   cookies.set(SESSION_COOKIE, sessionId, {
     path: "/",
     httpOnly: true,
-    sameSite: "strict",
-    // Upgrade from 'lax' for better security
+    sameSite: "lax",
     secure: !dev,
     // Always secure in production (Cloudflare Pages enforces HTTPS)
     maxAge: 60 * 60 * 24 * SESSION_EXPIRY_DAYS
@@ -136,7 +155,8 @@ export {
   validateResetToken as a,
   canManageUsers as b,
   createSession as c,
-  validateSessionWithOrg as d,
+  destroySession as d,
+  validateSessionWithOrg as e,
   hashPassword as h,
   resetPassword as r,
   setSessionCookie as s,

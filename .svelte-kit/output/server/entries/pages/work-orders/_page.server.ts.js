@@ -3,47 +3,63 @@ import { r as requireAuth } from "../../../chunks/guards.js";
 import { e as error, f as fail } from "../../../chunks/index.js";
 import { D as DEFAULT_PRIORITY, h as DEFAULT_SELECTION_MODE, P as PRIORITIES } from "../../../chunks/constants.js";
 import { q as queryWorkOrders, a as queryLocationOptions, M as MAX_DESCRIPTION_LENGTH, c as createWorkOrder, u as updateWorkOrderStatus, b as assignWorkOrder } from "../../../chunks/service.js";
-import { a as SECURITY_RATE_LIMITS, S as SecurityManager } from "../../../chunks/security.js";
+import { S as SecurityManager, a as SECURITY_RATE_LIMITS } from "../../../chunks/security.js";
 import { q as queryTemplates, a as applyTemplate } from "../../../chunks/templates.js";
+import { l as logError, a as logWarn } from "../../../chunks/logger.js";
 const load = async (event) => {
-  requireAuth(event);
-  const prisma = await createRequestPrisma(event);
-  const userId = event.locals.user.id;
-  const organizationId = event.locals.user.organizationId;
-  if (!organizationId) {
-    throw error(400, "Organization required");
+  try {
+    requireAuth(event);
+    const prisma = await createRequestPrisma(event);
+    const userId = event.locals.user.id;
+    const organizationId = event.locals.user.organizationId;
+    if (!organizationId) {
+      throw error(400, "Organization required");
+    }
+    const myOnly = event.url.searchParams.get("my") === "true";
+    const unassigned = event.url.searchParams.get("unassigned") === "true";
+    const status = event.url.searchParams.get("status");
+    const priority = event.url.searchParams.get("priority");
+    const siteId = event.url.searchParams.get("siteId");
+    const sort = event.url.searchParams.get("sort") || "dueDate";
+    const search = event.url.searchParams.get("search");
+    let assignedToId;
+    if (myOnly)
+      assignedToId = userId;
+    else if (unassigned)
+      assignedToId = "unassigned";
+    const workOrders = await queryWorkOrders(prisma, {
+      organizationId,
+      assignedToId,
+      status: status || void 0,
+      priority: priority || void 0,
+      siteId: siteId || void 0,
+      sort,
+      search: search || void 0
+    });
+    const locationOptions = await queryLocationOptions(prisma, organizationId);
+    const templates = await queryTemplates(prisma, {
+      organizationId,
+      isActive: true
+    });
+    return {
+      workOrders,
+      ...locationOptions,
+      templates,
+      myOnly,
+      unassigned,
+      status,
+      priority,
+      siteId,
+      sort,
+      search
+    };
+  } catch (e) {
+    logError("Failed to load work orders page", e, {
+      userId: event.locals.user?.id,
+      organizationId: event.locals.user?.organizationId
+    });
+    throw error(500, "Failed to load work orders. Please try again later.");
   }
-  const myOnly = event.url.searchParams.get("my") === "true";
-  const status = event.url.searchParams.get("status");
-  const priority = event.url.searchParams.get("priority");
-  const siteId = event.url.searchParams.get("siteId");
-  const sort = event.url.searchParams.get("sort") || "dueDate";
-  const search = event.url.searchParams.get("search");
-  const workOrders = await queryWorkOrders(prisma, {
-    organizationId,
-    assignedToId: myOnly ? userId : void 0,
-    status: status || void 0,
-    priority: priority || void 0,
-    siteId: siteId || void 0,
-    sort,
-    search: search || void 0
-  });
-  const locationOptions = await queryLocationOptions(prisma, organizationId);
-  const templates = await queryTemplates(prisma, {
-    organizationId,
-    isActive: true
-  });
-  return {
-    workOrders,
-    ...locationOptions,
-    templates,
-    myOnly,
-    status,
-    priority,
-    siteId,
-    sort,
-    search
-  };
 };
 const actions = {
   /**
@@ -62,12 +78,18 @@ const actions = {
       return fail(429, { error: "Too many requests. Please try again later." });
     }
     const prisma = await createRequestPrisma(event);
-    event.locals.user?.id;
+    const userId = event.locals.user?.id;
     const organizationId = event.locals.user?.organizationId;
     const data = await event.request.formData();
     let title = data.get("title");
     let description = data.get("description");
+    const failureMode = data.get("failureMode");
     let priority = data.get("priority") || DEFAULT_PRIORITY;
+    if (failureMode && failureMode !== "General") {
+      description = description ? `${description}
+
+Failure Mode: ${failureMode}` : `Failure Mode: ${failureMode}`;
+    }
     const dueDate = data.get("dueDate");
     const assignedToId = data.get("assignedToId");
     const selectionMode = data.get("selectionMode") || DEFAULT_SELECTION_MODE;
@@ -94,23 +116,28 @@ const actions = {
       checklistItems = templateResult.items || [];
     }
     if (!title?.trim()) {
+      logWarn("Work order creation failed: Title missing", { userId, organizationId });
       return fail(400, { error: "Title is required." });
     }
     if (!PRIORITIES.includes(priority)) {
+      logWarn("Work order creation failed: Invalid priority", { userId, organizationId, priority });
       return fail(400, { error: "Invalid priority value." });
     }
     const trimmedDescription = description?.trim() || "";
     if (trimmedDescription.length > MAX_DESCRIPTION_LENGTH) {
+      logWarn("Work order creation failed: Description too long", { userId, organizationId });
       return fail(400, { error: `Description is too long (max ${MAX_DESCRIPTION_LENGTH} characters).` });
     }
     let parsedDueDate = null;
     if (dueDate) {
       parsedDueDate = new Date(dueDate);
       if (isNaN(parsedDueDate.getTime())) {
+        logWarn("Work order creation failed: Invalid due date", { userId, organizationId, dueDate });
         return fail(400, { error: "Invalid due date format." });
       }
     }
     if (!assetId && !unitId && !buildingId && !siteId) {
+      logWarn("Work order creation failed: No location selected", { userId, organizationId });
       return fail(400, { error: "Please select an asset, unit, building, or site." });
     }
     return createWorkOrder(event, prisma, {

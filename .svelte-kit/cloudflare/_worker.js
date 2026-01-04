@@ -13098,15 +13098,6 @@ var init_prisma = __esm({
   }
 });
 
-// .svelte-kit/output/server/chunks/environment.js
-var dev;
-var init_environment = __esm({
-  ".svelte-kit/output/server/chunks/environment.js"() {
-    init_true();
-    dev = DEV;
-  }
-});
-
 // .svelte-kit/output/server/chunks/auth.js
 async function hashPassword(password) {
   return bcryptjs_default.hash(password, 12);
@@ -13190,12 +13181,30 @@ async function validateSessionWithOrg(cookies) {
     currentOrganization: user.Organization
   };
 }
+async function destroySession(cookies) {
+  const sessionId = cookies.get(SESSION_COOKIE);
+  if (sessionId) {
+    const client = await getPrisma();
+    await client.session.delete({ where: { id: sessionId } }).catch(() => {
+    });
+    cookies.set(SESSION_COOKIE, "", {
+      path: "/",
+      httpOnly: true,
+      sameSite: "lax",
+      secure: !dev,
+      // Match the secure attribute used when setting the cookie
+      expires: /* @__PURE__ */ new Date(0),
+      // Expire immediately (Unix epoch)
+      maxAge: 0
+      // Also set maxAge to 0 for belt-and-suspenders
+    });
+  }
+}
 function setSessionCookie(cookies, sessionId) {
   cookies.set(SESSION_COOKIE, sessionId, {
     path: "/",
     httpOnly: true,
-    sameSite: "strict",
-    // Upgrade from 'lax' for better security
+    sameSite: "lax",
     secure: !dev,
     // Always secure in production (Cloudflare Pages enforces HTTPS)
     maxAge: 60 * 60 * 24 * SESSION_EXPIRY_DAYS
@@ -13237,12 +13246,13 @@ async function resetPassword(token, newPassword) {
   });
   return user;
 }
-var SESSION_COOKIE, SESSION_EXPIRY_DAYS;
+var dev, SESSION_COOKIE, SESSION_EXPIRY_DAYS;
 var init_auth = __esm({
   ".svelte-kit/output/server/chunks/auth.js"() {
     init_bcryptjs();
     init_prisma();
-    init_environment();
+    init_true();
+    dev = DEV;
     SESSION_COOKIE = "spore_session";
     SESSION_EXPIRY_DAYS = 30;
   }
@@ -13294,7 +13304,7 @@ var init_hooks_server = __esm({
       if (event.locals.authState === "unauthenticated" && !isPublicRoute) {
         throw redirect(303, "/auth/login");
       }
-      if (event.locals.user && event.url.pathname.startsWith("/auth/")) {
+      if (event.locals.user && event.url.pathname.startsWith("/auth/") && !event.url.pathname.startsWith("/auth/logout")) {
         if (event.locals.authState === "lobby") {
           throw redirect(303, "/onboarding");
         }
@@ -13534,7 +13544,7 @@ var init_internal = __esm({
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
       },
-      version_hash: "wmz03a"
+      version_hash: "xff2nv"
     };
   }
 });
@@ -14454,6 +14464,9 @@ function log(level, message, context) {
 function logError(message, error47, context) {
   log("error", message, { ...context, error: error47 instanceof Error ? error47.message : String(error47) });
 }
+function logWarn(message, context) {
+  log("warn", message, context);
+}
 var init_logger = __esm({
   ".svelte-kit/output/server/chunks/logger.js"() {
   }
@@ -14465,12 +14478,11 @@ var init_security = __esm({
   ".svelte-kit/output/server/chunks/security.js"() {
     init_prisma();
     SecurityManager = class _SecurityManager {
-      constructor() {
-        this.ipBlockCache = /* @__PURE__ */ new Map();
-        this.lastCacheCleanup = 0;
-        this.CACHE_CLEANUP_INTERVAL = 6e4;
-        this.rateLimitMap = /* @__PURE__ */ new Map();
-      }
+      static instance;
+      // In-memory cache for blocked IPs (faster than DB queries)
+      ipBlockCache = /* @__PURE__ */ new Map();
+      lastCacheCleanup = 0;
+      CACHE_CLEANUP_INTERVAL = 6e4;
       // 1 minute
       static getInstance() {
         if (!_SecurityManager.instance) {
@@ -14624,6 +14636,8 @@ var init_security = __esm({
         }
         return rateLimitResult;
       }
+      // Simple in-memory rate limiter (keeping existing logic)
+      rateLimitMap = /* @__PURE__ */ new Map();
       checkInMemoryRateLimit(key2, config2) {
         const now = Date.now();
         const entry = this.rateLimitMap.get(key2);
@@ -15417,7 +15431,15 @@ var init_layout_svelte = __esm({
         $$bindings.rooms(rooms);
       if ($$props.templates === void 0 && $$bindings.templates && templates !== void 0)
         $$bindings.templates(templates);
-      return ` ${` <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 lg:hidden" title="Create Work Order" aria-label="Create Work Order"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>  <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 hidden lg:flex" title="Create Work Order" aria-label="Create Work Order"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>`}  ${``}`;
+      let $$settled;
+      let $$rendered;
+      let previous_head = $$result.head;
+      do {
+        $$settled = true;
+        $$result.head = previous_head;
+        $$rendered = ` ${` <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 lg:hidden" title="Create Work Order" aria-label="Create Work Order"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>  <button type="button" class="fixed bottom-6 right-6 z-50 bg-spore-orange hover:bg-spore-orange/90 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-spore-orange/50 hidden lg:flex" title="Create Work Order" aria-label="Create Work Order"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>`}  ${``}`;
+      } while (!$$settled);
+      return $$rendered;
     });
     breadcrumbConfig = {
       excludedPaths: [
@@ -15634,8 +15656,8 @@ var init__ = __esm({
     index = 0;
     component = async () => component_cache ??= (await Promise.resolve().then(() => (init_layout_svelte(), layout_svelte_exports))).default;
     server_id = "src/routes/+layout.server.ts";
-    imports = ["_app/immutable/nodes/0.4e77ab64.js", "_app/immutable/chunks/_layout.94fcb4e6.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/stores.e6b76d1c.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/constants.cc7bddc0.js"];
-    stylesheets = ["_app/immutable/assets/_layout.1ec5a2f9.css"];
+    imports = ["_app/immutable/nodes/0.6fccc56e.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/stores.b052de97.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/constants.fb644233.js", "_app/immutable/chunks/WorkOrderForm.b6f541a8.js"];
+    stylesheets = ["_app/immutable/assets/0.e2955bef.css"];
     fonts = [];
   }
 });
@@ -15674,7 +15696,7 @@ var init__2 = __esm({
   ".svelte-kit/output/server/nodes/1.js"() {
     index2 = 1;
     component2 = async () => component_cache2 ??= (await Promise.resolve().then(() => (init_error_svelte(), error_svelte_exports))).default;
-    imports2 = ["_app/immutable/nodes/1.dbeccec8.js", "_app/immutable/chunks/error.522891f4.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/stores.e6b76d1c.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports2 = ["_app/immutable/nodes/1.7b192039.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/stores.b052de97.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js"];
     stylesheets2 = [];
     fonts2 = [];
   }
@@ -15765,7 +15787,7 @@ var init__3 = __esm({
     index3 = 2;
     component3 = async () => component_cache3 ??= (await Promise.resolve().then(() => (init_page_svelte(), page_svelte_exports))).default;
     server_id2 = "src/routes/+page.server.ts";
-    imports3 = ["_app/immutable/chunks/2.4b56285a.js", "_app/immutable/chunks/_page.a7320398.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports3 = ["_app/immutable/nodes/2.85d68de7.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js"];
     stylesheets3 = [];
     fonts3 = [];
   }
@@ -29834,7 +29856,7 @@ var init__4 = __esm({
     index4 = 3;
     component4 = async () => component_cache4 ??= (await Promise.resolve().then(() => (init_page_svelte2(), page_svelte_exports2))).default;
     server_id3 = "src/routes/assets/+page.server.ts";
-    imports4 = ["_app/immutable/nodes/3.83dbcc01.js", "_app/immutable/chunks/_page.7b2b618b.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/constants.cc7bddc0.js", "_app/immutable/chunks/AssetForm.f3459561.js", "_app/immutable/chunks/FilterBar.0110061d.js"];
+    imports4 = ["_app/immutable/nodes/3.d1a20f6b.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js", "_app/immutable/chunks/constants.fb644233.js", "_app/immutable/chunks/AssetForm.82cbf624.js", "_app/immutable/chunks/FilterBar.8213ca23.js"];
     stylesheets4 = [];
     fonts4 = [];
   }
@@ -30088,7 +30110,7 @@ var init__5 = __esm({
     index5 = 4;
     component5 = async () => component_cache5 ??= (await Promise.resolve().then(() => (init_page_svelte3(), page_svelte_exports3))).default;
     server_id4 = "src/routes/assets/[id]/+page.server.ts";
-    imports5 = ["_app/immutable/nodes/4.ce1012ee.js", "_app/immutable/chunks/_page.a02fb855.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/constants.cc7bddc0.js", "_app/immutable/chunks/AssetForm.f3459561.js"];
+    imports5 = ["_app/immutable/nodes/4.809c27ac.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js", "_app/immutable/chunks/constants.fb644233.js", "_app/immutable/chunks/AssetForm.82cbf624.js"];
     stylesheets5 = [];
     fonts5 = [];
   }
@@ -30222,7 +30244,7 @@ var init__6 = __esm({
     index6 = 5;
     component6 = async () => component_cache6 ??= (await Promise.resolve().then(() => (init_page_svelte4(), page_svelte_exports4))).default;
     server_id5 = "src/routes/audit-log/+page.server.ts";
-    imports6 = ["_app/immutable/chunks/5.42a8da84.js", "_app/immutable/chunks/_page.8d06d9c2.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.db98bb86.js"];
+    imports6 = ["_app/immutable/nodes/5.348a2998.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.87e06830.js"];
     stylesheets6 = [];
     fonts6 = [];
   }
@@ -30238,8 +30260,8 @@ var load5, actions4;
 var init_page_server_ts5 = __esm({
   ".svelte-kit/output/server/entries/pages/auth/emergency-reset/_page.server.ts.js"() {
     init_chunks();
-    init_auth();
     init_prisma();
+    init_auth();
     init_zod();
     load5 = async () => {
       return {};
@@ -30353,7 +30375,7 @@ var init__7 = __esm({
     index7 = 6;
     component7 = async () => component_cache7 ??= (await Promise.resolve().then(() => (init_page_svelte5(), page_svelte_exports5))).default;
     server_id6 = "src/routes/auth/emergency-reset/+page.server.ts";
-    imports7 = ["_app/immutable/chunks/6.be3b2a02.js", "_app/immutable/chunks/_page.f8aa9021.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports7 = ["_app/immutable/nodes/6.4431bec3.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js"];
     stylesheets7 = [];
     fonts7 = [];
   }
@@ -30522,7 +30544,7 @@ var init__8 = __esm({
     index8 = 7;
     component8 = async () => component_cache8 ??= (await Promise.resolve().then(() => (init_page_svelte6(), page_svelte_exports6))).default;
     server_id7 = "src/routes/auth/login/+page.server.ts";
-    imports8 = ["_app/immutable/chunks/7.3aca7fcd.js", "_app/immutable/chunks/_page.b2dcc93a.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports8 = ["_app/immutable/nodes/7.77ee7fb0.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js"];
     stylesheets8 = [];
     fonts8 = [];
   }
@@ -30685,7 +30707,7 @@ var init__9 = __esm({
     index9 = 8;
     component9 = async () => component_cache9 ??= (await Promise.resolve().then(() => (init_page_svelte7(), page_svelte_exports7))).default;
     server_id8 = "src/routes/auth/register/+page.server.ts";
-    imports9 = ["_app/immutable/chunks/8.f5272396.js", "_app/immutable/chunks/_page.e281c412.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports9 = ["_app/immutable/nodes/8.3f56dbf9.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js"];
     stylesheets9 = [];
     fonts9 = [];
   }
@@ -30819,7 +30841,7 @@ var init__10 = __esm({
     index10 = 9;
     component10 = async () => component_cache10 ??= (await Promise.resolve().then(() => (init_page_svelte8(), page_svelte_exports8))).default;
     server_id9 = "src/routes/auth/reset-password/[token]/+page.server.ts";
-    imports10 = ["_app/immutable/chunks/9.d00b31b3.js", "_app/immutable/chunks/_page.99313784.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports10 = ["_app/immutable/nodes/9.e4a734ff.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js"];
     stylesheets10 = [];
     fonts10 = [];
   }
@@ -30835,10 +30857,21 @@ var init_page_server_ts9 = __esm({
   ".svelte-kit/output/server/entries/pages/dashboard/_page.server.ts.js"() {
     init_prisma();
     init_guards();
+    init_security();
+    init_chunks();
     RECENT_WORK_ORDERS_LIMIT = 5;
     load9 = async (event) => {
       try {
         requireAuth(event);
+        const security = SecurityManager.getInstance();
+        const rateLimitResult = await security.checkRateLimit(
+          { event, action: "dashboard_load", userId: event.locals.user?.id },
+          SECURITY_RATE_LIMITS.SENSITIVE
+          // Use SENSITIVE limit for dashboard to prevent heavy DB load
+        );
+        if (!rateLimitResult.success) {
+          throw error(429, "Too many requests. Please try again later.");
+        }
         const prisma = await createRequestPrisma(event);
         const organizationId = event.locals.user.organizationId ?? void 0;
         const [total, pending, inProgress, completed] = await Promise.all([
@@ -30898,9 +30931,9 @@ var init_page_server_ts9 = __esm({
           recentWorkOrders: mappedRecentWorkOrders,
           sites: mappedSites
         };
-      } catch (error47) {
-        console.error("[DASHBOARD] Error loading dashboard:", error47);
-        throw error47;
+      } catch (error210) {
+        console.error("[DASHBOARD] Error loading dashboard:", error210);
+        throw error210;
       }
     };
   }
@@ -30927,21 +30960,27 @@ var page_svelte_exports9 = {};
 __export(page_svelte_exports9, {
   default: () => Page9
 });
-function getStatusBadgeClasses(status) {
-  const base2 = "px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-full";
-  const styles = {
-    COMPLETED: "bg-spore-forest text-white",
-    IN_PROGRESS: "bg-spore-orange text-white",
-    PENDING: "bg-spore-steel text-white",
-    ON_HOLD: "bg-spore-cream text-spore-steel"
-  };
-  return `${base2} ${styles[status] || "bg-spore-cream text-spore-steel"}`;
-}
-var LIVE_FEED_MAX_ITEMS, Page9;
+var StatusBadge, LIVE_FEED_MAX_ITEMS, Page9;
 var init_page_svelte9 = __esm({
   ".svelte-kit/output/server/entries/pages/dashboard/_page.svelte.js"() {
     init_ssr();
     init_websocket();
+    init_constants2();
+    StatusBadge = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+      let colorClass;
+      let formattedStatus;
+      let sizeClass;
+      let { status } = $$props;
+      let { size = "sm" } = $$props;
+      if ($$props.status === void 0 && $$bindings.status && status !== void 0)
+        $$bindings.status(status);
+      if ($$props.size === void 0 && $$bindings.size && size !== void 0)
+        $$bindings.size(size);
+      colorClass = getStatusColor(status);
+      formattedStatus = formatStatus(status);
+      sizeClass = size === "sm" ? "px-2 py-1 text-xs" : "px-3 py-1.5 text-xs";
+      return `<span class="${escape(sizeClass, true) + " font-semibold rounded-full " + escape(colorClass, true) + " whitespace-nowrap"}">${escape(formattedStatus)}</span>`;
+    });
     LIVE_FEED_MAX_ITEMS = 10;
     Page9 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let stats;
@@ -31049,7 +31088,7 @@ var init_page_svelte9 = __esm({
           true
         )}">${escape(action.label)}</span> </a>`;
       })}</div></div>  <div class="bg-spore-white rounded-xl p-6 shadow-sm border border-spore-cream/50"><div class="flex justify-between items-center mb-5"><h2 class="text-lg font-bold text-spore-dark" data-svelte-h="svelte-1umgn2y">Recent Work Orders</h2> <a href="/work-orders" class="text-sm font-semibold text-spore-orange hover:text-spore-orange/80" data-svelte-h="svelte-1ohthn9">View all \u2192</a></div> ${recentWorkOrders.length > 0 ? `<div class="space-y-3">${each(recentWorkOrders, (wo) => {
-        return `<div class="flex items-center justify-between p-4 bg-spore-cream/20 rounded-lg border border-spore-cream/50"><div class="flex-1 min-w-0"><p class="text-sm font-bold text-spore-dark truncate">${escape(wo.title)}</p> <p class="text-xs text-spore-steel mt-1">${escape(wo.asset?.room?.name ? `Room ${wo.asset.room.name}` : "")} ${escape(wo.asset?.room?.building ? ` \u2022 Bldg ${wo.asset.room.building}` : "")} ${escape(wo.asset?.room?.floor ? ` \u2022 Floor ${wo.asset.room.floor}` : "")} </p></div> <span${add_attribute("class", getStatusBadgeClasses(wo.status), 0)}>${escape(wo.status.replace("_", " "))}</span> </div>`;
+        return `<div class="flex items-center justify-between p-4 bg-spore-cream/20 rounded-lg border border-spore-cream/50"><div class="flex-1 min-w-0"><p class="text-sm font-bold text-spore-dark truncate">${escape(wo.title)}</p> <p class="text-xs text-spore-steel mt-1">${escape(wo.asset?.room?.name ? `Room ${wo.asset.room.name}` : "")} ${escape(wo.asset?.room?.building ? ` \u2022 Bldg ${wo.asset.room.building}` : "")} ${escape(wo.asset?.room?.floor ? ` \u2022 Floor ${wo.asset.room.floor}` : "")} </p></div> ${validate_component(StatusBadge, "StatusBadge").$$render($$result, { status: wo.status, size: "md" }, {}, {})} </div>`;
       })}</div>` : `<p class="text-spore-steel text-sm" data-svelte-h="svelte-bae9j6">No recent work orders</p>`}</div></div>  <div class="space-y-8"><div class="bg-spore-dark rounded-xl p-6 border border-spore-steel/30"><div class="flex items-center justify-between mb-5"><h2 class="text-lg font-bold text-spore-cream" data-svelte-h="svelte-846tpj">Live Feed</h2> <span class="${"flex items-center gap-2 text-xs font-semibold " + escape(
         wsConnected ? "text-spore-orange" : wsPolling ? "text-spore-forest" : "text-spore-cream/50",
         true
@@ -31086,7 +31125,7 @@ var init__11 = __esm({
     index11 = 10;
     component11 = async () => component_cache11 ??= (await Promise.resolve().then(() => (init_page_svelte9(), page_svelte_exports9))).default;
     server_id10 = "src/routes/dashboard/+page.server.ts";
-    imports11 = ["_app/immutable/nodes/10.3852fac7.js", "_app/immutable/chunks/_page.b2002d4b.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/websocket.ff281e65.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports11 = ["_app/immutable/nodes/10.b8bf35b8.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/websocket.40625606.js", "_app/immutable/chunks/index.d78cd8e4.js", "_app/immutable/chunks/constants.fb644233.js"];
     stylesheets11 = [];
     fonts11 = [];
   }
@@ -31248,7 +31287,7 @@ var init__12 = __esm({
     index12 = 11;
     component12 = async () => component_cache12 ??= (await Promise.resolve().then(() => (init_page_svelte10(), page_svelte_exports10))).default;
     server_id11 = "src/routes/join-organization/+page.server.ts";
-    imports12 = ["_app/immutable/chunks/11.38a9ad2b.js", "_app/immutable/chunks/_page.712b7f4e.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports12 = ["_app/immutable/nodes/11.3895f8ce.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js"];
     stylesheets12 = [];
     fonts12 = [];
   }
@@ -31376,7 +31415,7 @@ var init__13 = __esm({
     index13 = 12;
     component13 = async () => component_cache13 ??= (await Promise.resolve().then(() => (init_page_svelte11(), page_svelte_exports11))).default;
     server_id12 = "src/routes/onboarding/+page.server.ts";
-    imports13 = ["_app/immutable/chunks/12.23c3a1c8.js", "_app/immutable/chunks/_page.35493fbc.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports13 = ["_app/immutable/nodes/12.4dce7737.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js"];
     stylesheets13 = [];
     fonts13 = [];
   }
@@ -31517,7 +31556,7 @@ var init__14 = __esm({
     index14 = 13;
     component14 = async () => component_cache14 ??= (await Promise.resolve().then(() => (init_page_svelte12(), page_svelte_exports12))).default;
     server_id13 = "src/routes/profile/+page.server.ts";
-    imports14 = ["_app/immutable/chunks/13.e5975abc.js", "_app/immutable/chunks/_page.bc100e93.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports14 = ["_app/immutable/nodes/13.32888bc8.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js"];
     stylesheets14 = [];
     fonts14 = [];
   }
@@ -31647,7 +31686,7 @@ var init__15 = __esm({
     index15 = 14;
     component15 = async () => component_cache15 ??= (await Promise.resolve().then(() => (init_page_svelte13(), page_svelte_exports13))).default;
     server_id14 = "src/routes/select-organization/+page.server.ts";
-    imports15 = ["_app/immutable/nodes/14.5f299f27.js", "_app/immutable/chunks/_page.e37169f7.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports15 = ["_app/immutable/nodes/14.803a8d3e.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js"];
     stylesheets15 = [];
     fonts15 = [];
   }
@@ -31817,7 +31856,7 @@ var init__16 = __esm({
     index16 = 15;
     component16 = async () => component_cache16 ??= (await Promise.resolve().then(() => (init_page_svelte14(), page_svelte_exports14))).default;
     server_id15 = "src/routes/sites/+page.server.ts";
-    imports16 = ["_app/immutable/chunks/15.650fc23d.js", "_app/immutable/chunks/_page.e1015e72.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports16 = ["_app/immutable/nodes/15.9d4fa4ad.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js"];
     stylesheets16 = [];
     fonts16 = [];
   }
@@ -32117,7 +32156,7 @@ var init__17 = __esm({
     index17 = 16;
     component17 = async () => component_cache17 ??= (await Promise.resolve().then(() => (init_page_svelte15(), page_svelte_exports15))).default;
     server_id16 = "src/routes/sites/[id]/+page.server.ts";
-    imports17 = ["_app/immutable/chunks/16.3b60b98b.js", "_app/immutable/chunks/_page.130a976f.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js"];
+    imports17 = ["_app/immutable/nodes/16.9a843748.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js"];
     stylesheets17 = [];
     fonts17 = [];
   }
@@ -32252,7 +32291,7 @@ var init_page_svelte16 = __esm({
     init_devalue();
     init_constants2();
     css = {
-      code: ".line-clamp-1.s-Osc4856uyo_8{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.line-clamp-2.s-Osc4856uyo_8{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.truncate.s-Osc4856uyo_8{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+      code: ".line-clamp-1.s-PQ0LLf1VcKdg{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.line-clamp-2.s-PQ0LLf1VcKdg{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.truncate.s-PQ0LLf1VcKdg{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
       map: null
     };
     Page16 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
@@ -32272,9 +32311,9 @@ var init_page_svelte16 = __esm({
         showInactive ? "bg-spore-orange text-white" : "bg-spore-cream/20 text-spore-steel hover:bg-spore-cream/30",
         true
       )}">${escape(showInactive ? "All" : "Active")}</button></div></div></div>  ${``}  ${templates && templates.length > 0 ? `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${each(templates, (template) => {
-        return `<article class="bg-white rounded-xl shadow-sm border border-spore-cream/50 hover:shadow-md transition-shadow overflow-hidden"> <div class="px-5 py-4 border-b border-spore-cream/50"><div class="flex items-start justify-between gap-2"><h3 class="font-bold text-lg text-spore-dark line-clamp-1 s-Osc4856uyo_8">${escape(template.name)}</h3> <div class="flex gap-1 shrink-0">${template.isGlobal ? `<span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-100 text-purple-700" title="Global template" data-svelte-h="svelte-1taoxi1">Global
-									</span>` : ``} <span class="${"px-2 py-0.5 text-xs font-semibold rounded-full " + escape(WORK_ORDER_PRIORITY_COLORS[template.priority], true) + " s-Osc4856uyo_8"}">${escape(template.priority)}</span> </div></div> ${template.description ? `<p class="text-sm text-spore-steel mt-1 line-clamp-2 s-Osc4856uyo_8">${escape(template.description)}</p>` : ``}</div>  <div class="px-5 py-4"><div class="flex items-center justify-between text-sm"><span class="text-spore-steel">${escape(template._itemCount || 0)} ${escape(template._itemCount === 1 ? "item" : "items")}</span> <span class="text-spore-steel">Used ${escape(template.usageCount)} ${escape(template.usageCount === 1 ? "time" : "times")} </span></div>  ${template.TemplateItems && template.TemplateItems.length > 0 ? `<ul class="mt-3 space-y-1">${each(template.TemplateItems.slice(0, 3), (item) => {
-          return `<li class="text-sm text-spore-steel flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-spore-cream" aria-hidden="true"></span> <span class="truncate s-Osc4856uyo_8">${escape(item.title)}</span> </li>`;
+        return `<article class="bg-white rounded-xl shadow-sm border border-spore-cream/50 hover:shadow-md transition-shadow overflow-hidden"> <div class="px-5 py-4 border-b border-spore-cream/50"><div class="flex items-start justify-between gap-2"><h3 class="font-bold text-lg text-spore-dark line-clamp-1 s-PQ0LLf1VcKdg">${escape(template.name)}</h3> <div class="flex gap-1 shrink-0">${template.isGlobal ? `<span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-100 text-purple-700" title="Global template" data-svelte-h="svelte-1taoxi1">Global
+									</span>` : ``} <span class="${"px-2 py-0.5 text-xs font-semibold rounded-full " + escape(WORK_ORDER_PRIORITY_COLORS[template.priority], true) + " s-PQ0LLf1VcKdg"}">${escape(template.priority)}</span> </div></div> ${template.description ? `<p class="text-sm text-spore-steel mt-1 line-clamp-2 s-PQ0LLf1VcKdg">${escape(template.description)}</p>` : ``}</div>  <div class="px-5 py-4"><div class="flex items-center justify-between text-sm"><span class="text-spore-steel">${escape(template._itemCount || 0)} ${escape(template._itemCount === 1 ? "item" : "items")}</span> <span class="text-spore-steel">Used ${escape(template.usageCount)} ${escape(template.usageCount === 1 ? "time" : "times")} </span></div>  ${template.TemplateItems && template.TemplateItems.length > 0 ? `<ul class="mt-3 space-y-1">${each(template.TemplateItems.slice(0, 3), (item) => {
+          return `<li class="text-sm text-spore-steel flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-spore-cream" aria-hidden="true"></span> <span class="truncate s-PQ0LLf1VcKdg">${escape(item.title)}</span> </li>`;
         })} ${template.TemplateItems.length > 3 ? `<li class="text-sm text-spore-steel italic">+${escape(template.TemplateItems.length - 3)} more items
 									</li>` : ``} </ul>` : ``}</div>  <div class="px-5 py-3 bg-spore-cream/10 border-t border-spore-cream/50 flex justify-between items-center"><a href="${"/templates/" + escape(template.id, true)}" class="text-sm font-medium text-spore-orange hover:text-spore-orange/80 focus:outline-none focus:underline">View Details</a> <form method="POST" action="?/delete" class="inline"><input type="hidden" name="templateId"${add_attribute("value", template.id, 0)}> <button type="submit" class="text-sm text-red-500 hover:text-red-700 focus:outline-none focus:underline" onclick="return confirm('Are you sure you want to delete this template?')" data-svelte-h="svelte-og4i1n">Delete</button> </form></div> </article>`;
       })}</div>` : ` <div class="text-center py-16 bg-white rounded-xl" role="status"><div class="text-5xl mb-4" aria-hidden="true" data-svelte-h="svelte-idje0l">\u{1F4CB}</div> <h3 class="text-xl font-bold text-spore-dark mb-2" data-svelte-h="svelte-10lu0ts">No templates yet</h3> <p class="text-spore-steel mb-6" data-svelte-h="svelte-1qrwo84">Create your first template to speed up work order creation</p> <button class="bg-spore-orange text-white px-6 py-3 rounded-xl hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange focus:ring-offset-2 transition-colors text-sm font-bold" data-svelte-h="svelte-m2x7vk">+ CREATE TEMPLATE</button></div>`} </div>`;
@@ -32300,8 +32339,8 @@ var init__18 = __esm({
     index18 = 17;
     component18 = async () => component_cache18 ??= (await Promise.resolve().then(() => (init_page_svelte16(), page_svelte_exports16))).default;
     server_id17 = "src/routes/templates/+page.server.ts";
-    imports18 = ["_app/immutable/nodes/17.1a1f92a3.js", "_app/immutable/chunks/_page.2252b26e.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/stores.e6b76d1c.js", "_app/immutable/chunks/constants.cc7bddc0.js"];
-    stylesheets18 = ["_app/immutable/assets/_page.b74b4820.css"];
+    imports18 = ["_app/immutable/nodes/17.bca449e1.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js", "_app/immutable/chunks/stores.b052de97.js", "_app/immutable/chunks/constants.fb644233.js"];
+    stylesheets18 = ["_app/immutable/assets/17.73c9d2d6.css"];
     fonts18 = [];
   }
 });
@@ -32496,7 +32535,7 @@ var init__19 = __esm({
     index19 = 18;
     component19 = async () => component_cache19 ??= (await Promise.resolve().then(() => (init_page_svelte17(), page_svelte_exports17))).default;
     server_id18 = "src/routes/templates/[id]/+page.server.ts";
-    imports19 = ["_app/immutable/chunks/18.3cc46594.js", "_app/immutable/chunks/_page.45132f49.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/constants.cc7bddc0.js"];
+    imports19 = ["_app/immutable/nodes/18.f6f6a5a1.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js", "_app/immutable/chunks/constants.fb644233.js"];
     stylesheets19 = [];
     fonts19 = [];
   }
@@ -32859,7 +32898,7 @@ var init__20 = __esm({
     index20 = 19;
     component20 = async () => component_cache20 ??= (await Promise.resolve().then(() => (init_page_svelte18(), page_svelte_exports18))).default;
     server_id19 = "src/routes/users/+page.server.ts";
-    imports20 = ["_app/immutable/nodes/19.8299d912.js", "_app/immutable/chunks/_page.bce61d57.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/stores.e6b76d1c.js", "_app/immutable/chunks/badges.487c14ed.js", "_app/immutable/chunks/FilterBar.0110061d.js"];
+    imports20 = ["_app/immutable/nodes/19.8c70146c.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js", "_app/immutable/chunks/stores.b052de97.js", "_app/immutable/chunks/badges.487c14ed.js", "_app/immutable/chunks/FilterBar.8213ca23.js"];
     stylesheets20 = [];
     fonts20 = [];
   }
@@ -32946,7 +32985,7 @@ var init__21 = __esm({
   ".svelte-kit/output/server/nodes/20.js"() {
     index21 = 20;
     component21 = async () => component_cache21 ??= (await Promise.resolve().then(() => (init_page_svelte19(), page_svelte_exports19))).default;
-    imports21 = ["_app/immutable/chunks/20.92748185.js", "_app/immutable/chunks/_page.6cf9c208.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/badges.487c14ed.js"];
+    imports21 = ["_app/immutable/nodes/20.85357b85.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/globals.7f7f1b26.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/badges.487c14ed.js"];
     stylesheets21 = [];
     fonts21 = [];
   }
@@ -33192,7 +33231,11 @@ function buildWorkOrderWhere(filters) {
     organizationId: filters.organizationId
   };
   if (filters.assignedToId) {
-    where.assignedToId = filters.assignedToId;
+    if (filters.assignedToId === "unassigned") {
+      where.assignedToId = null;
+    } else {
+      where.assignedToId = filters.assignedToId;
+    }
   }
   if (filters.status) {
     where.status = filters.status;
@@ -33516,7 +33559,7 @@ async function createWorkOrder(event, prisma, data) {
     return { success: true, workOrder: newWo };
   } catch (e3) {
     logError("Error creating work order", e3, { title: data.title });
-    return { success: false, error: "Failed to create work order." };
+    return { success: false, error: "Failed to create work order due to a database error." };
   }
 }
 async function updateWorkOrderStatus(event, prisma, workOrderId, newStatus, reason) {
@@ -33560,7 +33603,7 @@ async function updateWorkOrderStatus(event, prisma, workOrderId, newStatus, reas
       throw e3;
     }
     logError("Error updating WO status", e3, { workOrderId, newStatus });
-    return { success: false, error: "Database transaction failed." };
+    return { success: false, error: "Failed to update status due to a database error." };
   }
 }
 async function assignWorkOrder(event, prisma, workOrderId, assignedToId) {
@@ -33711,45 +33754,61 @@ var init_page_server_ts19 = __esm({
     init_service();
     init_security();
     init_templates();
+    init_logger();
     load19 = async (event) => {
-      requireAuth(event);
-      const prisma = await createRequestPrisma(event);
-      const userId = event.locals.user.id;
-      const organizationId = event.locals.user.organizationId;
-      if (!organizationId) {
-        throw error(400, "Organization required");
+      try {
+        requireAuth(event);
+        const prisma = await createRequestPrisma(event);
+        const userId = event.locals.user.id;
+        const organizationId = event.locals.user.organizationId;
+        if (!organizationId) {
+          throw error(400, "Organization required");
+        }
+        const myOnly = event.url.searchParams.get("my") === "true";
+        const unassigned = event.url.searchParams.get("unassigned") === "true";
+        const status = event.url.searchParams.get("status");
+        const priority = event.url.searchParams.get("priority");
+        const siteId = event.url.searchParams.get("siteId");
+        const sort = event.url.searchParams.get("sort") || "dueDate";
+        const search = event.url.searchParams.get("search");
+        let assignedToId;
+        if (myOnly)
+          assignedToId = userId;
+        else if (unassigned)
+          assignedToId = "unassigned";
+        const workOrders = await queryWorkOrders(prisma, {
+          organizationId,
+          assignedToId,
+          status: status || void 0,
+          priority: priority || void 0,
+          siteId: siteId || void 0,
+          sort,
+          search: search || void 0
+        });
+        const locationOptions = await queryLocationOptions(prisma, organizationId);
+        const templates = await queryTemplates(prisma, {
+          organizationId,
+          isActive: true
+        });
+        return {
+          workOrders,
+          ...locationOptions,
+          templates,
+          myOnly,
+          unassigned,
+          status,
+          priority,
+          siteId,
+          sort,
+          search
+        };
+      } catch (e3) {
+        logError("Failed to load work orders page", e3, {
+          userId: event.locals.user?.id,
+          organizationId: event.locals.user?.organizationId
+        });
+        throw error(500, "Failed to load work orders. Please try again later.");
       }
-      const myOnly = event.url.searchParams.get("my") === "true";
-      const status = event.url.searchParams.get("status");
-      const priority = event.url.searchParams.get("priority");
-      const siteId = event.url.searchParams.get("siteId");
-      const sort = event.url.searchParams.get("sort") || "dueDate";
-      const search = event.url.searchParams.get("search");
-      const workOrders = await queryWorkOrders(prisma, {
-        organizationId,
-        assignedToId: myOnly ? userId : void 0,
-        status: status || void 0,
-        priority: priority || void 0,
-        siteId: siteId || void 0,
-        sort,
-        search: search || void 0
-      });
-      const locationOptions = await queryLocationOptions(prisma, organizationId);
-      const templates = await queryTemplates(prisma, {
-        organizationId,
-        isActive: true
-      });
-      return {
-        workOrders,
-        ...locationOptions,
-        templates,
-        myOnly,
-        status,
-        priority,
-        siteId,
-        sort,
-        search
-      };
     };
     actions17 = {
       /**
@@ -33768,12 +33827,18 @@ var init_page_server_ts19 = __esm({
           return fail(429, { error: "Too many requests. Please try again later." });
         }
         const prisma = await createRequestPrisma(event);
-        event.locals.user?.id;
+        const userId = event.locals.user?.id;
         const organizationId = event.locals.user?.organizationId;
         const data = await event.request.formData();
         let title = data.get("title");
         let description = data.get("description");
+        const failureMode = data.get("failureMode");
         let priority = data.get("priority") || DEFAULT_PRIORITY;
+        if (failureMode && failureMode !== "General") {
+          description = description ? `${description}
+
+Failure Mode: ${failureMode}` : `Failure Mode: ${failureMode}`;
+        }
         const dueDate = data.get("dueDate");
         const assignedToId = data.get("assignedToId");
         const selectionMode = data.get("selectionMode") || DEFAULT_SELECTION_MODE;
@@ -33800,23 +33865,28 @@ var init_page_server_ts19 = __esm({
           checklistItems = templateResult.items || [];
         }
         if (!title?.trim()) {
+          logWarn("Work order creation failed: Title missing", { userId, organizationId });
           return fail(400, { error: "Title is required." });
         }
         if (!PRIORITIES.includes(priority)) {
+          logWarn("Work order creation failed: Invalid priority", { userId, organizationId, priority });
           return fail(400, { error: "Invalid priority value." });
         }
         const trimmedDescription = description?.trim() || "";
         if (trimmedDescription.length > MAX_DESCRIPTION_LENGTH) {
+          logWarn("Work order creation failed: Description too long", { userId, organizationId });
           return fail(400, { error: `Description is too long (max ${MAX_DESCRIPTION_LENGTH} characters).` });
         }
         let parsedDueDate = null;
         if (dueDate) {
           parsedDueDate = new Date(dueDate);
           if (isNaN(parsedDueDate.getTime())) {
+            logWarn("Work order creation failed: Invalid due date", { userId, organizationId, dueDate });
             return fail(400, { error: "Invalid due date format." });
           }
         }
         if (!assetId && !unitId && !buildingId && !siteId) {
+          logWarn("Work order creation failed: No location selected", { userId, organizationId });
           return fail(400, { error: "Please select an asset, unit, building, or site." });
         }
         return createWorkOrder(event, prisma, {
@@ -33933,11 +34003,14 @@ var init_page_svelte20 = __esm({
       let sortOption = data.sort || DEFAULT_SORT_OPTION;
       let showFilters = false;
       let myOnly = data.myOnly || false;
+      let unassigned = data.unassigned || false;
       let searchValue = data.search || "";
       function applyFilters() {
         const params = new URLSearchParams();
         if (myOnly)
           params.set("my", "true");
+        if (unassigned)
+          params.set("unassigned", "true");
         if (filterStatus)
           params.set("status", filterStatus);
         if (filterPriority)
@@ -33956,11 +34029,20 @@ var init_page_svelte20 = __esm({
         filterSite = "";
         sortOption = DEFAULT_SORT_OPTION;
         myOnly = false;
+        unassigned = false;
         searchValue = "";
         applyFilters();
       }
       function toggleMyOrders() {
         myOnly = !myOnly;
+        if (myOnly)
+          unassigned = false;
+        applyFilters();
+      }
+      function toggleUnassigned() {
+        unassigned = !unassigned;
+        if (unassigned)
+          myOnly = false;
         applyFilters();
       }
       let wsConnected = false;
@@ -34048,6 +34130,12 @@ var init_page_svelte20 = __esm({
                 active: myOnly,
                 onToggle: toggleMyOrders,
                 title: "Show only my assigned work orders"
+              },
+              {
+                label: "Unassigned",
+                active: unassigned,
+                onToggle: toggleUnassigned,
+                title: "Show unassigned work orders"
               }
             ],
             filters: [
@@ -34153,7 +34241,7 @@ var init__22 = __esm({
     index22 = 21;
     component22 = async () => component_cache22 ??= (await Promise.resolve().then(() => (init_page_svelte20(), page_svelte_exports20))).default;
     server_id20 = "src/routes/work-orders/+page.server.ts";
-    imports22 = ["_app/immutable/nodes/21.1ae08e3f.js", "_app/immutable/chunks/_page.a9e36868.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/websocket.ff281e65.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/stores.e6b76d1c.js", "_app/immutable/chunks/constants.cc7bddc0.js", "_app/immutable/chunks/FilterBar.0110061d.js"];
+    imports22 = ["_app/immutable/nodes/21.39752a15.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/websocket.40625606.js", "_app/immutable/chunks/index.d78cd8e4.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/stores.b052de97.js", "_app/immutable/chunks/constants.fb644233.js", "_app/immutable/chunks/WorkOrderForm.b6f541a8.js", "_app/immutable/chunks/FilterBar.8213ca23.js"];
     stylesheets22 = [];
     fonts22 = [];
   }
@@ -35241,7 +35329,7 @@ var init__23 = __esm({
     index23 = 22;
     component23 = async () => component_cache23 ??= (await Promise.resolve().then(() => (init_page_svelte21(), page_svelte_exports21))).default;
     server_id21 = "src/routes/work-orders/[id]/+page.server.ts";
-    imports23 = ["_app/immutable/chunks/22.37b2d588.js", "_app/immutable/chunks/_page.a2bc2991.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js", "_app/immutable/chunks/forms.4d10594c.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/constants.cc7bddc0.js"];
+    imports23 = ["_app/immutable/nodes/22.8fbd227c.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js", "_app/immutable/chunks/forms.a013eb12.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js", "_app/immutable/chunks/constants.fb644233.js"];
     stylesheets23 = [];
     fonts23 = [];
   }
@@ -35454,31 +35542,11 @@ var POST2;
 var init_server_ts4 = __esm({
   ".svelte-kit/output/server/entries/endpoints/auth/logout/_server.ts.js"() {
     init_prisma();
-    init_environment();
+    init_auth();
     POST2 = async (event) => {
       initEnvFromEvent(event);
-      const sessionId = event.cookies.get("spore_session");
-      console.log("[LOGOUT] Session ID:", sessionId || "NOT FOUND");
-      if (sessionId) {
-        const client = await getPrisma();
-        try {
-          await client.session.delete({ where: { id: sessionId } });
-          console.log("[LOGOUT] Session deleted successfully");
-        } catch (error47) {
-          console.error("[LOGOUT] Failed to delete session:", error47);
-        }
-      } else {
-        console.log("[LOGOUT] No session ID found, nothing to delete");
-      }
-      event.cookies.set("spore_session", "", {
-        path: "/",
-        httpOnly: true,
-        sameSite: "strict",
-        secure: !dev,
-        expires: /* @__PURE__ */ new Date(0),
-        maxAge: 0
-      });
-      console.log("[LOGOUT] Cookie deleted via cookies.set()");
+      await destroySession(event.cookies);
+      console.log("[LOGOUT] Session destroyed");
       return new Response(null, {
         status: 303,
         headers: {
@@ -38550,7 +38618,7 @@ var manifest = (() => {
     assets: /* @__PURE__ */ new Set(["favicon.png", "favicon.svg", "_headers"]),
     mimeTypes: { ".png": "image/png", ".svg": "image/svg+xml" },
     _: {
-      client: { "start": "_app/immutable/entry/start.c1485827.js", "app": "_app/immutable/entry/app.64e68449.js", "imports": ["_app/immutable/entry/start.c1485827.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/singletons.b8573d35.js", "_app/immutable/chunks/index.9628e424.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.64e68449.js", "_app/immutable/chunks/scheduler.1a6e5117.js", "_app/immutable/chunks/index.db98bb86.js"], "stylesheets": [], "fonts": [] },
+      client: { "start": "_app/immutable/entry/start.44482981.js", "app": "_app/immutable/entry/app.c59324d1.js", "imports": ["_app/immutable/entry/start.44482981.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/singletons.0340fcc2.js", "_app/immutable/chunks/index.d78cd8e4.js", "_app/immutable/chunks/parse.bee59afc.js", "_app/immutable/entry/app.c59324d1.js", "_app/immutable/chunks/scheduler.d7bb0f2c.js", "_app/immutable/chunks/index.87e06830.js"], "stylesheets": [], "fonts": [] },
       nodes: [
         __memo(() => Promise.resolve().then(() => (init__(), __exports))),
         __memo(() => Promise.resolve().then(() => (init__2(), __exports2))),

@@ -1,6 +1,6 @@
 import { c as create_ssr_component, e as each, g as escape, f as add_attribute, v as validate_component } from "../../../../chunks/ssr.js";
 import "devalue";
-import { g as getStatusColor, d as WORK_ORDER_STATUSES } from "../../../../chunks/constants.js";
+import { g as getStatusColor, e as WORK_ORDER_STATUSES } from "../../../../chunks/constants.js";
 import { l as linkifyMentions } from "../../../../chunks/mentions.js";
 function formatStatus$1(status) {
   return status.replace(/_/g, " ");

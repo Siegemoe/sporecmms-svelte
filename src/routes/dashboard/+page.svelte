@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { wsStore } from '$lib/stores/websocket';
+	import StatusBadge from '$lib/components/StatusBadge.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -56,18 +57,6 @@
 		{ icon: '⚙️', label: 'Assets', href: '/assets' },
 		{ icon: '➕', label: 'New WO', href: '/work-orders?create=true', primary: true }
 	];
-
-	// Status badge utility function
-	function getStatusBadgeClasses(status: string): string {
-		const base = 'px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-full';
-		const styles: Record<string, string> = {
-			COMPLETED: 'bg-spore-forest text-white',
-			IN_PROGRESS: 'bg-spore-orange text-white',
-			PENDING: 'bg-spore-steel text-white',
-			ON_HOLD: 'bg-spore-cream text-spore-steel'
-		};
-		return `${base} ${styles[status] || 'bg-spore-cream text-spore-steel'}`;
-	}
 </script>
 
 <svelte:head>
@@ -146,9 +135,7 @@
 										{wo.asset?.room?.floor ? ` • Floor ${wo.asset.room.floor}` : ''}
 									</p>
 								</div>
-								<span class={getStatusBadgeClasses(wo.status)}>
-									{wo.status.replace('_', ' ')}
-								</span>
+								<StatusBadge status={wo.status} size="md" />
 							</div>
 						{/each}
 					</div>

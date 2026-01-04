@@ -70,7 +70,9 @@
       "Bash(npx prisma format:*)",
       "Bash(npx prisma:*)",
       "Bash(grep:*)",
-      "mcp__plugin_serena_serena__get_symbols_overview"
+      "mcp__plugin_serena_serena__get_symbols_overview",
+      "Bash(uniq:*)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []

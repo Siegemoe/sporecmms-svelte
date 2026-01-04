@@ -1,12 +1,24 @@
 import type { PageServerLoad } from './$types';
 import { createRequestPrisma } from '$lib/server/prisma';
 import { requireAuth } from '$lib/server/guards';
+import { SecurityManager, SECURITY_RATE_LIMITS } from '$lib/server/security';
+import { error } from '@sveltejs/kit';
 
 const RECENT_WORK_ORDERS_LIMIT = 5;
 
 export const load: PageServerLoad = async (event) => {
 	try {
 		requireAuth(event);
+
+		const security = SecurityManager.getInstance();
+		const rateLimitResult = await security.checkRateLimit(
+			{ event, action: 'dashboard_load', userId: event.locals.user?.id },
+			SECURITY_RATE_LIMITS.SENSITIVE // Use SENSITIVE limit for dashboard to prevent heavy DB load
+		);
+
+		if (!rateLimitResult.success) {
+			throw error(429, 'Too many requests. Please try again later.');
+		}
 
 		const prisma = await createRequestPrisma(event);
 		const organizationId = event.locals.user!.organizationId ?? undefined;

@@ -1,16 +1,22 @@
-import { c as create_ssr_component, o as onDestroy, g as escape, e as each, f as add_attribute } from "../../../chunks/ssr.js";
+import { c as create_ssr_component, g as escape, o as onDestroy, e as each, f as add_attribute, v as validate_component } from "../../../chunks/ssr.js";
 import { w as wsStore } from "../../../chunks/websocket.js";
+import { c as formatStatus, g as getStatusColor } from "../../../chunks/constants.js";
+const StatusBadge = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let colorClass;
+  let formattedStatus;
+  let sizeClass;
+  let { status } = $$props;
+  let { size = "sm" } = $$props;
+  if ($$props.status === void 0 && $$bindings.status && status !== void 0)
+    $$bindings.status(status);
+  if ($$props.size === void 0 && $$bindings.size && size !== void 0)
+    $$bindings.size(size);
+  colorClass = getStatusColor(status);
+  formattedStatus = formatStatus(status);
+  sizeClass = size === "sm" ? "px-2 py-1 text-xs" : "px-3 py-1.5 text-xs";
+  return `<span class="${escape(sizeClass, true) + " font-semibold rounded-full " + escape(colorClass, true) + " whitespace-nowrap"}">${escape(formattedStatus)}</span>`;
+});
 const LIVE_FEED_MAX_ITEMS = 10;
-function getStatusBadgeClasses(status) {
-  const base = "px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-full";
-  const styles = {
-    COMPLETED: "bg-spore-forest text-white",
-    IN_PROGRESS: "bg-spore-orange text-white",
-    PENDING: "bg-spore-steel text-white",
-    ON_HOLD: "bg-spore-cream text-spore-steel"
-  };
-  return `${base} ${styles[status] || "bg-spore-cream text-spore-steel"}`;
-}
 const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let stats;
   let recentWorkOrders;
@@ -117,7 +123,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       true
     )}">${escape(action.label)}</span> </a>`;
   })}</div></div>  <div class="bg-spore-white rounded-xl p-6 shadow-sm border border-spore-cream/50"><div class="flex justify-between items-center mb-5"><h2 class="text-lg font-bold text-spore-dark" data-svelte-h="svelte-1umgn2y">Recent Work Orders</h2> <a href="/work-orders" class="text-sm font-semibold text-spore-orange hover:text-spore-orange/80" data-svelte-h="svelte-1ohthn9">View all →</a></div> ${recentWorkOrders.length > 0 ? `<div class="space-y-3">${each(recentWorkOrders, (wo) => {
-    return `<div class="flex items-center justify-between p-4 bg-spore-cream/20 rounded-lg border border-spore-cream/50"><div class="flex-1 min-w-0"><p class="text-sm font-bold text-spore-dark truncate">${escape(wo.title)}</p> <p class="text-xs text-spore-steel mt-1">${escape(wo.asset?.room?.name ? `Room ${wo.asset.room.name}` : "")} ${escape(wo.asset?.room?.building ? ` • Bldg ${wo.asset.room.building}` : "")} ${escape(wo.asset?.room?.floor ? ` • Floor ${wo.asset.room.floor}` : "")} </p></div> <span${add_attribute("class", getStatusBadgeClasses(wo.status), 0)}>${escape(wo.status.replace("_", " "))}</span> </div>`;
+    return `<div class="flex items-center justify-between p-4 bg-spore-cream/20 rounded-lg border border-spore-cream/50"><div class="flex-1 min-w-0"><p class="text-sm font-bold text-spore-dark truncate">${escape(wo.title)}</p> <p class="text-xs text-spore-steel mt-1">${escape(wo.asset?.room?.name ? `Room ${wo.asset.room.name}` : "")} ${escape(wo.asset?.room?.building ? ` • Bldg ${wo.asset.room.building}` : "")} ${escape(wo.asset?.room?.floor ? ` • Floor ${wo.asset.room.floor}` : "")} </p></div> ${validate_component(StatusBadge, "StatusBadge").$$render($$result, { status: wo.status, size: "md" }, {}, {})} </div>`;
   })}</div>` : `<p class="text-spore-steel text-sm" data-svelte-h="svelte-bae9j6">No recent work orders</p>`}</div></div>  <div class="space-y-8"><div class="bg-spore-dark rounded-xl p-6 border border-spore-steel/30"><div class="flex items-center justify-between mb-5"><h2 class="text-lg font-bold text-spore-cream" data-svelte-h="svelte-846tpj">Live Feed</h2> <span class="${"flex items-center gap-2 text-xs font-semibold " + escape(
     wsConnected ? "text-spore-orange" : wsPolling ? "text-spore-forest" : "text-spore-cream/50",
     true

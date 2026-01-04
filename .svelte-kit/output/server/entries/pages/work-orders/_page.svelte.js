@@ -3,7 +3,7 @@ import { w as wsStore } from "../../../chunks/websocket.js";
 import "devalue";
 import { i as invalidateAll, g as goto, F as FilterBar } from "../../../chunks/FilterBar.js";
 import { p as page } from "../../../chunks/stores.js";
-import { c as DEFAULT_SORT_OPTION, d as WORK_ORDER_STATUSES, P as PRIORITIES, W as WORK_ORDER_PRIORITY_COLORS, g as getStatusColor, e as formatStatus } from "../../../chunks/constants.js";
+import { d as DEFAULT_SORT_OPTION, e as WORK_ORDER_STATUSES, P as PRIORITIES, W as WORK_ORDER_PRIORITY_COLORS, g as getStatusColor, c as formatStatus } from "../../../chunks/constants.js";
 import { f as formatUserName } from "../../../chunks/user.js";
 function isOverdue(dueDate, status) {
   if (status === "COMPLETED" || !dueDate)
@@ -40,11 +40,14 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let sortOption = data.sort || DEFAULT_SORT_OPTION;
   let showFilters = false;
   let myOnly = data.myOnly || false;
+  let unassigned = data.unassigned || false;
   let searchValue = data.search || "";
   function applyFilters() {
     const params = new URLSearchParams();
     if (myOnly)
       params.set("my", "true");
+    if (unassigned)
+      params.set("unassigned", "true");
     if (filterStatus)
       params.set("status", filterStatus);
     if (filterPriority)
@@ -63,11 +66,20 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     filterSite = "";
     sortOption = DEFAULT_SORT_OPTION;
     myOnly = false;
+    unassigned = false;
     searchValue = "";
     applyFilters();
   }
   function toggleMyOrders() {
     myOnly = !myOnly;
+    if (myOnly)
+      unassigned = false;
+    applyFilters();
+  }
+  function toggleUnassigned() {
+    unassigned = !unassigned;
+    if (unassigned)
+      myOnly = false;
     applyFilters();
   }
   let wsConnected = false;
@@ -155,6 +167,12 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
             active: myOnly,
             onToggle: toggleMyOrders,
             title: "Show only my assigned work orders"
+          },
+          {
+            label: "Unassigned",
+            active: unassigned,
+            onToggle: toggleUnassigned,
+            title: "Show unassigned work orders"
           }
         ],
         filters: [

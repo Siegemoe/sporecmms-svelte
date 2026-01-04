@@ -1,5 +1,5 @@
 import { r as redirect } from "./index.js";
-import { d as validateSessionWithOrg } from "./auth.js";
+import { e as validateSessionWithOrg } from "./auth.js";
 import { d as building } from "./internal.js";
 import { i as initEnvFromEvent } from "./prisma.js";
 const publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password", "/", "/favicon.ico", "/favicon.png"];
@@ -35,7 +35,7 @@ const handle = async ({ event, resolve }) => {
   if (event.locals.authState === "unauthenticated" && !isPublicRoute) {
     throw redirect(303, "/auth/login");
   }
-  if (event.locals.user && event.url.pathname.startsWith("/auth/")) {
+  if (event.locals.user && event.url.pathname.startsWith("/auth/") && !event.url.pathname.startsWith("/auth/logout")) {
     if (event.locals.authState === "lobby") {
       throw redirect(303, "/onboarding");
     }

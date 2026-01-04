@@ -1,9 +1,20 @@
 import { c as createRequestPrisma } from "../../../chunks/prisma.js";
 import { r as requireAuth } from "../../../chunks/guards.js";
+import { S as SecurityManager, a as SECURITY_RATE_LIMITS } from "../../../chunks/security.js";
+import { e as error } from "../../../chunks/index.js";
 const RECENT_WORK_ORDERS_LIMIT = 5;
 const load = async (event) => {
   try {
     requireAuth(event);
+    const security = SecurityManager.getInstance();
+    const rateLimitResult = await security.checkRateLimit(
+      { event, action: "dashboard_load", userId: event.locals.user?.id },
+      SECURITY_RATE_LIMITS.SENSITIVE
+      // Use SENSITIVE limit for dashboard to prevent heavy DB load
+    );
+    if (!rateLimitResult.success) {
+      throw error(429, "Too many requests. Please try again later.");
+    }
     const prisma = await createRequestPrisma(event);
     const organizationId = event.locals.user.organizationId ?? void 0;
     const [total, pending, inProgress, completed] = await Promise.all([
@@ -63,9 +74,9 @@ const load = async (event) => {
       recentWorkOrders: mappedRecentWorkOrders,
       sites: mappedSites
     };
-  } catch (error) {
-    console.error("[DASHBOARD] Error loading dashboard:", error);
-    throw error;
+  } catch (error2) {
+    console.error("[DASHBOARD] Error loading dashboard:", error2);
+    throw error2;
   }
 };
 export {

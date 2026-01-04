@@ -16,57 +16,73 @@ import {
 } from '$lib/server/work-orders/service';
 import { queryTemplates, applyTemplate } from '$lib/server/work-orders/templates';
 import type { WorkOrderCreateInput } from '$lib/validation';
+import { logError, logWarn } from '$lib/server/logger';
 
 export const load = async (event: Parameters<PageServerLoad>[0]) => {
-	requireAuth(event);
+	try {
+		requireAuth(event);
 
-	const prisma = await createRequestPrisma(event);
-	const userId = event.locals.user!.id;
-	const organizationId = event.locals.user!.organizationId;
+		const prisma = await createRequestPrisma(event);
+		const userId = event.locals.user!.id;
+		const organizationId = event.locals.user!.organizationId;
 
-	if (!organizationId) {
-		throw error(400, 'Organization required');
+		if (!organizationId) {
+			throw error(400, 'Organization required');
+		}
+
+		// Parse Query Params
+		const myOnly = event.url.searchParams.get('my') === 'true';
+		const unassigned = event.url.searchParams.get('unassigned') === 'true';
+		const status = event.url.searchParams.get('status') as WorkOrderStatus | null;
+		const priority = event.url.searchParams.get('priority') as Priority | null;
+		const siteId = event.url.searchParams.get('siteId');
+		const sort = event.url.searchParams.get('sort') || 'dueDate';
+		const search = event.url.searchParams.get('search');
+
+		// Determine assignment filter
+		let assignedToId: string | undefined;
+		if (myOnly) assignedToId = userId;
+		else if (unassigned) assignedToId = 'unassigned';
+
+		// Query work orders with filters
+		const workOrders = await queryWorkOrders(prisma, {
+			organizationId,
+			assignedToId,
+			status: status || undefined,
+			priority: priority || undefined,
+			siteId: siteId || undefined,
+			sort,
+			search: search || undefined
+		});
+
+		// Get location options for the create form
+		const locationOptions = await queryLocationOptions(prisma, organizationId);
+
+		// Get active templates for the organization
+		const templates = await queryTemplates(prisma, {
+			organizationId,
+			isActive: true
+		});
+
+		return {
+			workOrders,
+			...locationOptions,
+			templates,
+			myOnly,
+			unassigned,
+			status,
+			priority,
+			siteId,
+			sort,
+			search
+		};
+	} catch (e) {
+		logError('Failed to load work orders page', e, {
+			userId: event.locals.user?.id,
+			organizationId: event.locals.user?.organizationId
+		});
+		throw error(500, 'Failed to load work orders. Please try again later.');
 	}
-
-	// Parse Query Params
-	const myOnly = event.url.searchParams.get('my') === 'true';
-	const status = event.url.searchParams.get('status') as WorkOrderStatus | null;
-	const priority = event.url.searchParams.get('priority') as Priority | null;
-	const siteId = event.url.searchParams.get('siteId');
-	const sort = event.url.searchParams.get('sort') || 'dueDate';
-	const search = event.url.searchParams.get('search');
-
-	// Query work orders with filters
-	const workOrders = await queryWorkOrders(prisma, {
-		organizationId,
-		assignedToId: myOnly ? userId : undefined,
-		status: status || undefined,
-		priority: priority || undefined,
-		siteId: siteId || undefined,
-		sort,
-		search: search || undefined
-	});
-
-	// Get location options for the create form
-	const locationOptions = await queryLocationOptions(prisma, organizationId);
-
-	// Get active templates for the organization
-	const templates = await queryTemplates(prisma, {
-		organizationId,
-		isActive: true
-	});
-
-	return {
-		workOrders,
-		...locationOptions,
-		templates,
-		myOnly,
-		status,
-		priority,
-		siteId,
-		sort,
-		search
-	};
 };
 
 export const actions = {
@@ -94,7 +110,13 @@ export const actions = {
 
 		let title = data.get('title') as string;
 		let description = data.get('description') as string;
+		const failureMode = data.get('failureMode') as string;
 		let priority = (data.get('priority') as string) || DEFAULT_PRIORITY;
+
+		// Append failure mode to description if present
+		if (failureMode && failureMode !== 'General') {
+			description = description ? `${description}\n\nFailure Mode: ${failureMode}` : `Failure Mode: ${failureMode}`;
+		}
 		const dueDate = data.get('dueDate') as string;
 		const assignedToId = data.get('assignedToId') as string;
 		const selectionMode = (data.get('selectionMode') as string) || DEFAULT_SELECTION_MODE;
@@ -134,17 +156,20 @@ export const actions = {
 
 		// Validate title
 		if (!title?.trim()) {
+			logWarn('Work order creation failed: Title missing', { userId, organizationId });
 			return fail(400, { error: 'Title is required.' });
 		}
 
 		// Validate priority enum
 		if (!PRIORITIES.includes(priority as Priority)) {
+			logWarn('Work order creation failed: Invalid priority', { userId, organizationId, priority });
 			return fail(400, { error: 'Invalid priority value.' });
 		}
 
 		// Validate and sanitize description
 		const trimmedDescription = description?.trim() || '';
 		if (trimmedDescription.length > MAX_DESCRIPTION_LENGTH) {
+			logWarn('Work order creation failed: Description too long', { userId, organizationId });
 			return fail(400, { error: `Description is too long (max ${MAX_DESCRIPTION_LENGTH} characters).` });
 		}
 
@@ -153,12 +178,14 @@ export const actions = {
 		if (dueDate) {
 			parsedDueDate = new Date(dueDate);
 			if (isNaN(parsedDueDate.getTime())) {
+				logWarn('Work order creation failed: Invalid due date', { userId, organizationId, dueDate });
 				return fail(400, { error: 'Invalid due date format.' });
 			}
 		}
 
 		// Validate at least one selection is made
 		if (!assetId && !unitId && !buildingId && !siteId) {
+			logWarn('Work order creation failed: No location selected', { userId, organizationId });
 			return fail(400, { error: 'Please select an asset, unit, building, or site.' });
 		}
 
