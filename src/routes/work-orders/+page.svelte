@@ -17,6 +17,7 @@
 	} from '$lib/constants';
 	import { formatUserName } from '$lib/utils/user';
 	import FilterBar from '$lib/components/FilterBar.svelte';
+	import WorkOrderForm from '$lib/components/work-orders/WorkOrderForm.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -63,6 +64,7 @@
 	let sortOption = data.sort || DEFAULT_SORT_OPTION;
 	let showFilters = false;
 	let myOnly = data.myOnly || false;
+	let unassigned = data.unassigned || false;
 	let searchValue = data.search || '';
 
 	// Sync when page data changes
@@ -77,6 +79,7 @@
 	function applyFilters() {
 		const params = new URLSearchParams();
 		if (myOnly) params.set('my', 'true');
+		if (unassigned) params.set('unassigned', 'true');
 		if (filterStatus) params.set('status', filterStatus);
 		if (filterPriority) params.set('priority', filterPriority);
 		if (filterSite) params.set('siteId', filterSite);
@@ -92,12 +95,20 @@
 		filterSite = '';
 		sortOption = DEFAULT_SORT_OPTION;
 		myOnly = false;
+		unassigned = false;
 		searchValue = '';
 		applyFilters();
 	}
 
 	function toggleMyOrders() {
 		myOnly = !myOnly;
+		if (myOnly) unassigned = false; // Mutually exclusive
+		applyFilters();
+	}
+
+	function toggleUnassigned() {
+		unassigned = !unassigned;
+		if (unassigned) myOnly = false; // Mutually exclusive
 		applyFilters();
 	}
 
@@ -234,6 +245,12 @@
 				active: myOnly,
 				onToggle: toggleMyOrders,
 				title: 'Show only my assigned work orders'
+			},
+			{
+				label: 'Unassigned',
+				active: unassigned,
+				onToggle: toggleUnassigned,
+				title: 'Show unassigned work orders'
 			}
 		]}
 		filters={[
@@ -276,231 +293,17 @@
 	{#if showCreateForm}
 		<div id="create-form" class="bg-spore-white rounded-xl p-4 md:p-6 mb-8 border border-spore-orange/20 shadow-lg" role="region" aria-label="Create work order form">
 			<h2 class="text-lg font-bold text-spore-dark mb-4">Create New Work Order</h2>
-			<form
-				method="POST"
-				action="?/create"
-				use:enhance={() => {
-					isSubmitting = true;
-					return async ({ result }) => {
-						isSubmitting = false;
-						// Only hide form and reset on success
-						if (result.type === 'success') {
-							showCreateForm = false;
-							selectedTemplateId = '';
-							newWO = {
-								title: '',
-								description: '',
-								priority: DEFAULT_PRIORITY,
-								dueDate: '',
-								assignedToId: '',
-								selectionMode: DEFAULT_SELECTION_MODE,
-								assetId: '',
-								unitId: '',
-								buildingId: '',
-								siteId: '',
-								templateId: ''
-							};
-						}
-					};
-				}}
-				class="space-y-4 md:space-y-4"
-			>
-				<!-- Template Selection -->
-				{#if templates && templates.length > 0}
-					<div class="bg-spore-cream/20 rounded-lg p-3 md:p-4">
-						<label for="template-select" class="block text-sm font-medium text-spore-dark mb-2">
-							Start from Template (Optional)
-						</label>
-						<select
-							id="template-select"
-							bind:value={selectedTemplateId}
-							on:change={(e) => selectTemplate(e.currentTarget.value)}
-							class="w-full px-3 md:px-4 py-3 rounded-lg border border-spore-cream bg-white text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
-						>
-							<option value="">Select a template...</option>
-							{#each templates as template}
-								<option value={template.id}>
-									{template.name} ({template._itemCount || 0} items)
-								</option>
-							{/each}
-						</select>
-						{#if selectedTemplateId}
-							<p class="text-xs text-spore-steel mt-2">
-								Template values have been applied. You can edit them before creating the work order.
-							</p>
-						{/if}
-					</div>
-				{/if}
-
-				<input type="hidden" name="templateId" bind:value={newWO.templateId} />
-
-				<!-- Title and Description -->
-				<div>
-					<label for="wo-title" class="sr-only">Work order title</label>
-					<input
-						type="text"
-						id="wo-title"
-						name="title"
-						bind:value={newWO.title}
-						placeholder="Work order title"
-						class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
-						required
-						aria-required="true"
-					/>
-				</div>
-				<textarea
-					name="description"
-					bind:value={newWO.description}
-					placeholder="Description (optional)"
-					rows="2"
-					class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark placeholder-spore-steel/50 focus:outline-none focus:ring-2 focus:ring-spore-orange resize-none min-h-[80px]"
-				></textarea>
-
-				<!-- Priority, Due Date, Assignment -->
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-					<div>
-						<label for="wo-priority" class="block text-sm font-medium text-spore-dark mb-1">Priority</label>
-						<select
-							id="wo-priority"
-							name="priority"
-							bind:value={newWO.priority}
-							class="w-full px-3 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
-						>
-							{#each PRIORITIES as priority}
-								<option value={priority}>{priority}</option>
-							{/each}
-						</select>
-					</div>
-					<div>
-						<label for="wo-due" class="block text-sm font-medium text-spore-dark mb-1">Due Date (optional)</label>
-						<input
-							type="date"
-							id="wo-due"
-							name="dueDate"
-							bind:value={newWO.dueDate}
-							class="w-full px-3 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
-						/>
-					</div>
-					<div>
-						<label for="wo-assign" class="block text-sm font-medium text-spore-dark mb-1">Assign To (optional)</label>
-						<select
-							id="wo-assign"
-							name="assignedToId"
-							bind:value={newWO.assignedToId}
-							class="w-full px-3 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
-						>
-							<option value="">Unassigned</option>
-							{#each users as user}
-								<option value={user.id}>{formatUserName(user)}</option>
-							{/each}
-						</select>
-					</div>
-				</div>
-
-				<!-- Location Selection -->
-				<div>
-					<label class="block text-sm font-medium text-spore-dark mb-2">Location</label>
-					<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
-						{#each ['asset', 'unit', 'building', 'site'] as mode}
-							<button
-								type="button"
-								class="px-3 py-3 text-sm font-medium rounded-lg transition-colors min-h-[44px] {
-									newWO.selectionMode === mode
-										? 'bg-spore-orange text-white'
-										: 'bg-spore-cream/20 text-spore-steel hover:bg-spore-cream/30'
-								}"
-								on:click={() => {
-									newWO.selectionMode = mode;
-									newWO.assetId = '';
-									newWO.unitId = '';
-									newWO.buildingId = '';
-									newWO.siteId = '';
-								}}
-							>
-								{mode.charAt(0).toUpperCase() + mode.slice(1)}
-							</button>
-						{/each}
-					</div>
-
-					<!-- Selection Dropdowns -->
-					{#if newWO.selectionMode === 'asset'}
-						<select
-							name="assetId"
-							bind:value={newWO.assetId}
-							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
-							required
-						>
-							<option value="">Select an asset...</option>
-							{#each assets as asset}
-								<option value={asset.id}>
-									{asset.name} — {asset.room?.site?.name || 'Unknown'}, Unit {asset.room?.roomNumber || 'N/A'}
-								</option>
-							{/each}
-						</select>
-					{:else if newWO.selectionMode === 'unit'}
-						<select
-							name="unitId"
-							bind:value={newWO.unitId}
-							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
-							required
-						>
-							<option value="">Select a unit...</option>
-							{#each units as unit}
-								<option value={unit.id}>
-									{unit.site?.name} - Unit {unit.roomNumber}
-									{unit.building ? ` (${unit.building.name})` : ''}
-									{unit.name ? ` - ${unit.name}` : ''}
-								</option>
-							{/each}
-						</select>
-					{:else if newWO.selectionMode === 'building'}
-						<select
-							name="buildingId"
-							bind:value={newWO.buildingId}
-							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
-							required
-						>
-							<option value="">Select a building...</option>
-							{#each buildings as building}
-								<option value={building.id}>
-									{building.name} - {building.site?.name || 'Unknown'}
-								</option>
-							{/each}
-						</select>
-					{:else if newWO.selectionMode === 'site'}
-						<select
-							name="siteId"
-							bind:value={newWO.siteId}
-							class="w-full px-4 py-3 rounded-lg border border-spore-cream bg-spore-cream/20 text-spore-dark focus:outline-none focus:ring-2 focus:ring-spore-orange min-h-[44px]"
-							required
-						>
-							<option value="">Select a site...</option>
-							{#each sites as site}
-								<option value={site.id}>{site.name}</option>
-							{/each}
-						</select>
-					{/if}
-				</div>
-
-				<!-- Submit Button -->
-				<div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
-					<button
-						type="button"
-						on:click={() => showCreateForm = false}
-						class="w-full sm:w-auto px-6 py-3 rounded-lg font-bold text-sm text-spore-steel hover:bg-spore-cream transition-colors min-h-[44px]"
-					>
-						CANCEL
-					</button>
-					<button
-						type="submit"
-						disabled={isSubmitting || !newWO.title.trim() || !(newWO.assetId || newWO.unitId || newWO.buildingId || newWO.siteId)}
-						class="w-full sm:w-auto bg-spore-forest text-white px-8 py-3 rounded-lg font-bold text-sm tracking-wide hover:bg-spore-forest/90 focus:outline-none focus:ring-2 focus:ring-spore-forest focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
-						aria-busy={isSubmitting}
-					>
-						{isSubmitting ? 'CREATING...' : 'CREATE WORK ORDER'}
-					</button>
-				</div>
-			</form>
+			<WorkOrderForm
+				assets={assets}
+				units={units}
+				buildings={buildings}
+				sites={sites}
+				users={users}
+				templates={templates}
+				bind:isSubmitting
+				on:success={() => showCreateForm = false}
+				on:cancel={() => showCreateForm = false}
+			/>
 		</div>
 	{/if}
 

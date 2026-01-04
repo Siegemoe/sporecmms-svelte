@@ -29,16 +29,22 @@ export const load: PageServerLoad = async (event) => {
 
 	// Parse Query Params
 	const myOnly = event.url.searchParams.get('my') === 'true';
+	const unassigned = event.url.searchParams.get('unassigned') === 'true';
 	const status = event.url.searchParams.get('status') as WorkOrderStatus | null;
 	const priority = event.url.searchParams.get('priority') as Priority | null;
 	const siteId = event.url.searchParams.get('siteId');
 	const sort = event.url.searchParams.get('sort') || 'dueDate';
 	const search = event.url.searchParams.get('search');
 
+	// Determine assignment filter
+	let assignedToId: string | undefined;
+	if (myOnly) assignedToId = userId;
+	else if (unassigned) assignedToId = 'unassigned';
+
 	// Query work orders with filters
 	const workOrders = await queryWorkOrders(prisma, {
 		organizationId,
-		assignedToId: myOnly ? userId : undefined,
+		assignedToId,
 		status: status || undefined,
 		priority: priority || undefined,
 		siteId: siteId || undefined,
@@ -60,6 +66,7 @@ export const load: PageServerLoad = async (event) => {
 		...locationOptions,
 		templates,
 		myOnly,
+		unassigned,
 		status,
 		priority,
 		siteId,
@@ -93,7 +100,13 @@ export const actions: Actions = {
 
 		let title = data.get('title') as string;
 		let description = data.get('description') as string;
+		const failureMode = data.get('failureMode') as string;
 		let priority = (data.get('priority') as string) || DEFAULT_PRIORITY;
+
+		// Append failure mode to description if present
+		if (failureMode && failureMode !== 'General') {
+			description = description ? `${description}\n\nFailure Mode: ${failureMode}` : `Failure Mode: ${failureMode}`;
+		}
 		const dueDate = data.get('dueDate') as string;
 		const assignedToId = data.get('assignedToId') as string;
 		const selectionMode = (data.get('selectionMode') as string) || DEFAULT_SELECTION_MODE;

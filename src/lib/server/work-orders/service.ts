@@ -34,7 +34,11 @@ export function buildWorkOrderWhere(filters: {
 	};
 
 	if (filters.assignedToId) {
-		where.assignedToId = filters.assignedToId;
+		if (filters.assignedToId === 'unassigned') {
+			where.assignedToId = null;
+		} else {
+			where.assignedToId = filters.assignedToId;
+		}
 	}
 	if (filters.status) {
 		where.status = filters.status;

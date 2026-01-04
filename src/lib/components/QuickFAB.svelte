@@ -2,6 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { FAILURE_MODES } from '$lib/constants';
+	import WorkOrderForm from '$lib/components/work-orders/WorkOrderForm.svelte';
 
 	export let assets: Array<{ id: string; name: string; room?: { id: string; name: string; building?: { id: string; name: string }; site?: { name?: string } } }> = [];
 	export let buildings: Array<{ id: string; name: string; site?: { name?: string } }> = [];
@@ -17,39 +18,12 @@
 
 	let showCreateForm = false;
 	let isSubmitting = false;
-	let selectionMode = 'asset'; // 'asset' | 'room' | 'building'
-	let selectedTemplateId = '';
-	let newWO = { title: '', description: '', assetId: '', failureMode: 'General', roomId: '', buildingId: '', templateId: '' };
 
 	const dispatch = createEventDispatcher();
 
-	const failureModes = FAILURE_MODES;
-
-	function selectTemplate() {
-		const template = templates.find((t) => t.id === selectedTemplateId);
-		if (template) {
-			newWO.templateId = template.id;
-			if (template.title) {
-				newWO.title = template.title;
-			}
-			if (template.workDescription) {
-				newWO.description = template.workDescription;
-			}
-		} else {
-			newWO.templateId = '';
-		}
-	}
-
 	function closeForm() {
 		showCreateForm = false;
-		newWO = { title: '', description: '', assetId: '', failureMode: 'General', roomId: '', buildingId: '', templateId: '' };
-		selectionMode = 'asset';
-		selectedTemplateId = '';
 		dispatch('close');
-	}
-
-	function handleFormSubmit() {
-		isSubmitting = true;
 	}
 </script>
 
@@ -102,442 +76,40 @@
 			aria-label="Close form"
 		></div>
 
-		<!-- Single Form Element -->
-		<form
-			method="POST"
-			action="/work-orders?/create"
-			use:enhance={() => {
-				handleFormSubmit();
-				return async ({ update }) => {
-					const result = await update();
-					if (result.type === 'success') {
+		<!-- Modal Container -->
+		<div class="relative w-full lg:max-w-2xl lg:mx-4 max-h-[90vh] flex flex-col bg-white rounded-t-2xl lg:rounded-2xl shadow-2xl overflow-hidden z-50">
+			<!-- Header -->
+			<div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10">
+				<h2 class="text-xl font-bold text-gray-900">Quick Work Order</h2>
+				<button
+					type="button"
+					on:click={closeForm}
+					class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+					aria-label="Close"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+			</div>
+
+			<!-- Form Content -->
+			<div class="p-6 overflow-y-auto">
+				<WorkOrderForm
+					assets={assets}
+					units={rooms}
+					buildings={buildings}
+					sites={[]} 
+					users={[]} 
+					templates={templates}
+					bind:isSubmitting
+					on:success={() => {
 						closeForm();
-						isSubmitting = false;
-					} else {
-						isSubmitting = false;
-					}
-				};
-			}}
-		>
-			<!-- Mobile: Bottom Sheet -->
-			<div class="lg:hidden relative bg-white rounded-t-2xl w-full h-[85vh] flex flex-col overflow-hidden">
-				<!-- Handle -->
-				<div class="flex justify-center py-3">
-					<div class="w-12 h-1 bg-gray-300 rounded-full"></div>
-				</div>
-
-				<!-- Header -->
-				<div class="sticky top-0 bg-white border-b border-gray-200 px-4 py-4">
-					<div class="flex items-center justify-between">
-						<h2 class="text-xl font-bold text-gray-900">Quick Work Order</h2>
-						<button
-							type="button"
-							on:click={closeForm}
-							class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-							aria-label="Close"
-						>
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-							</svg>
-						</button>
-					</div>
-				</div>
-
-				<!-- Form -->
-				                <div class="p-4 space-y-4 w-full min-w-0 overflow-y-auto flex-1">
-				                    <!-- Selection Mode Toggle -->
-				                    <div class="flex gap-2 flex-wrap">
-				                        <button
-				                            type="button"
-				                            class="px-3 py-1 text-xs rounded-full {selectionMode === 'asset' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-				                            on:click={() => { selectionMode = 'asset'; newWO.assetId = ''; }}
-				                        >
-				                            Asset
-				                        </button>
-				                        <button
-				                            type="button"
-				                            class="px-3 py-1 text-xs rounded-full {selectionMode === 'room' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-				                            on:click={() => { selectionMode = 'room'; newWO.roomId = ''; }}
-				                        >
-				                            Unit
-				                        </button>						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'building' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'building'; newWO.buildingId = ''; }}
-						>
-							Building
-						</button>
-					</div>
-
-					<!-- Hidden field for selection mode -->
-					<input type="hidden" name="selectionMode" value={selectionMode} />
-					<!-- Hidden field for template -->
-					<input type="hidden" name="templateId" value={newWO.templateId} />
-
-					<!-- Template Selection -->
-					{#if templates && templates.length > 0}
-						<div class="bg-spore-cream/20 rounded-lg p-3">
-							<label for="fab-wo-template" class="block text-xs font-semibold text-gray-700 mb-1">
-								Start from Template (Optional)
-							</label>
-							<select
-								id="fab-wo-template"
-								bind:value={selectedTemplateId}
-								on:change={selectTemplate}
-								class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-							>
-								<option value="">Select a template...</option>
-								{#each templates as template}
-									<option value={template.id}>
-										{template.name} ({template._itemCount || 0} items)
-									</option>
-								{/each}
-							</select>
-						</div>
-					{/if}
-
-					<div class="w-full">
-						<label for="fab-wo-title" class="block text-sm font-semibold text-gray-900 mb-2">Title *</label>
-						<input
-							type="text"
-							id="fab-wo-title"
-							name="title"
-							bind:value={newWO.title}
-							placeholder="Brief description of the issue"
-							class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 placeholder-gray-500"
-							required
-							aria-required="true"
-						/>
-					</div>
-
-					<!-- Asset Selection -->
-					{#if selectionMode === 'asset'}
-						<div class="w-full">
-							<label for="fab-wo-asset" class="block text-sm font-semibold text-gray-900 mb-2">Asset *</label>
-							<select
-								id="fab-wo-asset"
-								name="assetId"
-								bind:value={newWO.assetId}
-								class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
-								required
-								aria-required="true"
-							>
-								<option value="">Select an asset...</option>
-								{#each assets as asset}
-									<option value={asset.id}>
-										{asset.name} {asset.room?.site?.name ? `- ${asset.room.site.name}` : ''}
-									</option>
-								{/each}
-							</select>
-						</div>
-
-					<!-- Room Selection -->
-					{:else if selectionMode === 'room'}
-						<div class="w-full">
-							<label for="fab-wo-room" class="block text-sm font-semibold text-gray-900 mb-2">Room *</label>
-							<select
-								id="fab-wo-room"
-								name="roomId"
-								bind:value={newWO.roomId}
-								class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
-								required
-								aria-required="true"
-							>
-								<option value="">Select a room...</option>
-								{#each rooms as room}
-									<option value={room.id}>
-										{room.name} {room.building ? `- ${room.building.name}` : ''} {room.site?.name ? `- ${room.site.name}` : ''}
-									</option>
-								{/each}
-							</select>
-						</div>
-
-					<!-- Building Selection -->
-					{:else if selectionMode === 'building'}
-						<div class="w-full">
-							<label for="fab-wo-building" class="block text-sm font-semibold text-gray-900 mb-2">Building *</label>
-							<select
-								id="fab-wo-building"
-								name="buildingId"
-								bind:value={newWO.buildingId}
-								class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
-								required
-								aria-required="true"
-							>
-								<option value="">Select a building...</option>
-								{#each buildings as building}
-									<option value={building.id}>
-										{building.name} {building.site?.name ? `- ${building.site.name}` : ''}
-									</option>
-								{/each}
-							</select>
-						</div>
-					{/if}
-
-					<div class="w-full">
-						<label for="fab-wo-failure" class="block text-sm font-semibold text-gray-900 mb-2">Failure Mode</label>
-						<select
-							id="fab-wo-failure"
-							name="failureMode"
-							bind:value={newWO.failureMode}
-							class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
-						>
-							{#each failureModes as mode}
-								<option value={mode}>{mode}</option>
-							{/each}
-						</select>
-					</div>
-
-					<div class="w-full">
-						<label for="fab-wo-description" class="block text-sm font-semibold text-gray-900 mb-2">Description</label>
-						<textarea
-							id="fab-wo-description"
-							name="description"
-							bind:value={newWO.description}
-							placeholder="Additional details (optional)"
-							rows="3"
-							class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 placeholder-gray-500 resize-none"
-						></textarea>
-					</div>
-
-					<div class="flex gap-3 pt-4">
-						<button
-							type="button"
-							on:click={closeForm}
-							class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
-							disabled={isSubmitting}
-						>
-							Cancel
-						</button>
-						<button
-							type="submit"
-							disabled={isSubmitting || !newWO.title.trim() || (selectionMode === 'asset' && !newWO.assetId) || (selectionMode === 'room' && !newWO.roomId) || (selectionMode === 'building' && !newWO.buildingId)}
-							class="flex-1 bg-spore-orange text-white px-4 py-3 rounded-lg font-semibold hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-							aria-busy={isSubmitting}
-						>
-							{#if isSubmitting}
-								<span class="flex items-center justify-center gap-2">
-									<svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
-										<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-										<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-									</svg>
-									Creating...
-								</span>
-							{:else}
-								Create Work Order
-							{/if}
-						</button>
-					</div>
-				</div>
+						// Optional: trigger toast or refresh
+					}}
+					on:cancel={closeForm}
+				/>
 			</div>
-
-			<!-- Desktop: Modal -->
-			<div class="hidden lg:block relative bg-white rounded-2xl shadow-2xl w-[512px] mx-4 max-h-[90vh] flex flex-col">
-				<!-- Header -->
-				<div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl">
-					<div class="flex items-center justify-between">
-						<h2 class="text-xl font-bold text-gray-900">Quick Work Order</h2>
-						<button
-							type="button"
-							on:click={closeForm}
-							class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-							aria-label="Close"
-						>
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-							</svg>
-						</button>
-					</div>
-				</div>
-
-				<!-- Form Content -->
-				<div class="p-6 space-y-4 w-full min-w-0 overflow-y-auto flex-1">
-					<!-- Selection Mode Toggle -->
-					<div class="flex gap-2 flex-wrap">
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'asset' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'asset'; newWO.assetId = ''; }}
-						>
-							Asset
-						</button>
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'room' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'room'; newWO.roomId = ''; }}
-						>
-							Room
-						</button>
-						<button
-							type="button"
-							class="px-3 py-1 text-xs rounded-full {selectionMode === 'building' ? 'bg-spore-orange text-white' : 'bg-gray-200 text-gray-700'}"
-							on:click={() => { selectionMode = 'building'; newWO.buildingId = ''; }}
-						>
-							Building
-						</button>
-					</div>
-
-					<!-- Hidden field for selection mode -->
-					<input type="hidden" name="selectionMode" value={selectionMode} />
-					<!-- Hidden field for template -->
-					<input type="hidden" name="templateId" value={newWO.templateId} />
-
-					<!-- Template Selection -->
-					{#if templates && templates.length > 0}
-						<div class="bg-spore-cream/20 rounded-lg p-3">
-							<label for="fab-wo-template-desktop" class="block text-xs font-semibold text-gray-700 mb-1">
-								Start from Template (Optional)
-							</label>
-							<select
-								id="fab-wo-template-desktop"
-								bind:value={selectedTemplateId}
-								on:change={selectTemplate}
-								class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-							>
-								<option value="">Select a template...</option>
-								{#each templates as template}
-									<option value={template.id}>
-										{template.name} ({template._itemCount || 0} items)
-									</option>
-								{/each}
-							</select>
-						</div>
-					{/if}
-
-					<div class="w-full">
-						<label for="fab-wo-title-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Title *</label>
-						<input
-							type="text"
-							id="fab-wo-title-desktop"
-							name="title"
-							bind:value={newWO.title}
-							placeholder="Brief description of the issue"
-							class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 placeholder-gray-500"
-							required
-							aria-required="true"
-						/>
-					</div>
-
-					<!-- Asset Selection -->
-					{#if selectionMode === 'asset'}
-						<div class="min-h-[80px] w-full">
-							<label for="fab-wo-asset-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Asset *</label>
-							<select
-								id="fab-wo-asset-desktop"
-								name="assetId"
-								bind:value={newWO.assetId}
-								class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
-								required
-								aria-required="true"
-							>
-								<option value="">Select an asset...</option>
-								{#each assets as asset}
-									<option value={asset.id}>
-										{asset.name} {asset.room?.site?.name ? `- ${asset.room.site.name}` : ''}
-									</option>
-								{/each}
-							</select>
-						</div>
-
-					<!-- Room Selection -->
-					{:else if selectionMode === 'room'}
-						<div class="min-h-[80px] w-full">
-							<label for="fab-wo-room-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Room *</label>
-							<select
-								id="fab-wo-room-desktop"
-								name="roomId"
-								bind:value={newWO.roomId}
-								class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
-								required
-								aria-required="true"
-							>
-								<option value="">Select a room...</option>
-								{#each rooms as room}
-									<option value={room.id}>
-										{room.name} {room.building ? `- ${room.building.name}` : ''} {room.site?.name ? `- ${room.site.name}` : ''}
-									</option>
-								{/each}
-							</select>
-						</div>
-
-					<!-- Building Selection -->
-					{:else if selectionMode === 'building'}
-						<div class="min-h-[80px] w-full">
-							<label for="fab-wo-building-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Building *</label>
-							<select
-								id="fab-wo-building-desktop"
-								name="buildingId"
-								bind:value={newWO.buildingId}
-								class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
-								required
-								aria-required="true"
-							>
-								<option value="">Select a building...</option>
-								{#each buildings as building}
-									<option value={building.id}>
-										{building.name} {building.site?.name ? `- ${building.site.name}` : ''}
-									</option>
-								{/each}
-							</select>
-						</div>
-					{/if}
-
-					<div>
-						<label for="fab-wo-failure-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Failure Mode</label>
-						<select
-							id="fab-wo-failure-desktop"
-							name="failureMode"
-							bind:value={newWO.failureMode}
-							class="w-full min-w-0 px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 appearance-none"
-						>
-							{#each failureModes as mode}
-								<option value={mode}>{mode}</option>
-							{/each}
-						</select>
-					</div>
-
-					<div>
-						<label for="fab-wo-description-desktop" class="block text-sm font-semibold text-gray-900 mb-2">Description</label>
-						<textarea
-							id="fab-wo-description-desktop"
-							name="description"
-							bind:value={newWO.description}
-							placeholder="Additional details (optional)"
-							rows="3"
-							class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-spore-orange focus:border-spore-orange text-gray-900 placeholder-gray-500 resize-none"
-						></textarea>
-					</div>
-
-					<div class="flex gap-3 pt-4">
-						<button
-							type="button"
-							on:click={closeForm}
-							class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
-							disabled={isSubmitting}
-						>
-							Cancel
-						</button>
-						<button
-							type="submit"
-							disabled={isSubmitting || !newWO.title.trim() || (selectionMode === 'asset' && !newWO.assetId) || (selectionMode === 'room' && !newWO.roomId) || (selectionMode === 'building' && !newWO.buildingId)}
-							class="flex-1 bg-spore-orange text-white px-4 py-3 rounded-lg font-semibold hover:bg-spore-orange/90 focus:outline-none focus:ring-2 focus:ring-spore-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-							aria-busy={isSubmitting}
-						>
-							{#if isSubmitting}
-								<span class="flex items-center justify-center gap-2">
-									<svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
-										<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-										<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-									</svg>
-									Creating...
-								</span>
-							{:else}
-								Create Work Order
-							{/if}
-						</button>
-					</div>
-				</div>
-			</div>
-		</form>
+		</div>
 	</div>
 {/if}
