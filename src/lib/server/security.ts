@@ -479,5 +479,10 @@ export const SECURITY_RATE_LIMITS = {
     limit: 3,
     windowMs: 60 * 60 * 1000, // 1 hour
     violationThreshold: 2
+  },
+  SENSITIVE: {
+    limit: 20,
+    windowMs: 60 * 1000,
+    violationThreshold: 5
   }
 };
