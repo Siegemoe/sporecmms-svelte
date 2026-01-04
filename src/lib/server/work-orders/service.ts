@@ -481,7 +481,9 @@ export async function createWorkOrder(
 		return { success: true, workOrder: newWo };
 	} catch (e) {
 		logError('Error creating work order', e, { title: data.title });
-		return { success: false, error: 'Failed to create work order.' };
+		// Return a standardized error object instead of just { success: false }
+		// The controller layer can then decide how to present this (e.g. fail(500))
+		return { success: false, error: 'Failed to create work order due to a database error.' };
 	}
 }
 
@@ -545,11 +547,11 @@ export async function updateWorkOrderStatus(
 		return { success: true, updatedWo };
 	} catch (e) {
 		if (e && typeof e === 'object' && 'status' in e) {
-			// Re-throw fail() responses
+			// Re-throw fail() responses (authorization errors)
 			throw e;
 		}
 		logError('Error updating WO status', e, { workOrderId, newStatus });
-		return { success: false, error: 'Database transaction failed.' };
+		return { success: false, error: 'Failed to update status due to a database error.' };
 	}
 }
 
