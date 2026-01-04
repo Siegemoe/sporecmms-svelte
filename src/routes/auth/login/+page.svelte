@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { enhance, applyAction } from '$app/forms';
 	import type { ActionData } from './$types';
 
 	export let form: ActionData;
@@ -29,9 +29,15 @@
 				method="POST"
 				use:enhance={() => {
 					isSubmitting = true;
-					return async ({ result, update }) => {
-						await update();
-						isSubmitting = false;
+					return async ({ result }) => {
+						if (result.type === 'redirect') {
+							// Force a full page reload on successful login to ensure
+							// session cookies are properly picked up and all state is fresh.
+							window.location.href = result.location;
+						} else {
+							await applyAction(result);
+							isSubmitting = false;
+						}
 					};
 				}}
 				class="space-y-5"
