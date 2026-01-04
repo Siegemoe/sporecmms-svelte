@@ -37,7 +37,7 @@
 									clip-rule="evenodd"
 								/>
 							</svg>
-						{/if}}
+						{/if}
 						{#if crumb.href}
 							<a
 								href={crumb.href}
