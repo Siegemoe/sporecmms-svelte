@@ -57,7 +57,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	// Handle authenticated users accessing auth pages
-	if (event.locals.user && event.url.pathname.startsWith('/auth/')) {
+	if (event.locals.user && event.url.pathname.startsWith('/auth/') && !event.url.pathname.startsWith('/auth/logout')) {
 		// If user is in lobby, send to onboarding
 		if (event.locals.authState === 'lobby') {
 			throw redirect(303, '/onboarding');
